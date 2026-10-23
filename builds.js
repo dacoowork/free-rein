@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "hoist",
+    title: "Hoist",
+    date: "2026-10-23",
+    kind: "Word and language",
+    blurb: "Ships spell with flags. Read words flown as signal hoists, string up your own message, and learn what each of the 26 flags means alone.",
+    font: "'Barlow Condensed', 'Arial Narrow', sans-serif", fontWeight: 800, letterSpacing: "0.02em",
+    bg: "#e8f0f4", fg: "#12222c", accent: "#d22630", accent2: "#1f4c9e",
+    motif: "hoist"
+  },
+  {
     slug: "sprouts",
     title: "Sprouts",
     date: "2026-10-23",

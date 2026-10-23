@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -79,7 +79,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-10-23b"></script>
+<script src="builds.js?v=2026-10-23c"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -193,6 +193,16 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
       const cell=10,n=32,ox=0,oy=0;let s=`<rect width="320" height="180" fill="${b.bg}"/>`;
       for(let p=0;p<18;p++)for(let e=0;e<n;e++){const up=tie[th[e%12]][th[p%12]];
         s+=`<rect x="${ox+e*cell}" y="${oy+p*cell}" width="${cell}" height="${cell}" fill="${up?'#273760':'#e7dec6'}" stroke="#c3cabf" stroke-width=".5"/>`}
+      return s;
+    },
+    hoist(b){
+      // the word HOIST flown on a halyard, top to bottom, in true International Code flags
+      const R='#d22630',Y='#f5c400',B='#1f4c9e',K='#141414',W='#ffffff';
+      const r=(x,y,w,h,f)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}"/>`;
+      const F={H:r(0,0,30,40,W)+r(30,0,30,40,R),O:r(0,0,60,40,Y)+`<polygon points="0,0 60,0 60,40" fill="${R}"/>`,
+        I:r(0,0,60,40,Y)+`<circle cx="30" cy="20" r="11" fill="${K}"/>`,S:r(0,0,60,40,W)+r(20,13.33,20,13.34,B),T:r(0,0,20,40,R)+r(20,0,20,40,W)+r(40,0,20,40,B)};
+      let s=`<rect width="320" height="180" fill="${b.bg}"/><rect x="146" y="2" width="4" height="178" rx="2" fill="#7d8e97"/>`;
+      'HOIST'.split('').forEach((L,k)=>{s+=`<g transform="translate(152 ${8+k*33.5}) scale(.78)">${F[L]}<rect x=".5" y=".5" width="59" height="39" fill="none" stroke="rgba(18,34,44,.3)"/></g>`});
       return s;
     },
     sprouts(b){

@@ -1,0 +1,275 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Hoist</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout: a harbour signal station. Daylight sky ground, flags strung on halyards, condensed signage type. */
+:root {
+  --sky: #e8f0f4;
+  --panel: #ffffff;
+  --ink: #12222c;
+  --muted: #536772;
+  --rule: #c5d3da;
+  --halyard: #7d8e97;
+  --signal: #c81e2b;
+  --ok: #1d7a46;
+  --edge: rgba(18, 34, 44, .28);
+  --f-red: #d22630; --f-yellow: #f5c400; --f-blue: #1f4c9e; --f-black: #141414; --f-white: #ffffff;
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "Barlow", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --sky: #0e171c; --panel: #16232a; --ink: #e6eef2; --muted: #9db0ba; --rule: #2b3d47; --halyard: #6f8590;
+  --signal: #ff5a63; --ok: #5bd18c; --edge: rgba(255,255,255,.22); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --sky: #0e171c; --panel: #16232a; --ink: #e6eef2; --muted: #9db0ba; --rule: #2b3d47; --halyard: #6f8590;
+  --signal: #ff5a63; --ok: #5bd18c; --edge: rgba(255,255,255,.22); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--sky); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.5; margin: 0; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 56px; display: grid; gap: 40px; }
+h1, h2, h3 { font-family: var(--display); text-transform: uppercase; margin: 0; text-wrap: balance; }
+.eyebrow { font-family: var(--display); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; font-size: 13px; color: var(--signal); }
+svg.flag { display: block; overflow: hidden; }
+
+/* hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px; align-items: center; }
+.hero h1 { font-size: clamp(72px, 14vw, 152px); font-weight: 800; line-height: .85; letter-spacing: .01em; }
+.hero p { max-width: 58ch; margin: 14px 0 0; color: var(--muted); font-size: 17px; }
+.hero-hoist { display: flex; gap: 0; align-items: flex-start; }
+.mast { width: 6px; height: 300px; background: var(--halyard); border-radius: 3px; }
+.hero-hoist .col { display: grid; gap: 6px; padding-top: 8px; position: relative; }
+.hero-hoist .col::before { content: ""; position: absolute; left: 0; top: 0; bottom: -8px; width: 2px; background: var(--halyard); }
+.hero-hoist svg { width: 78px; height: 52px; transform-origin: left center; animation: flutter 3.2s ease-in-out infinite; }
+.hero-hoist svg:nth-child(2) { animation-delay: -.6s } .hero-hoist svg:nth-child(3) { animation-delay: -1.2s }
+.hero-hoist svg:nth-child(4) { animation-delay: -1.8s } .hero-hoist svg:nth-child(5) { animation-delay: -2.4s }
+@keyframes flutter { 0%,100% { transform: skewY(0deg) scaleX(1); } 50% { transform: skewY(-3deg) scaleX(.96); } }
+@media (prefers-reduced-motion: reduce) { .hero-hoist svg, .shake { animation: none !important; } }
+
+/* sections */
+section { display: grid; gap: 18px; }
+.sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 20px; border-bottom: 2px solid var(--ink); padding-bottom: 8px; }
+.sec-head h2 { font-size: 34px; font-weight: 800; }
+.sec-head p { margin: 0; color: var(--muted); max-width: 60ch; }
+
+/* reader game */
+.reader { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 28px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 24px; }
+.station { display: flex; justify-content: center; align-items: flex-start; min-height: 380px; }
+.halyard { position: relative; display: grid; gap: 4px; padding: 14px 0 14px 0; }
+.halyard::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--halyard); }
+.halyard svg { width: 72px; height: 48px; }
+.halyard .slot { display: flex; align-items: center; gap: 10px; }
+.halyard .tag { font-family: var(--display); font-weight: 700; font-size: 18px; width: 18px; color: var(--ok); }
+.controls { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-content: start; min-width: 0; }
+.scoreline { display: flex; flex-wrap: wrap; gap: 8px 22px; font-family: var(--display); text-transform: uppercase; letter-spacing: .06em; font-size: 15px; color: var(--muted); }
+.scoreline b { color: var(--ink); font-size: 26px; font-weight: 800; margin-right: 4px; font-variant-numeric: tabular-nums; }
+.prompt { font-size: 18px; margin: 0; }
+.answer-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.answer-row input { flex: 1 1 200px; min-width: 0; font-family: var(--display); font-weight: 700; font-size: 30px; letter-spacing: .18em; text-transform: uppercase; padding: 8px 14px; border: 2px solid var(--ink); border-radius: 4px; background: var(--sky); color: var(--ink); }
+.answer-row input:focus-visible, button:focus-visible { outline: 3px solid var(--f-yellow); outline-offset: 2px; }
+button { font-family: var(--display); font-weight: 700; font-size: 17px; letter-spacing: .08em; text-transform: uppercase; padding: 10px 18px; border-radius: 4px; border: 2px solid var(--ink); background: var(--ink); color: var(--panel); cursor: pointer; }
+button.ghost { background: transparent; color: var(--ink); }
+button:hover:not(:disabled) { filter: brightness(1.12); }
+button:disabled { opacity: .35; cursor: default; }
+.btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.verdict { min-height: 3em; margin: 0; font-weight: 500; }
+.verdict.bad { color: var(--signal); } .verdict.good { color: var(--ok); }
+.shake { animation: shake .35s; }
+@keyframes shake { 20%,60% { transform: translateX(-6px); } 40%,80% { transform: translateX(6px); } }
+.log { border-top: 1px solid var(--rule); padding-top: 12px; color: var(--muted); font-size: 14px; }
+.log ol { margin: 6px 0 0; padding-left: 20px; display: grid; gap: 2px; }
+.log li b { font-family: var(--display); letter-spacing: .1em; color: var(--ink); }
+
+/* composer */
+.composer { display: grid; gap: 16px; }
+.composer label { font-family: var(--display); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: 14px; color: var(--muted); }
+.composer input { width: 100%; font-family: var(--body); font-size: 20px; padding: 10px 14px; border: 2px solid var(--ink); border-radius: 4px; background: var(--panel); color: var(--ink); }
+.dressed { display: flex; flex-wrap: wrap; gap: 26px 30px; align-items: flex-start; min-height: 140px; padding: 18px; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; }
+.dressed .halyard svg { width: 54px; height: 36px; }
+.dressed .word-label { font-family: var(--display); font-weight: 700; letter-spacing: .14em; font-size: 14px; color: var(--muted); margin-top: 6px; padding-left: 8px; }
+.note { margin: 0; color: var(--muted); font-size: 14px; }
+
+/* locker */
+.locker { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 12px; }
+.card { display: grid; grid-template-columns: 60px minmax(0,1fr); gap: 12px; align-items: start; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 12px; }
+.card svg { width: 60px; height: 40px; }
+.card h3 { font-size: 20px; font-weight: 700; line-height: 1.1; }
+.card h3 span { color: var(--muted); font-weight: 500; }
+.card p { margin: 4px 0 0; font-size: 13.5px; line-height: 1.35; color: var(--muted); }
+footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--rule); padding-top: 14px; }
+
+@media (max-width: 760px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-hoist { display: none; }
+  .reader { grid-template-columns: minmax(0, 1fr); padding: 16px; gap: 18px; }
+  .station { min-height: 0; }
+  .reader .halyard svg { width: 51px; height: 34px; }
+  .scoreline { gap: 4px 14px; font-size: 13px; } .scoreline b { font-size: 22px; }
+  .answer-row input { font-size: 24px; }
+}
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">International Code of Signals</div>
+      <h1>Hoist</h1>
+      <p>Ships spell with flags. Twenty-six of them, one per letter, run up a halyard and read from the top down. Learn to read a hoist, string up your own message, and keep the flag locker open while you learn what each flag means when it flies alone.</p>
+    </div>
+    <div class="hero-hoist" aria-hidden="true"><div class="mast"></div><div class="col" id="heroCol"></div></div>
+  </header>
+
+  <section aria-labelledby="readH">
+    <div class="sec-head"><h2 id="readH">Read the hoist</h2><p>A ship off the breakwater is flying a word. Read the flags top to bottom and type it in.</p></div>
+    <div class="reader">
+      <div class="station"><div class="halyard" id="readHalyard" aria-label="Signal hoist"></div></div>
+      <div class="controls">
+        <div class="scoreline">
+          <span><b id="sScore">0</b>points</span>
+          <span><b id="sSolved">0</b>read</span>
+          <span><b id="sStreak">0</b>streak</span>
+          <span><b id="sMiss">0</b>misreads</span>
+        </div>
+        <p class="prompt" id="prompt">The hoist has 4 flags.</p>
+        <form class="answer-row" id="answerForm" autocomplete="off">
+          <input id="answer" aria-label="Your reading" maxlength="10" spellcheck="false" placeholder="Word">
+          <button type="submit" id="checkBtn">Read it</button>
+        </form>
+        <div class="btns">
+          <button type="button" class="ghost" id="hintBtn">Name the next flag</button>
+          <button type="button" class="ghost" id="skipBtn">Haul down, show answer</button>
+        </div>
+        <p class="verdict" id="verdict" aria-live="polite">Each flag is worth a point. A hint costs the point for that flag.</p>
+        <div class="log"><span>Signal log</span><ol id="log"></ol></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="makeH" class="composer">
+    <div class="sec-head"><h2 id="makeH">Make a hoist</h2><p>Each word goes on its own halyard. Letters only: numbers have their own pennants, which this locker leaves out.</p></div>
+    <label for="compose">Your message</label>
+    <input id="compose" maxlength="48" value="Fair winds" spellcheck="false">
+    <div class="dressed" id="dressed"></div>
+    <p class="note" id="composeNote"></p>
+  </section>
+
+  <section aria-labelledby="lockH">
+    <div class="sec-head"><h2 id="lockH">Flag locker</h2><p>What each flag means when it flies on its own, from the International Code of Signals.</p></div>
+    <div class="locker" id="locker"></div>
+  </section>
+
+  <footer>Flag designs and single-flag meanings follow the International Code of Signals (1965, as amended). Some flags carry a second meaning for fishing vessels; the main one is shown.</footer>
+</div>
+
+<script>
+(() => {
+const R='var(--f-red)',Y='var(--f-yellow)',B='var(--f-blue)',K='var(--f-black)',W='var(--f-white)';
+const rect=(x,y,w,h,f)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" style="fill:${f}"/>`;
+const poly=(p,f)=>`<polygon points="${p}" style="fill:${f}"/>`;
+const swallow='0,0 60,0 45,20 60,40 0,40';
+const vbars=cs=>cs.map((c,i)=>rect(i*60/cs.length,0,60/cs.length+.2,40,c)).join('');
+const hbars=cs=>cs.map((c,i)=>rect(0,i*40/cs.length,60,40/cs.length+.2,c)).join('');
+const FLAGS={
+ A:{n:'Alfa',m:'I have a diver down; keep well clear at slow speed.',d:()=>poly(swallow,B)+rect(0,0,30,40,W),s:swallow},
+ B:{n:'Bravo',m:'I am taking in, discharging or carrying dangerous goods.',d:()=>poly(swallow,R),s:swallow},
+ C:{n:'Charlie',m:'Affirmative.',d:()=>hbars([B,W,R,W,B])},
+ D:{n:'Delta',m:'Keep clear of me; I am manoeuvring with difficulty.',d:()=>rect(0,0,60,40,Y)+rect(0,10,60,20,B)},
+ E:{n:'Echo',m:'I am altering my course to starboard.',d:()=>hbars([B,R])},
+ F:{n:'Foxtrot',m:'I am disabled; communicate with me.',d:()=>rect(0,0,60,40,W)+poly('30,0 60,20 30,40 0,20',R)},
+ G:{n:'Golf',m:'I require a pilot.',d:()=>vbars([Y,B,Y,B,Y,B])},
+ H:{n:'Hotel',m:'I have a pilot on board.',d:()=>vbars([W,R])},
+ I:{n:'India',m:'I am altering my course to port.',d:()=>rect(0,0,60,40,Y)+`<circle cx="30" cy="20" r="11" style="fill:${K}"/>`},
+ J:{n:'Juliett',m:'I am on fire and have dangerous cargo on board: keep well clear of me.',d:()=>hbars([B,W,B])},
+ K:{n:'Kilo',m:'I wish to communicate with you.',d:()=>vbars([Y,B])},
+ L:{n:'Lima',m:'You should stop your vessel instantly.',d:()=>rect(0,0,60,40,Y)+rect(30,0,30,20,K)+rect(0,20,30,20,K)},
+ M:{n:'Mike',m:'My vessel is stopped and making no way through the water.',d:()=>rect(0,0,60,40,B)+`<path d="M0 0L60 40M60 0L0 40" style="stroke:${W}" stroke-width="8"/>`},
+ N:{n:'November',m:'Negative.',d:()=>{let s='';for(let i=0;i<4;i++)for(let j=0;j<4;j++)s+=rect(i*15,j*10,15.2,10.2,(i+j)%2?W:B);return s;}},
+ O:{n:'Oscar',m:'Man overboard.',d:()=>rect(0,0,60,40,Y)+poly('0,0 60,0 60,40',R)},
+ P:{n:'Papa',m:'In harbour: all persons report on board, the vessel is about to sail.',d:()=>rect(0,0,60,40,B)+rect(20,13.33,20,13.34,W)},
+ Q:{n:'Quebec',m:'My vessel is healthy and I request free pratique.',d:()=>rect(0,0,60,40,Y)},
+ R:{n:'Romeo',m:'No meaning when flown alone.',d:()=>rect(0,0,60,40,R)+rect(0,16,60,8,Y)+rect(26,0,8,40,Y)},
+ S:{n:'Sierra',m:'I am operating astern propulsion.',d:()=>rect(0,0,60,40,W)+rect(20,13.33,20,13.34,B)},
+ T:{n:'Tango',m:'Keep clear of me; I am engaged in pair trawling.',d:()=>vbars([R,W,B])},
+ U:{n:'Uniform',m:'You are running into danger.',d:()=>rect(0,0,60,40,W)+rect(0,0,30,20,R)+rect(30,20,30,20,R)},
+ V:{n:'Victor',m:'I require assistance.',d:()=>rect(0,0,60,40,W)+`<path d="M0 0L60 40M60 0L0 40" style="stroke:${R}" stroke-width="8"/>`},
+ W:{n:'Whiskey',m:'I require medical assistance.',d:()=>rect(0,0,60,40,B)+rect(10,6.67,40,26.66,W)+rect(20,13.33,20,13.34,R)},
+ X:{n:'X-ray',m:'Stop carrying out your intentions and watch for my signals.',d:()=>rect(0,0,60,40,W)+rect(0,16,60,8,B)+rect(26,0,8,40,B)},
+ Y:{n:'Yankee',m:'I am dragging my anchor.',d:()=>{let s=rect(0,0,60,40,Y);for(let c=-40;c<100;c+=17)s+=poly(`${c},0 ${c+8.5},0 ${c+8.5-40},40 ${c-40},40`,R);return s;}},
+ Z:{n:'Zulu',m:'I require a tug.',d:()=>poly('0,0 60,0 30,20',Y)+poly('0,0 30,20 0,40',K)+poly('0,40 60,40 30,20',R)+poly('60,0 60,40 30,20',B)},
+};
+function flag(L){const f=FLAGS[L];const edge=f.s?`<polygon points="${f.s}" fill="none" style="stroke:var(--edge)" stroke-width="1.2"/>`:`<rect x=".5" y=".5" width="59" height="39" fill="none" style="stroke:var(--edge)" stroke-width="1.2"/>`;
+ return `<svg class="flag" viewBox="0 0 60 40" role="img" aria-label="${f.n} flag">${f.d()}${edge}</svg>`;}
+window.__hoistFlag=flag;
+
+// hero
+document.getElementById('heroCol').innerHTML='HOIST'.split('').map(flag).join('');
+
+// locker
+document.getElementById('locker').innerHTML=Object.keys(FLAGS).map(L=>`<article class="card">${flag(L)}<div><h3>${L} <span>${FLAGS[L].n}</span></h3><p>${FLAGS[L].m}</p></div></article>`).join('');
+
+// composer
+const comp=document.getElementById('compose'),dressed=document.getElementById('dressed'),note=document.getElementById('composeNote');
+let composed=[];
+function drawCompose(){
+ const raw=comp.value;
+ composed=raw.toUpperCase().split(/\s+/).map(w=>w.replace(/[^A-Z]/g,'')).filter(Boolean);
+ const dropped=raw.replace(/[A-Za-z\s]/g,'');
+ dressed.innerHTML=composed.length?composed.map(w=>`<div><div class="halyard">${w.split('').map(flag).join('')}</div><div class="word-label">${w}</div></div>`).join(''):'<p class="note">Type a message above and its flags go up here.</p>';
+ const n=composed.join('').length;
+ note.textContent=(n?`${composed.length} halyard${composed.length>1?'s':''}, ${n} flag${n>1?'s':''}. `:'')+(dropped?`Left off the hoist: ${[...new Set(dropped)].join(' ')}`:'');
+}
+comp.addEventListener('input',drawCompose); drawCompose();
+
+// reader game
+const WORDS=['KEEL','HULL','MAST','KNOT','TIDE','BUOY','WAKE','BERTH','CABIN','CARGO','DINGHY','GALLEY','HELM','JETTY','QUAY','RUDDER','STERN','DECK','BILGE','CLEAT','FATHOM','HAWSER','PILOT','REEF','SWELL','SQUALL','ZEPHYR','JIB','YAWL','KETCH','SLOOP','GALE','WHARF','BEACON','COMPASS','LUFF','VOYAGE','EBB','FLOTSAM','OAKUM','SEXTANT','BOWLINE','TOPSAIL','WAVE','JUNK','QUILL'];
+const S={word:'',revealed:0,score:0,solved:0,streak:0,misses:0,done:false,deck:[],history:[]};
+const $=id=>document.getElementById(id);
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function drawHalyard(){
+ $('readHalyard').innerHTML=S.word.split('').map((L,i)=>`<div class="slot">${flag(L)}<span class="tag">${(S.done||i<S.revealed)?L:''}</span></div>`).join('');
+}
+function newRound(){
+ if(!S.deck.length)S.deck=shuffle(WORDS.slice());
+ S.word=S.deck.pop();S.revealed=0;S.done=false;
+ $('prompt').textContent=`The hoist has ${S.word.length} flags. Read from the top.`;
+ $('answer').value='';$('answer').disabled=false;$('checkBtn').textContent='Read it';
+ $('hintBtn').disabled=false;$('skipBtn').disabled=false;
+ drawHalyard();
+}
+function stats(){$('sScore').textContent=S.score;$('sSolved').textContent=S.solved;$('sStreak').textContent=S.streak;$('sMiss').textContent=S.misses;}
+function say(t,c){const v=$('verdict');v.textContent=t;v.className='verdict '+(c||'');}
+function logIt(word,how){S.history.unshift({word,how});const ol=$('log');ol.innerHTML=S.history.slice(0,5).map(h=>`<li><b>${h.word}</b> ${h.how}</li>`).join('');}
+$('answerForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ if(S.done){newRound();say('New hoist going up.','');$('answer').focus();return;}
+ const g=$('answer').value.toUpperCase().replace(/[^A-Z]/g,'');
+ if(!g){say('Type the word you read in the flags first.','bad');return;}
+ if(g===S.word){
+  const pts=S.word.length-S.revealed;S.score+=pts;S.solved++;S.streak++;S.done=true;
+  say(`Correct: ${S.word}. ${pts} point${pts===1?'':'s'}.`,'good');logIt(S.word,`read for ${pts}`);
+  $('checkBtn').textContent='Next hoist';$('hintBtn').disabled=true;$('skipBtn').disabled=true;drawHalyard();
+ } else {
+  S.misses++;S.streak=0;
+  const wrongAt=[...S.word].findIndex((L,i)=>g[i]!==L);
+  const why=g.length!==S.word.length?`That is ${g.length} letters; the hoist has ${S.word.length} flags.`:`Flag ${wrongAt+1} from the top is not ${g[wrongAt]}. Check it in the locker below.`;
+  say(`Not ${g}. ${why}`,'bad');
+  const inp=$('answer');inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');
+ }
+ stats();
+});
+$('hintBtn').addEventListener('click',()=>{
+ if(S.done)return;
+ if(S.revealed<S.word.length-1){const L=S.word[S.revealed];S.revealed++;say(`Flag ${S.revealed} is ${FLAGS[L].n}: ${L}.`,'');drawHalyard();}
+ else say('Only one flag left. You can read this one.','');
+});
+$('skipBtn').addEventListener('click',()=>{
+ if(S.done)return;S.done=true;S.streak=0;drawHalyard();stats();
+ say(`The hoist read ${S.word}. No points this time.`,'bad');logIt(S.word,'shown');
+ $('checkBtn').textContent='Next hoist';$('hintBtn').disabled=true;$('skipBtn').disabled=true;
+});
+newRound();stats();
+window.__hoist={get state(){return {word:S.word,revealed:S.revealed,score:S.score,solved:S.solved,streak:S.streak,misses:S.misses,done:S.done,composed:composed.slice(),flags:Object.keys(FLAGS).length};}};
+})();
+</script>
+
+</body></html>
