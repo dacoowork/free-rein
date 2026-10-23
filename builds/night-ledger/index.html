@@ -1,0 +1,391 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Night Ledger</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,700&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an almanac page — a sky strip from noon to noon as the hero, then a ledger of events beside the moon, then the week ahead. */
+:root{
+  --bg:#e8ecf1; --panel:#f5f7fa; --fg:#18202e; --muted:#5a6578; --rule:#c6cedb;
+  --accent:#2c6aa3; --warm:#a86a12;
+  --display:"Bodoni Moda",Didot,"Bodoni 72",Georgia,serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c111b; --panel:#141b29; --fg:#e4e8ef; --muted:#8e99ad; --rule:#26314a;
+  --accent:#8dbfeb; --warm:#e7b85a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c111b; --panel:#141b29; --fg:#e4e8ef; --muted:#8e99ad; --rule:#26314a;
+  --accent:#8dbfeb; --warm:#e7b85a; color-scheme:dark}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:980px;margin:0 auto;display:grid;gap:28px}
+header{display:grid;gap:14px}
+.mast{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 20px;border-bottom:2px solid var(--fg);padding-bottom:8px}
+h1{font:700 clamp(2rem,6vw,3.2rem)/1 var(--display);margin:0;letter-spacing:-.01em}
+.edition{font:500 .75rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:end}
+.field{display:grid;gap:4px}
+.field span{font:500 .7rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+select,input{font:inherit;font-size:.95rem;color:var(--fg);background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:7px 9px;min-width:0}
+input[type=number]{width:8.5em}
+select:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hero{display:grid;gap:12px}
+.verdict{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 18px}
+.big{font:500 clamp(2.6rem,9vw,4.6rem)/1 var(--display);font-variant-numeric:lining-nums tabular-nums}
+.big small{font-size:.45em;margin:0 .15em 0 .05em}
+.verdict p{margin:0;max-width:44ch;color:var(--muted);text-wrap:pretty}
+.verdict p b{color:var(--fg)}
+.chart{position:relative;border-radius:6px;overflow:hidden;background:#0b1222}
+canvas#band{display:block;width:100%;height:240px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font:400 .75rem var(--mono);color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-2px;margin-right:6px}
+.legend .ln{height:3px;width:16px;vertical-align:3px;border-radius:2px}
+.cols{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:28px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+h2{font:700 1.35rem/1.2 var(--display);margin:0 0 10px;text-wrap:balance}
+.ledger{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.ledger td{padding:7px 4px;border-bottom:1px solid var(--rule);vertical-align:baseline}
+.ledger td.t{font:500 1.05rem var(--mono);width:5.2em}
+.ledger td.a{font:400 .78rem var(--mono);color:var(--muted);text-align:right;white-space:nowrap}
+.ledger tr.sep td{border-bottom:2px solid var(--fg)}
+.ledger .none{color:var(--muted)}
+.moon{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:18px;display:grid;gap:14px}
+.moonhead{display:flex;gap:16px;align-items:center}
+canvas#moon{width:96px;height:96px;flex:none}
+.phase{font:700 1.3rem/1.15 var(--display)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0;font-size:.95rem}
+.kv dt{color:var(--muted);font:400 .78rem/1.9 var(--mono);text-transform:uppercase;letter-spacing:.06em}
+.kv dd{margin:0;font-variant-numeric:tabular-nums}
+.week-scroll{overflow-x:auto}
+.week{width:100%;min-width:520px;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.week th{font:500 .7rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 6px;border-bottom:2px solid var(--fg)}
+.week td{padding:8px 6px;border-bottom:1px solid var(--rule);font-size:.93rem}
+.week td.num{font-family:var(--mono);font-size:.88rem;white-space:nowrap}
+.week tr.on td{background:var(--panel)}
+.bar{position:relative;height:10px;background:var(--rule);border-radius:2px;min-width:90px}
+.bar span{position:absolute;inset:0 auto 0 0;border-radius:2px}
+.bar .dk{background:#31507f}
+.bar .mf{background:var(--accent)}
+.note{font-size:.85rem;color:var(--muted);max-width:70ch;margin:0}
+footer{border-top:1px solid var(--rule);padding-top:12px}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="mast">
+      <h1>Night Ledger</h1>
+      <span class="edition" id="edition">Almanac for tonight</span>
+    </div>
+    <div class="controls">
+      <label class="field"><span>Place</span>
+        <select id="place"></select></label>
+      <label class="field"><span>Night of</span>
+        <input type="date" id="date"></label>
+      <label class="field custom" hidden><span>Latitude °</span>
+        <input type="number" id="lat" step="0.01" min="-89.9" max="89.9" value="51.48"></label>
+      <label class="field custom" hidden><span>Longitude °</span>
+        <input type="number" id="lng" step="0.01" min="-180" max="180" value="0.00"></label>
+    </div>
+  </header>
+
+  <section class="hero" aria-label="Tonight">
+    <div class="verdict">
+      <div class="big" id="bigDark">–</div>
+      <p id="verdictText">Working out the sky…</p>
+    </div>
+    <div class="chart"><canvas id="band" aria-label="Sun and moon altitude from noon to noon"></canvas></div>
+    <div class="legend">
+      <span><i style="background:#9cc4e6"></i>Day</span>
+      <span><i style="background:#5d83b6"></i>Civil twilight</span>
+      <span><i style="background:#32507e"></i>Nautical</span>
+      <span><i style="background:#1c2a4b"></i>Astronomical</span>
+      <span><i style="background:#0b1222;outline:1px solid var(--rule)"></i>Night</span>
+      <span><i class="ln" style="background:#f2c14e"></i>Sun altitude</span>
+      <span><i class="ln" style="background:#e9e4d0"></i>Moon altitude</span>
+    </div>
+  </section>
+
+  <div class="cols">
+    <section>
+      <h2>Evening into morning</h2>
+      <table class="ledger"><tbody id="ledger"></tbody></table>
+    </section>
+    <section class="moon" aria-label="Moon">
+      <div class="moonhead">
+        <canvas id="moon" width="192" height="192" aria-hidden="true"></canvas>
+        <div>
+          <div class="phase" id="phaseName">–</div>
+          <div class="edition" id="phaseSub"></div>
+        </div>
+      </div>
+      <dl class="kv" id="moonKv"></dl>
+    </section>
+  </div>
+
+  <section>
+    <h2>The week ahead</h2>
+    <div class="week-scroll">
+      <table class="week">
+        <thead><tr><th>Night of</th><th>Moon</th><th>Astro dark</th><th>Moon‑free dark</th><th style="width:34%">Share of 12 h</th></tr></thead>
+        <tbody id="week"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <p class="note">Times are local to the chosen place. Sunrise and sunset use the sun's upper limb with standard refraction (−0.833°); twilights end at −6°, −12° and −18°. "Moon‑free dark" counts astronomical night with the moon below the horizon or less than 5% lit. Positions use low‑precision formulas good to about a minute or two at mid latitudes.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+// ---------- astronomy (after SunCalc's low-precision formulas) ----------
+const PI=Math.PI, rad=PI/180, dayMs=864e5, J1970=2440588, J2000=2451545, e=rad*23.4397;
+const toDays=t=>t/dayMs-0.5+J1970-J2000;
+const ra=(l,b)=>Math.atan2(Math.sin(l)*Math.cos(e)-Math.tan(b)*Math.sin(e),Math.cos(l));
+const dec=(l,b)=>Math.asin(Math.sin(b)*Math.cos(e)+Math.cos(b)*Math.sin(e)*Math.sin(l));
+const alt=(H,phi,d)=>Math.asin(Math.sin(phi)*Math.sin(d)+Math.cos(phi)*Math.cos(d)*Math.cos(H));
+const sid=(d,lw)=>rad*(280.16+360.9856235*d)-lw;
+function sunCoords(d){const M=rad*(357.5291+0.98560028*d);
+  const C=rad*(1.9148*Math.sin(M)+0.02*Math.sin(2*M)+0.0003*Math.sin(3*M));
+  const L=M+C+rad*102.9372+PI; return{dec:dec(L,0),ra:ra(L,0)};}
+function moonCoords(d){const L=rad*(218.316+13.176396*d),M=rad*(134.963+13.064993*d),F=rad*(93.272+13.229350*d);
+  const l=L+rad*6.289*Math.sin(M),b=rad*5.128*Math.sin(F);
+  return{ra:ra(l,b),dec:dec(l,b),dist:385001-20905*Math.cos(M)};}
+function sunAlt(t,lat,lng){const d=toDays(t),c=sunCoords(d);return alt(sid(d,rad*-lng)-c.ra,rad*lat,c.dec)/rad;}
+function moonAlt(t,lat,lng){const d=toDays(t),c=moonCoords(d);return alt(sid(d,rad*-lng)-c.ra,rad*lat,c.dec)/rad;}
+function moonIllum(t){const d=toDays(t),s=sunCoords(d),m=moonCoords(d),sd=149598000;
+  const phi=Math.acos(Math.sin(s.dec)*Math.sin(m.dec)+Math.cos(s.dec)*Math.cos(m.dec)*Math.cos(s.ra-m.ra));
+  const inc=Math.atan2(sd*Math.sin(phi),m.dist-sd*Math.cos(phi));
+  const ang=Math.atan2(Math.cos(s.dec)*Math.sin(s.ra-m.ra),Math.sin(s.dec)*Math.cos(m.dec)-Math.cos(s.dec)*Math.sin(m.dec)*Math.cos(s.ra-m.ra));
+  return{fraction:(1+Math.cos(inc))/2,phase:0.5+0.5*inc*(ang<0?-1:1)/PI};}
+
+const SUN_H=-0.833, MOON_H=0.125, STEP=5, N=24*60/STEP+1;
+
+// ---------- time zones ----------
+function tzOffset(ms,tz){
+  const p=new Intl.DateTimeFormat("en-US",{timeZone:tz,hourCycle:"h23",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit"}).formatToParts(new Date(ms));
+  const g=k=>+p.find(x=>x.type===k).value;
+  return (Date.UTC(g("year"),g("month")-1,g("day"),g("hour")%24,g("minute"),g("second"))-ms)/6e4;}
+function localNoon(y,m,d,tz){let g=Date.UTC(y,m-1,d,12);let t=g-tzOffset(g,tz)*6e4;return g-tzOffset(t,tz)*6e4;}
+const fmtCache={};
+function fmt(ms,tz,opts){const k=tz+JSON.stringify(opts);fmtCache[k]=fmtCache[k]||new Intl.DateTimeFormat("en-GB",Object.assign({timeZone:tz},opts));return fmtCache[k].format(new Date(ms));}
+const hhmm=(ms,tz)=>fmt(ms,tz,{hour:"2-digit",minute:"2-digit",hourCycle:"h23"});
+const dur=min=>{min=Math.round(min);const h=Math.floor(min/60),m=min%60;return h+" h "+String(m).padStart(2,"0")+" m";};
+
+// ---------- places ----------
+const BROWSER_TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC"}catch(_){return"UTC"}})();
+const PLACES=[
+  ["London","51.48","-0.00","Europe/London"],
+  ["Edinburgh","55.95","-3.19","Europe/London"],
+  ["Galloway Dark Sky Park","55.10","-4.48","Europe/London"],
+  ["Reykjavík","64.15","-21.94","Atlantic/Reykjavik"],
+  ["Tromsø","69.65","18.96","Europe/Oslo"],
+  ["Paris","48.86","2.35","Europe/Paris"],
+  ["New York","40.71","-74.01","America/New_York"],
+  ["Los Angeles","34.05","-118.24","America/Los_Angeles"],
+  ["Atacama (San Pedro)","-22.91","-68.20","America/Santiago"],
+  ["Cape Town","-33.92","18.42","Africa/Johannesburg"],
+  ["Singapore","1.35","103.82","Asia/Singapore"],
+  ["Tokyo","35.68","139.69","Asia/Tokyo"],
+  ["Sydney","-33.87","151.21","Australia/Sydney"],
+  ["Custom coordinates","","",BROWSER_TZ]
+].map(([name,lat,lng,tz])=>({name,lat:+lat,lng:+lng,tz,custom:lat===""}));
+
+// ---------- computation ----------
+function sample(start,lat,lng){
+  const t=new Float64Array(N),s=new Float32Array(N),m=new Float32Array(N);
+  for(let i=0;i<N;i++){t[i]=start+i*STEP*6e4;s[i]=sunAlt(t[i],lat,lng);m[i]=moonAlt(t[i],lat,lng);}
+  return{t,s,m};}
+function crossings(t,a,h){const out=[];
+  for(let i=1;i<a.length;i++){const p=a[i-1]-h,q=a[i]-h;
+    if((p<0)!==(q<0)){const f=p/(p-q);out.push({t:t[i-1]+f*(t[i]-t[i-1]),up:q>=0});}}
+  return out;}
+function nightStats(S,illumMid){
+  let dark=0,free=0,best=null,cur=null;
+  for(let i=0;i<N-1;i++){
+    const isDark=S.s[i]<-18, isFree=isDark&&(S.m[i]<MOON_H||illumMid<0.05);
+    if(isDark)dark+=STEP;
+    if(isFree){free+=STEP;if(!cur)cur={a:S.t[i],b:S.t[i+1]};else cur.b=S.t[i+1];}
+    else if(cur){if(!best||cur.b-cur.a>best.b-best.a)best=cur;cur=null;}
+  }
+  if(cur&&(!best||cur.b-cur.a>best.b-best.a))best=cur;
+  return{dark,free,best};}
+function phaseName(p){
+  if(p<0.02||p>0.98)return"New moon";
+  if(p<0.23)return"Waxing crescent"; if(p<0.27)return"First quarter";
+  if(p<0.48)return"Waxing gibbous"; if(p<0.52)return"Full moon";
+  if(p<0.73)return"Waning gibbous"; if(p<0.77)return"Last quarter";
+  return"Waning crescent";}
+function nextPhases(start){
+  let prev=moonIllum(start).phase,full=null,nw=null;
+  for(let h=1;h<24*32&&(!full||!nw);h++){
+    const t=start+h*36e5,p=moonIllum(t).phase;
+    if(!full&&prev<0.5&&p>=0.5)full=t-36e5*(p-0.5)/(p-prev);
+    if(!nw&&prev>0.9&&p<0.1)nw=t-36e5*p/(p+1-prev);
+    prev=p;}
+  return{full,nw};}
+
+// ---------- drawing ----------
+const SKY=[[-18,"#0b1222"],[-12,"#1c2a4b"],[-6,"#32507e"],[SUN_H,"#5d83b6"],[99,"#9cc4e6"]];
+const skyColor=a=>{for(const[l,c]of SKY)if(a<l)return c;return SKY[SKY.length-1][1];};
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+function drawBand(S,tz,stats){
+  const cv=document.getElementById("band"),dpr=Math.min(window.devicePixelRatio||1,2);
+  const W=cv.clientWidth,H=cv.clientHeight; if(!W)return;
+  cv.width=W*dpr;cv.height=H*dpr;const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);
+  const top=10,bot=H-30,lo=-50,hi=70;
+  const x=i=>i/(N-1)*W, y=a=>top+(hi-Math.max(lo,Math.min(hi,a)))/(hi-lo)*(bot-top);
+  for(let i=0;i<N-1;i++){c.fillStyle=skyColor((S.s[i]+S.s[i+1])/2);c.fillRect(Math.floor(x(i)),0,Math.ceil(x(i+1)-x(i))+1,H);}
+  // altitude guides
+  c.font='500 10px "IBM Plex Mono",monospace';c.textBaseline="middle";
+  for(const a of[60,30,-30]){c.strokeStyle="rgba(255,255,255,.12)";c.lineWidth=1;c.setLineDash([2,4]);
+    c.beginPath();c.moveTo(0,y(a)+.5);c.lineTo(W,y(a)+.5);c.stroke();c.setLineDash([]);
+    c.fillStyle="rgba(255,255,255,.55)";c.fillText((a>0?"+":"")+a+"°",6,y(a)-7);}
+  c.strokeStyle="rgba(255,255,255,.7)";c.lineWidth=1;c.beginPath();c.moveTo(0,y(0)+.5);c.lineTo(W,y(0)+.5);c.stroke();
+  c.fillStyle="rgba(255,255,255,.8)";c.fillText("horizon",6,y(0)-8);
+  // best window
+  if(stats.best){const t0=S.t[0],span=S.t[N-1]-t0;
+    const a=(stats.best.a-t0)/span*W,b=(stats.best.b-t0)/span*W;
+    c.fillStyle="rgba(141,191,235,.13)";c.fillRect(a,top,b-a,bot-top);
+    c.strokeStyle="#8dbfeb";c.lineWidth=2;c.beginPath();c.moveTo(a,bot-4);c.lineTo(a,bot);c.lineTo(b,bot);c.lineTo(b,bot-4);c.stroke();}
+  const line=(arr,col,w)=>{c.strokeStyle=col;c.lineWidth=w;c.lineJoin="round";c.beginPath();
+    for(let i=0;i<N;i++){const X=x(i),Y=y(arr[i]);i?c.lineTo(X,Y):c.moveTo(X,Y);}c.stroke();};
+  line(S.m,"#e9e4d0",2);line(S.s,"#f2c14e",2.5);
+  // now marker
+  const now=Date.now();if(now>S.t[0]&&now<S.t[N-1]){const X=(now-S.t[0])/(S.t[N-1]-S.t[0])*W;
+    c.strokeStyle="#fff";c.lineWidth=1.5;c.beginPath();c.moveTo(X,top);c.lineTo(X,bot);c.stroke();
+    c.fillStyle="#fff";c.textAlign="center";c.fillText("now",X,top+4);c.textAlign="left";}
+  // hour axis
+  c.fillStyle="rgba(8,12,22,.75)";c.fillRect(0,bot+2,W,H-bot);
+  c.fillStyle="rgba(255,255,255,.85)";c.textAlign="center";c.textBaseline="middle";
+  const every=W<500?6:3;
+  for(let i=0;i<N;i++){const t=S.t[i];const hm=hhmm(t,tz);if(hm.endsWith(":00")&&(+hm.slice(0,2))%every===0){
+    const X=x(i);c.fillRect(X,bot+2,1,4);
+    if(X>14&&X<W-14)c.fillText(hm,X,bot+17);}}
+  c.textAlign="left";}
+
+function drawMoon(phase,southern){
+  const cv=document.getElementById("moon"),c=cv.getContext("2d"),s=cv.width,r=s/2-6,cx=s/2,cy=s/2;
+  c.clearRect(0,0,s,s);c.save();if(southern){c.translate(s,0);c.scale(-1,1);}
+  c.fillStyle=css("--rule")||"#26314a";c.beginPath();c.arc(cx,cy,r,0,2*PI);c.fill();
+  const k=Math.cos(2*PI*phase),rx=Math.abs(k)*r,waxing=phase<0.5;
+  c.fillStyle="#ece6cf";c.beginPath();
+  if(waxing){c.arc(cx,cy,r,-PI/2,PI/2,false);c.ellipse(cx,cy,rx,r,0,PI/2,-PI/2,k>0);}
+  else{c.arc(cx,cy,r,-PI/2,PI/2,true);c.ellipse(cx,cy,rx,r,0,PI/2,3*PI/2,k<0);}
+  c.fill();c.restore();}
+
+// ---------- render ----------
+const $=id=>document.getElementById(id);
+let state={};
+function current(){
+  const pl=PLACES[+$("place").value];
+  let lat=pl.lat,lng=pl.lng;
+  if(pl.custom){lat=Math.max(-89.9,Math.min(89.9,parseFloat($("lat").value)||0));lng=Math.max(-180,Math.min(180,parseFloat($("lng").value)||0));}
+  const[y,m,d]=($("date").value||"").split("-").map(Number);
+  return{pl,lat,lng,tz:pl.tz,y,m,d};}
+
+function render(){
+  const q=current(); if(!q.y)return;
+  const start=localNoon(q.y,q.m,q.d,q.tz);
+  const S=sample(start,q.lat,q.lng);
+  const mid=start+12*36e5, il=moonIllum(mid);
+  const stats=nightStats(S,il.fraction);
+  state={S,tz:q.tz,stats};
+
+  const dayLabel=fmt(start,q.tz,{weekday:"long",day:"numeric",month:"long"});
+  $("edition").textContent=q.pl.custom?`${q.lat.toFixed(2)}°, ${q.lng.toFixed(2)}° · ${q.tz}`:`${q.pl.name} · ${Math.abs(q.lat).toFixed(2)}°${q.lat>=0?"N":"S"}`;
+
+  // verdict
+  const hrs=Math.floor(stats.free/60),mins=Math.round(stats.free%60);
+  $("bigDark").innerHTML=stats.free?`${hrs}<small>h</small>${String(mins).padStart(2,"0")}<small>m</small>`:"None";
+  let v;
+  const minS=Math.min(...S.s);
+  if(minS>=-18) v=`The sun only sinks to <b>${minS.toFixed(1)}°</b> on the night of ${dayLabel}, so the sky never gets fully dark. ${minS>=SUN_H?"It doesn't set at all.":"The deepest point is around "+hhmm(S.t[S.s.indexOf(minS)],q.tz)+"."}`;
+  else if(!stats.free) v=`Astronomical night lasts ${dur(stats.dark)} on the night of ${dayLabel}, but a ${Math.round(il.fraction*100)}% moon is up for all of it. Good for the moon itself; poor for faint objects.`;
+  else v=`of moon‑free dark on the night of ${dayLabel}. Longest stretch: <b>${hhmm(stats.best.a,q.tz)}–${hhmm(stats.best.b,q.tz)}</b>${stats.free<stats.dark?`, out of ${dur(stats.dark)} of astronomical night.`:", with the moon out of the way the whole time."}`;
+  $("verdictText").innerHTML=v;
+
+  drawBand(S,q.tz,stats);
+
+  // ledger
+  const ev=[];
+  const add=(arr,h,up,label)=>crossings(S.t,arr,h).filter(c=>c.up===up).forEach(c=>ev.push({t:c.t,label,body:arr===S.s?"sun":"moon"}));
+  add(S.s,SUN_H,false,"Sunset"); add(S.s,-6,false,"Civil dusk"); add(S.s,-12,false,"Nautical dusk"); add(S.s,-18,false,"Astronomical dusk");
+  add(S.s,-18,true,"Astronomical dawn"); add(S.s,-12,true,"Nautical dawn"); add(S.s,-6,true,"Civil dawn"); add(S.s,SUN_H,true,"Sunrise");
+  add(S.m,MOON_H,true,"Moonrise"); add(S.m,MOON_H,false,"Moonset");
+  ev.sort((a,b)=>a.t-b.t);
+  const midIdx=Math.round((N-1)/2);
+  let rows="",sepDone=false;
+  ev.forEach((e,i)=>{
+    const idx=Math.round((e.t-S.t[0])/(STEP*6e4));
+    const sa=sunAlt(e.t,q.lat,q.lng);
+    const next=ev[i+1];const sep=!sepDone&&next&&next.t>mid&&e.t<=mid;if(sep)sepDone=true;
+    rows+=`<tr${sep?' class="sep"':""}><td class="t">${hhmm(e.t,q.tz)}</td><td>${e.label}</td><td class="a">sun ${sa>=0?"+":"−"}${Math.abs(sa).toFixed(1)}°</td></tr>`;
+  });
+  const missing=[];
+  if(!ev.some(e=>e.label==="Sunset")&&minS>=SUN_H)missing.push("The sun stays up all night.");
+  if(!ev.some(e=>e.label==="Astronomical dusk")&&minS<-18===false&&minS<SUN_H)missing.push("No astronomical night: twilight lasts until dawn.");
+  if(Math.max(...S.s)<SUN_H)missing.push("Polar night: the sun does not rise in this window.");
+  if(!ev.some(e=>e.body==="moon"))missing.push(Math.min(...S.m)>MOON_H?"The moon stays above the horizon all night.":"The moon neither rises nor sets in this window.");
+  rows+=missing.map(m=>`<tr><td class="t none">—</td><td class="none" colspan="2">${m}</td></tr>`).join("");
+  $("ledger").innerHTML=rows||`<tr><td class="none">No events.</td></tr>`;
+
+  // moon
+  drawMoon(il.phase,q.lat<0);
+  $("phaseName").textContent=phaseName(il.phase);
+  $("phaseSub").textContent=`${Math.round(il.fraction*100)}% lit at local midnight`;
+  const np=nextPhases(start);
+  const mAlts=Array.from(S.m), peak=Math.max(...mAlts), peakT=S.t[mAlts.indexOf(peak)];
+  const md=(t)=>fmt(t,q.tz,{weekday:"short",day:"numeric",month:"short"})+", "+hhmm(t,q.tz);
+  const kv=[
+    ["Age",(il.phase*29.53).toFixed(1)+" days"],
+    ["Highest",peak>0?`${peak.toFixed(0)}° at ${hhmm(peakT,q.tz)}`:"Below the horizon all night"],
+    ["Next full",np.full?md(np.full):"—"],
+    ["Next new",np.nw?md(np.nw):"—"]];
+  $("moonKv").innerHTML=kv.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join("");
+
+  // week
+  let w="";
+  for(let i=0;i<7;i++){
+    const dt=new Date(Date.UTC(q.y,q.m-1,q.d+i));
+    const st=localNoon(dt.getUTCFullYear(),dt.getUTCMonth()+1,dt.getUTCDate(),q.tz);
+    const SS=i===0?S:sample(st,q.lat,q.lng);
+    const ill=moonIllum(st+12*36e5), ns=i===0?stats:nightStats(SS,ill.fraction);
+    const pct=v=>Math.min(100,v/720*100).toFixed(1);
+    w+=`<tr${i===0?' class="on"':""}><td>${fmt(st,q.tz,{weekday:"short",day:"numeric",month:"short"})}</td>
+      <td>${Math.round(ill.fraction*100)}% · ${phaseName(ill.phase).replace(" moon","").toLowerCase()}</td>
+      <td class="num">${ns.dark?dur(ns.dark):"none"}</td><td class="num">${ns.free?dur(ns.free):"none"}</td>
+      <td><div class="bar" title="Astronomical dark and moon-free dark against 12 hours"><span class="dk" style="width:${pct(ns.dark)}%"></span><span class="mf" style="width:${pct(ns.free)}%"></span></div></td></tr>`;
+  }
+  $("week").innerHTML=w;
+  try{localStorage.setItem("nl-place",$("place").value);localStorage.setItem("nl-custom",JSON.stringify([$("lat").value,$("lng").value]));}catch(_){}
+}
+
+// ---------- setup ----------
+const sel=$("place");
+PLACES.forEach((p,i)=>{const o=document.createElement("option");o.value=i;o.textContent=p.name;sel.appendChild(o);});
+let saved=null;try{saved=localStorage.getItem("nl-place");const c=JSON.parse(localStorage.getItem("nl-custom")||"null");if(c){$("lat").value=c[0];$("lng").value=c[1];}}catch(_){}
+sel.value=saved&&PLACES[+saved]?saved:"0";
+const syncCustom=()=>document.querySelectorAll(".custom").forEach(el=>el.hidden=!PLACES[+sel.value].custom);
+syncCustom();
+// default date = today in the chosen place; if it's before ~6am there, show last night
+(function(){const pl=PLACES[+sel.value],now=Date.now();
+  const parts=fmt(now-6*36e5,pl.tz,{year:"numeric",month:"2-digit",day:"2-digit"}).split("/");
+  $("date").value=`${parts[2]}-${parts[1]}-${parts[0]}`;})();
+sel.addEventListener("change",()=>{syncCustom();render();});
+["date","lat","lng"].forEach(id=>$(id).addEventListener("input",render));
+let rz;window.addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>state.S&&drawBand(state.S,state.tz,state.stats),120);});
+try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",render);}catch(_){}
+new MutationObserver(render).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+setInterval(()=>state.S&&drawBand(state.S,state.tz,state.stats),60000);
+render();
+})();
+</script>
+
+</body></html>

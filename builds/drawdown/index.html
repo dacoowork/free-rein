@@ -1,0 +1,470 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Drawdown</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600&family=Martian+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a weaver's draft sheet on the left (threading, tie-up, treadling, drawdown), the woven cloth on the right; stacks on phones. */
+:root {
+  --paper: #eceee9;
+  --sheet: #f7f8f4;
+  --ink: #1b2240;
+  --grid: #c3cabf;
+  --muted: #5b625d;
+  --accent: #a33a2b;
+  --tint: #e2e6dd;
+  --display: "Young Serif", Georgia, "Times New Roman", serif;
+  --body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Martian Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #13171d; --sheet: #1a1f27; --ink: #e2e5dc; --grid: #313945;
+    --muted: #9aa29b; --accent: #e3806a; --tint: #222833; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #13171d; --sheet: #1a1f27; --ink: #e2e5dc; --grid: #313945;
+  --muted: #9aa29b; --accent: #e3806a; --tint: #222833; color-scheme: dark;
+}
+html, body { background: var(--paper); color: var(--ink); }
+body {
+  font-family: var(--body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 48px;
+}
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 22px; }
+header { display: grid; gap: 6px; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+h1 span { color: var(--accent); }
+.lede { margin: 0; max-width: 62ch; color: var(--muted); }
+.eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+.presets { display: flex; flex-wrap: wrap; gap: 8px; }
+button {
+  font: 500 13px/1 var(--body); color: var(--ink); background: var(--sheet);
+  border: 1px solid var(--grid); border-radius: 3px; padding: 9px 12px; cursor: pointer;
+}
+button:hover { border-color: var(--ink); }
+button:focus-visible, canvas:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+.board { display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 860px) { .board { grid-template-columns: minmax(0, 1fr); } }
+
+.sheet { background: var(--sheet); border: 1px solid var(--grid); padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.sheet h2 { font-family: var(--display); font-weight: 400; font-size: 1.25rem; margin: 0; }
+.sheet-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+#draft { display: block; touch-action: none; cursor: crosshair; max-width: 100%; }
+.legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 6px 16px; margin: 0; padding: 0; list-style: none; font-size: 13px; color: var(--muted); }
+.legend b { color: var(--ink); font-weight: 600; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.cloth-wrap { position: relative; border: 1px solid var(--grid); overflow: hidden; }
+#cloth { display: block; width: 100%; height: clamp(260px, 52vh, 520px); }
+.zoom { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.zoom input { flex: 1; accent-color: var(--accent); }
+
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--grid); border: 1px solid var(--grid); }
+.stat { background: var(--sheet); padding: 10px 12px; display: grid; gap: 2px; }
+.stat .eyebrow { font-size: 10px; }
+.stat strong { font-family: var(--mono); font-weight: 500; font-size: 15px; font-variant-numeric: tabular-nums; }
+@media (max-width: 420px) { .stats { grid-template-columns: minmax(0, 1fr); } }
+.verdict { margin: 0; font-size: 14px; padding-left: 10px; border-left: 3px solid var(--grid); }
+.verdict[data-level="bad"] { border-color: var(--accent); }
+.verdict[data-level="ok"] { border-color: var(--ink); }
+.yarns { display: flex; flex-wrap: wrap; gap: 10px 14px; font-size: 12px; color: var(--muted); }
+.yarns span { display: inline-flex; align-items: center; gap: 6px; }
+.yarns i { width: 14px; height: 14px; border-radius: 2px; border: 1px solid var(--grid); display: inline-block; }
+footer { font-size: 13px; color: var(--muted); max-width: 70ch; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Four shafts · six treadles · 24-end repeat</div>
+    <h1>Drawdown<span>.</span></h1>
+    <p class="lede">Write a weaving draft the way a handweaver does: thread each warp end onto a shaft, tie shafts to treadles, and choose a treadle for every pick. The drawdown shows where warp rises over weft, and the cloth beside it shows what comes off the loom.</p>
+  </header>
+
+  <nav class="presets" id="presets" aria-label="Weave structures"></nav>
+
+  <div class="board">
+    <section class="sheet" aria-labelledby="draft-h">
+      <div class="sheet-head">
+        <h2 id="draft-h">The draft</h2>
+        <span class="eyebrow" id="cellinfo">Tap a square to edit</span>
+      </div>
+      <canvas id="draft" tabindex="0" aria-label="Weaving draft editor. Threading top left, tie-up top right, treadling right, drawdown bottom left."></canvas>
+      <ul class="legend">
+        <li><b>Threading</b> (top) — which shaft each end runs through. Shaft 1 is the bottom row.</li>
+        <li><b>Tie-up</b> (top right) — which shafts each treadle lifts.</li>
+        <li><b>Treadling</b> (right) — the treadle pressed for each pick, read downward.</li>
+        <li><b>Yarn strips</b> — tap the top row or far column to change an end's or pick's colour.</li>
+      </ul>
+      <div class="tools">
+        <button id="tromp" type="button">Tromp as writ</button>
+        <button id="random" type="button">Random draft</button>
+        <button id="clear" type="button">Clear</button>
+        <button id="colourdd" type="button" aria-pressed="false">Colour drawdown</button>
+      </div>
+    </section>
+
+    <section class="sheet" aria-labelledby="cloth-h">
+      <div class="sheet-head">
+        <h2 id="cloth-h">Off the loom</h2>
+        <span class="eyebrow" id="clothname">Plain weave</span>
+      </div>
+      <div class="cloth-wrap"><canvas id="cloth" aria-label="Woven cloth preview"></canvas></div>
+      <label class="zoom" for="zoom">Sett <input id="zoom" type="range" min="3" max="18" value="7"> <output id="zoomout">7 px</output></label>
+      <div class="stats">
+        <div class="stat"><span class="eyebrow">Longest float, face</span><strong id="sFace">–</strong></div>
+        <div class="stat"><span class="eyebrow">Longest float, back</span><strong id="sBack">–</strong></div>
+        <div class="stat"><span class="eyebrow">Warp on face</span><strong id="sWarp">–</strong></div>
+      </div>
+      <p class="verdict" id="verdict" data-level="ok">–</p>
+      <div class="yarns" id="yarns"></div>
+    </section>
+  </div>
+
+  <footer>A float is a stretch of yarn that passes over several threads without being bound in. Short floats make a firm cloth; floats of seven or more catch on fingers and buttons. Tromp as writ treadles the pattern in the same order it is threaded, which turns a point threading into diamonds.</footer>
+</div>
+
+<script>
+(() => {
+  const N = 24, S = 4, T = 6;
+  const YARNS = [
+    { name: "Undyed wool", c: "#e7dec6" },
+    { name: "Indigo", c: "#273760" },
+    { name: "Madder", c: "#a7392a" },
+    { name: "Weld", c: "#d3aa3b" },
+    { name: "Walnut", c: "#5b4131" }
+  ];
+  const TWILL = [[1,0,0,1,1,0],[1,1,0,0,0,1],[0,1,1,0,1,0],[0,0,1,1,0,1]];
+
+  let th = [], tr = [], tie = [], wc = [], fc = [];
+  let colourDD = false, reveal = N, current = "";
+
+  const rep = (a, f = v => v - 1) => Array.from({ length: N }, (_, i) => f(a[i % a.length]));
+  const copyTie = t => t.map(r => r.map(Boolean));
+
+  const PRESETS = {
+    "Plain weave": { th: [1,2,3,4], tr: [5,6], w: [1], f: [0] },
+    "2/2 twill": { th: [1,2,3,4], tr: [1,2,3,4], w: [1], f: [0] },
+    "Point twill": { th: [1,2,3,4,3,2], tr: [1,2,3,4,3,2], w: [2], f: [0] },
+    "Goose eye": { th: [1,2,3,4,1,2,3,2,1,4,3,2], tr: [1,2,3,4,1,2,3,2,1,4,3,2], w: [4], f: [0] },
+    "Herringbone": { th: [1,2,3,4,1,2,4,3,2,1,4,3], tr: [1,2,3,4], w: [1], f: [3] },
+    "Rosepath": { th: [1,2,3,4,1,4,3,2], tr: [1,2,3,4,1,4,3,2], w: [0], f: [2] },
+    "Basketweave": { th: [1,2,3,4], tr: [1,1,2,2], w: [3], f: [4],
+      tie: [[1,0,0,0,1,0],[1,0,0,0,0,1],[0,1,0,0,1,0],[0,1,0,0,0,1]] },
+    "Log cabin": { th: [1,2,3,4], tr: [5,6], w: [1,0,1,0,1,0,0,1,0,1,0,1], f: [1,0,1,0,1,0,0,1,0,1,0,1] }
+  };
+
+  function load(name, animate = true) {
+    const p = PRESETS[name];
+    th = rep(p.th); tr = rep(p.tr);
+    tie = copyTie(p.tie || TWILL);
+    wc = rep(p.w, v => v); fc = rep(p.f, v => v);
+    current = name; markPreset();
+    if (animate) weave(); else update();
+  }
+
+  // ---- presets UI
+  const presetsEl = document.getElementById("presets");
+  Object.keys(PRESETS).forEach(n => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = n; b.dataset.name = n;
+    b.addEventListener("click", () => load(n));
+    presetsEl.appendChild(b);
+  });
+  function markPreset() {
+    presetsEl.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.name === current)));
+    document.getElementById("clothname").textContent = current || "Your own draft";
+  }
+  function edited() { if (current) { current = ""; markPreset(); } }
+
+  const yarnsEl = document.getElementById("yarns");
+  YARNS.forEach(y => { const s = document.createElement("span"); s.innerHTML = `<i style="background:${y.c}"></i>${y.name}`; yarnsEl.appendChild(s); });
+
+  // ---- structure
+  const up = (e, p) => th[e] >= 0 && tr[p] >= 0 && tie[th[e]][tr[p]];
+
+  // ---- theme colours
+  let C = {};
+  function readTheme() {
+    const cs = getComputedStyle(document.documentElement);
+    ["paper","sheet","ink","grid","muted","accent","tint"].forEach(k => C[k] = cs.getPropertyValue("--" + k).trim());
+  }
+
+  // ---- draft canvas
+  const draft = document.getElementById("draft");
+  const dctx = draft.getContext("2d");
+  const COLS = N + T + 3, ROWS = S + 3 + N;
+  let cell = 14;
+  const ROW_TH = 2, ROW_DD = S + 3, COL_TU = N + 1, COL_WF = N + T + 2;
+
+  function sizeDraft() {
+    const avail = draft.parentElement.clientWidth - 32;
+    cell = Math.max(8, Math.min(18, Math.floor(avail / COLS)));
+    const dpr = window.devicePixelRatio || 1;
+    draft.width = COLS * cell * dpr; draft.height = ROWS * cell * dpr;
+    draft.style.width = COLS * cell + "px"; draft.style.height = ROWS * cell + "px";
+    dctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function box(col, row, fill, inset = 1) {
+    dctx.fillStyle = fill;
+    dctx.fillRect(col * cell + inset, row * cell + inset, cell - inset * 2 + 1, cell - inset * 2 + 1);
+  }
+  function gridArea(c0, r0, w, h, bg) {
+    dctx.fillStyle = bg; dctx.fillRect(c0 * cell, r0 * cell, w * cell, h * cell);
+    dctx.strokeStyle = C.grid; dctx.lineWidth = 1; dctx.beginPath();
+    for (let i = 0; i <= w; i++) { const x = (c0 + i) * cell + 0.5; dctx.moveTo(x, r0 * cell); dctx.lineTo(x, (r0 + h) * cell); }
+    for (let j = 0; j <= h; j++) { const y = (r0 + j) * cell + 0.5; dctx.moveTo(c0 * cell, y); dctx.lineTo((c0 + w) * cell, y); }
+    dctx.stroke();
+    // heavier rule every 4 cells, like draft paper
+    dctx.strokeStyle = C.muted; dctx.globalAlpha = 0.35; dctx.beginPath();
+    for (let i = 0; i <= w; i += 4) { const x = (c0 + i) * cell + 0.5; dctx.moveTo(x, r0 * cell); dctx.lineTo(x, (r0 + h) * cell); }
+    for (let j = 0; j <= h; j += 4) { const y = (r0 + j) * cell + 0.5; dctx.moveTo(c0 * cell, y); dctx.lineTo((c0 + w) * cell, y); }
+    dctx.stroke(); dctx.globalAlpha = 1;
+  }
+
+  function drawDraft() {
+    dctx.clearRect(0, 0, COLS * cell, ROWS * cell);
+    // yarn strips
+    for (let e = 0; e < N; e++) { box(e, 0, YARNS[wc[e]].c, 0); }
+    for (let p = 0; p < N; p++) { box(COL_WF, ROW_DD + p, YARNS[fc[p]].c, 0); }
+    dctx.strokeStyle = C.grid; dctx.strokeRect(0.5, 0.5, N * cell, cell);
+    dctx.strokeRect(COL_WF * cell + 0.5, ROW_DD * cell + 0.5, cell, N * cell);
+
+    gridArea(0, ROW_TH, N, S, C.tint);
+    gridArea(COL_TU, ROW_TH, T, S, C.tint);
+    gridArea(COL_TU, ROW_DD, T, N, C.tint);
+    gridArea(0, ROW_DD, N, N, C.sheet);
+
+    for (let e = 0; e < N; e++) if (th[e] >= 0) box(e, ROW_TH + (S - 1 - th[e]), C.ink, 2);
+    for (let s = 0; s < S; s++) for (let t = 0; t < T; t++) if (tie[s][t]) {
+      const x = (COL_TU + t) * cell, y = (ROW_TH + S - 1 - s) * cell;
+      dctx.strokeStyle = C.accent; dctx.lineWidth = Math.max(1.5, cell / 7);
+      dctx.beginPath(); dctx.moveTo(x + 3, y + 3); dctx.lineTo(x + cell - 2, y + cell - 2);
+      dctx.moveTo(x + cell - 2, y + 3); dctx.lineTo(x + 3, y + cell - 2); dctx.stroke();
+    }
+    for (let p = 0; p < N; p++) if (tr[p] >= 0) box(COL_TU + tr[p], ROW_DD + p, C.ink, 2);
+
+    for (let p = 0; p < Math.min(reveal, N); p++) for (let e = 0; e < N; e++) {
+      const u = up(e, p);
+      if (colourDD) box(e, ROW_DD + p, u ? YARNS[wc[e]].c : YARNS[fc[p]].c, 0.5);
+      else if (u) box(e, ROW_DD + p, C.ink, 1);
+    }
+  }
+
+  function hit(ev) {
+    const r = draft.getBoundingClientRect();
+    const col = Math.floor((ev.clientX - r.left) / cell), row = Math.floor((ev.clientY - r.top) / cell);
+    if (row === 0 && col >= 0 && col < N) return { k: "wc", e: col };
+    if (row >= ROW_TH && row < ROW_TH + S) {
+      const s = S - 1 - (row - ROW_TH);
+      if (col >= 0 && col < N) return { k: "th", e: col, s };
+      if (col >= COL_TU && col < COL_TU + T) return { k: "tie", s, t: col - COL_TU };
+    }
+    if (row >= ROW_DD && row < ROW_DD + N) {
+      const p = row - ROW_DD;
+      if (col >= COL_TU && col < COL_TU + T) return { k: "tr", p, t: col - COL_TU };
+      if (col === COL_WF) return { k: "fc", p };
+      if (col >= 0 && col < N) return { k: "dd", e: col, p };
+    }
+    return null;
+  }
+
+  let paint = null;
+  function apply(h, first) {
+    if (!h) return;
+    if (h.k === "th") {
+      if (first) paint = { k: "th", v: th[h.e] === h.s ? -1 : 0 };
+      if (paint.k !== "th") return;
+      th[h.e] = paint.v === -1 && first ? -1 : h.s;
+    } else if (h.k === "tie") {
+      if (first) paint = { k: "tie", v: !tie[h.s][h.t] };
+      if (paint.k !== "tie") return;
+      tie[h.s][h.t] = paint.v;
+    } else if (h.k === "tr") {
+      if (first) paint = { k: "tr", v: tr[h.p] === h.t ? -1 : 0 };
+      if (paint.k !== "tr") return;
+      tr[h.p] = paint.v === -1 && first ? -1 : h.t;
+    } else if (h.k === "wc") {
+      if (first) paint = { k: "wc", v: (wc[h.e] + 1) % YARNS.length };
+      if (paint.k !== "wc") return;
+      wc[h.e] = paint.v;
+    } else if (h.k === "fc") {
+      if (first) paint = { k: "fc", v: (fc[h.p] + 1) % YARNS.length };
+      if (paint.k !== "fc") return;
+      fc[h.p] = paint.v;
+    } else return;
+    edited(); reveal = N; update();
+  }
+  let last = "";
+  draft.addEventListener("pointerdown", ev => {
+    draft.setPointerCapture(ev.pointerId);
+    const h = hit(ev); last = JSON.stringify(h); apply(h, true);
+  });
+  draft.addEventListener("pointermove", ev => {
+    const h = hit(ev); describe(h);
+    if (!paint || !(ev.buttons & 1)) return;
+    const key = JSON.stringify(h); if (key === last) return; last = key;
+    apply(h, false);
+  });
+  draft.addEventListener("pointerup", () => { paint = null; });
+  draft.addEventListener("pointerleave", () => describe(null));
+
+  const info = document.getElementById("cellinfo");
+  function describe(h) {
+    if (!h) { info.textContent = "Tap a square to edit"; return; }
+    const map = {
+      th: () => `End ${h.e + 1} · shaft ${h.s + 1}`,
+      tie: () => `Treadle ${h.t + 1} · shaft ${h.s + 1}`,
+      tr: () => `Pick ${h.p + 1} · treadle ${h.t + 1}`,
+      wc: () => `End ${h.e + 1} · ${YARNS[wc[h.e]].name}`,
+      fc: () => `Pick ${h.p + 1} · ${YARNS[fc[h.p]].name}`,
+      dd: () => `End ${h.e + 1}, pick ${h.p + 1} · ${up(h.e, h.p) ? "warp up" : "weft up"}`
+    };
+    info.textContent = map[h.k]();
+  }
+
+  // ---- cloth
+  const cloth = document.getElementById("cloth");
+  const cctx = cloth.getContext("2d");
+  const tile = document.createElement("canvas");
+  const tctx = tile.getContext("2d");
+  let k = 7;
+
+  function shade(c, amt) {
+    const n = parseInt(c.slice(1), 16);
+    let r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+    const f = v => Math.max(0, Math.min(255, Math.round(amt < 0 ? v * (1 + amt) : v + (255 - v) * amt)));
+    return `rgb(${f(r)},${f(g)},${f(b)})`;
+  }
+  function drawCloth() {
+    const dpr = window.devicePixelRatio || 1;
+    const w = cloth.clientWidth, h = cloth.clientHeight;
+    cloth.width = w * dpr; cloth.height = h * dpr;
+    const px = k * dpr;
+    tile.width = N * px; tile.height = N * px;
+    for (let p = 0; p < N; p++) for (let e = 0; e < N; e++) {
+      const u = up(e, p), base = u ? YARNS[wc[e]].c : YARNS[fc[p]].c;
+      const x = e * px, y = p * px;
+      tctx.fillStyle = shade(base, -0.38); tctx.fillRect(x, y, px, px);
+      if (u) {
+        // vertical yarn, rounded across its width
+        const g = tctx.createLinearGradient(x, 0, x + px, 0);
+        g.addColorStop(0, shade(base, -0.3)); g.addColorStop(0.45, shade(base, 0.12)); g.addColorStop(1, shade(base, -0.3));
+        tctx.fillStyle = g; tctx.fillRect(x + px * 0.08, y, px * 0.84, px);
+      } else {
+        const g = tctx.createLinearGradient(0, y, 0, y + px);
+        g.addColorStop(0, shade(base, -0.3)); g.addColorStop(0.45, shade(base, 0.12)); g.addColorStop(1, shade(base, -0.3));
+        tctx.fillStyle = g; tctx.fillRect(x, y + px * 0.08, px, px * 0.84);
+      }
+    }
+    cctx.setTransform(1, 0, 0, 1, 0, 0);
+    cctx.fillStyle = cctx.createPattern(tile, "repeat");
+    cctx.fillRect(0, 0, cloth.width, cloth.height);
+  }
+
+  // ---- analysis
+  function runs(get) {
+    // longest cyclic run of true values in a length-N sequence; Infinity if all true
+    let all = true, best = 0;
+    for (let i = 0; i < N; i++) if (!get(i)) { all = false; break; }
+    if (all) return Infinity;
+    for (let i = 0; i < N; i++) {
+      if (get(i) && !get((i - 1 + N) % N)) { let n = 0; while (get((i + n) % N)) n++; best = Math.max(best, n); }
+    }
+    return best;
+  }
+  function analyse() {
+    let face = 0, back = 0, warpUp = 0, loose = 0;
+    for (let e = 0; e < N; e++) {
+      const a = runs(p => up(e, p)), b = runs(p => !up(e, p));
+      face = Math.max(face, a); back = Math.max(back, b);
+      if (a === Infinity || b === Infinity) loose++;
+    }
+    for (let p = 0; p < N; p++) {
+      const a = runs(e => !up(e, p)), b = runs(e => up(e, p));
+      face = Math.max(face, a); back = Math.max(back, b);
+      if (a === Infinity || b === Infinity) loose++;
+      for (let e = 0; e < N; e++) if (up(e, p)) warpUp++;
+    }
+    const fmt = v => v === Infinity ? "unbound" : `${v} thread${v === 1 ? "" : "s"}`;
+    document.getElementById("sFace").textContent = fmt(face);
+    document.getElementById("sBack").textContent = fmt(back);
+    const pct = Math.round(warpUp / (N * N) * 100);
+    document.getElementById("sWarp").textContent = `${pct}%` + (pct === 50 ? " · balanced" : pct > 50 ? " · warp-faced" : " · weft-faced");
+    const v = document.getElementById("verdict");
+    const worst = Math.max(face, back);
+    if (loose) { v.dataset.level = "bad"; v.textContent = `Won't hold together: ${loose} thread${loose === 1 ? " never interlaces" : "s never interlace"} anywhere in the repeat. Thread every end and treadle every pick.`; }
+    else if (worst >= 7) { v.dataset.level = "bad"; v.textContent = `Floats of ${worst} will snag. Fine for a wall hanging; tack them down with tabby picks for anything worn.`; }
+    else if (worst <= 3) { v.dataset.level = "ok"; v.textContent = "Firm, stable cloth. Good for upholstery, bags and anything that takes wear."; }
+    else { v.dataset.level = "ok"; v.textContent = `Floats up to ${worst}: a soft, drapey cloth for scarves and throws.`; }
+  }
+
+  function update() { drawDraft(); drawCloth(); analyse(); }
+
+  // ---- weaving reveal
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let raf = 0;
+  function weave() {
+    cancelAnimationFrame(raf);
+    drawCloth(); analyse();
+    if (still.matches) { reveal = N; drawDraft(); return; }
+    const t0 = performance.now();
+    const step = now => {
+      reveal = Math.min(N, Math.floor((now - t0) / 28) + 1);
+      drawDraft();
+      if (reveal < N) raf = requestAnimationFrame(step);
+    };
+    reveal = 0; raf = requestAnimationFrame(step);
+  }
+
+  // ---- tools
+  document.getElementById("tromp").addEventListener("click", () => {
+    tr = th.map(s => s); tie = copyTie(TWILL);
+    // twill tie-up: treadle n lifts shafts n and n+1, so threaded shafts map cleanly to treadles
+    edited(); weave();
+  });
+  document.getElementById("random").addEventListener("click", () => {
+    const walk = () => { let s = Math.floor(Math.random() * 4); const out = [];
+      const len = [4, 6, 8, 12, 24][Math.floor(Math.random() * 5)];
+      for (let i = 0; i < len; i++) { out.push(s + 1); s = (s + (Math.random() < 0.7 ? 1 : -1) * (Math.random() < 0.85 ? 1 : 2) + 8) % 4; }
+      return out; };
+    th = rep(walk());
+    tr = Math.random() < 0.5 ? th.slice() : rep(walk());
+    tie = copyTie(TWILL);
+    const a = Math.floor(Math.random() * YARNS.length); let b = Math.floor(Math.random() * YARNS.length); if (b === a) b = (a + 2) % YARNS.length;
+    wc = rep([a], v => v); fc = rep([b], v => v);
+    edited(); weave();
+  });
+  document.getElementById("clear").addEventListener("click", () => {
+    th = rep([0], () => -1); tr = rep([0], () => -1);
+    tie = copyTie(TWILL); edited(); reveal = N; update();
+  });
+  const cdd = document.getElementById("colourdd");
+  cdd.addEventListener("click", () => { colourDD = !colourDD; cdd.setAttribute("aria-pressed", String(colourDD)); drawDraft(); });
+
+  const zoom = document.getElementById("zoom"), zout = document.getElementById("zoomout");
+  zoom.addEventListener("input", () => { k = +zoom.value; zout.textContent = k + " px"; drawCloth(); });
+
+  // ---- theme + resize
+  readTheme();
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  const retheme = () => { readTheme(); drawDraft(); };
+  mq.addEventListener ? mq.addEventListener("change", retheme) : mq.addListener(retheme);
+  new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  let rt;
+  window.addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => { sizeDraft(); update(); }, 120); });
+
+  sizeDraft();
+  load("Goose eye", false);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { sizeDraft(); update(); });
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,328 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Ebru Tray</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700&family=Alegreya+Sans:ital,wght@0,400;0,500;1,400&display=swap">
+<style>
+/* Layout: one tray as the hero, the bench of tools beneath it, a line of pulled prints at the foot. Single dark-studio look. */
+:root{
+  --bench:#161d1e;      /* workshop wall */
+  --bench-2:#1f292a;    /* raised panels */
+  --rim:#3a2a1e;        /* tray wood */
+  --bath:#c4cbbd;       /* size water, carrageenan grey-green */
+  --ink:#ece6d6;        /* text */
+  --muted:#9aa49c;
+  --ochre:#d39a3c;      /* accent */
+  --line:#2f3b3c;
+  --f-display:"Alegreya SC",Georgia,"Times New Roman",serif;
+  --f-body:"Alegreya Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+html,body{background:var(--bench);color:var(--ink)}
+body{font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 40px}
+.wrap{max-width:1040px;margin:0 auto;display:grid;gap:20px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 24px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(2rem,5vw,3rem);letter-spacing:.04em;margin:0;line-height:1;text-wrap:balance}
+h1 span{color:var(--ochre)}
+header p{margin:0;color:var(--muted);max-width:52ch;font-size:1rem}
+.tray{background:var(--rim);padding:clamp(8px,1.6vw,16px);border-radius:6px;
+  box-shadow:inset 0 0 0 1px #5a4130,0 18px 40px -18px #000}
+.bathwrap{position:relative}
+canvas#bath{display:block;width:100%;aspect-ratio:1000/680;max-width:100%;background:var(--bath);touch-action:none;cursor:crosshair;border-radius:2px}
+.hint{position:absolute;left:10px;bottom:8px;font-size:.8rem;color:#3a4540;background:#c4cbbdcc;padding:2px 8px;border-radius:3px;pointer-events:none;transition:opacity .6s}
+.bench{display:grid;grid-template-columns:1fr auto;gap:16px 24px;align-items:start}
+@media (max-width:720px){.bench{grid-template-columns:1fr}}
+.group{display:grid;gap:8px;min-width:0}
+.label{font-family:var(--f-display);font-size:.8rem;letter-spacing:.12em;color:var(--muted);text-transform:lowercase}
+.pigments{display:flex;flex-wrap:wrap;gap:8px}
+.pig{display:flex;align-items:center;gap:8px;background:var(--bench-2);border:1px solid var(--line);color:var(--ink);
+  font:inherit;font-size:.9rem;padding:5px 12px 5px 6px;border-radius:999px;cursor:pointer}
+.pig i{width:20px;height:20px;border-radius:50%;display:block;box-shadow:inset 0 0 0 1px #0004}
+.pig[aria-pressed="true"]{border-color:var(--ochre);box-shadow:0 0 0 1px var(--ochre)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button.tool{font:inherit;font-size:.95rem;background:var(--bench-2);color:var(--ink);border:1px solid var(--line);padding:7px 14px;border-radius:4px;cursor:pointer}
+button.tool:hover{border-color:#4b5a5b}
+button.tool.primary{background:var(--ochre);color:#1b1408;border-color:var(--ochre);font-weight:500}
+button.tool:disabled{opacity:.45;cursor:default}
+button:focus-visible,input:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+.size{display:flex;align-items:center;gap:10px}
+input[type=range]{accent-color:var(--ochre);width:160px;max-width:100%}
+.num{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.9rem;min-width:4ch}
+.status{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.prints{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:16px}
+.strip{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px}
+.strip figure{margin:0;flex:0 0 auto;display:grid;gap:4px}
+.strip img{height:110px;width:auto;border-radius:2px;box-shadow:0 6px 16px -8px #000;display:block}
+.strip figcaption{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.empty{color:var(--muted);font-size:.9rem;margin:0}
+.maths{color:var(--muted);font-size:.9rem;max-width:68ch;margin:0}
+.maths code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85em;color:var(--ink);background:var(--bench-2);padding:1px 5px;border-radius:3px;white-space:nowrap}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Ebru <span>Tray</span></h1>
+    <p>A bath of thickened water, a few earth pigments and a comb. Float the ink, rake it, then lay paper on top to pull a print.</p>
+  </header>
+
+  <div class="tray">
+    <div class="bathwrap">
+      <canvas id="bath" aria-label="Marbling bath. Tap to drop ink, drag to pull a stylus through it."></canvas>
+      <div class="hint" id="hint">Tap to drop ink · drag to pull a stylus</div>
+    </div>
+  </div>
+
+  <div class="bench">
+    <div class="group">
+      <span class="label">pigment</span>
+      <div class="pigments" id="pigments"></div>
+    </div>
+    <div class="group">
+      <span class="label">drop size</span>
+      <div class="size"><input type="range" id="size" min="12" max="110" value="46" aria-label="Drop size"><span class="num" id="sizeOut">46</span></div>
+    </div>
+    <div class="group" style="grid-column:1/-1">
+      <span class="label">workshop</span>
+      <div class="row">
+        <button class="tool" id="bScatter">Sprinkle stones</button>
+        <button class="tool" id="bCombV">Rake down</button>
+        <button class="tool" id="bCombH">Rake across</button>
+        <button class="tool" id="bGelgit">Gel-git</button>
+        <button class="tool" id="bSkim">Skim bath</button>
+        <button class="tool primary" id="bPrint">Lay paper</button>
+        <span class="status" id="status"></span>
+      </div>
+    </div>
+  </div>
+
+  <section class="prints">
+    <span class="label">pulled prints</span>
+    <div class="strip" id="strip"><p class="empty" id="empty">No prints yet. Lay paper on the bath to lift the pattern.</p></div>
+  </section>
+
+  <p class="maths">How the ink moves: each new drop pushes every existing point outward, <code>p → c + (p−c)·√(1 + r²/|p−c|²)</code>, which keeps every area the same. A rake moves points along each tine by <code>α·λ/(d+λ)</code>, where <code>d</code> is the distance to the tine, so ink nearest the teeth travels furthest.</p>
+</div>
+
+<script>
+(()=>{
+const W=1000,H=680,MAXSEG=3.2,MINSEG=0.7;
+const PIG=[
+  {n:"Yellow ochre",c:"#d6a13f"},
+  {n:"Indigo",c:"#283b6e"},
+  {n:"Madder",c:"#a5302b"},
+  {n:"Verdigris",c:"#3c8676"},
+  {n:"Lamp black",c:"#22201d"},
+  {n:"Chalk",c:"#f1eee4"},
+  {n:"Rose",c:"#d48090"}
+];
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const cv=document.getElementById("bath"),ctx=cv.getContext("2d");
+let drops=[],cur=1,dirty=true,busy=false,prints=0;
+let growing=null; // {drop,cx,cy,r,target}
+
+// ---------- geometry ----------
+function circle(cx,cy,r){
+  const n=Math.max(40,Math.ceil(2*Math.PI*r/MAXSEG)),p=new Array(n*2);
+  for(let i=0;i<n;i++){const a=i/n*Math.PI*2;p[2*i]=cx+r*Math.cos(a);p[2*i+1]=cy+r*Math.sin(a)}
+  return p;
+}
+function refine(p){
+  const out=[],n=p.length/2;
+  let lx=p[0],ly=p[1];out.push(lx,ly);
+  for(let i=1;i<=n;i++){
+    const j=(i%n)*2,x=p[j],y=p[j+1];
+    const dx=x-lx,dy=y-ly,d2=dx*dx+dy*dy;
+    if(d2>MAXSEG*MAXSEG){
+      const k=Math.ceil(Math.sqrt(d2)/MAXSEG);
+      for(let s=1;s<k;s++)out.push(lx+dx*s/k,ly+dy*s/k);
+    }else if(d2<MINSEG*MINSEG && i<n){continue}
+    if(i<n){out.push(x,y);lx=x;ly=y}
+  }
+  return out;
+}
+function refineAll(){for(const d of drops)d.p=refine(d.p)}
+
+function pushOut(cx,cy,r,skip){
+  const r2=r*r;
+  for(const d of drops){
+    if(d===skip)continue;const p=d.p;
+    for(let i=0;i<p.length;i+=2){
+      const dx=p[i]-cx,dy=p[i+1]-cy,d2=dx*dx+dy*dy+1e-6,s=Math.sqrt(1+r2/d2);
+      p[i]=cx+dx*s;p[i+1]=cy+dy*s;
+    }
+  }
+}
+// infinite tine line through (bx,by), direction (mx,my)
+function tine(bx,by,mx,my,a,lam){
+  const nx=-my,ny=mx;
+  for(const d of drops){const p=d.p;
+    for(let i=0;i<p.length;i+=2){
+      const dd=Math.abs((p[i]-bx)*nx+(p[i+1]-by)*ny),z=a*lam/(dd+lam);
+      p[i]+=z*mx;p[i+1]+=z*my;
+    }}
+}
+// finite stylus: segment a->b, falloff with distance to the stylus tip path
+function stylus(ax,ay,bx,by,lam){
+  const sx=bx-ax,sy=by-ay,L2=sx*sx+sy*sy;if(L2<1e-6)return;
+  for(const d of drops){const p=d.p;
+    for(let i=0;i<p.length;i+=2){
+      const px=p[i]-ax,py=p[i+1]-ay;let t=(px*sx+py*sy)/L2;t=t<0?0:t>1?1:t;
+      const qx=px-t*sx,qy=py-t*sy,dist=Math.sqrt(qx*qx+qy*qy);
+      if(dist>lam*14)continue;
+      const f=lam/(dist+lam),g=f*f*(1-t*0.5);
+      p[i]+=sx*g;p[i+1]+=sy*g;
+    }}
+}
+
+// ---------- ink ----------
+function settleGrowing(){
+  if(!growing)return;
+  const g=growing;growing=null;
+  const rr=Math.sqrt(Math.max(0,g.target*g.target-g.r*g.r));
+  if(rr>0)pushOut(g.cx,g.cy,rr,g.drop);
+  g.drop.p=circle(g.cx,g.cy,g.target);
+}
+function drop(cx,cy,r,col,animate){
+  settleGrowing();
+  const d={c:col,p:[]};
+  if(!animate||reduce){pushOut(cx,cy,r);d.p=circle(cx,cy,r);drops.push(d);refineAll();dirty=true;return}
+  drops.push(d);growing={drop:d,cx,cy,r:0,target:r,t0:performance.now()};
+}
+
+// ---------- rendering ----------
+let scale=1;
+function resize(){
+  const dpr=Math.min(2,devicePixelRatio||1),w=cv.clientWidth;
+  cv.width=Math.round(w*dpr);cv.height=Math.round(w*H/W*dpr);
+  scale=cv.width/W;dirty=true;
+}
+function render(){
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.fillStyle="#c4cbbd";ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.setTransform(scale,0,0,scale,0,0);
+  for(const d of drops){
+    const p=d.p;if(p.length<6)continue;
+    ctx.beginPath();ctx.moveTo(p[0],p[1]);
+    for(let i=2;i<p.length;i+=2)ctx.lineTo(p[i],p[i+1]);
+    ctx.closePath();ctx.fillStyle=d.c;ctx.fill();
+  }
+  if(combFx){
+    ctx.strokeStyle="#1b1408aa";ctx.lineWidth=1.5;
+    for(const l of combFx.lines){ctx.beginPath();
+      if(combFx.vert){const y=combFx.pos;ctx.moveTo(l,y-26);ctx.lineTo(l,y)}
+      else{const x=combFx.pos;ctx.moveTo(x-26,l);ctx.lineTo(x,l)}
+      ctx.stroke()}
+  }
+  let pts=0;for(const d of drops)pts+=d.p.length/2;
+  status.textContent=drops.length+" drops · "+pts.toLocaleString()+" points";
+}
+
+// ---------- combs (animated) ----------
+let combFx=null;const queue=[];
+function comb(vert,spacing,offset,alpha,lam){queue.push({vert,spacing,offset,alpha,lam})}
+function runQueue(){
+  if(busy||!queue.length)return;
+  settleGrowing();
+  const job=queue.shift(),frames=reduce?1:42;let f=0;busy=true;setBusy(true);
+  const extent=job.vert?W:H,lines=[];
+  for(let x=job.offset;x<extent;x+=job.spacing)lines.push(x);
+  const dir=Math.sign(job.alpha)||1;
+  combFx={vert:job.vert,lines,pos:0};
+  (function step(){
+    const a=job.alpha/frames;
+    for(const l of lines){job.vert?tine(l,0,0,1,a,job.lam):tine(0,l,1,0,a,job.lam)}
+    refineAll();f++;
+    const span=job.vert?H:W;combFx.pos=dir>0?span*f/frames:span*(1-f/frames);
+    dirty=true;
+    if(f<frames)requestAnimationFrame(step);
+    else{combFx=null;busy=false;setBusy(false);dirty=true;runQueue()}
+  })();
+}
+function setBusy(b){for(const id of["bScatter","bCombV","bCombH","bGelgit","bSkim","bPrint"])document.getElementById(id).disabled=b}
+
+// ---------- seeded start ----------
+let seed=7;const rnd=()=>((seed=(seed*16807)%2147483647)/2147483647);
+function scatter(n,cols,rmin,rmax,rand=Math.random){
+  for(let i=0;i<n;i++)drop(rand()*W,rand()*H,rmin+rand()*(rmax-rmin),cols[Math.floor(rand()*cols.length)],false);
+}
+function startPattern(){
+  drops=[];
+  const cols=[PIG[0].c,PIG[1].c,PIG[2].c,PIG[5].c];
+  // base coat of large stones
+  scatter(26,cols,40,80,rnd);
+  scatter(30,cols,14,30,rnd);
+  // gel-git: rake down, then back up between the teeth
+  for(const l of range(25,W,70))tine(l,0,0,1,90,9);refineAll();
+  for(const l of range(60,W,70))tine(l,0,0,1,-90,9);refineAll();
+  dirty=true;
+}
+function range(a,b,s){const r=[];for(let x=a;x<b;x+=s)r.push(x);return r}
+
+// ---------- input ----------
+let down=null;
+function pos(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H,sx:e.clientX,sy:e.clientY}}
+cv.addEventListener("pointerdown",e=>{if(busy)return;cv.setPointerCapture(e.pointerId);const p=pos(e);down={start:p,last:p,drag:false};hideHint()});
+cv.addEventListener("pointermove",e=>{
+  if(!down)return;const p=pos(e);
+  if(!down.drag&&Math.hypot(p.sx-down.start.sx,p.sy-down.start.sy)>6){down.drag=true;settleGrowing()}
+  if(down.drag){
+    const dx=p.x-down.last.x,dy=p.y-down.last.y,L=Math.hypot(dx,dy),k=Math.max(1,Math.ceil(L/4));
+    for(let s=0;s<k;s++){const ax=down.last.x+dx*s/k,ay=down.last.y+dy*s/k;stylus(ax,ay,ax+dx/k,ay+dy/k,10)}
+    refineAll();down.last=p;dirty=true;
+  }
+});
+function up(e){if(!down)return;if(!down.drag){const p=down.start;drop(p.x,p.y,+size.value,PIG[cur].c,true)}down=null}
+cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",()=>down=null);
+
+const hint=document.getElementById("hint");function hideHint(){hint.style.opacity=0}
+
+// ---------- controls ----------
+const pigEl=document.getElementById("pigments");
+PIG.forEach((p,i)=>{const b=document.createElement("button");b.className="pig";b.type="button";b.id="pig"+i;
+  b.innerHTML='<i style="background:'+p.c+'"></i>'+p.n;b.setAttribute("aria-pressed",i===cur);
+  b.onclick=()=>{cur=i;[...pigEl.children].forEach((c,j)=>c.setAttribute("aria-pressed",j===i))};pigEl.appendChild(b)});
+const size=document.getElementById("size"),sizeOut=document.getElementById("sizeOut"),status=document.getElementById("status");
+size.oninput=()=>sizeOut.textContent=size.value;
+document.getElementById("bScatter").onclick=()=>{settleGrowing();const base=+size.value;
+  for(let i=0;i<14;i++)drop(Math.random()*W,Math.random()*H,base*(0.35+Math.random()*0.5),PIG[cur].c,false)};
+document.getElementById("bCombV").onclick=()=>{comb(true,56,28,110,8);runQueue()};
+document.getElementById("bCombH").onclick=()=>{comb(false,40,20,130,7);runQueue()};
+document.getElementById("bGelgit").onclick=()=>{comb(true,70,25,90,9);comb(true,70,60,-90,9);runQueue()};
+document.getElementById("bSkim").onclick=()=>{growing=null;drops=[];dirty=true};
+document.getElementById("bPrint").onclick=()=>{
+  settleGrowing();render();
+  // paper: warm the ink, add a soft deckle edge
+  const o=document.createElement("canvas");o.width=600;o.height=Math.round(600*H/W);
+  const c=o.getContext("2d");c.fillStyle="#efe8d8";c.fillRect(0,0,o.width,o.height);
+  c.globalAlpha=.93;c.drawImage(cv,0,0,o.width,o.height);c.globalAlpha=1;
+  c.globalCompositeOperation="multiply";c.fillStyle="#f3e9d2";c.fillRect(0,0,o.width,o.height);
+  c.globalCompositeOperation="source-over";
+  const g=c.createRadialGradient(o.width/2,o.height/2,o.height*.35,o.width/2,o.height/2,o.width*.62);
+  g.addColorStop(0,"#0000");g.addColorStop(1,"#3a2a1430");c.fillStyle=g;c.fillRect(0,0,o.width,o.height);
+  prints++;
+  const fig=document.createElement("figure"),img=new Image();img.src=o.toDataURL("image/jpeg",.88);img.alt="Marbled print "+prints;
+  const cap=document.createElement("figcaption");cap.textContent="Print "+prints+" · "+drops.length+" drops";
+  fig.append(img,cap);const strip=document.getElementById("strip");
+  document.getElementById("empty").hidden=true;strip.insertBefore(fig,strip.firstChild);
+  drops=[];dirty=true;
+};
+
+// ---------- loop ----------
+function loop(t){
+  if(growing){
+    const g=growing,k=Math.min(1,(t-g.t0)/320),e=1-Math.pow(1-k,3),nr=g.target*e;
+    const rr=Math.sqrt(Math.max(0,nr*nr-g.r*g.r));
+    if(rr>0)pushOut(g.cx,g.cy,rr,g.drop);
+    g.r=nr;g.drop.p=circle(g.cx,g.cy,Math.max(1,nr));
+    for(const d of drops)if(d!==g.drop)d.p=refine(d.p);
+    if(k>=1)growing=null;dirty=true;
+  }
+  if(dirty){render();dirty=false}
+  requestAnimationFrame(loop);
+}
+new ResizeObserver(resize).observe(cv);
+startPattern();resize();requestAnimationFrame(loop);
+})();
+</script>
+
+</body></html>

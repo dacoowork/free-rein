@@ -1,0 +1,388 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Ringing Chamber</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a varnished peal board. Gilt title, the live row as the hero, tower circle beside the method grid drawn as lead columns. */
+:root{
+  --oak:#1d140d; --oak-2:#2a1d13; --grain:#3a2a1c;
+  --gilt:#e9d6a6; --gilt-dim:#a89470; --gold:#c9a24a;
+  --blue:#6aa6e0; --red:#d0614a;
+  --display:"Cinzel","Trajan Pro",Georgia,serif;
+  --body:"Crimson Pro",Georgia,"Times New Roman",serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+html,body{background:var(--oak);color:var(--gilt)}
+body{font-family:var(--body);font-size:18px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px;
+  background-image:repeating-linear-gradient(92deg,transparent 0 7px,rgba(255,220,170,.018) 7px 9px,transparent 9px 23px),radial-gradient(120% 80% at 50% 0%,var(--oak-2),var(--oak) 70%)}
+.board{max-width:980px;margin:0 auto;display:grid;gap:22px}
+header{display:grid;gap:4px;justify-items:center;text-align:center;border:1px solid var(--grain);outline:1px solid var(--grain);outline-offset:5px;padding:22px 16px 18px;margin:6px}
+.eyebrow{font-family:var(--display);letter-spacing:.32em;font-size:12px;color:var(--gold);text-transform:uppercase}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,6vw,52px);margin:0;letter-spacing:.06em;text-wrap:balance;
+  background:linear-gradient(180deg,#f6e8bd,#c9a24a 60%,#8d6a2a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{font-style:italic;color:var(--gilt-dim);max-width:52ch}
+
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:22px;align-items:center}
+@media (max-width:760px){.hero{grid-template-columns:minmax(0,1fr)}}
+.rowcard{display:grid;gap:10px;justify-items:center;text-align:center;min-width:0}
+.call{font-family:var(--display);font-size:clamp(18px,3.4vw,24px);color:var(--gold);min-height:1.5em;letter-spacing:.06em}
+.row{font-family:var(--display);font-weight:700;font-size:clamp(46px,11vw,96px);letter-spacing:.14em;line-height:1;display:flex;gap:.04em;padding-left:.14em}
+.row span{transition:color .12s,transform .12s;color:var(--gilt-dim)}
+.row span.blue{color:var(--blue)}
+.row span.treb{color:var(--red)}
+.row span.now{color:#fff8e2;transform:translateY(-6px)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:center;font-size:15px;color:var(--gilt-dim);font-variant-numeric:tabular-nums}
+.meta b{color:var(--gilt);font-weight:600}
+#tower{width:100%;max-width:280px;aspect-ratio:1;justify-self:center;cursor:pointer}
+
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:end;justify-content:center;border-top:1px solid var(--grain);border-bottom:1px solid var(--grain);padding-block:16px}
+.ctl{display:grid;gap:4px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gilt-dim);font-family:var(--display)}
+select,input[type=range]{font-family:var(--body);font-size:17px;letter-spacing:0;text-transform:none}
+select{background:var(--oak-2);color:var(--gilt);border:1px solid var(--grain);border-radius:3px;padding:6px 8px}
+input[type=range]{accent-color:var(--gold);width:160px}
+button{font-family:var(--display);font-weight:700;letter-spacing:.16em;font-size:15px;background:linear-gradient(180deg,#d9b864,#a8822f);color:#22170c;border:0;border-radius:3px;padding:11px 26px;cursor:pointer;min-width:120px}
+button[aria-pressed=true]{background:var(--oak-2);color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.speedval{font-family:var(--body);text-transform:none;letter-spacing:0;color:var(--gilt);font-size:15px}
+
+.gridwrap{overflow-x:auto;padding-block:6px}
+#grid{display:block;margin:0 auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 22px;justify-content:center;font-size:15px;color:var(--gilt-dim)}
+.legend i{display:inline-block;width:22px;height:3px;vertical-align:middle;margin-right:6px}
+.pn{font-family:var(--mono);font-size:13px;color:var(--gilt-dim);text-align:center;overflow-wrap:anywhere}
+
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px 30px;border-top:1px solid var(--grain);padding-top:20px}
+.notes h2{font-family:var(--display);font-size:15px;letter-spacing:.18em;color:var(--gold);margin:0 0 4px;font-weight:500}
+.notes p{margin:0;font-size:17px;color:var(--gilt);max-width:60ch}
+.notes p em{color:var(--gilt-dim)}
+@media (prefers-reduced-motion:reduce){.row span{transition:none}.row span.now{transform:none}}
+</style>
+
+<div class="board">
+  <header>
+    <div class="eyebrow">Six bells · rung in the English style</div>
+    <h1>Ringing Chamber</h1>
+    <div class="sub">Pick a method, take hold and ring. Every pull changes the order, no row is struck twice, and the band comes back to rounds.</div>
+  </header>
+
+  <section class="hero">
+    <div class="rowcard">
+      <div class="call" id="call">Stand. Ready to ring.</div>
+      <div class="row" id="row" aria-live="off"></div>
+      <div class="meta">
+        <span>Stroke <b id="stroke">Handstroke</b></span>
+        <span>Change <b id="chg">0</b> / <b id="tot">0</b></span>
+        <span>Lead <b id="lead">–</b></span>
+      </div>
+    </div>
+    <canvas id="tower" width="560" height="560" aria-label="The six ropes seen from above. Tap to sound a bell." role="img"></canvas>
+  </section>
+
+  <section class="controls">
+    <label class="ctl" for="method">Method
+      <select id="method">
+        <option value="hunt">Plain Hunt Minor</option>
+        <option value="bob" selected>Plain Bob Minor</option>
+        <option value="grandsire">Grandsire Doubles</option>
+        <option value="cambridge">Cambridge Surprise Minor</option>
+      </select>
+    </label>
+    <label class="ctl" for="follow">Ring the
+      <select id="follow"></select>
+    </label>
+    <label class="ctl" for="speed">Pace <span class="speedval" id="speedval"></span>
+      <input type="range" id="speed" min="18" max="40" step="1" value="26">
+    </label>
+    <button id="go" aria-pressed="false">Look to</button>
+  </section>
+
+  <section style="display:grid;gap:10px">
+    <div class="legend"><span><i style="background:var(--red)"></i>Treble</span><span><i style="background:var(--blue);height:4px"></i>Your bell, the blue line</span><span id="cover"></span></div>
+    <div class="gridwrap"><canvas id="grid"></canvas></div>
+    <div class="pn">Place notation, one lead: <span id="pn"></span></div>
+  </section>
+
+  <section class="notes">
+    <div><h2>Changes, not tunes</h2><p>Tower bells swing a full circle and can't be hurried, so ringers don't play melodies. They strike in rows, and each change lets a bell move by at most one place. <em>Rounds</em> is the descending scale, 123456.</p></div>
+    <div><h2>Handstroke and back</h2><p>Each bell sounds twice per full pull: once on the sally, once on the tail end. A ringer leaves a beat of silence before every handstroke row, the <em>handstroke gap</em>, which gives ringing its limp.</p></div>
+    <div><h2>Place notation</h2><p>A method is written as the places kept still. <em>x</em> swaps every pair; <em>16</em> holds first and sixth and swaps the rest. Six bells have 720 possible rows, and an extent rings them all.</p></div>
+    <div><h2>The blue line</h2><p>Ringers learn a method by the path one bell traces through the rows, drawn in blue in the old method books. Follow it to see dodges, places and the treble hunting straight through.</p></div>
+  </section>
+</div>
+
+<script>
+(() => {
+const METHODS = {
+  hunt:      {name:"Plain Hunt Minor", stage:6, lead:"x.16.x.16.x.16.x.16.x.16.x.16"},
+  bob:       {name:"Plain Bob Minor", stage:6, lead:"x.16.x.16.x.16.x.16.x.16.x.12"},
+  grandsire: {name:"Grandsire Doubles", stage:5, lead:"3.1.5.1.5.1.5.1.5.1"},
+  cambridge: {name:"Cambridge Surprise Minor", stage:6, lead:"x.36.x.14.x.12.x.36.x.14.x.56.x.14.x.36.x.12.x.14.x.36.x.12"}
+};
+const N = 6;
+const $ = id => document.getElementById(id);
+let state = {method:"bob", follow:2, rows:[], leadLen:12};
+
+function applyChange(row, tok, stage){
+  const places = tok === "x" ? new Set() : new Set(tok.split("").map(Number));
+  const r = row.slice(); let i = 0;
+  while (i < stage){
+    if (places.has(i+1)) { i++; continue; }
+    if (i+1 < stage && !places.has(i+2)) { [r[i], r[i+1]] = [r[i+1], r[i]]; i += 2; } else i++;
+  }
+  return r;
+}
+function generate(key){
+  const m = METHODS[key], toks = m.lead.split(".");
+  const rounds = [1,2,3,4,5,6]; const rows = [rounds];
+  let r = rounds, k = 0;
+  do { r = applyChange(r, toks[k % toks.length], m.stage); rows.push(r); k++; }
+  while (r.join("") !== "123456" && k < 2000);
+  return {rows, leadLen: toks.length, stage: m.stage};
+}
+
+/* ---------- audio ---------- */
+let ctx = null, master = null;
+const NOMINALS = [987.8, 880, 784, 740, 659.3, 587.3]; // B A G F# E D, treble to tenor
+function audio(){
+  if (ctx) return ctx;
+  try {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createGain(); master.gain.value = .5;
+    const comp = ctx.createDynamicsCompressor(); master.connect(comp); comp.connect(ctx.destination);
+  } catch(e){ ctx = null; }
+  return ctx;
+}
+const PARTIALS = [[.25,.30,5.5],[.5,.38,3.2],[.6,.30,2.4],[.75,.16,2],[1,.55,1.7],[1.25,.12,1.1],[1.5,.10,.9],[2,.07,.6],[2.61,.04,.4]];
+function strike(bell, t, stroke){
+  if (!ctx) return;
+  const f = NOMINALS[bell-1], amp = stroke ? .9 : 1;
+  const out = ctx.createGain(); out.gain.value = .16*amp;
+  const pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+  if (pan){ pan.pan.value = (bell-3.5)/5; out.connect(pan); pan.connect(master); } else out.connect(master);
+  const tail = bell === 6 ? 1.35 : 1;
+  for (const [ratio, g, dec] of PARTIALS){
+    const o = ctx.createOscillator(), e = ctx.createGain();
+    o.frequency.value = f*ratio*(1+(Math.random()-.5)*.0016);
+    e.gain.setValueAtTime(0, t);
+    e.gain.linearRampToValueAtTime(g, t+.004);
+    e.gain.exponentialRampToValueAtTime(.0001, t+dec*tail);
+    o.connect(e); e.connect(out); o.start(t); o.stop(t+dec*tail+.05);
+  }
+}
+const now = () => ctx ? ctx.currentTime : performance.now()/1000;
+
+/* ---------- touch sequence ---------- */
+function buildSeq(){
+  const seq = [];
+  const add = (row, gridRow, kind) => seq.push({row, gridRow, kind});
+  add(state.rows[0], 0, "rounds"); add(state.rows[0], 0, "rounds");
+  for (let i = 1; i < state.rows.length; i++) add(state.rows[i], i, i === state.rows.length-1 ? "home" : "method");
+  add(state.rows[0], 0, "rounds"); add(state.rows[0], 0, "rounds");
+  return seq;
+}
+
+let ringing = false, events = [], schedIdx = 0, nextT = 0, seq = [], beat = .3, timer = null;
+function beatLen(){ const cpm = +$("speed").value; return (2*60/cpm)/(2*N+1); }
+function calls(i){
+  const last = seq.length;
+  if (i === 0) return "Look to. Treble's going.";
+  if (i === 1) return "She's gone. Go " + METHODS[state.method].name + ".";
+  if (seq[i].kind === "home") return "That's all.";
+  if (i === last-1) return "Stand.";
+  return null;
+}
+function schedule(){
+  beat = beatLen();
+  while (schedIdx < seq.length && nextT < now() + .6){
+    const s = seq[schedIdx], stroke = schedIdx % 2;
+    if (schedIdx === 0 || calls(schedIdx)) events.push({t: nextT - beat*.9, call: calls(schedIdx)});
+    for (let p = 0; p < N; p++){
+      const bell = s.row[p], t = nextT + p*beat;
+      strike(bell, t, stroke);
+      events.push({t, seqIdx: schedIdx, p, bell, stroke});
+    }
+    nextT += N*beat + (stroke === 1 ? beat : 0);
+    schedIdx++;
+  }
+  if (schedIdx >= seq.length && events.length === 0) stop("Stood. The bells are down.");
+}
+function start(){
+  audio(); if (ctx && ctx.state === "suspended") ctx.resume();
+  seq = buildSeq(); events = []; schedIdx = 0; nextT = now() + .5; ringing = true;
+  $("go").textContent = "Stand"; $("go").setAttribute("aria-pressed","true");
+  timer = setInterval(schedule, 60); schedule();
+}
+function stop(msg){
+  ringing = false; clearInterval(timer); events = [];
+  $("go").textContent = "Look to"; $("go").setAttribute("aria-pressed","false");
+  $("call").textContent = msg || "Stand. Ready to ring.";
+  cur = {gridRow:0, p:-1, stroke:0, seqIdx:-1}; setRow(state.rows[0], -1); drawGrid(); drawTower();
+}
+
+/* ---------- display ---------- */
+let cur = {gridRow:0, p:-1, stroke:0, seqIdx:-1};
+let pulses = new Array(7).fill(-9);
+function setRow(row, p){
+  const el = $("row");
+  if (el.children.length !== N) el.innerHTML = "<span></span>".repeat(N);
+  [...el.children].forEach((s,i) => {
+    const b = row[i]; s.textContent = b;
+    s.className = (b === state.follow ? "blue" : b === 1 ? "treb" : "") + (i === p ? " now" : "");
+  });
+}
+function tick(){
+  const t = now();
+  while (events.length && events[0].t <= t){
+    const e = events.shift();
+    if (e.call){ $("call").textContent = e.call; continue; }
+    const s = seq[e.seqIdx];
+    if (e.seqIdx !== cur.seqIdx){
+      cur.seqIdx = e.seqIdx; cur.gridRow = s.gridRow;
+      $("stroke").textContent = e.stroke ? "Backstroke" : "Handstroke";
+      $("chg").textContent = s.kind === "rounds" ? 0 : s.gridRow;
+      $("lead").textContent = s.kind === "rounds" ? "Rounds" : Math.ceil(s.gridRow/state.leadLen);
+      drawGrid();
+    }
+    cur.p = e.p; pulses[e.bell] = t;
+    setRow(s.row, e.p);
+  }
+  drawTower();
+  requestAnimationFrame(tick);
+}
+
+/* tower: ropes in a circle, numbered clockwise from the treble */
+const tw = $("tower"), tc = tw.getContext("2d");
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function ropePos(b){ const a = Math.PI/2 + (b-1)*(Math.PI*2/N) + Math.PI/N; return [280 + Math.cos(a)*190, 280 + Math.sin(a)*190]; }
+function drawTower(){
+  const t = now();
+  tc.clearRect(0,0,560,560);
+  tc.strokeStyle = "#3a2a1c"; tc.lineWidth = 2;
+  tc.beginPath(); tc.arc(280,280,250,0,Math.PI*2); tc.stroke();
+  tc.setLineDash([4,8]); tc.beginPath(); tc.arc(280,280,190,0,Math.PI*2); tc.stroke(); tc.setLineDash([]);
+  tc.fillStyle = "#a89470"; tc.font = "500 22px Cinzel, Georgia, serif"; tc.textAlign = "center"; tc.textBaseline = "middle";
+  tc.fillText(cur.seqIdx >= 0 ? (cur.seqIdx%2 ? "BACK" : "HAND") : "TOWER", 280, 268);
+  tc.font = "italic 20px 'Crimson Pro', Georgia, serif"; tc.fillText("seen from above", 280, 298);
+  for (let b = 1; b <= N; b++){
+    const [x,y] = ropePos(b), age = t - pulses[b];
+    const k = age >= 0 && age < 1.2 ? Math.exp(-age*3.2) : 0;
+    const col = b === state.follow ? "#6aa6e0" : b === 1 ? "#d0614a" : "#c9a24a";
+    if (k > 0){
+      tc.globalAlpha = k*.5; tc.strokeStyle = col; tc.lineWidth = 3;
+      tc.beginPath(); tc.arc(x,y,44 + (reduce ? 0 : (1-k)*40),0,Math.PI*2); tc.stroke(); tc.globalAlpha = 1;
+    }
+    // sally: striped wool grip
+    tc.fillStyle = "#2a1d13"; tc.beginPath(); tc.arc(x,y,40,0,Math.PI*2); tc.fill();
+    tc.lineWidth = 6; tc.strokeStyle = col; tc.globalAlpha = .45 + k*.55;
+    tc.beginPath(); tc.arc(x,y,36,0,Math.PI*2); tc.stroke(); tc.globalAlpha = 1;
+    tc.fillStyle = k > .2 ? "#fff8e2" : "#e9d6a6"; tc.font = "700 34px Cinzel, Georgia, serif";
+    tc.fillText(b, x, y+2);
+  }
+}
+tw.addEventListener("pointerdown", ev => {
+  const r = tw.getBoundingClientRect(), x = (ev.clientX-r.left)*560/r.width, y = (ev.clientY-r.top)*560/r.height;
+  for (let b = 1; b <= N; b++){
+    const [bx,by] = ropePos(b);
+    if (Math.hypot(x-bx,y-by) < 48){
+      audio(); if (ctx && ctx.state === "suspended") ctx.resume();
+      strike(b, now()+.01, 0); pulses[b] = now()+.01; return;
+    }
+  }
+});
+
+/* method grid: one column per lead, as in the method books */
+const gc = $("grid"), gx = gc.getContext("2d");
+let G = {};
+function layoutGrid(){
+  const leads = Math.ceil((state.rows.length-1)/state.leadLen);
+  const cw = 15, rh = state.leadLen > 12 ? 13 : 17, colW = cw*N, gap = 26;
+  const w = leads*colW + (leads-1)*gap + 20, h = (state.leadLen+1)*rh + 20;
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  gc.width = w*dpr; gc.height = h*dpr; gc.style.width = w+"px"; gc.style.height = h+"px";
+  gx.setTransform(dpr,0,0,dpr,0,0);
+  G = {leads, cw, rh, colW, gap, w, h};
+}
+function cell(gridRow, lead){ // returns [x0,y] of row within that lead column
+  const r = gridRow - lead*state.leadLen;
+  return [10 + lead*(G.colW+G.gap), 10 + r*G.rh + G.rh/2];
+}
+function drawGrid(){
+  const {leads, cw, rh, colW, w, h} = G, L = state.leadLen, rows = state.rows;
+  gx.clearRect(0,0,w,h);
+  // playhead
+  if (cur.seqIdx >= 0){
+    const gr = cur.gridRow, lead = Math.min(leads-1, Math.max(0, Math.ceil(gr/L)-1));
+    const ld = gr === 0 ? 0 : lead;
+    const [x0,y] = cell(gr, ld);
+    gx.fillStyle = "rgba(201,162,74,.18)"; gx.fillRect(x0-4, y-rh/2, colW+8, rh);
+  }
+  // lead-end rules
+  gx.strokeStyle = "#3a2a1c"; gx.lineWidth = 1;
+  for (let l = 0; l < leads; l++){
+    const [x0] = cell(0,l);
+    gx.beginPath(); gx.moveTo(x0-2, 10+L*rh); gx.lineTo(x0+colW+2, 10+L*rh); gx.stroke();
+  }
+  // lines
+  const line = (bell, col, lw) => {
+    gx.strokeStyle = col; gx.lineWidth = lw; gx.lineJoin = "round"; gx.lineCap = "round";
+    for (let l = 0; l < leads; l++){
+      gx.beginPath();
+      for (let r = l*L; r <= Math.min((l+1)*L, rows.length-1); r++){
+        const [x0,y] = cell(r,l), p = rows[r].indexOf(bell);
+        const x = x0 + p*cw + cw/2;
+        r === l*L ? gx.moveTo(x,y) : gx.lineTo(x,y);
+      }
+      gx.stroke();
+    }
+  };
+  if (state.follow !== 1) line(1, "#d0614a", 1.6);
+  line(state.follow, "#6aa6e0", 3.2);
+  // digits
+  gx.font = "500 12px 'JetBrains Mono', Menlo, monospace"; gx.textAlign = "center"; gx.textBaseline = "middle";
+  for (let l = 0; l < leads; l++){
+    for (let r = l*L; r <= Math.min((l+1)*L, rows.length-1); r++){
+      const [x0,y] = cell(r,l);
+      const head = r === l*L;
+      rows[r].forEach((b,p) => {
+        if (b === state.follow || b === 1) return;
+        gx.fillStyle = b === 6 && METHODS[state.method].stage === 5 ? "#5f513c" : head ? "#e9d6a6" : "#8d7b5c";
+        gx.fillText(b, x0 + p*cw + cw/2, y);
+      });
+    }
+  }
+}
+
+function setMethod(key){
+  state.method = key;
+  const g = generate(key);
+  state.rows = g.rows; state.leadLen = g.leadLen;
+  const stage = METHODS[key].stage;
+  const fol = $("follow"), prev = +fol.value || state.follow;
+  fol.innerHTML = "";
+  for (let b = 1; b <= stage; b++){
+    const o = document.createElement("option");
+    o.value = b; o.textContent = b === 1 ? "Treble" : b === 6 ? "Tenor" : b + (b===2?"nd":b===3?"rd":"th");
+    fol.appendChild(o);
+  }
+  state.follow = prev <= stage ? prev : 2; fol.value = state.follow;
+  $("tot").textContent = state.rows.length-1;
+  $("pn").textContent = METHODS[key].lead.replace(/\.x\./g,"x").replace(/^x\./,"x").replace(/\.x$/,"x");
+  $("cover").textContent = stage === 5 ? "Tenor rings behind as cover" : "";
+  layoutGrid(); setRow(state.rows[0], -1); drawGrid();
+}
+
+$("method").addEventListener("change", e => { if (ringing) stop(); setMethod(e.target.value); });
+$("follow").addEventListener("change", e => { state.follow = +e.target.value; drawGrid(); setRow(cur.seqIdx>=0 ? seq[cur.seqIdx].row : state.rows[0], cur.p); });
+const sp = () => { const v = +$("speed").value; $("speedval").textContent = v + " changes a minute"; };
+$("speed").addEventListener("input", sp); sp();
+$("go").addEventListener("click", () => ringing ? stop() : start());
+
+setMethod("bob");
+document.fonts && document.fonts.ready.then(() => { drawGrid(); drawTower(); });
+requestAnimationFrame(tick);
+})();
+</script>
+
+</body></html>

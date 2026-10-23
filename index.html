@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&family=Bodoni+Moda:ital,opsz,wght@1,6..96,500&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -145,6 +145,67 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
       rows.forEach(([set,click],i)=>{for(let j=0;j<4;j++){const cx=216+j*18,cy=62+i*28;
         s+=j<set?`<circle cx="${cx}" cy="${cy}" r="6" fill="${b.accent}"/>`:j<set+click?`<circle cx="${cx}" cy="${cy}" r="5" fill="none" stroke="${b.accent}" stroke-width="2"/>`:`<circle cx="${cx}" cy="${cy}" r="6" fill="#2a2f33"/>`}});
       return s;
+    },
+    harmonograph(b,r){
+      let s=`<rect width="320" height="180" fill="#1d4680"/>`;
+      const X={w:2*Math.PI/1.6*2/3*1.004,ph:r()*6.3,d:.006},Y={w:2*Math.PI/1.6,ph:r()*6.3,d:.007};
+      let d='';
+      for(let t=0;t<300;t+=.03){const ex=Math.exp(-X.d*t),ey=Math.exp(-Y.d*t);
+        const x=160+70*Math.sin(X.w*t+X.ph)*ex, y=90+70*Math.sin(Y.w*t+Y.ph)*ey;
+        d+=(t?'L':'M')+x.toFixed(1)+' '+y.toFixed(1)}
+      return s+`<path d="${d}" fill="none" stroke="${b.fg}" stroke-width=".45" opacity=".8"/><circle cx="160" cy="90" r="3" fill="${b.accent}"/>`;
+    },
+    marble(b,r){
+      const cols=['#d6a13f','#283b6e','#a5302b','#f1eee4','#3c8676'];
+      let s=`<rect width="320" height="180" fill="#c4cbbd"/><g>`;
+      // concentric stones, then combed with a sine displacement drawn as wavy bands
+      for(let i=0;i<14;i++){const cx=r()*320,cy=r()*180;let rad=40+r()*30;
+        for(let k=0;k<5;k++){s+=`<circle cx="${cx.toFixed(0)}" cy="${cy.toFixed(0)}" r="${(rad*(1-k*.19)).toFixed(1)}" fill="${cols[(i+k)%cols.length]}"/>`}}
+      s+=`</g>`;
+      // comb lines
+      let d='';for(let x=10;x<320;x+=22)d+=`M${x} 0L${x} 180`;
+      return `<defs><filter id="comb" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="0.004 0.04" numOctaves="1" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="38" xChannelSelector="R" yChannelSelector="G"/></filter></defs><g filter="url(#comb)">${s}</g>`;
+    },
+    almanac(b){
+      const sky=[['#9cc4e6',0,.18],['#5d83b6',.18,.24],['#32507e',.24,.29],['#1c2a4b',.29,.34],['#0b1222',.34,.66],['#1c2a4b',.66,.71],['#32507e',.71,.76],['#5d83b6',.76,.82],['#9cc4e6',.82,1]];
+      let s=sky.map(([c,a,z])=>`<rect x="${a*320}" width="${(z-a)*320+.5}" height="180" fill="${c}"/>`).join('');
+      let sun='',moon='';
+      for(let i=0;i<=64;i++){const x=i*5,t=i/64;
+        sun+=(i?'L':'M')+x+' '+(90-62*Math.cos(t*2*Math.PI)).toFixed(1);
+        moon+=(i?'L':'M')+x+' '+(90+40*Math.cos((t-.3)*2*Math.PI)).toFixed(1)}
+      return s+`<rect x="${.42*320}" y="20" width="${.24*320}" height="140" fill="${b.accent}" opacity=".14"/><line x1="0" x2="320" y1="90" y2="90" stroke="#fff" stroke-opacity=".6"/>
+        <path d="${moon}" fill="none" stroke="#e9e4d0" stroke-width="1.6"/><path d="${sun}" fill="none" stroke="#f2c14e" stroke-width="2"/>`;
+    },
+    blueline(b){
+      // Plain Bob Minor, one lead plus a bit, drawn as in method books
+      const pn='x.16.x.16.x.16.x.16.x.16.x.12'.split('.');
+      const ch=(row,tok)=>{const pl=tok==='x'?[]:tok.split('').map(Number),q=row.slice();let i=0;while(i<6){if(pl.includes(i+1)){i++;continue}if(i+1<6&&!pl.includes(i+2)){[q[i],q[i+1]]=[q[i+1],q[i]];i+=2}else i++}return q};
+      let rows=[[1,2,3,4,5,6]];for(let k=0;k<36;k++)rows.push(ch(rows[rows.length-1],pn[k%12]));
+      let s=`<rect width="320" height="180" fill="${b.bg}"/>`, digits='';
+      const cols=3,cw=16,rh=13.4,colW=cw*6,x0=i=>22+i*(colW+10);
+      const path=(bell)=>{let d='';for(let c=0;c<cols;c++){for(let k=0;k<=12;k++){const rr=rows[c*12+k],p=rr.indexOf(bell);d+=(k?'L':'M')+(x0(c)+p*cw+cw/2)+' '+(8+k*rh)}}return d};
+      for(let c=0;c<cols;c++)for(let k=0;k<=12;k++)rows[c*12+k].forEach((bl,p)=>{if(bl===1||bl===2)return;digits+=`<text x="${x0(c)+p*cw+cw/2}" y="${8+k*rh+3.5}" font-size="9" font-family="monospace" fill="#8d7b5c" text-anchor="middle">${bl}</text>`});
+      return s+digits+`<path d="${path(1)}" fill="none" stroke="#d0614a" stroke-width="1.2"/><path d="${path(2)}" fill="none" stroke="${b.accent2}" stroke-width="2.6" stroke-linejoin="round"/>`;
+    },
+    weave(b){
+      // goose eye: point threading + tromp as writ on a 2/2 twill tie-up
+      const th=[0,1,2,3,0,1,2,1,0,3,2,1],tie=[[1,0,0,1],[1,1,0,0],[0,1,1,0],[0,0,1,1]];
+      const cell=10,n=32,ox=0,oy=0;let s=`<rect width="320" height="180" fill="${b.bg}"/>`;
+      for(let p=0;p<18;p++)for(let e=0;e<n;e++){const up=tie[th[e%12]][th[p%12]];
+        s+=`<rect x="${ox+e*cell}" y="${oy+p*cell}" width="${cell}" height="${cell}" fill="${up?'#273760':'#e7dec6'}" stroke="#c3cabf" stroke-width=".5"/>`}
+      return s;
+    },
+    snowflake(b,r){
+      let s=`<defs><radialGradient id="win" cx=".5" cy=".45" r=".75"><stop offset="0" stop-color="#1d2f45"/><stop offset="1" stop-color="#0a121c"/></radialGradient>
+        <clipPath id="wedge"><path d="M0 0L100 0L86.6 50Z"/></clipPath></defs><rect width="320" height="180" fill="url(#win)"/>
+        <line x1="160" y1="0" x2="160" y2="22" stroke="${b.accent2}"/>`;
+      // a cut design inside one 30-degree wedge, then mirrored twelve times
+      let cut='';
+      cut+=`<circle cx="48" cy="0" r="7"/><circle cx="74" cy="0" r="5"/><path d="M26 -2L34 -2L30 9Z"/><circle cx="${(60*Math.cos(Math.PI/6)).toFixed(1)}" cy="${(60*Math.sin(Math.PI/6)).toFixed(1)}" r="5"/>
+        <path d="M95 8L80 20L95 32Z"/><circle cx="0" cy="0" r="8"/><path d="M58 12l6 4l-6 4l-6-4Z"/>`;
+      const wedge=`<g clip-path="url(#wedge)"><path d="M0 0L100 0L100 60Z" fill="#f5f3ec"/><g fill="#0d1520">${cut}</g></g>`;
+      let flake='';for(let k=0;k<6;k++)for(const m of[1,-1])flake+=`<g transform="rotate(${k*60}) scale(1 ${m})">${wedge}</g>`;
+      return s+`<g transform="translate(160 100) scale(.72) rotate(-90)">${flake}</g>`;
     },
     hypnogram(b,r){
       let s=`<rect width="320" height="180" fill="${b.bg}"/>`;

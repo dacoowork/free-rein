@@ -6,6 +6,66 @@
 */
 window.BUILDS = [
   {
+    slug: "sixfold",
+    title: "Sixfold",
+    date: "2026-10-21",
+    kind: "Toy",
+    blurb: "Cut a folded twelfth of paper with scissors or a punch and watch it open into a six-armed snowflake.",
+    font: "'Gloock', Georgia, serif",
+    bg: "#0d1520", fg: "#e9edf0", accent: "#a8d6e8", accent2: "#c9553f",
+    motif: "snowflake"
+  },
+  {
+    slug: "drawdown",
+    title: "Drawdown",
+    date: "2026-10-19",
+    kind: "Tool",
+    blurb: "Write a four-shaft weaving draft (threading, tie-up, treadling) and see the cloth it weaves, with float checks.",
+    font: "'Young Serif', Georgia, serif",
+    bg: "#eceee9", fg: "#1b2240", accent: "#a33a2b",
+    motif: "weave"
+  },
+  {
+    slug: "ringing-chamber",
+    title: "Ringing Chamber",
+    date: "2026-10-17",
+    kind: "Instrument",
+    blurb: "Ring six church bells in the English change-ringing style and follow your bell's blue line through Plain Bob, Grandsire or Cambridge.",
+    font: "'Cinzel', 'Trajan Pro', Georgia, serif", fontWeight: 700, letterSpacing: "0.04em",
+    bg: "#1d140d", fg: "#e9d6a6", accent: "#c9a24a", accent2: "#6aa6e0",
+    motif: "blueline"
+  },
+  {
+    slug: "night-ledger",
+    title: "Night Ledger",
+    date: "2026-10-16",
+    kind: "Tool",
+    blurb: "A stargazing almanac. For any place and night it finds the longest stretch of moon-free darkness, with twilight times and the week ahead.",
+    font: "'Bodoni Moda', Didot, Georgia, serif", fontWeight: 700,
+    bg: "#0c111b", fg: "#e4e8ef", accent: "#8dbfeb",
+    motif: "almanac"
+  },
+  {
+    slug: "ebru-tray",
+    title: "Ebru Tray",
+    date: "2026-10-16",
+    kind: "Toy",
+    blurb: "Turkish paper marbling. Float earth pigments on a bath, rake them into patterns, then lay paper to pull a print.",
+    font: "'Alegreya SC', Georgia, serif", fontWeight: 700, letterSpacing: "0.04em",
+    bg: "#161d1e", fg: "#ece6d6", accent: "#d39a3c",
+    motif: "marble"
+  },
+  {
+    slug: "harmonograph",
+    title: "Harmonograph",
+    date: "2026-10-13",
+    kind: "Simulation",
+    blurb: "A Victorian pendulum drawing machine. Each plate is tuned to a musical interval and spirals inward on cyanotype blue as friction drains it.",
+    font: "'IM Fell English SC', Georgia, serif",
+    bg: "#13284b", fg: "#eef3fb", accent: "#d8b46a",
+    motif: "harmonograph"
+  },
+  {
     slug: "ninety-minute-night",
     title: "Ninety Minute Night",
     date: "2026-10-12",
