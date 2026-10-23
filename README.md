@@ -14,7 +14,8 @@ Each build is a single self-contained HTML page that runs in the browser.
 
 1. Save the build's page as `builds/<slug>/index.html`.
 2. Add an entry to the top of `builds.js` with its title, date, a one-line blurb and its colours and font.
-3. Commit and push. GitHub Pages republishes within a minute or two.
+3. Bump the `?v=` date on the `builds.js` script tag in `index.html` and `play.html`, so browsers don't keep a cached list.
+4. Commit and push. GitHub Pages republishes within a minute or two.
 
 ## Hosting
 
