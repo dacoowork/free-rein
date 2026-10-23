@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "sprouts",
+    title: "Sprouts",
+    date: "2026-10-23",
+    kind: "Two-player game",
+    blurb: "John Conway's 1967 pen-and-paper game for two. Draw lines between spots, a new spot sprouts on each line, and whoever can't move loses.",
+    font: "'Bricolage Grotesque', 'Avenir Next', sans-serif", fontWeight: 800, letterSpacing: "-0.02em",
+    bg: "#fbfcfa", fg: "#1c2227", accent: "#1d4fd8", accent2: "#d33b27",
+    motif: "sprouts"
+  },
+  {
     slug: "sixfold",
     title: "Sixfold",
     date: "2026-10-21",

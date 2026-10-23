@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -79,7 +79,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-10-23"></script>
+<script src="builds.js?v=2026-10-23b"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -193,6 +193,18 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
       const cell=10,n=32,ox=0,oy=0;let s=`<rect width="320" height="180" fill="${b.bg}"/>`;
       for(let p=0;p<18;p++)for(let e=0;e<n;e++){const up=tie[th[e%12]][th[p%12]];
         s+=`<rect x="${ox+e*cell}" y="${oy+p*cell}" width="${cell}" height="${cell}" fill="${up?'#273760':'#e7dec6'}" stroke="#c3cabf" stroke-width=".5"/>`}
+      return s;
+    },
+    sprouts(b){
+      // squared exercise-book paper, red margin, a game a few moves in
+      let s=`<defs><pattern id="sq" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M12 0H0V12" fill="none" stroke="#d6e5ee" stroke-width=".8"/></pattern></defs>
+        <rect width="320" height="180" fill="${b.bg}"/><rect width="320" height="180" fill="url(#sq)"/><rect x="34" width="1.6" height="180" fill="#f0b7b0"/>`;
+      // a legal position four moves in: no crossings, no spot over three lines
+      const lines=[[b.accent,'M110 90C115 50 140 40 165 40C190 40 215 50 220 90'],[b.accent2,'M110 90C115 130 140 140 165 140C190 140 215 130 220 90'],
+        [b.accent,'M165 40C215 30 265 50 265 90C265 130 215 150 165 140'],[b.accent2,'M110 90C60 90 60 165 165 165C240 165 290 130 265 90']];
+      for(const[c,d]of lines)s+=`<path d="${d}" fill="none" stroke="${c}" stroke-width="2.6" stroke-linecap="round"/>`;
+      const spots=[[110,90,1],[220,90,0],[165,40,1],[165,140,1],[265,90,1],[165,165,0]];
+      for(const[x,y,dead]of spots)s+=`<circle cx="${x}" cy="${y}" r="5.5" fill="${dead?b.fg:b.bg}" stroke="${b.fg}" stroke-width="2"/>`;
       return s;
     },
     snowflake(b,r){
