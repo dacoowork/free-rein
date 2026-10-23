@@ -1,0 +1,398 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Night Garden</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* Layout: full-bleed canvas garden; name floats over the sky, season + planting bar sit on the soil line */
+:root{
+  --sky:#070d17;
+  --soil:#04080b;
+  --ink:#dfe7df;
+  --muted:#8fa3a3;
+  --pollen:#f2d68c;
+  --line:rgba(223,231,223,.16);
+  --glass:rgba(10,20,28,.62);
+  --display:"Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --body:"Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--sky);color:var(--ink);font-family:var(--body);overflow:hidden;-webkit-font-smoothing:antialiased}
+#garden{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:manipulation;cursor:crosshair}
+
+.top{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top,0px) + 18px) 16px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;pointer-events:none}
+.brand{min-width:0}
+h1{margin:0;font-family:var(--display);font-style:italic;font-weight:400;font-size:clamp(2rem,6vw,2.75rem);line-height:1;letter-spacing:-.01em;text-wrap:balance}
+.key{margin:.6rem 0 0;font-size:.78rem;line-height:1.55;color:var(--muted);max-width:30ch}
+.key b{color:var(--ink);font-weight:500}
+.meta{display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:auto;flex-shrink:0}
+.count{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.ghost{font:inherit;font-size:.78rem;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:999px;padding:.38rem .8rem;cursor:pointer}
+.ghost:hover{border-color:var(--muted)}
+.confirm{display:flex;gap:6px;align-items:center;font-size:.78rem}
+.confirm .yes{border-color:var(--pollen);color:var(--pollen)}
+
+.caption{position:fixed;left:16px;right:16px;margin:0 auto;max-width:520px;text-align:center;font-family:var(--display);font-size:1.25rem;line-height:1.35;color:var(--ink);text-shadow:0 1px 12px rgba(0,0,0,.8);opacity:0;transform:translateY(6px);transition:opacity .5s,transform .5s;pointer-events:none}
+.caption.show{opacity:1;transform:none}
+.caption small{display:block;margin-top:.35rem;font-family:var(--body);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+.plant{position:fixed;left:0;right:0;bottom:0;padding:10px 16px calc(env(safe-area-inset-bottom,0px) + 16px);display:flex;flex-direction:column;gap:10px}
+.row{max-width:560px;width:100%;margin:0 auto;display:flex;gap:8px;align-items:center;justify-content:space-between}
+.seasons{display:flex;gap:2px;border:1px solid var(--line);border-radius:999px;padding:2px;background:var(--glass);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);min-width:0}
+.seasons button{font:inherit;font-size:.74rem;color:var(--muted);background:transparent;border:0;border-radius:999px;padding:.34rem .62rem;cursor:pointer;white-space:nowrap;position:relative}
+.seasons button:hover{color:var(--ink)}
+.seasons button[aria-pressed="true"]{background:rgba(223,231,223,.12);color:var(--ink)}
+.seasons button.now::after{content:"";position:absolute;top:4px;right:4px;width:4px;height:4px;border-radius:50%;background:var(--pollen)}
+.sound{display:flex;align-items:center;gap:.45rem;flex-shrink:0}
+.sound svg{width:14px;height:14px}
+.sound[aria-pressed="true"]{border-color:var(--pollen);color:var(--pollen)}
+#form{display:flex;gap:8px}
+#seed{flex:1;min-width:0;font:inherit;font-size:1rem;color:var(--ink);background:var(--glass);border:1px solid var(--line);border-radius:999px;padding:.8rem 1.1rem;outline:none;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#seed::placeholder{color:var(--muted)}
+#seed:focus-visible{border-color:var(--pollen)}
+.go{font:inherit;font-weight:600;font-size:.95rem;color:#14130c;background:var(--pollen);border:0;border-radius:999px;padding:0 1.25rem;cursor:pointer}
+.go:hover{filter:brightness(1.06)}
+button:focus-visible{outline:2px solid var(--pollen);outline-offset:2px}
+@media (max-width:420px){.key{max-width:22ch}.seasons button{padding:.34rem .48rem;font-size:.7rem}}
+</style>
+
+<canvas id="garden" aria-label="A night garden. Each thing you type grows into a plant."></canvas>
+
+<header class="top">
+  <div class="brand">
+    <h1>Night Garden</h1>
+    <p class="key"><b>Short lines</b> grow grass. <b>Questions</b> bloom. <b>Long thoughts</b> climb as vines. An <b>!</b> wakes the fireflies. Tap a plant to read it.</p>
+  </div>
+  <div class="meta">
+    <div class="count" id="count">0 plants</div>
+    <div id="clearWrap"><button class="ghost" id="clear" type="button">Clear</button></div>
+  </div>
+</header>
+
+<p class="caption" id="caption" aria-live="polite"></p>
+
+<div class="plant">
+  <div class="row">
+    <div class="seasons" id="seasons" role="group" aria-label="Season">
+      <button type="button" data-s="spring">Spring</button>
+      <button type="button" data-s="summer">Summer</button>
+      <button type="button" data-s="autumn">Autumn</button>
+      <button type="button" data-s="winter">Winter</button>
+    </div>
+    <button class="ghost sound" id="sound" type="button" aria-pressed="false">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M2 6v4h3l4 3V3L5 6H2z" fill="currentColor" stroke="none"/><path id="waves" d="M11.5 5.5a3.5 3.5 0 0 1 0 5M13.5 3.5a6.3 6.3 0 0 1 0 9"/></svg>
+      <span id="soundLabel">Sound off</span>
+    </button>
+  </div>
+  <form id="form" class="row" autocomplete="off">
+    <label for="seed" hidden>Your thought</label>
+    <input id="seed" maxlength="280" placeholder="Type a thought and plant it…" enterkeyhint="go">
+    <button class="go" type="submit">Plant</button>
+  </form>
+</div>
+
+<script>
+(()=>{
+const cv=document.getElementById('garden'),ctx=cv.getContext('2d');
+const formWrap=document.querySelector('.plant'),cap=document.getElementById('caption');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const KEY='night-garden-v1',SKEY='night-garden-season',GROW=3800,MAX=90;
+let W=0,H=0,DPR=1,ground=0,bg=null,stars=[],flies=[],drift=[],plants=[],highlight=null,capTimer=0;
+
+function hash(s){let h=2166136261;for(const c of s){h^=c.codePointAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const ease=x=>1-Math.pow(1-x,3);
+const lerp=(a,b,k)=>a+(b-a)*k;
+
+/* ---------- Seasons ---------- */
+const SEASONS={
+  spring:{lh:100,ls:52,ll:56,vr:.5,leaf:1,petal:1,ph:0,ps:70,pl:77,flies:12,fall:0,snow:0,petals:.035,frost:0,tr:150,tg:90,tb:120,ta:.035,star:1},
+  summer:{lh:132,ls:42,ll:45,vr:.4,leaf:1.15,petal:1.1,ph:0,ps:76,pl:72,flies:34,fall:0,snow:0,petals:0,frost:0,tr:90,tg:60,tb:30,ta:.05,star:.9},
+  autumn:{lh:28,ls:72,ll:52,vr:1,leaf:.85,petal:.7,ph:0,ps:46,pl:64,flies:7,fall:.06,snow:0,petals:0,frost:.06,tr:110,tg:50,tb:20,ta:.05,star:1},
+  winter:{lh:30,ls:12,ll:40,vr:.3,leaf:.12,petal:.28,ph:0,ps:14,pl:88,flies:0,fall:.004,snow:.5,petals:0,frost:.55,tr:120,tg:160,tb:220,ta:.07,star:1.25}
+};
+const LINES={spring:'Spring. Everything wakes a little greener.',summer:'Summer. The fireflies are out in force.',autumn:'Autumn. The leaves are turning.',winter:'Winter. Snow on the beds, the flowers closed.'};
+function realSeason(){const m=new Date().getMonth();return m>=2&&m<=4?'spring':m<=7&&m>=5?'summer':m>=8&&m<=10?'autumn':'winter'}
+let season=(()=>{try{const s=localStorage.getItem(SKEY);if(SEASONS[s])return s}catch(e){}return realSeason()})();
+const S={...SEASONS[season]};
+function stepSeason(){const T=SEASONS[season],k=reduce?1:.025;for(const key in T)S[key]=lerp(S[key],T[key],k)}
+
+function kindOf(t){t=t.trim();if(/\?\s*$/.test(t))return'flower';if(t.length>60)return'vine';if(t.split(/\s+/).length<=3)return'grass';return'fern'}
+const KIND_NAME={flower:'a question, in bloom',vine:'a long thought, climbing',grass:'a short line, as grass',fern:'a thought, as a fern'};
+
+function build(p){
+  const r=rng(p.seed),k=kindOf(p.text),len=p.text.length,words=p.text.trim().split(/\s+/).length;
+  const g={kind:k,hue:p.seed%360,phase:r()*6.283,spark:p.text.includes('!'),var:((p.seed>>8)%60)-30};
+  const maxH=ground*0.6;
+  if(k==='grass'){
+    const n=3+Math.floor(r()*4);g.blades=[];
+    for(let i=0;i<n;i++)g.blades.push({dx:(r()-.5)*20,h:Math.min(maxH,30+r()*40+len*1.6),bend:(r()-.5)*36});
+    g.height=Math.max(...g.blades.map(b=>b.h));g.width=26;
+  }else{
+    const h=k==='vine'?Math.min(maxH,150+len*1.4):k==='flower'?Math.min(maxH*.85,110+len*2+r()*40):Math.min(maxH*.7,80+len*2+r()*30);
+    const n=k==='vine'?24:12,seg=h/n,pts=[{x:0,y:0}];let x=0,dr=(r()-.5)*1.2;
+    for(let i=1;i<=n;i++){
+      if(k==='vine')x=Math.sin(i*.55+g.phase)*(10+i*.9);
+      else{dr+=(r()-.5)*.6;x+=dr*seg*.12}
+      pts.push({x,y:-i*seg});
+    }
+    g.pts=pts;g.height=h;g.width=k==='vine'?44:30;
+    const lc=k==='flower'?Math.min(4,words):Math.min(n-2,words+1);g.leaves=[];
+    for(let i=0;i<lc;i++)g.leaves.push({i:1+Math.floor((i+.5)/lc*(n-2)),side:i%2?1:-1,size:7+r()*9+(k==='vine'?2:0),ang:.45+r()*.5});
+    if(k==='vine'){g.tendrils=[];for(let i=4;i<n;i+=4+Math.floor(r()*3))g.tendrils.push({i,side:r()<.5?-1:1,s:6+r()*6})}
+    if(k==='flower'){g.petals=5+Math.floor(r()*4);g.petalLen=10+Math.min(14,words*1.5)+r()*4;g.petalHue=(g.hue+150+r()*80)%360}
+  }
+  return g;
+}
+function rebuild(){for(const p of plants){p.px=p.x*W;p.geo=build(p)}computeLean()}
+function computeLean(){
+  const fl=plants.filter(p=>p.geo.kind==='flower');
+  for(const p of fl){let best=null,bd=1e9;for(const q of fl){if(q===p)continue;const d=Math.abs(q.px-p.px);if(d<bd){bd=d;best=q}}
+    p.geo.lean=best&&bd<W*.7?Math.sign(best.px-p.px||1)*Math.min(34,5000/(bd+60)):0}
+}
+
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(Array.isArray(s))return s}catch(e){}return null}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(plants.map(({text,x,seed,born,sample})=>({text,x,seed,born,sample}))))}catch(e){}}
+function samples(){
+  const L=[
+    ["Will the frost hold off until the tulips are in?",.14],
+    ["quiet street",.27],
+    ["I keep meaning to call my grandmother back, and every evening I find a reason to wait until tomorrow.",.42],
+    ["Finally finished the shed roof!",.58],
+    ["rain soon",.7],
+    ["What would I build if no one was watching?",.86]
+  ];
+  return L.map(([text,x],i)=>({text,x,seed:hash(text),born:Date.now()-60000-i,sample:true}));
+}
+function pickX(){let best=.5,bd=-1;for(let i=0;i<10;i++){const x=.08+Math.random()*.84;let d=1;for(const p of plants)d=Math.min(d,Math.abs(p.x-x));if(d>bd){bd=d;best=x}}return best}
+
+function resize(){
+  DPR=Math.min(2,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;
+  cv.width=W*DPR;cv.height=H*DPR;
+  const fh=formWrap.getBoundingClientRect().height;ground=H-Math.max(130,fh+14);
+  cap.style.bottom=(H-ground+22)+'px';
+  paintBg();
+  const r=rng(7);stars=[];const ns=Math.round(W*H/5200);
+  for(let i=0;i<ns;i++)stars.push({x:r()*W,y:r()*ground*.82,s:r()*1.2+.3,ph:r()*6.28,sp:.4+r()*1.4});
+  rebuild();
+}
+function newFly(x,y,life){return{x:x??Math.random()*W,y:y??ground-Math.random()*ground*.55,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.3,ph:Math.random()*6.28,life:life??Infinity,amb:life==null}}
+
+function paintBg(){
+  bg=document.createElement('canvas');bg.width=W*DPR;bg.height=H*DPR;const b=bg.getContext('2d');b.scale(DPR,DPR);
+  const gr=b.createLinearGradient(0,0,0,ground);gr.addColorStop(0,'#050a13');gr.addColorStop(.7,'#0b1823');gr.addColorStop(1,'#132833');
+  b.fillStyle=gr;b.fillRect(0,0,W,H);
+  const mx=W*.8,my=Math.max(150,H*.2),mr=Math.min(30,W*.06);
+  const halo=b.createRadialGradient(mx,my,mr*.6,mx,my,mr*6);halo.addColorStop(0,'rgba(233,236,223,.16)');halo.addColorStop(1,'rgba(233,236,223,0)');
+  b.fillStyle=halo;b.fillRect(0,0,W,ground);
+  b.fillStyle='#e9ecdf';b.beginPath();b.arc(mx,my,mr,0,7);b.fill();
+  b.fillStyle='rgba(7,13,23,.12)';b.beginPath();b.arc(mx-mr*.3,my-mr*.15,mr*.22,0,7);b.arc(mx+mr*.3,my+mr*.3,mr*.14,0,7);b.fill();
+  const hill=(amp,off,col,f)=>{b.fillStyle=col;b.beginPath();b.moveTo(0,H);for(let x=0;x<=W;x+=8){b.lineTo(x,ground-off-amp*(.5+.5*Math.sin(x*f+off))-amp*.4*Math.sin(x*f*2.7+1))}b.lineTo(W,H);b.fill()};
+  hill(46,34,'#0c1a22',.006);hill(26,10,'#08121a',.011);
+  const sg=b.createLinearGradient(0,ground,0,H);sg.addColorStop(0,'#071016');sg.addColorStop(1,'#030609');
+  b.fillStyle=sg;b.fillRect(0,ground,W,H-ground);
+  b.strokeStyle='rgba(143,163,163,.12)';b.lineWidth=1;b.beginPath();b.moveTo(0,ground+.5);b.lineTo(W,ground+.5);b.stroke();
+}
+
+function xy(p,pt,t){
+  const g=p.geo,f=g.height?-pt.y/g.height:0;
+  const sw=reduce?0:Math.sin(t*.0007+g.phase+p.px*.004)*(4+g.height*.05)*f*f;
+  return[p.px+pt.x+sw+(g.lean||0)*f*f,ground+pt.y];
+}
+const leafHue=g=>S.lh+g.var*S.vr;
+
+function drawPlant(p,t){
+  const g=p.geo,prog=reduce?1:ease(clamp((t-p.born)/GROW));if(prog<=0)return;
+  const lh=leafHue(g),col=`hsl(${lh-10},${S.ls*.6}%,${S.ll+6}%)`,leaf=`hsla(${lh},${S.ls}%,${S.ll}%,.92)`;
+  ctx.save();ctx.shadowColor=`hsla(${lh},60%,60%,.5)`;ctx.shadowBlur=highlight===p?18:6;
+  ctx.strokeStyle=col;ctx.lineCap='round';
+  if(g.kind==='grass'){
+    ctx.lineWidth=1.7;ctx.strokeStyle=`hsl(${lh},${S.ls*.8}%,${S.ll+4}%)`;
+    const droop=S.frost*.6;
+    for(const b of g.blades){const h=b.h*prog*(1-droop*.35),sw=reduce?0:Math.sin(t*.0009+g.phase+b.dx)*h*.08;
+      const x0=p.px+b.dx,bend=b.bend*(1+droop*1.4);ctx.beginPath();ctx.moveTo(x0,ground);ctx.quadraticCurveTo(x0+bend*.4,ground-h*.55,x0+bend*prog+sw,ground-h);ctx.stroke()}
+    if(g.spark)tip(p.px+g.blades[0].dx+g.blades[0].bend,ground-g.blades[0].h*prog,t,prog);
+    ctx.restore();return;
+  }
+  const n=g.pts.length-1,upto=prog*n,P=[];
+  for(let i=0;i<=Math.ceil(upto);i++){let pt=g.pts[i];if(i>upto){const a=g.pts[i-1],fr=upto-(i-1);pt={x:a.x+(pt.x-a.x)*fr,y:a.y+(pt.y-a.y)*fr}}P.push(xy(p,pt,t))}
+  ctx.lineWidth=g.kind==='vine'?1.9:2.3;ctx.beginPath();ctx.moveTo(P[0][0],P[0][1]);
+  for(let i=1;i<P.length-1;i++){ctx.quadraticCurveTo(P[i][0],P[i][1],(P[i][0]+P[i+1][0])/2,(P[i][1]+P[i+1][1])/2)}
+  if(P.length>1)ctx.lineTo(P[P.length-1][0],P[P.length-1][1]);ctx.stroke();
+  ctx.fillStyle=leaf;
+  for(const L of g.leaves){if(L.i>upto)continue;const s=clamp((upto-L.i)/2.5)*S.leaf,q=xy(p,g.pts[L.i],t),len=L.size*2*s,w=L.size*.55*s;if(len<.6)continue;
+    const sway=reduce?0:Math.sin(t*.0011+L.i+g.phase)*.12,droop=S.frost*.5;
+    ctx.save();ctx.translate(q[0],q[1]);ctx.rotate((L.side>0?-L.ang+droop:Math.PI+L.ang-droop)+sway);
+    ctx.beginPath();ctx.moveTo(0,0);ctx.quadraticCurveTo(len*.5,-w,len,0);ctx.quadraticCurveTo(len*.5,w,0,0);ctx.fill();ctx.restore()}
+  if(g.tendrils){ctx.lineWidth=1.1;for(const T of g.tendrils){if(T.i>upto-1)continue;const q=xy(p,g.pts[T.i],t),s=T.s*clamp((upto-T.i)/3)*(.5+.5*S.leaf);
+    ctx.beginPath();for(let a=0;a<=9.4;a+=.3){const rr=s*(1-a/10),x=q[0]+T.side*(s+Math.cos(a)*rr),y=q[1]-Math.sin(a)*rr;a?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.stroke()}}
+  const top=P[P.length-1];
+  if(g.kind==='flower'&&prog>.78){
+    const b=ease(clamp((prog-.78)/.22)),rot=(reduce?0:t*.00008)+g.phase,open=S.petal;
+    ctx.save();ctx.translate(top[0],top[1]);ctx.shadowColor=`hsla(${g.petalHue},80%,70%,.7)`;ctx.shadowBlur=14*open;
+    ctx.fillStyle=`hsla(${g.petalHue},${S.ps}%,${S.pl}%,.85)`;
+    for(let i=0;i<g.petals;i++){ctx.save();ctx.rotate(rot+i/g.petals*6.283);ctx.beginPath();const L=g.petalLen*b*open;ctx.ellipse(L*.55,0,L*.55,Math.max(.5,L*.26),0,0,6.283);ctx.fill();ctx.restore()}
+    ctx.fillStyle='#f2d68c';ctx.beginPath();ctx.arc(0,0,3.2*b*(.5+.5*open),0,6.283);ctx.fill();
+    if(S.frost>.3){ctx.fillStyle=`rgba(240,246,250,${(S.frost-.3)*1.4})`;ctx.beginPath();ctx.ellipse(0,-3,g.petalLen*.5,2.4,0,0,6.283);ctx.fill()}
+    ctx.restore();
+  }else if(prog<1||g.kind==='vine'){
+    ctx.fillStyle=`hsla(${lh},60%,75%,.9)`;ctx.beginPath();ctx.arc(top[0],top[1],1.8,0,6.283);ctx.fill();
+  }
+  if(g.spark)tip(top[0],top[1],t,prog);
+  ctx.restore();
+}
+function tip(x,y,t,prog){const a=.35+.35*Math.sin(t*.003);ctx.save();ctx.shadowColor='#f2d68c';ctx.shadowBlur=16;ctx.fillStyle=`rgba(242,214,140,${a*prog})`;ctx.beginPath();ctx.arc(x,y-4,2.2,0,6.283);ctx.fill();ctx.restore()}
+
+/* ---------- Falling things: leaves, snow, petals ---------- */
+function spawnDrift(t){
+  if(reduce||drift.length>260)return;
+  const leafy=plants.filter(p=>p.geo.leaves&&p.geo.leaves.length&&t-p.born>GROW);
+  if(leafy.length&&Math.random()<S.fall*Math.min(1,leafy.length/4)){
+    const p=leafy[Math.floor(Math.random()*leafy.length)],L=p.geo.leaves[Math.floor(Math.random()*p.geo.leaves.length)],q=xy(p,p.geo.pts[L.i],t);
+    drift.push({k:'leaf',x:q[0],y:q[1],vx:(Math.random()-.5)*.6,vy:.3+Math.random()*.3,r:Math.random()*6,vr:(Math.random()-.5)*.08,s:L.size*.8,h:leafHue(p.geo)+(Math.random()-.5)*16,life:1});
+  }
+  if(Math.random()<S.snow)drift.push({k:'snow',x:Math.random()*W,y:-6,vx:0,vy:.35+Math.random()*.6,r:Math.random()*6,vr:0,s:.8+Math.random()*1.8,life:1});
+  const fl=plants.filter(p=>p.geo.kind==='flower'&&t-p.born>GROW);
+  if(fl.length&&Math.random()<S.petals*Math.min(1,fl.length/2)){
+    const p=fl[Math.floor(Math.random()*fl.length)],q=xy(p,p.geo.pts[p.geo.pts.length-1],t);
+    drift.push({k:'petal',x:q[0],y:q[1],vx:.3+Math.random()*.6,vy:.15+Math.random()*.25,r:Math.random()*6,vr:(Math.random()-.5)*.06,s:p.geo.petalLen*.35,h:p.geo.petalHue,life:1});
+  }
+}
+function drawDrift(t){
+  for(let i=drift.length-1;i>=0;i--){const d=drift[i];
+    d.x+=d.vx+Math.sin(t*.001+d.r)*(d.k==='snow'?.3:.5);d.y+=d.vy;d.r+=d.vr;
+    if(d.y>=ground+2){d.y=ground+2;d.vx=0;d.vy=0;d.vr=0;d.life-=d.k==='snow'?.006:.003}
+    if(d.life<=0||d.x<-20||d.x>W+20){drift.splice(i,1);continue}
+    ctx.save();ctx.globalAlpha=clamp(d.life);ctx.translate(d.x,d.y);
+    if(d.k==='snow'){ctx.fillStyle='rgba(236,242,246,.85)';ctx.beginPath();ctx.arc(0,0,d.s,0,6.283);ctx.fill()}
+    else{ctx.rotate(d.r);const L=d.s*(d.k==='leaf'?1.6:1);ctx.fillStyle=d.k==='leaf'?`hsla(${d.h},${S.ls}%,${S.ll}%,.9)`:`hsla(${d.h},70%,78%,.8)`;
+      ctx.beginPath();ctx.moveTo(-L/2,0);ctx.quadraticCurveTo(0,-L*.32,L/2,0);ctx.quadraticCurveTo(0,L*.32,-L/2,0);ctx.fill()}
+    ctx.restore()}
+}
+function balanceFlies(){
+  const amb=flies.filter(f=>f.amb&&f.life===Infinity),target=Math.round(S.flies);
+  if(amb.length<target&&Math.random()<.1)flies.push(newFly());
+  else if(amb.length>target&&Math.random()<.1)amb[0].life=60;
+}
+
+function frame(t){
+  const now=Date.now();stepSeason();balanceFlies();spawnDrift(now);
+  ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(bg,0,0);ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.fillStyle=`rgba(${S.tr|0},${S.tg|0},${S.tb|0},${S.ta})`;ctx.fillRect(0,0,W,ground);
+  for(const s of stars){const a=(reduce?.6:.35+.45*Math.sin(t*.001*s.sp+s.ph))*Math.min(1,S.star);ctx.fillStyle=`rgba(223,231,223,${a})`;ctx.fillRect(s.x,s.y,s.s*S.star,s.s*S.star)}
+  if(S.frost>.01){const fg=ctx.createLinearGradient(0,ground-6,0,ground+28);fg.addColorStop(0,'rgba(232,240,246,0)');fg.addColorStop(.25,`rgba(232,240,246,${S.frost*.5})`);fg.addColorStop(1,'rgba(232,240,246,0)');ctx.fillStyle=fg;ctx.fillRect(0,ground-6,W,34)}
+  for(const p of plants)drawPlant(p,now);
+  drawDrift(t);
+  ctx.save();ctx.shadowColor='#f2d68c';ctx.shadowBlur=10;
+  for(let i=flies.length-1;i>=0;i--){const f=flies[i];
+    if(!reduce){f.vx+=(Math.random()-.5)*.04;f.vy+=(Math.random()-.5)*.04;f.vx*=.98;f.vy*=.98;f.x+=f.vx;f.y+=f.vy;
+      if(f.x<0)f.x=W;if(f.x>W)f.x=0;if(f.y>ground-6)f.vy-=.05;if(f.y<ground*.3)f.vy+=.03}
+    if(f.life!==Infinity){f.life--;if(f.life<=0){flies.splice(i,1);continue}}
+    const fade=f.life===Infinity?1:clamp(f.life/60);
+    const a=(reduce?.7:.25+.75*Math.max(0,Math.sin(t*.002+f.ph)))*fade;
+    ctx.fillStyle=`rgba(242,214,140,${a})`;ctx.beginPath();ctx.arc(f.x,f.y,1.7,0,6.283);ctx.fill()}
+  ctx.restore();
+  if(soundOn&&plants.length&&now>nextChime){nextChime=now+6000+Math.random()*9000;const p=plants[Math.floor(Math.random()*plants.length)];bell(note(p,0),0,.05,3.2)}
+  requestAnimationFrame(frame);
+}
+
+/* ---------- Sound ---------- */
+let AC=null,master=null,wet=null,soundOn=false,pad=null,nextChime=0;
+const MAJOR=[1,9/8,5/4,3/2,5/3,2,9/4,5/2],MINOR=[1,6/5,4/3,3/2,9/5,2,12/5,8/3];
+const BASE=293.66;
+function scale(){return season==='spring'||season==='summer'?MAJOR:MINOR}
+function note(p,i){const sc=scale(),k=p.geo.kind,oct=k==='flower'?2:k==='grass'?1:k==='vine'?.5:1;return BASE*sc[((p.seed>>>(i*3))+i)%sc.length]*oct}
+function initAudio(){
+  AC=new (window.AudioContext||window.webkitAudioContext)();
+  master=AC.createGain();master.gain.value=0;master.connect(AC.destination);
+  const conv=AC.createConvolver(),len=Math.floor(AC.sampleRate*3.2),buf=AC.createBuffer(2,len,AC.sampleRate);
+  for(let c=0;c<2;c++){const d=buf.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.8)}
+  conv.buffer=buf;wet=AC.createGain();wet.gain.value=.6;wet.connect(conv);conv.connect(master);
+  const lp=AC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=420;lp.Q.value=.4;
+  const lfo=AC.createOscillator(),lg=AC.createGain();lfo.frequency.value=.05;lg.gain.value=160;lfo.connect(lg);lg.connect(lp.frequency);lfo.start();
+  const pg=AC.createGain();pg.gain.value=.045;lp.connect(pg);pg.connect(master);pg.connect(wet);
+  pad=[0,1,2].map(()=>{const o=AC.createOscillator();o.type='triangle';o.connect(lp);o.start();return o});
+  tunePad(true);
+}
+function tunePad(now){if(!pad)return;const r=BASE/4,sc=scale(),f=[r,r*3/2,r*2*sc[2]];pad.forEach((o,i)=>{o.detune.value=(i-1)*4;now?o.frequency.value=f[i]:o.frequency.setTargetAtTime(f[i],AC.currentTime,1.2)})}
+function bell(f,when=0,g=.16,dur=2.6){
+  if(!soundOn||!AC)return;const t=AC.currentTime+when;
+  [[1,1],[2.76,.26],[5.4,.07]].forEach(([m,a])=>{const o=AC.createOscillator(),e=AC.createGain();o.type='sine';o.frequency.value=f*m;
+    e.gain.setValueAtTime(0,t);e.gain.linearRampToValueAtTime(g*a,t+.012);e.gain.exponentialRampToValueAtTime(.0001,t+dur/Math.pow(m,.4));
+    o.connect(e);e.connect(master);e.connect(wet);o.start(t);o.stop(t+dur+.2)});
+}
+function plantSound(p){
+  const k=p.geo.kind;
+  if(k==='grass')bell(note(p,0),0,.12,1.4);
+  else if(k==='fern'){bell(note(p,0),0,.13);bell(note(p,1),.18,.1)}
+  else if(k==='vine'){for(let i=0;i<4;i++)bell(note(p,i),i*.24,.12,3)}
+  else{bell(note(p,0)/2,0,.1,2);const d=GROW*.8/1000;for(let i=0;i<3;i++)bell(note(p,i),d+i*.05,.09,3.4)}
+  if(p.geo.spark)for(let i=0;i<5;i++)bell(BASE*4*scale()[(i*2)%scale().length],.1+i*.07,.035,1.2);
+}
+const soundBtn=document.getElementById('sound'),soundLabel=document.getElementById('soundLabel'),waves=document.getElementById('waves');
+function renderSound(){soundBtn.setAttribute('aria-pressed',soundOn);soundLabel.textContent=soundOn?'Sound on':'Sound off';waves.style.opacity=soundOn?1:.25}
+soundBtn.addEventListener('click',()=>{
+  try{
+    if(!AC)initAudio();
+    soundOn=!soundOn;
+    if(soundOn){AC.resume();master.gain.cancelScheduledValues(AC.currentTime);master.gain.setTargetAtTime(.55,AC.currentTime,.6);nextChime=Date.now()+2500;
+      [0,2,4].forEach((s,i)=>bell(BASE*scale()[s],.15+i*.12,.08,3))}
+    else master.gain.setTargetAtTime(0,AC.currentTime,.3);
+  }catch(e){soundOn=false;say('Sound is not available here.<small>Your browser blocked audio</small>')}
+  renderSound();
+});
+document.addEventListener('visibilitychange',()=>{if(!AC)return;document.hidden?AC.suspend():soundOn&&AC.resume()});
+
+/* ---------- UI ---------- */
+function updateCount(){
+  const n=plants.length,s=plants.some(p=>p.sample);
+  document.getElementById('count').textContent=n===0?'Empty garden':`${n} plant${n===1?'':'s'}${s?' · sample seeds':''}`;
+}
+function say(html,ms=5200){cap.innerHTML=html;cap.classList.add('show');clearTimeout(capTimer);capTimer=setTimeout(()=>{cap.classList.remove('show');highlight=null},ms)}
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const seasonBtns=[...document.querySelectorAll('#seasons button')];
+function renderSeasons(){const real=realSeason();seasonBtns.forEach(b=>{b.setAttribute('aria-pressed',b.dataset.s===season);b.classList.toggle('now',b.dataset.s===real);b.title=b.dataset.s===real?'The season right now':''})}
+seasonBtns.forEach(b=>b.addEventListener('click',()=>{
+  if(b.dataset.s===season)return;season=b.dataset.s;try{localStorage.setItem(SKEY,season)}catch(e){}
+  renderSeasons();tunePad(false);say(LINES[season]+(season===realSeason()?'<small>the season right now</small>':''),3800);
+  if(soundOn){const sc=scale();[0,2,4,5].forEach((s,i)=>bell(BASE*sc[s],i*.16,.07,3.2))}
+}));
+
+document.getElementById('form').addEventListener('submit',e=>{
+  e.preventDefault();const inp=document.getElementById('seed'),text=inp.value.trim();if(!text)return;
+  const p={text,x:pickX(),seed:hash(text+Date.now()),born:Date.now()};p.px=p.x*W;p.geo=build(p);
+  plants.push(p);if(plants.length>MAX)plants.shift();computeLean();save();updateCount();inp.value='';
+  if(p.geo.spark){const tx=p.px,ty=ground-p.geo.height;for(let i=0;i<14;i++){const f=newFly(tx+(Math.random()-.5)*30,ty+(Math.random()-.5)*30,240+Math.random()*200);f.vx=(Math.random()-.5)*2;f.vy=-Math.random()*1.5;flies.push(f)}}
+  plantSound(p);
+  say(`Planted.<small>${KIND_NAME[p.geo.kind]}</small>`,2600);
+});
+
+cv.addEventListener('pointerdown',e=>{
+  const x=e.clientX,y=e.clientY;let best=null,bd=1e9;
+  for(const p of plants){const g=p.geo,dx=Math.abs(x-p.px-(g.lean||0)*.5);if(dx>g.width+10)continue;if(y<ground-g.height-30||y>ground+16)continue;if(dx<bd){bd=dx;best=p}}
+  if(best){highlight=best;bell(note(best,0),0,.12,2.4);const d=new Date(best.born).toLocaleDateString(undefined,{day:'numeric',month:'short'});
+    say(`${esc(best.text)}<small>${KIND_NAME[best.geo.kind]}${best.sample?' · sample':' · planted '+d}</small>`)}
+});
+
+const wrap=document.getElementById('clearWrap');
+function showClear(){wrap.innerHTML='<button class="ghost" id="clear" type="button">Clear</button>';document.getElementById('clear').onclick=askClear}
+function askClear(){
+  if(!plants.length)return;
+  wrap.innerHTML='<div class="confirm"><span>Clear the garden?</span><button class="ghost yes" type="button" id="yes">Clear</button><button class="ghost" type="button" id="no">Keep</button></div>';
+  document.getElementById('yes').onclick=()=>{plants=[];drift=[];save();updateCount();showClear();say('The soil is ready.<small>Type below to plant your first seed</small>',6000)};
+  document.getElementById('no').onclick=showClear;
+}
+document.getElementById('clear').onclick=askClear;
+
+plants=load()||samples();
+renderSeasons();renderSound();resize();updateCount();
+for(let i=0;i<Math.round(S.flies);i++)flies.push(newFly());
+addEventListener('resize',resize);
+requestAnimationFrame(frame);
+if(plants.length&&plants.every(p=>p.sample))setTimeout(()=>say('Six sample seeds are growing.<small>Plant your own below, or clear them first</small>',5500),600);
+})();
+</script>
+
+</body></html>

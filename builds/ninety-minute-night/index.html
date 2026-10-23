@@ -1,0 +1,211 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Ninety Minute Night</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,300;1,6..72,400&family=Manrope:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one narrow night-sky column — clock, mode switch, a row of alarm times, then the hypnogram of the chosen night. Deliberately single dark theme. */
+:root{
+  --sky:#0d1024; --sky-2:#151a36; --line:#2a3160; --ink:#e7e4f4; --dim:#9298c4;
+  --moon:#f2d58a; --rem:#8fb3ff; --deep:#5b4fd6;
+  --f-display:"Newsreader", Georgia, serif;
+  --f-body:"Manrope", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--sky);color:var(--ink)}
+body{font-family:var(--f-body);font-size:15px;line-height:1.55;
+  background:radial-gradient(120% 60% at 80% -10%, #262b5a 0%, var(--sky) 60%) fixed, var(--sky);
+  min-height:100%}
+.wrap{max-width:720px;margin:0 auto;padding-inline:20px;padding-block:40px 64px;display:flex;flex-direction:column;gap:32px}
+#stars{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.wrap>*{position:relative;z-index:1}
+header{display:flex;flex-direction:column;gap:6px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--moon)}
+h1{font-family:var(--f-display);font-weight:300;font-style:italic;font-size:clamp(40px,9vw,64px);line-height:1;margin:0;text-wrap:balance}
+.lede{color:var(--dim);max-width:52ch;margin:4px 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--sky-2)}
+.seg button{font:500 14px var(--f-body);color:var(--dim);background:none;border:0;border-radius:999px;padding:8px 16px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sky)}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+input[type=time],select{font:600 16px var(--f-mono);color:var(--ink);background:var(--sky-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+button:focus-visible,input:focus-visible,select:focus-visible,.slot:focus-visible{outline:2px solid var(--moon);outline-offset:2px}
+.now{font-family:var(--f-mono);color:var(--dim);font-size:13px}
+.now b{color:var(--ink);font-weight:600}
+.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.slot{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(21,26,54,.7);transition:border-color .2s,transform .2s}
+.slot:hover{border-color:var(--dim)}
+.slot .t{font:600 26px var(--f-mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.slot .m{font-size:12px;color:var(--dim)}
+.slot .tag{font-family:var(--f-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.slot.best .tag{color:var(--moon)}
+.slot[aria-pressed="true"]{border-color:var(--moon);background:rgba(242,213,138,.08)}
+.chart{display:flex;flex-direction:column;gap:10px}
+.chart h2{font-family:var(--f-display);font-style:italic;font-weight:400;font-size:24px;margin:0}
+.chart p{margin:0;color:var(--dim);font-size:14px;max-width:60ch}
+.svgbox{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:rgba(13,16,36,.6);padding:12px 8px 6px}
+svg text{font-family:var(--f-mono);font-size:10px;fill:var(--dim)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--dim)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+footer{font-size:12px;color:var(--dim);max-width:60ch}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<canvas id="stars" aria-hidden="true"></canvas>
+<main class="wrap">
+  <header>
+    <span class="eyebrow">Sleep cycle planner</span>
+    <h1>Wake between the waves.</h1>
+    <p class="lede">A night runs in cycles of roughly ninety minutes. Waking at the end of one, in light sleep, feels far easier than being pulled out of deep sleep halfway through.</p>
+  </header>
+
+  <section class="controls" aria-label="Settings">
+    <div class="seg" role="group" aria-label="Mode">
+      <button id="m-now" aria-pressed="true">Going to bed now</button>
+      <button id="m-wake" aria-pressed="false">I must wake at…</button>
+    </div>
+    <div class="field" id="wakeField" hidden>
+      <label for="wakeAt">Alarm</label>
+      <input type="time" id="wakeAt" value="07:00">
+    </div>
+    <div class="field">
+      <label for="latency">Time to fall asleep</label>
+      <select id="latency">
+        <option value="5">5 min</option><option value="10">10 min</option>
+        <option value="15" selected>15 min</option><option value="20">20 min</option>
+        <option value="30">30 min</option><option value="45">45 min</option>
+      </select>
+    </div>
+  </section>
+
+  <div class="now" id="status"></div>
+  <section class="slots" id="slots" aria-label="Suggested times"></section>
+
+  <section class="chart">
+    <h2 id="chartTitle">Your night</h2>
+    <p id="chartNote"></p>
+    <div class="svgbox"><svg id="hyp" viewBox="0 0 680 200" width="680" height="200" role="img" aria-label="Hypnogram of the chosen night"></svg></div>
+    <div class="legend">
+      <span><i style="background:var(--rem)"></i>REM, dreaming</span>
+      <span><i style="background:var(--dim)"></i>Light sleep N1–N2</span>
+      <span><i style="background:var(--deep)"></i>Deep sleep N3</span>
+    </div>
+  </section>
+
+  <footer>Cycles vary from about 80 to 110 minutes between people and through the night, so treat these as good targets rather than exact science. Most adults do best on five or six cycles.</footer>
+</main>
+
+<script>
+const CYCLE=90, $=id=>document.getElementById(id);
+let mode='now', chosen=null;
+
+const fmt=d=>d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+const hrs=m=>`${Math.floor(m/60)}h ${String(m%60).padStart(2,'0')}m`;
+const addMin=(d,m)=>new Date(d.getTime()+m*60000);
+
+function wakeTarget(){
+  const [h,m]=$('wakeAt').value.split(':').map(Number);
+  const now=new Date(), t=new Date(now); t.setHours(h,m||0,0,0);
+  if(t<=now) t.setDate(t.getDate()+1);
+  return t;
+}
+
+function compute(){
+  const lat=+$('latency').value, out=[];
+  for(const n of [6,5,4,3]){
+    if(mode==='now'){
+      const bed=new Date(), wake=addMin(bed,lat+n*CYCLE);
+      out.push({n,show:wake,bed,wake,lat});
+    }else{
+      const wake=wakeTarget(), bed=addMin(wake,-(lat+n*CYCLE));
+      if(bed<new Date()) continue;
+      out.push({n,show:bed,bed,wake,lat});
+    }
+  }
+  return out;
+}
+
+function render(){
+  const list=compute(), now=new Date(), lat=+$('latency').value;
+  $('status').innerHTML = mode==='now'
+    ? `It's <b>${fmt(now)}</b>. Asleep by about <b>${fmt(addMin(now,lat))}</b>, so set an alarm for:`
+    : `To wake at <b>${fmt(wakeTarget())}</b>, aim to be in bed by:`;
+  if(!list.find(o=>o.n===chosen)) chosen=list.length?list[0].n:null;
+  $('slots').innerHTML = list.length ? list.map((o,i)=>`
+    <button class="slot ${o.n>=5?'best':''}" data-n="${o.n}" aria-pressed="${o.n===chosen}">
+      <span class="tag">${o.n>=5?'Recommended':o.n===4?'Short night':'Emergency'}</span>
+      <span class="t">${fmt(o.show)}</span>
+      <span class="m">${o.n} cycles · ${hrs(o.n*CYCLE)} asleep</span>
+    </button>`).join('')
+    : `<p class="now">Every full-cycle bedtime has already passed. Sleep now and take the next full cycle you can.</p>`;
+  document.querySelectorAll('.slot').forEach(b=>b.onclick=()=>{chosen=+b.dataset.n;render();});
+  const pick=list.find(o=>o.n===chosen);
+  drawHyp(pick);
+}
+
+/* Simplified architecture: deep sleep heavy early, REM grows later. depth: 0 wake,1 REM,2 N1,3 N2,4 N3 */
+function cycleShape(i,total){
+  const deep=Math.max(0, 30-i*9), rem=Math.min(35, 10+i*7);
+  const n2=CYCLE-deep-rem-8;
+  const seq=[[2,5],[3,Math.round(n2/2)]];
+  if(deep>0) seq.push([4,deep]);
+  seq.push([3,n2-Math.round(n2/2)],[2,3],[1,rem]);
+  return seq;
+}
+
+function drawHyp(o){
+  const svg=$('hyp');
+  if(!o){svg.innerHTML='';$('chartNote').textContent='';return;}
+  const W=680,H=200,L=58,R=16,T=14,B=30, total=o.lat+o.n*CYCLE;
+  const x=m=>L+(W-L-R)*m/total, yv=d=>T+(H-T-B)*d/4;
+  const segs=[[0,o.lat]];
+  for(let i=0;i<o.n;i++) segs.push(...cycleShape(i,o.n));
+  let t=0, d='', blocks='';
+  segs.forEach(([depth,len],k)=>{
+    const x0=x(t), x1=x(t+len), y=yv(depth);
+    d += (k? `L${x0},${y}`:`M${x0},${y}`)+`L${x1},${y}`;
+    if(depth===1) blocks+=`<rect x="${x0}" y="${yv(1)-5}" width="${x1-x0}" height="10" rx="3" fill="var(--rem)" opacity=".85"/>`;
+    if(depth===4) blocks+=`<rect x="${x0}" y="${yv(4)-5}" width="${x1-x0}" height="10" rx="3" fill="var(--deep)"/>`;
+    t+=len;
+  });
+  const labels=['Awake','REM','N1','N2','N3'].map((s,i)=>
+    `<text x="${L-10}" y="${yv(i)+3}" text-anchor="end">${s}</text><line x1="${L}" x2="${W-R}" y1="${yv(i)}" y2="${yv(i)}" stroke="var(--line)" stroke-dasharray="2 4"/>`).join('');
+  let ticks='';
+  for(let i=0;i<=o.n;i++){
+    const m=o.lat+i*CYCLE, xx=x(m);
+    ticks+=`<line x1="${xx}" x2="${xx}" y1="${T}" y2="${H-B}" stroke="var(--line)"/>
+      <text x="${xx}" y="${H-B+16}" text-anchor="${i===0?'start':i===o.n?'end':'middle'}">${fmt(addMin(o.bed,m))}</text>`;
+  }
+  const wx=x(total);
+  svg.innerHTML = labels+ticks+blocks+
+    `<path d="${d}L${wx},${yv(0)}" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round"/>
+     <circle cx="${wx}" cy="${yv(0)}" r="5" fill="var(--moon)"/>
+     <text x="${wx-8}" y="${yv(0)+4}" text-anchor="end" style="fill:var(--moon)">alarm ${fmt(o.wake)}</text>`;
+  $('chartTitle').textContent = `${o.n} cycles, ${fmt(o.bed)} to ${fmt(o.wake)}`;
+  $('chartNote').textContent = 'Deep sleep crowds the first half of the night; REM stretches out toward morning. The alarm lands just after the final REM stretch, when you are closest to the surface.';
+}
+
+function setMode(m){
+  mode=m; $('m-now').setAttribute('aria-pressed',m==='now'); $('m-wake').setAttribute('aria-pressed',m==='wake');
+  $('wakeField').hidden = m!=='wake'; chosen=null; render();
+}
+$('m-now').onclick=()=>setMode('now'); $('m-wake').onclick=()=>setMode('wake');
+$('wakeAt').oninput=render; $('latency').onchange=render;
+setInterval(()=>{ if(mode==='now') render(); }, 30000);
+render();
+
+/* quiet starfield */
+(function(){
+  const c=$('stars'), g=c.getContext('2d'), still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let s=[];
+  function size(){c.width=innerWidth*devicePixelRatio;c.height=innerHeight*devicePixelRatio;
+    s=Array.from({length:110},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.2*devicePixelRatio+.3,p:Math.random()*6}));}
+  function frame(t){g.clearRect(0,0,c.width,c.height);
+    for(const k of s){g.globalAlpha=.25+.35*(1+Math.sin(t/1400+k.p))/2;g.fillStyle='#e7e4f4';g.beginPath();g.arc(k.x,k.y,k.r,0,7);g.fill();}
+    if(!still) requestAnimationFrame(frame);}
+  addEventListener('resize',size); size(); requestAnimationFrame(frame);
+})();
+</script>
+
+</body></html>
