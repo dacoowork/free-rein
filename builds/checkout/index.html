@@ -1,0 +1,417 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Checkout</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Work+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a single reading column of short sections, each anchored by a live till simulation drawn from above; shelf-edge-ticket readouts in signal yellow. */
+:root{
+  --bg:#f3f5f2; --surface:#ffffff; --ink:#17191c; --muted:#59606a; --rule:#d6dad5;
+  --yellow:#ffcf1a; --red:#d7261e; --cust:#3f6c93; --floor:#eceee9; --belt:#a7adb3;
+  --display:'Space Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+  --body:'Work Sans','Helvetica Neue',Arial,sans-serif;
+  --mono:'Space Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141619; --surface:#1c1f23; --ink:#eceeef; --muted:#a3a9b0; --rule:#343a40;
+  --yellow:#ffd43b; --red:#ff5d4f; --cust:#86b3dc; --floor:#22262b; --belt:#5d656d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141619; --surface:#1c1f23; --ink:#eceeef; --muted:#a3a9b0; --rule:#343a40;
+  --yellow:#ffd43b; --red:#ff5d4f; --cust:#86b3dc; --floor:#22262b; --belt:#5d656d; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6}
+.wrap{max-width:860px;margin:0 auto;padding-block:36px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px 22px;align-items:center;margin-bottom:36px}
+.lanelight{width:74px;height:74px;background:var(--yellow);color:#17191c;font-family:var(--display);font-weight:700;font-size:52px;line-height:74px;text-align:center;border-radius:6px;box-shadow:0 0 0 3px var(--ink)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(40px,8vw,68px);line-height:1;letter-spacing:-.03em;margin:0}
+.lede{grid-column:1/-1;margin:0;font-size:19px;max-width:60ch;text-wrap:pretty}
+section{margin-top:52px;display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(24px,4.2vw,32px);line-height:1.15;letter-spacing:-.02em;margin:0;text-wrap:balance}
+p{margin:0;max-width:65ch;text-wrap:pretty}
+code,.f{font-family:var(--mono);font-size:.88em;background:var(--floor);padding:1px 5px;border-radius:3px}
+.card{background:var(--surface);border:1.5px solid var(--rule);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.bar h3{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:0}
+canvas{display:block;width:100%;border-radius:5px;background:var(--floor)}
+.ctl{display:flex;flex-direction:column;gap:4px}
+.ctl .row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:15px}
+.ctl label{font-weight:600}
+.ctl .v{font-family:var(--mono);font-size:14px;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--ink)}
+button{font:inherit;cursor:pointer;color:var(--ink)}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:5px;overflow:hidden;flex-wrap:wrap}
+.seg button{background:transparent;border:0;padding:5px 10px;font-family:var(--mono);font-size:12.5px}
+.seg button+button{border-left:1.5px solid var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.btn{background:transparent;border:1.5px solid var(--ink);border-radius:5px;padding:5px 12px;font-family:var(--mono);font-size:12.5px}
+.btn:hover,.seg button:hover{background:color-mix(in srgb,var(--ink) 10%,transparent)}
+.seg button[aria-pressed="true"]:hover{background:var(--ink)}
+:focus-visible{outline:3px solid var(--cust);outline-offset:2px}
+.tickets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:560px){.tickets{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tk{border:1.5px solid var(--rule);border-radius:4px;padding:6px 9px 7px;display:flex;flex-direction:column;gap:1px;min-width:0}
+.tk span{font-size:12px;color:var(--muted);line-height:1.3}
+.tk b{font-family:var(--mono);font-size:21px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1.25}
+.tk b small{font-size:12px;font-weight:400;margin-left:3px}
+.tk.hot{background:var(--yellow);border-color:var(--yellow);color:#17191c}
+.tk.hot span{color:#3b3a2c}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:700px){.pair{grid-template-columns:minmax(0,1fr)}}
+.pair .tickets{grid-template-columns:repeat(3,minmax(0,1fr))}
+.verdict{font-weight:600;min-height:3.2em}
+.chartbox{overflow-x:auto}
+svg#chart{display:block;width:100%;height:auto}
+.ax{font-family:var(--mono);font-size:12px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--muted)}
+.legend i{display:inline-block;width:18px;height:0;border-top:3px solid var(--ink);vertical-align:middle;margin-right:6px}
+.legend .o i{border:2px solid var(--red);width:11px;height:11px;border-radius:50%}
+.formula{font-family:var(--mono);font-size:15px;background:var(--floor);border-radius:5px;padding:10px 12px;overflow-x:auto}
+.foot{margin-top:56px;padding-top:16px;border-top:1.5px solid var(--rule);font-size:14px;color:var(--muted)}
+@media (max-width:480px){body{font-size:16px}.lede{font-size:17px}.lanelight{width:58px;height:58px;font-size:40px;line-height:58px}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="lanelight" aria-hidden="true">7</div>
+    <h1>Checkout</h1>
+    <p class="lede">Why does a queue go from fine to hopeless when the shop gets only a little busier? Three experiments with supermarket tills, run on simulated shoppers who turn up at random and take a minute each, on average, to serve.</p>
+  </header>
+
+  <section id="one">
+    <p class="eyebrow">Experiment 1 · One till</p>
+    <h2>A little busier, a lot longer</h2>
+    <p>Till 7 can serve 60 shoppers an hour. Slide the number of shoppers arriving each hour and watch the line. At half capacity nobody waits long. Push the till to 90% busy and the average wait is nine minutes, even though the till still has spare time six minutes in every hour.</p>
+    <div class="card">
+      <div class="bar">
+        <h3>Till 7</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="seg" role="group" aria-label="Speed for till 7" id="sp1">
+            <button type="button" data-sp="30" aria-pressed="false">30×</button><button type="button" data-sp="120" aria-pressed="true">120×</button><button type="button" data-sp="480" aria-pressed="false">480×</button>
+          </div>
+          <button class="btn" type="button" id="pause1">Pause</button>
+        </div>
+      </div>
+      <canvas id="c1" height="240" aria-label="Top-down view of one till and its queue"></canvas>
+      <div class="ctl">
+        <div class="row"><label for="rate1">Shoppers arriving per hour</label><span class="v" id="rate1v">48 an hour · till 80% busy</span></div>
+        <input type="range" id="rate1" min="15" max="58" step="1" value="48">
+      </div>
+      <div class="tickets">
+        <div class="tk"><span>In the queue now</span><b id="q1">0</b></div>
+        <div class="tk"><span>Till busy, measured</span><b id="u1">0<small>%</small></b></div>
+        <div class="tk"><span>Average wait so far</span><b id="w1">–</b></div>
+        <div class="tk hot"><span>Predicted average wait</span><b id="p1">4.0<small>min</small></b></div>
+      </div>
+      <p class="v" id="n1" style="font-size:13px;color:var(--muted);font-family:var(--mono)">Measuring since the last change: 0 shoppers served.</p>
+    </div>
+  </section>
+
+  <section id="two">
+    <p class="eyebrow">Experiment 2 · The hockey stick</p>
+    <h2>The curve that bends upward</h2>
+    <p>For one till, the average wait depends on just two things: how busy the till is, written <span class="f">ρ</span>, and how much basket sizes vary. The Pollaczek–Khinchine formula puts them together:</p>
+    <div class="formula">wait = ρ ⁄ (1 − ρ) × (1 + c²) ⁄ 2 × service time</div>
+    <p>The first part is what makes the hockey stick. As <span class="f">ρ</span> heads for 1, <span class="f">1 − ρ</span> heads for zero and the wait has no ceiling. The second part, with <span class="f">c</span> the spread of basket sizes, scales the whole curve. If every basket took exactly a minute, waits would halve. Mix in weekly shops behind people buying a sandwich and they go up instead. Pick a mix here and it also changes the shoppers at till 7.</p>
+    <div class="card">
+      <div class="bar">
+        <h3>Wait against how busy the till is</h3>
+        <div class="seg" role="group" aria-label="Basket mix" id="mix">
+          <button type="button" data-c2="0" aria-pressed="false">All the same</button><button type="button" data-c2="1" aria-pressed="true">Normal mix</button><button type="button" data-c2="3" aria-pressed="false">Wildly mixed</button>
+        </div>
+      </div>
+      <div class="chartbox">
+        <svg id="chart" viewBox="0 0 600 330" role="img" aria-label="Average wait in minutes against till utilisation, for three basket mixes"></svg>
+      </div>
+      <div class="legend">
+        <span><i></i>Predicted, chosen mix</span>
+        <span><i style="border-top-color:var(--belt);border-top-width:2px"></i>Other mixes</span>
+        <span class="o"><i></i>Measured at till 7</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="three">
+    <p class="eyebrow">Experiment 3 · Four tills</p>
+    <h2>One line or four?</h2>
+    <p>The same shoppers, with the same baskets, arrive at two identical rows of four tills. On the left each shopper joins the shortest line and stays in it. On the right everyone waits in one snake and goes to the next free till. The snake is faster on average, and nobody watches a later arrival get served first.</p>
+    <div class="card">
+      <div class="bar">
+        <h3>Same shoppers, two layouts</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="seg" role="group" aria-label="Speed for four tills" id="sp3">
+            <button type="button" data-sp="30" aria-pressed="false">30×</button><button type="button" data-sp="120" aria-pressed="true">120×</button><button type="button" data-sp="480" aria-pressed="false">480×</button>
+          </div>
+          <button class="btn" type="button" id="pause3">Pause</button>
+          <button class="btn" type="button" id="reset3">Reset</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <div class="row"><label for="rate3">Shoppers arriving per hour</label><span class="v" id="rate3v">216 an hour · tills 90% busy</span></div>
+        <input type="range" id="rate3" min="120" max="230" step="2" value="216">
+      </div>
+      <div class="pair">
+        <div class="card" style="padding:10px;border-style:dashed">
+          <h3 style="font-family:var(--mono);font-size:12.5px;margin:0">Four lines · join the shortest</h3>
+          <canvas id="cL" height="300" aria-label="Four tills, each with its own line"></canvas>
+          <div class="tickets">
+            <div class="tk"><span>Average wait</span><b id="wL">–</b></div>
+            <div class="tk"><span>Longest wait</span><b id="mL">–</b></div>
+            <div class="tk"><span>Overtaken</span><b id="oL">–</b></div>
+          </div>
+        </div>
+        <div class="card" style="padding:10px;border-style:dashed">
+          <h3 style="font-family:var(--mono);font-size:12.5px;margin:0">One snake · next free till</h3>
+          <canvas id="cS" height="300" aria-label="Four tills fed by one serpentine queue"></canvas>
+          <div class="tickets">
+            <div class="tk"><span>Average wait</span><b id="wS">–</b></div>
+            <div class="tk"><span>Longest wait</span><b id="mS">–</b></div>
+            <div class="tk"><span>Overtaken</span><b id="oS">–</b></div>
+          </div>
+        </div>
+      </div>
+      <p class="verdict" id="verdict" aria-live="polite">Both layouts are warming up.</p>
+      <p style="font-size:14px;color:var(--muted)">“Overtaken” is the share of shoppers who saw someone who arrived after them reach a till first. Predicted snake wait from the Erlang C formula: <b id="pS" style="font-family:var(--mono);color:var(--ink)">–</b>.</p>
+    </div>
+  </section>
+
+  <p class="foot">Shoppers arrive at random (a Poisson stream), so gaps between them are sometimes long and sometimes very short, and that randomness is the whole reason queues form below 100% busy. Service averages one minute. In “normal mix” service times are exponentially spread (c = 1); “wildly mixed” is a blend of quick shops and big trolleys with c² = 3. Shoppers are coloured by how long they have waited, blue to red at ten minutes.</p>
+</div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+function mulberry(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const expo=(r,mean)=>-Math.log(1-r())*mean;
+function service(r,c2){
+  if(c2===0)return 1;
+  if(c2===1)return expo(r,1);
+  const p=0.5*(1+Math.sqrt((c2-1)/(c2+1)));
+  return r()<p?expo(r,1/(2*p)):expo(r,1/(2*(1-p)));
+}
+const fmtMin=m=>m<1?`${Math.round(m*60)}<small>s</small>`:`${m.toFixed(1)}<small>min</small>`;
+const pk=(rho,c2)=>rho>=1?Infinity:rho/(1-rho)*(1+c2)/2;
+function erlangC(c,a){ // a = offered load in erlangs
+  let sum=0,term=1;for(let k=0;k<c;k++){if(k>0)term*=a/k;sum+=term;}
+  const top=term*a/c/(1-a/c);return top/(sum+top);
+}
+
+// A row of tills. mode: 'single' | 'lanes' | 'snake'
+class Store{
+  constructor(n,mode,seed){this.n=n;this.mode=mode;this.r=mulberry(seed);this.t=0;
+    this.tills=Array.from({length:n},()=>({c:null,end:0}));
+    this.qs=mode==='lanes'?Array.from({length:n},()=>[]):[[]];
+    this.all=[];this.resetStats();}
+  resetStats(){this.served=0;this.sumW=0;this.maxW=0;this.over=0;this.busyT=0;this.statT=0;this.maxStarted=-1;}
+  queued(){return this.qs.reduce((s,q)=>s+q.length,0);}
+  start(i,c){const T=this.tills[i];T.c=c;c.till=i;c.startAt=this.t;T.end=this.t+c.svc;c.state='serving';
+    const w=this.t-c.at;this.served++;this.sumW+=w;this.maxW=Math.max(this.maxW,w);
+    if(c.id<this.maxStarted)this.over++;this.maxStarted=Math.max(this.maxStarted,c.id);}
+  arrive(c){c.state='queue';this.all.push(c);
+    if(this.mode==='lanes'){
+      let best=[],bl=1e9;
+      this.tills.forEach((T,i)=>{const l=this.qs[i].length+(T.c?1:0);if(l<bl){bl=l;best=[i];}else if(l===bl)best.push(i);});
+      const i=best[Math.floor(this.r()*best.length)];c.lane=i;
+      if(!this.tills[i].c)this.start(i,c);else this.qs[i].push(c);
+    }else{
+      const free=this.tills.map((T,i)=>T.c?-1:i).filter(i=>i>=0);
+      if(free.length&&this.qs[0].length===0)this.start(free[Math.floor(this.r()*free.length)],c);else this.qs[0].push(c);
+    }}
+  run(T){ // advance to time T, completing services in order
+    for(;;){let k=-1,e=Infinity;this.tills.forEach((x,i)=>{if(x.c&&x.end<e){e=x.end;k=i;}});
+      if(k<0||e>T)break;this.acc(e);const x=this.tills[k];x.c.state='gone';x.c.goneAt=e;x.c=null;
+      const q=this.mode==='lanes'?this.qs[k]:this.qs[0];if(q.length)this.start(k,q.shift());}
+    this.acc(T);
+    this.all=this.all.filter(c=>c.state!=='gone'||this.t-c.goneAt<0.6);}
+  acc(t){const dt=t-this.t;if(dt>0){this.busyT+=dt*this.tills.filter(x=>x.c).length;this.statT+=dt;}this.t=t;}
+}
+class Source{
+  constructor(seed,rate,c2,stores){this.r=mulberry(seed);this.rate=rate;this.c2=c2;this.stores=stores;this.t=0;this.id=0;this.next=expo(this.r,1/rate);}
+  setRate(r){this.rate=r;this.next=this.t+expo(this.r,1/r);}
+  advance(dt){const T=this.t+dt;
+    while(this.next<=T){const at=this.next;const svc=service(this.r,this.c2);const id=this.id++;
+      this.stores.forEach(s=>{s.run(at);s.arrive({id,at,svc});});this.t=at;this.next=at+expo(this.r,1/this.rate);}
+    this.stores.forEach(s=>s.run(T));this.t=T;}
+}
+
+// ---------- colours ----------
+let COL={};
+function readCols(){const cs=getComputedStyle(document.documentElement);['bg','surface','ink','muted','rule','yellow','red','cust','floor','belt'].forEach(k=>COL[k]=cs.getPropertyValue('--'+k).trim());}
+readCols();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',readCols);
+new MutationObserver(readCols).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+function hex(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(x=>x+x).join('');return[0,2,4].map(i=>parseInt(h.slice(i,i+2),16));}
+function mix(a,b,t){const A=hex(a),B=hex(b);return`rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*t)).join(',')})`;}
+
+// ---------- drawing ----------
+function fit(cv){const d=devicePixelRatio||1,w=cv.clientWidth,h=+cv.getAttribute('height');
+  if(cv.width!==Math.round(w*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d);cv.style.height=h+'px';}
+  const g=cv.getContext('2d');g.setTransform(d,0,0,d,0,0);return{g,w,h};}
+function till(g,x,y,w,num,busy){
+  g.fillStyle=COL.surface;g.strokeStyle=COL.ink;g.lineWidth=2;g.beginPath();g.roundRect(x,y,w,30,4);g.fill();g.stroke();
+  g.fillStyle=COL.belt;g.fillRect(x+6,y+9,w-12,12);
+  g.fillStyle=busy?COL.yellow:COL.rule;g.beginPath();g.roundRect(x+w/2-12,y-15,24,18,3);g.fill();
+  g.fillStyle='#17191c';g.font='700 12px '+getComputedStyle(document.body).getPropertyValue('--mono');g.textAlign='center';g.textBaseline='middle';g.fillText(num,x+w/2,y-5.5);
+}
+function shopper(g,c,now){
+  const waited=(c.state==='queue'?now-c.at:(c.startAt??now)-c.at);
+  const col=mix(COL.cust,COL.red,Math.min(1,waited/10));
+  let a=1;if(c.state==='gone')a=Math.max(0,1-(now-c.goneAt)/0.6);
+  g.globalAlpha=a;g.fillStyle=col;g.beginPath();g.arc(c.x,c.y,8,0,7);g.fill();
+  if(c.state==='serving'){const p=Math.min(1,(now-c.startAt)/c.svc);g.strokeStyle=COL.ink;g.lineWidth=2;g.beginPath();g.arc(c.x,c.y,11.5,-Math.PI/2,-Math.PI/2+p*Math.PI*2);g.stroke();}
+  g.globalAlpha=1;
+}
+let snap=true;
+function ease(c,tx,ty,dt,sx,sy){if(c.x===undefined){c.x=sx;c.y=sy;}const k=snap?1:Math.min(1,dt*7);c.x+=(tx-c.x)*k;c.y+=(ty-c.y)*k;}
+function more(g,n,x,y,align){if(n<=0)return;g.fillStyle=COL.ink;g.font='700 12px '+getComputedStyle(document.body).getPropertyValue('--mono');g.textAlign=align||'right';g.textBaseline='middle';g.fillText(`+${n} more`,x,y);}
+
+function drawSingle(cv,s,dt){
+  const{g,w,h}=fit(cv);g.clearRect(0,0,w,h);
+  const tx=14,tw=76;
+  // till drawn sideways: counter block on the left
+  g.fillStyle=COL.surface;g.strokeStyle=COL.ink;g.lineWidth=2;g.beginPath();g.roundRect(tx,30,34,h-60,4);g.fill();g.stroke();
+  g.fillStyle=COL.belt;g.fillRect(tx+10,40,14,h-80);
+  g.fillStyle=s.tills[0].c?COL.yellow:COL.rule;g.beginPath();g.roundRect(tx+5,8,24,18,3);g.fill();
+  g.fillStyle='#17191c';g.font='700 12px '+getComputedStyle(document.body).getPropertyValue('--mono');g.textAlign='center';g.textBaseline='middle';g.fillText('7',tx+17,17.5);
+  const x0=86,step=26,y0=50,rowH=30,cols=Math.max(3,Math.floor((w-x0-14)/step)),rows=Math.max(1,Math.floor((h-y0-10)/rowH)+1),cap=cols*rows-1;
+  // belt barriers between serpentine rows
+  g.strokeStyle=COL.belt;g.lineWidth=2;g.setLineDash([6,5]);
+  for(let r=0;r<rows-1;r++){const y=y0+r*rowH+rowH/2;g.beginPath();if(r%2===0)g.moveTo(x0-10,y),g.lineTo(x0+(cols-1)*step-6,y);else g.moveTo(x0+12,y),g.lineTo(x0+(cols-1)*step+10,y);g.stroke();}
+  g.setLineDash([]);
+  const pos=i=>{const r=Math.floor(i/cols),k=i%cols;return[x0+(r%2?cols-1-k:k)*step,y0+r*rowH];};
+  const T=s.tills[0];
+  const q=s.qs[0];
+  s.all.forEach(c=>{
+    if(c.state==='serving'||c.state==='gone'){if(c.state==='gone')ease(c,tx+17,h+10,dt*0.5,0,0);else ease(c,62,y0,dt,w,h-10);}
+    else{const i=q.indexOf(c)+1;const[px,py]=pos(Math.min(i,cap));ease(c,px,py,dt,w+10,h-10);}
+  });
+  s.all.forEach(c=>{if(c.state!=='queue'||q.indexOf(c)+1<cap)shopper(g,c,s.t);});
+  more(g,q.length+1-cap,w-10,h-12);
+}
+function drawRow(cv,s,dt){
+  const{g,w,h}=fit(cv);g.clearRect(0,0,w,h);
+  const lw=w/4,ty=24;
+  s.tills.forEach((T,i)=>till(g,i*lw+6,ty,lw-12,i+1,!!T.c));
+  const sy=ty+52;
+  if(s.mode==='lanes'){
+    const step=22,y0=sy+30,cap=Math.max(1,Math.floor((h-y0-14)/step)+1);
+    s.all.forEach(c=>{
+      if(c.state==='serving')ease(c,c.till*lw+lw/2,sy,dt,w/2,h);
+      else if(c.state==='gone')ease(c,c.till*lw+lw/2,-10,dt*0.6,0,0);
+      else{const i=s.qs[c.lane].indexOf(c);ease(c,c.lane*lw+lw/2,y0+Math.min(i,cap-1)*step,dt,w/2,h+10);}
+    });
+    g.strokeStyle=COL.belt;g.lineWidth=2;g.setLineDash([6,5]);
+    for(let i=1;i<4;i++){g.beginPath();g.moveTo(i*lw,sy+14);g.lineTo(i*lw,h-6);g.stroke();}
+    g.setLineDash([]);
+    s.all.forEach(c=>{if(c.state!=='queue'||s.qs[c.lane].indexOf(c)<cap-1)shopper(g,c,s.t);});
+    s.qs.forEach((q,i)=>{const n=q.length-(cap-1);if(n>0)more(g,n,i*lw+lw/2,h-8,'center');});
+  }else{
+    const step=22,y0=sy+38,rowH=24,x0=16,cols=Math.max(4,Math.floor((w-x0*2)/step)+1),rows=Math.max(1,Math.floor((h-y0-14)/rowH)+1),cap=cols*rows;
+    g.strokeStyle=COL.belt;g.lineWidth=2;g.setLineDash([6,5]);
+    for(let r=0;r<rows-1;r++){const y=y0+r*rowH+rowH/2;g.beginPath();if(r%2===0)g.moveTo(x0-8,y),g.lineTo(x0+(cols-1)*step-10,y);else g.moveTo(x0+10,y),g.lineTo(x0+(cols-1)*step+8,y);g.stroke();}
+    g.setLineDash([]);
+    const q=s.qs[0];
+    const pos=i=>{const r=Math.floor(i/cols),k=i%cols;return[x0+(r%2?cols-1-k:k)*step,y0+r*rowH];};
+    s.all.forEach(c=>{
+      if(c.state==='serving')ease(c,c.till*lw+lw/2,sy,dt,x0,y0);
+      else if(c.state==='gone')ease(c,c.till*lw+lw/2,-10,dt*0.6,0,0);
+      else{const i=q.indexOf(c);const[px,py]=pos(Math.min(i,cap-1));ease(c,px,py,dt,w/2,h+10);}
+    });
+    s.all.forEach(c=>{if(c.state!=='queue'||q.indexOf(c)<cap-1)shopper(g,c,s.t);});
+    more(g,q.length-(cap-1),w-10,h-8);
+  }
+}
+
+// ---------- experiment 1 + 2 ----------
+const E1={rate:48,c2:1,speed:120,paused:false};
+let s1=new Store(1,'single',11),src1=new Source(7,E1.rate/60,E1.c2,[s1]);
+function upd1Labels(){
+  const rho=E1.rate/60;
+  $('rate1v').textContent=`${E1.rate} an hour · till ${Math.round(rho*100)}% busy`;
+  $('p1').innerHTML=fmtMin(pk(rho,E1.c2));
+}
+function meas1(){s1.resetStats();}
+$('rate1').addEventListener('input',e=>{E1.rate=+e.target.value;src1.setRate(E1.rate/60);meas1();upd1Labels();drawChart();});
+document.querySelectorAll('#mix button').forEach(b=>b.addEventListener('click',()=>{
+  E1.c2=+b.dataset.c2;src1.c2=E1.c2;meas1();
+  document.querySelectorAll('#mix button').forEach(x=>x.setAttribute('aria-pressed',x===b));upd1Labels();drawChart();}));
+function speedSeg(id,obj){document.querySelectorAll(`#${id} button`).forEach(b=>b.addEventListener('click',()=>{obj.speed=+b.dataset.sp;
+  document.querySelectorAll(`#${id} button`).forEach(x=>x.setAttribute('aria-pressed',x===b));}));}
+speedSeg('sp1',E1);
+$('pause1').addEventListener('click',()=>{E1.paused=!E1.paused;$('pause1').textContent=E1.paused?'Play':'Pause';});
+
+// chart
+const CH={l:52,r:578,t:14,b:290,ymax:20,W:600,H:330};
+const cx=r=>CH.l+(CH.r-CH.l)*r, cy=w=>CH.b-(CH.b-CH.t)*Math.min(w,CH.ymax)/CH.ymax;
+function curve(c2){let d='';for(let i=0;i<=400;i++){const r=i/400*0.995;const w=pk(r,c2);if(w>CH.ymax){const rr=CH.ymax/(CH.ymax+(1+c2)/2);d+=`L${cx(rr).toFixed(1)},${cy(CH.ymax).toFixed(1)}`;break;}d+=(i?'L':'M')+cx(r).toFixed(1)+','+cy(w).toFixed(1);}return d;}
+function drawChart(){
+  const narrow=$('chart').parentNode.clientWidth<520;CH.W=narrow?360:600;CH.H=narrow?300:330;CH.l=narrow?34:52;CH.r=CH.W-16;CH.b=CH.H-42;
+  $('chart').setAttribute('viewBox',`0 0 ${CH.W} ${CH.H}`);
+  let s='';
+  for(let y=0;y<=20;y+=5){s+=`<line x1="${CH.l}" x2="${CH.r}" y1="${cy(y)}" y2="${cy(y)}" style="stroke:var(--rule);stroke-width:1"/><text x="${CH.l-8}" y="${cy(y)+4}" text-anchor="end" class="ax" style="fill:var(--muted)">${y}</text>`;}
+  for(let x=0;x<=100;x+=20){s+=`<line x1="${cx(x/100)}" x2="${cx(x/100)}" y1="${CH.b}" y2="${CH.b+5}" style="stroke:var(--muted)"/><text x="${cx(x/100)}" y="${CH.b+20}" text-anchor="middle" class="ax" style="fill:var(--muted)">${x}%</text>`;}
+  s+=`<text x="${CH.r}" y="${CH.b+20+16}" text-anchor="end" class="ax" style="fill:var(--muted)">how busy the till is →</text>`;
+  s+=`<text x="${CH.l+6}" y="${CH.t+12}" class="ax" style="fill:var(--muted)">average wait, minutes</text>`;
+  [0,1,3].filter(c=>c!==E1.c2).forEach(c=>{s+=`<path d="${curve(c)}" style="fill:none;stroke:var(--belt);stroke-width:2"/>`;});
+  s+=`<path d="${curve(E1.c2)}" style="fill:none;stroke:var(--ink);stroke-width:3.5;stroke-linejoin:round"/>`;
+  const rho=E1.rate/60,w=pk(rho,E1.c2);
+  s+=`<line x1="${cx(rho)}" x2="${cx(rho)}" y1="${CH.t}" y2="${CH.b}" style="stroke:var(--ink);stroke-width:1;stroke-dasharray:3 4"/>`;
+  if(w<=CH.ymax)s+=`<circle cx="${cx(rho)}" cy="${cy(w)}" r="7" style="fill:var(--yellow);stroke:var(--ink);stroke-width:2"/>`;
+  else s+=`<path d="M${cx(rho)-7},${CH.t+10} L${cx(rho)},${CH.t} L${cx(rho)+7},${CH.t+10} Z" style="fill:var(--yellow);stroke:var(--ink);stroke-width:2"/>`;
+  if(s1.served>=15){const m=s1.sumW/s1.served;s+=`<circle id="meas" cx="${cx(rho)}" cy="${cy(m)}" r="6" style="fill:none;stroke:var(--red);stroke-width:2.5"/>`;}
+  const lbl=w>CH.ymax?`${w===Infinity?'∞':w.toFixed(0)} min, off the chart`:`${w.toFixed(1)} min`;
+  const flip=cx(rho)>CH.r-(CH.W<500?120:150);const lx=flip?cx(rho)-10:cx(rho)+10,anchor=flip?'end':'start';
+  s+=`<text x="${lx}" y="${w<=CH.ymax?Math.max(CH.t+30,cy(w)-12):CH.t+28}" text-anchor="${anchor}" class="ax" style="fill:var(--ink);font-weight:700">${Math.round(rho*100)}% busy: ${lbl}</text>`;
+  $('chart').innerHTML=s;
+}
+
+// ---------- experiment 3 ----------
+const E3={rate:216,speed:120,paused:false};
+let sL,sS,src3;
+function build3(){sL=new Store(4,'lanes',21);sS=new Store(4,'snake',21);src3=new Source(99,E3.rate/60,1,[sL,sS]);}
+build3();
+function upd3Labels(){const rho=E3.rate/240;$('rate3v').textContent=`${E3.rate} an hour · tills ${Math.round(rho*100)}% busy`;
+  const a=E3.rate/60;$('pS').innerHTML=fmtMin(erlangC(4,a)/(4-a)).replace(/<\/?small>/g,'');}
+$('rate3').addEventListener('input',e=>{E3.rate=+e.target.value;src3.setRate(E3.rate/60);sL.resetStats();sS.resetStats();upd3Labels();});
+speedSeg('sp3',E3);
+$('pause3').addEventListener('click',()=>{E3.paused=!E3.paused;$('pause3').textContent=E3.paused?'Play':'Pause';});
+$('reset3').addEventListener('click',()=>{build3();});
+
+function readouts(){
+  $('q1').textContent=s1.queued();
+  $('u1').innerHTML=`${s1.statT?Math.round(s1.busyT/s1.statT*100):0}<small>%</small>`;
+  $('w1').innerHTML=s1.served?fmtMin(s1.sumW/s1.served):'–';
+  $('n1').textContent=`Measuring since the last change: ${s1.served} shopper${s1.served===1?'':'s'} served.`;
+  const put=(s,k)=>{$('w'+k).innerHTML=s.served?fmtMin(s.sumW/s.served):'–';$('m'+k).innerHTML=s.served?fmtMin(s.maxW):'–';$('o'+k).innerHTML=s.served?`${Math.round(s.over/s.served*100)}<small>%</small>`:'–';};
+  put(sL,'L');put(sS,'S');
+  let v='Both layouts are warming up.';
+  if(sL.served>=40&&sS.served>=40){const a=sL.sumW/sL.served,b=sS.sumW/sS.served;
+    v=b<a?`So far the snake is ${Math.round((1-b/a)*100)}% quicker on average, and its longest wait is ${sS.maxW<sL.maxW?'shorter':'no better'}.`:`Right now the four lines are slightly ahead. Give it time: over a long run the snake comes out ahead.`;}
+  $('verdict').textContent=v;
+}
+
+let last=performance.now(),chartT=0;
+function loop(now){
+  const dt=Math.min(0.1,(now-last)/1000);last=now;
+  if(!E1.paused)src1.advance(dt*E1.speed/60);
+  if(!E3.paused)src3.advance(dt*E3.speed/60);
+  drawSingle($('c1'),s1,dt);drawRow($('cL'),sL,dt);drawRow($('cS'),sS,dt);
+  snap=false;readouts();chartT+=dt;if(chartT>0.5){chartT=0;drawChart();}
+  requestAnimationFrame(loop);
+}
+src1.advance(40);src3.advance(40);
+upd1Labels();upd3Labels();drawChart();requestAnimationFrame(loop);
+new ResizeObserver(()=>drawChart()).observe($('chart').parentNode);
+
+window.__checkout={
+  get state(){return{
+    one:{rate:E1.rate,c2:E1.c2,queue:s1.queued(),served:s1.served,avgWait:s1.served?s1.sumW/s1.served:null,predicted:pk(E1.rate/60,E1.c2),util:s1.statT?s1.busyT/s1.statT:0,t:s1.t},
+    lanes:{served:sL.served,avgWait:sL.served?sL.sumW/sL.served:null,maxWait:sL.maxW,overtaken:sL.served?sL.over/sL.served:0},
+    snake:{served:sS.served,avgWait:sS.served?sS.sumW/sS.served:null,maxWait:sS.maxW,overtaken:sS.served?sS.over/sS.served:0,predicted:erlangC(4,E3.rate/60)/(4-E3.rate/60)},
+    rate3:E3.rate,paused1:E1.paused,paused3:E3.paused};},
+  advance(min,which){if(which!==3)src1.advance(min);if(which!==1)src3.advance(min);snap=true;readouts();drawChart();}
+};
+})();
+</script>
+
+</body></html>

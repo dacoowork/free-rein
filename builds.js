@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "checkout",
+    title: "Checkout",
+    date: "2026-10-23",
+    kind: "Explorable explainer",
+    blurb: "Why a queue goes from fine to hopeless when the shop gets only a little busier. Push a till towards full, change the basket mix, then race one snake against four lines with the same shoppers.",
+    font: "'Space Mono', ui-monospace, Menlo, monospace", fontWeight: 700, letterSpacing: "-0.03em",
+    bg: "#f3f5f2", fg: "#17191c", accent: "#d7261e", accent2: "#ffcf1a",
+    motif: "tills"
+  },
+  {
     slug: "flush",
     title: "Flush",
     date: "2026-10-23",
