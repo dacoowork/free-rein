@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "flush",
+    title: "Flush",
+    date: "2026-10-23",
+    kind: "How it works",
+    blurb: "A working cutaway of a British syphon cistern. Flush it and watch a slug of water start the syphon, the air break it, and the float refill the tank. Then wear out the valve and make it overflow.",
+    font: "'Archivo', 'Arial Black', sans-serif", fontWeight: 900, fontStretch: "125%", letterSpacing: "-0.01em",
+    bg: "#e9efee", fg: "#152020", accent: "#1f8db4", accent2: "#9ad8ea",
+    motif: "cistern"
+  },
+  {
     slug: "hoist",
     title: "Hoist",
     date: "2026-10-23",

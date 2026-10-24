@@ -1,0 +1,508 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Flush</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;600;700&display=swap">
+<style>
+/* Layout: a technical cutaway on bathroom tile. Big working drawing on the left, gauges and parts list on the right; stacks on phones. */
+:root{
+  --bg:#e9efee; --tile:#dbe3e2; --card:#ffffff; --ink:#152020; --muted:#566866; --line:#c6d2d0;
+  --air:#f7fafa; --porcelain:#ffffff; --water:#9ad8ea; --water-deep:#1f8db4; --brass:#c98714; --fault:#cf3b24; --ok:#2a8a5c;
+  --display:'Archivo','Arial Black','Helvetica Neue',Arial,sans-serif;
+  --body:'Archivo','Helvetica Neue',Arial,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111819; --tile:#172122; --card:#192324; --ink:#e3ebea; --muted:#98aaa8; --line:#2e3d3e;
+  --air:#151e1f; --porcelain:#1e2a2b; --water:#1d6a83; --water-deep:#6ccbea; --brass:#e7a83c; --fault:#ff6d55; --ok:#5fcf97; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111819; --tile:#172122; --card:#192324; --ink:#e3ebea; --muted:#98aaa8; --line:#2e3d3e;
+  --air:#151e1f; --porcelain:#1e2a2b; --water:#1d6a83; --water-deep:#6ccbea; --brass:#e7a83c; --fault:#ff6d55; --ok:#5fcf97; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  background-image:linear-gradient(var(--tile) 2px,transparent 2px),linear-gradient(90deg,var(--tile) 2px,transparent 2px);
+  background-size:56px 56px;background-position:-1px -1px}
+.wrap{max-width:1180px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px 28px;margin-bottom:20px}
+h1{font-family:var(--display);font-stretch:125%;font-weight:900;font-size:clamp(44px,8vw,78px);line-height:.9;letter-spacing:-.01em;margin:0;text-transform:uppercase}
+h1 span{color:var(--water-deep)}
+.lede{max-width:56ch;margin:0;color:var(--muted);font-size:15px;text-wrap:pretty}
+.lede b{color:var(--ink);font-weight:600}
+.grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:880px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:6px}
+.fig{padding:14px 14px 16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.status{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+.pill{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 10px 5px 26px;border-radius:99px;border:1.5px solid currentColor;position:relative;color:var(--muted)}
+.pill::before{content:"";position:absolute;left:10px;top:50%;width:8px;height:8px;margin-top:-4px;border-radius:50%;background:currentColor}
+.pill[data-p="syphon"],.pill[data-p="priming"]{color:var(--water-deep)}
+.pill[data-p="refill"]{color:var(--brass)}
+.pill[data-p="overflow"],.pill[data-p="failed"]{color:var(--fault)}
+.pill[data-p="full"]{color:var(--ok)}
+.vol{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.vol b{color:var(--ink);font-size:18px;font-variant-numeric:tabular-nums}
+svg#rig{width:100%;height:auto;display:block;max-height:74vh}
+.flushbar{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{font:inherit;cursor:pointer}
+.flushbtn{font-family:var(--display);font-stretch:112%;font-weight:800;font-size:17px;text-transform:uppercase;letter-spacing:.02em;
+  padding:13px 10px;border-radius:6px;border:2px solid var(--ink);background:var(--ink);color:var(--card);display:flex;align-items:center;justify-content:center;gap:10px}
+.flushbtn.half{background:transparent;color:var(--ink)}
+@media (max-width:440px){.flushbtn{font-size:15px;gap:8px;padding:12px 6px}.flushbtn i{width:18px;height:18px}}
+.flushbtn:hover{filter:brightness(1.15)}
+.flushbtn:active{transform:translateY(1px)}
+.flushbtn i{display:inline-block;width:22px;height:22px;border-radius:50%;border:2px solid currentColor;position:relative}
+.flushbtn i::after{content:"";position:absolute;inset:3px;border-radius:50%;background:currentColor}
+.flushbtn.half i::after{inset:3px 3px 3px 9px;border-radius:0 99px 99px 0}
+:focus-visible{outline:3px solid var(--water-deep);outline-offset:2px}
+
+.panel{display:flex;flex-direction:column;gap:14px;min-width:0}
+.sec{padding:16px 18px}
+.sec h2{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+#explain{margin:0;font-size:15.5px;line-height:1.55;min-height:6.2em;text-wrap:pretty}
+.msg{font-family:var(--mono);font-size:12.5px;color:var(--fault);margin:8px 0 0;min-height:1.4em}
+.meters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:440px){.meters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.m{display:flex;flex-direction:column;gap:2px;min-width:0}
+.m span{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.m b{font-family:var(--mono);font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.m b small{font-size:11px;font-weight:400;color:var(--muted);margin-left:2px}
+#trace{width:100%;height:90px;display:block;margin-top:12px}
+.tally{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+@media (max-width:440px){.tally{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ctrl{display:flex;flex-direction:column;gap:14px}
+.row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px}
+.row label{font-weight:600}
+.hint{font-family:var(--mono);font-size:12px;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--water-deep)}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:5px;overflow:hidden}
+.seg button{background:transparent;color:var(--ink);border:0;padding:6px 12px;font-family:var(--mono);font-size:13px}
+.seg button+button{border-left:1.5px solid var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--card)}
+.sw{display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:600}
+.sw input{width:18px;height:18px;accent-color:var(--fault)}
+.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink);border-radius:5px;padding:6px 12px;font-family:var(--mono);font-size:12.5px}
+.parts{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.parts li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;padding:7px 6px;border-radius:5px;cursor:default}
+.parts li:hover,.parts li:focus-visible,.parts li.on{background:color-mix(in srgb,var(--water) 30%,transparent)}
+.parts .n{width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--card);font-family:var(--mono);font-size:11.5px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+.parts b{font-weight:700}
+.parts p{margin:1px 0 0;color:var(--muted);font-size:13.5px;line-height:1.45}
+.foot{font-size:13px;color:var(--muted);margin:18px 0 0;max-width:80ch}
+
+/* drawing */
+.wall{fill:none;stroke:var(--ink);stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
+.thin{fill:none;stroke:var(--ink);stroke-width:2.5;stroke-linejoin:round}
+.hair{fill:none;stroke:var(--muted);stroke-width:1}
+.porc{fill:var(--porcelain);stroke:var(--ink);stroke-width:3;stroke-linejoin:round}
+.airf{fill:var(--air)}
+.wat{fill:var(--water)}
+.watS{fill:none;stroke:var(--water)}
+.flow{fill:none;stroke:var(--water-deep);stroke-width:3;stroke-dasharray:9 13;stroke-linecap:round}
+.surf{stroke:var(--water-deep);stroke-width:2;fill:none}
+.brass{fill:var(--brass);stroke:var(--ink);stroke-width:2}
+.brassS{stroke:var(--brass);fill:none}
+.inkf{fill:var(--ink)}
+.lbl{font-family:var(--mono);font-size:11px;fill:var(--muted)}
+.lblI{font-family:var(--mono);font-size:11px;fill:var(--ink);font-weight:600}
+.warn{stroke:var(--fault);stroke-width:1.5;stroke-dasharray:4 4;fill:none}
+.warnT{font-family:var(--mono);font-size:10.5px;fill:var(--fault)}
+.setl{stroke:var(--brass);stroke-width:2;stroke-dasharray:7 5;fill:none}
+.co circle{fill:var(--ink)}
+.co text{font-family:var(--mono);font-size:13px;font-weight:700;fill:var(--card);text-anchor:middle;dominant-baseline:central}
+#rig.nolabels .co{display:none}
+.hl .co-target,.hl.co-target{filter:drop-shadow(0 0 0 transparent)}
+#rig [data-part].hl{outline:none}
+#rig .hlring{fill:none;stroke:var(--water-deep);stroke-width:3;stroke-dasharray:4 4;opacity:0}
+#rig .hlring.on{opacity:1}
+.co.on circle{fill:var(--water-deep)}
+@media (max-width:520px){#rig .lbl,#rig .warnT{font-size:14px}}
+@media (prefers-reduced-motion: reduce){.flushbtn:active{transform:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Flush<span>.</span></h1>
+    <p class="lede">A working cutaway of a British <b>syphon cistern</b>, the kind with no valve to leak at the bottom. Press the handle and watch how a slug of water thrown over a bend empties six litres in three seconds, then how a float puts it all back.</p>
+  </header>
+
+  <div class="grid">
+    <section class="card fig" aria-label="Cistern cutaway">
+      <div class="status">
+        <span class="pill" id="pill" data-p="full">Full</span>
+        <span class="vol"><b id="volTop">7.7</b> L in the tank</span>
+      </div>
+
+      <svg id="rig" viewBox="0 0 560 620" role="img" aria-label="Cutaway drawing of a syphon cistern above a toilet pan">
+        <defs>
+          <clipPath id="tankClip"><rect x="62" y="32" width="436" height="296"/></clipPath>
+          <clipPath id="bowlClip"><path d="M126,402 H384 C382,458 320,500 275,506 H235 C190,500 128,458 126,402 Z"/></clipPath>
+        </defs>
+
+        <!-- pan -->
+        <g data-part="pan">
+          <path class="porc" d="M110,388 H400 V400 C400,465 330,515 285,522 V606 H225 V522 C180,515 110,465 110,400 Z"/>
+          <path class="airf" style="stroke:var(--ink);stroke-width:2" d="M126,402 H384 C382,458 320,500 275,506 H235 C190,500 128,458 126,402 Z"/>
+          <g clip-path="url(#bowlClip)">
+            <rect class="wat" x="100" y="466" width="300" height="60"/>
+            <line class="surf" x1="100" y1="466" x2="400" y2="466"/>
+            <path id="streakL" class="flow" d="M216,404 C160,410 140,440 170,466" opacity="0"/>
+            <path id="streakR" class="flow" d="M247,404 C320,410 380,430 350,466" opacity="0"/>
+            <ellipse id="swirl" class="flow" cx="255" cy="476" rx="62" ry="8" opacity="0"/>
+          </g>
+          <rect class="wat" x="231" y="512" width="48" height="94"/>
+          <line class="thin" x1="231" y1="520" x2="231" y2="606"/><line class="thin" x1="279" y1="520" x2="279" y2="606"/>
+          <text class="lbl" x="292" y="600">to soil pipe</text>
+          <text class="lbl" x="66" y="440">pan</text>
+        </g>
+
+        <!-- tank body -->
+        <rect class="porc" x="56" y="26" width="448" height="310" rx="4"/>
+        <rect class="airf" x="62" y="32" width="436" height="298"/>
+        <g clip-path="url(#tankClip)">
+          <rect id="water" class="wat" x="60" y="160" width="440" height="170"/>
+          <line id="surf" class="surf" x1="60" y1="160" x2="500" y2="160"/>
+        </g>
+
+        <!-- ruler -->
+        <g id="ruler"></g>
+
+        <!-- overflow line -->
+        <line class="warn" x1="290" y1="90" x2="470" y2="90"/>
+        <text class="warnT" x="292" y="84">overflow 24 cm</text>
+
+        <!-- set level line -->
+        <g id="setG">
+          <line class="setl" x1="290" y1="160" x2="398" y2="160"/>
+          <text class="lbl" id="setT" x="294" y="154" style="fill:var(--brass)">set 17 cm</text>
+        </g>
+
+        <!-- down-leg air + syphon water -->
+        <rect class="airf" x="216" y="62" width="31" height="274"/>
+        <rect class="airf" x="216" y="336" width="31" height="52"/>
+        <path id="syfill" class="wat" opacity="0" d="M122,330 V96 Q122,59 156,59 H214 Q247,59 247,96 V390 H216 V86 Q210,79 204,86 V330 Z"/>
+        <rect id="slug" class="wat" x="126" y="200" width="76" height="0"/>
+        <line id="slugTop" class="surf" x1="126" y1="200" x2="202" y2="200" opacity="0"/>
+        <path id="legflow" class="flow" opacity="0" d="M163,300 V100 Q163,72 188,72 H210 Q231,72 231,100 V398"/>
+        <g id="bubbles" opacity="0">
+          <circle cx="231" cy="300" r="4" style="fill:var(--air);stroke:var(--water-deep);stroke-width:1.5"/>
+          <circle cx="226" cy="250" r="3" style="fill:var(--air);stroke:var(--water-deep);stroke-width:1.5"/>
+          <circle cx="236" cy="200" r="5" style="fill:var(--air);stroke:var(--water-deep);stroke-width:1.5"/>
+        </g>
+
+        <!-- syphon walls -->
+        <g data-part="bell">
+          <path class="wall" d="M120,310 V96 Q120,56 156,56 H214 Q250,56 250,96 V330"/>
+        </g>
+        <rect class="inkf" x="203" y="80" width="13" height="252" rx="6.5"/>
+        <g data-part="downleg">
+          <path class="wall" d="M213,336 V388 M250,336 V388"/>
+        </g>
+        <!-- air bleed -->
+        <circle id="bleed" cx="120" cy="240" r="6" style="fill:var(--card);stroke:var(--ink);stroke-width:2.5"/>
+
+        <!-- plunger + lever -->
+        <g id="plunger">
+          <polyline id="wire" class="thin" points="162,44 160,56 160,290"/>
+          <rect class="brass" x="128" y="290" width="72" height="9" rx="2"/>
+          <path d="M131,300 L144,307 M197,300 L184,307" class="thin" style="stroke:var(--water-deep)"/>
+        </g>
+        <g id="lever">
+          <rect class="brass" x="14" y="38" width="50" height="12" rx="6"/>
+          <rect x="62" y="41" width="108" height="6" rx="3" class="inkf"/>
+          <circle cx="66" cy="44" r="5" style="fill:var(--card);stroke:var(--ink);stroke-width:2"/>
+        </g>
+
+        <!-- fill valve -->
+        <g>
+          <rect class="wat" x="420" y="70" width="12" height="410" style="stroke:var(--ink);stroke-width:2.5"/>
+          <text class="lbl" x="440" y="476">mains in</text>
+          <rect x="452" y="70" width="8" height="226" class="airf" style="stroke:var(--ink);stroke-width:2"/>
+          <line id="refflow" class="flow" x1="456" y1="72" x2="456" y2="296" style="stroke-width:3" opacity="0"/>
+          <g id="splash" opacity="0">
+            <path class="surf" d="M446,300 q4,-10 10,-14 q6,4 10,14"/>
+          </g>
+          <rect class="brass" x="404" y="52" width="58" height="22" rx="4"/>
+          <g id="floatG">
+            <line id="frod" class="thin" x1="440" y1="74" x2="440" y2="140"/>
+            <rect id="fcup" x="404" y="140" width="44" height="30" rx="6" style="fill:var(--brass);fill-opacity:.85;stroke:var(--ink);stroke-width:2.5"/>
+          </g>
+          <rect id="clip" x="434" y="150" width="12" height="6" rx="1" class="inkf"/>
+        </g>
+
+        <!-- overflow pipe -->
+        <g data-part="overflow">
+          <rect x="474" y="90" width="12" height="246" class="airf" style="stroke:var(--ink);stroke-width:2.5"/>
+          <path id="ovwater" class="watS" d="M480,94 V344 H548" style="stroke-width:7" opacity="0"/>
+          <path class="thin" d="M474,336 V350 H548 M486,336 V338 H548"/>
+          <circle id="drip" cx="544" cy="360" r="4" class="wat" opacity="0"/>
+          <text class="lbl" x="550" y="440" text-anchor="end">warning pipe</text>
+        </g>
+
+        <!-- callouts -->
+        <g id="callouts">
+          <g class="co" data-part="lever"><circle cx="28" cy="80" r="11"/><text x="28" y="80">1</text></g>
+          <g class="co" data-part="plunger"><circle cx="186" cy="230" r="11"/><text x="186" y="230">2</text></g>
+          <g class="co" data-part="bell"><circle cx="140" cy="140" r="11"/><text x="140" y="140">3</text></g>
+          <g class="co" data-part="crown"><circle cx="272" cy="46" r="11" /><text x="272" y="46">4</text></g>
+          <g class="co" data-part="downleg"><circle cx="272" cy="360" r="11"/><text x="272" y="360">5</text></g>
+          <g class="co" data-part="bleed"><circle cx="141" cy="240" r="11"/><text x="141" y="240">6</text></g>
+          <g class="co" data-part="valve"><circle cx="390" cy="58" r="11"/><text x="390" y="58">7</text></g>
+          <g class="co" data-part="float" id="coFloat"><circle cx="390" cy="155" r="11"/><text x="390" y="155">8</text></g>
+          <g class="co" data-part="setlevel" id="coSet"><circle cx="276" cy="160" r="11"/><text x="276" y="160">9</text></g>
+          <g class="co" data-part="overflow"><circle cx="520" cy="96" r="11"/><text x="520" y="96">10</text></g>
+        </g>
+      </svg>
+
+      <div class="flushbar">
+        <button class="flushbtn" id="bFull" type="button"><i></i>Full flush</button>
+        <button class="flushbtn half" id="bHalf" type="button"><i></i>Half flush</button>
+      </div>
+    </section>
+
+    <div class="panel">
+      <section class="card sec">
+        <h2>What's happening</h2>
+        <p id="explain" aria-live="polite"></p>
+        <p class="msg" id="msg"></p>
+      </section>
+
+      <section class="card sec">
+        <h2>Gauges</h2>
+        <div class="meters">
+          <div class="m"><span>Level</span><b id="gLevel">17.0<small>cm</small></b></div>
+          <div class="m"><span>In tank</span><b id="gVol">7.7<small>L</small></b></div>
+          <div class="m"><span>Inflow</span><b id="gIn">0.00<small>L/s</small></b></div>
+          <div class="m"><span>Outflow</span><b id="gOut">0.00<small>L/s</small></b></div>
+        </div>
+        <svg id="trace" viewBox="0 0 300 90" preserveAspectRatio="none" aria-label="Water level over the last minute">
+          <line x1="0" y1="18" x2="300" y2="18" class="warn" vector-effect="non-scaling-stroke"/>
+          <line id="trSet" x1="0" y1="39" x2="300" y2="39" class="setl" style="stroke-width:1" vector-effect="non-scaling-stroke"/>
+          <path id="trArea" class="wat" style="opacity:.6" d=""/>
+          <polyline id="trLine" class="surf" vector-effect="non-scaling-stroke" points=""/>
+        </svg>
+        <div class="hint" style="display:flex;justify-content:space-between"><span>level, last 60 s</span><span>0 to 30 cm</span></div>
+        <div class="tally">
+          <div class="m"><span>Flushes</span><b id="tN">0</b></div>
+          <div class="m"><span>Last flush</span><b id="tLast">–</b></div>
+          <div class="m"><span>Total flushed</span><b id="tTot">0.0<small>L</small></b></div>
+          <div class="m"><span>Lost to overflow</span><b id="tLost">0.0<small>L</small></b></div>
+        </div>
+      </section>
+
+      <section class="card sec ctrl">
+        <h2 style="margin:0">Adjust and break it</h2>
+        <div>
+          <div class="row"><label for="shut">Set level (float clip)</label><span class="hint" id="shutV">17 cm</span></div>
+          <input id="shut" type="range" min="12" max="23" step="0.5" value="17">
+          <div class="hint" id="expect">Full flush ≈ 6.7 L · half ≈ 3.6 L</div>
+        </div>
+        <label class="sw" for="worn"><input type="checkbox" id="worn"><span>Worn valve washer<span class="hint" style="display:block;font-weight:400">lets water past when it should be shut</span></span></label>
+        <div class="row">
+          <span style="font-weight:600">Speed</span>
+          <div class="seg" role="group" aria-label="Simulation speed">
+            <button type="button" data-sp="0.25" aria-pressed="false">¼×</button>
+            <button type="button" data-sp="1" aria-pressed="true">1×</button>
+            <button type="button" data-sp="4" aria-pressed="false">4×</button>
+          </div>
+        </div>
+        <div class="row">
+          <label class="sw" for="labels"><input type="checkbox" id="labels" checked style="accent-color:var(--ink)"> Number the parts</label>
+          <button class="ghost" id="reset" type="button">Reset tank</button>
+        </div>
+      </section>
+
+      <section class="card sec">
+        <h2>Parts</h2>
+        <ol class="parts" id="parts"></ol>
+      </section>
+    </div>
+  </div>
+  <p class="foot">Numbers are for a typical close-coupled cistern: about 0.45 litres per centimetre of depth, a fill valve that delivers around 12 litres a minute, and a syphon that runs at 2 to 2.5 litres a second. The half flush here uses an air-bleed hole, one of several ways dual-flush syphons stop early.</p>
+</div>
+
+<script>
+(()=>{
+const AREA=0.45, PRIME=10, OVER=24, FULLBREAK=2.2, HALFBREAK=9;
+const Y=cm=>330-cm*10;
+const $=id=>document.getElementById(id);
+const S={level:17,shutoff:17,syphon:'off',half:false,lever:0,leverPhase:'rest',holdT:0,failT:0,breakT:0,breakHalf:false,
+  flushes:0,flushed:0,lost:0,lastFlush:0,curFlush:0,qin:0,qout:0,qov:0,worn:false,speed:1,t:0,phase:'full',primed:false,msgT:0};
+const hist=[];
+
+const PARTS=[
+ ['lever','Flush lever','Pushing the handle down lifts the arm inside the tank, and the arm pulls up the lift wire.'],
+ ['plunger','Lift wire and plunger','A disc with a flexible diaphragm. Going up, the diaphragm seals and heaves the water above it. Coming down, it flaps open and slides back through.'],
+ ['bell','Syphon bell','An upturned chamber, open at the bottom, so inside it the water sits at the same level as the tank.'],
+ ['crown','Crown','The top of the bend. Water has to be thrown over here to start a flush. While the tank is still, nothing can get over it, so a syphon cistern never drips into the pan.'],
+ ['downleg','Down-leg and flush pipe','Once water is falling down here, the weight of the column pulls more water up the bell behind it.'],
+ ['bleed','Air-bleed','Opened by the half-flush button. Air gets in at 9 cm and breaks the syphon early, saving about half the water.'],
+ ['valve','Fill valve','Mains water comes in here and runs down a tube to the floor of the tank, so refilling is quiet.'],
+ ['float','Float','Rides on the surface. As it drops it opens the valve; as it rises it closes it.'],
+ ['setlevel','Set level','Where the float closes the valve. Raising it gives a bigger flush and a longer refill.'],
+ ['overflow','Overflow and warning pipe','If the valve never shuts, water leaves here at 24 cm and drips outside the house where someone will notice.'],
+];
+const plist=$('parts');
+PARTS.forEach(([k,name,txt],i)=>{
+  const li=document.createElement('li');li.tabIndex=0;li.dataset.part=k;
+  li.innerHTML=`<span class="n">${i+1}</span><div><b>${name}</b><p>${txt}</p></div>`;
+  const on=v=>{li.classList.toggle('on',v);document.querySelectorAll(`.co[data-part="${k}"]`).forEach(c=>c.classList.toggle('on',v));};
+  li.addEventListener('mouseenter',()=>on(true));li.addEventListener('mouseleave',()=>on(false));
+  li.addEventListener('focus',()=>on(true));li.addEventListener('blur',()=>on(false));
+  plist.appendChild(li);
+});
+
+// ruler
+const ns='http://www.w3.org/2000/svg';const ruler=$('ruler');
+for(let c=0;c<=29;c++){const y=Y(c);const l=document.createElementNS(ns,'line');
+  l.setAttribute('x1',62);l.setAttribute('x2',c%5===0?76:69);l.setAttribute('y1',y);l.setAttribute('y2',y);l.setAttribute('class','hair');ruler.appendChild(l);
+  if(c%5===0&&c>0){const t=document.createElementNS(ns,'text');t.setAttribute('x',80);t.setAttribute('y',y+4);t.setAttribute('class','lbl');t.textContent=c;ruler.appendChild(t);}}
+const cmT=document.createElementNS(ns,'text');cmT.setAttribute('x',80);cmT.setAttribute('y',326);cmT.setAttribute('class','lbl');cmT.textContent='cm';ruler.appendChild(cmT);
+
+const TEXT={
+ full:'Full and still. The float is up at the set level, so the fill valve is shut. Inside the bell the water stands at the same height as the tank, well below the crown, so nothing can reach the pan.',
+ priming:'The handle lifts the plunger. Its diaphragm seals and heaves a slug of water up the bell towards the crown.',
+ syphon:'Syphon running. The slug went over the crown and down the down-leg, and the falling column now drags water up the bell behind it. The float has dropped and the valve is open, but it can’t keep up.',
+ brokenFull:'The level reached the bottom rim of the bell. Air rushed in under it, the column broke with a gurgle, and the flush stopped.',
+ brokenHalf:'The level reached the air-bleed at 9 cm. Air got in, the column broke, and the flush stopped early with water still in the tank.',
+ failed:'Not enough water to throw over the crown. The slug rose and fell back. A syphon cistern needs about 10 cm (4.5 L) before it will flush, which is why it won’t go twice in a row.',
+ refill:'Refilling. The float is low, so the valve is open. As the water rises the float rises with it and closes the valve bit by bit, so the last centimetre is the slowest.',
+ overflow:'The valve isn’t shutting. Water has reached the overflow at 24 cm and is running out of the warning pipe. In a house this is the drip outside the bathroom wall.',
+ overflowWorn:'The worn washer lets water past even with the float right up. The level crept up to the overflow at 24 cm and now drips steadily out of the warning pipe, all day and all night.',
+};
+const LABEL={full:'Full',priming:'Priming',syphon:'Syphoning',broken:'Syphon broken',failed:'Won’t flush',refill:'Refilling',overflow:'Overflowing'};
+
+function say(m){$('msg').textContent=m;S.msgT=3;}
+function flush(half){
+  if(S.syphon==='running'){say('It’s already flushing.');return false;}
+  if(S.leverPhase!=='rest'){say('The handle is still coming back up.');return false;}
+  S.half=half;S.leverPhase='up';S.primed=S.level>=PRIME;return true;
+}
+function step(dt){
+  S.t+=dt;
+  if(S.leverPhase==='up'){S.lever=Math.min(1,S.lever+dt/0.35);
+    if(S.lever>=1){S.leverPhase='hold';S.holdT=0;
+      if(S.level>=PRIME){S.syphon='running';S.flushes++;S.curFlush=0;S.breakHalf=S.half;}
+      else S.failT=3;}}
+  else if(S.leverPhase==='hold'){S.holdT+=dt;if(S.holdT>0.35)S.leverPhase='down';}
+  else if(S.leverPhase==='down'){S.lever=Math.max(0,S.lever-dt/0.5);if(S.lever<=0)S.leverPhase='rest';}
+  S.qout=S.syphon==='running'?0.36*Math.sqrt(Math.max(S.level,0)+30):0;
+  let open=Math.max(0,Math.min(1,(S.shutoff-S.level)/1.2));
+  if(S.worn)open=Math.max(open,0.12);
+  S.qin=0.2*open;
+  S.qov=S.level>OVER?1.5*(S.level-OVER):0;
+  S.level=Math.max(0,S.level+(S.qin-S.qout-S.qov)*dt/AREA);
+  S.flushed+=S.qout*dt;S.curFlush+=S.qout*dt;S.lost+=S.qov*dt;
+  const brk=S.breakHalf?HALFBREAK:FULLBREAK;
+  if(S.syphon==='running'&&S.level<=brk){S.syphon='off';S.breakT=1.8;S.lastFlush=S.curFlush;}
+  S.failT=Math.max(0,S.failT-dt);S.breakT=Math.max(0,S.breakT-dt);S.msgT=Math.max(0,S.msgT-dt);
+  S.phase=S.leverPhase==='up'?'priming':S.syphon==='running'?'syphon':S.failT>0?'failed':S.breakT>0?'broken':S.qov>0.0005?'overflow':S.qin>0.0005?'refill':'full';
+}
+
+let histAcc=0;
+function sample(dt){histAcc+=dt;while(histAcc>=0.25){histAcc-=0.25;hist.push(S.level);if(hist.length>240)hist.shift();}}
+
+function set(el,a,v){el.setAttribute(a,v);}
+const fmt=(v,d=1)=>v.toFixed(d);
+let lastPhaseKey='';
+function draw(){
+  const wy=Y(S.level);
+  set($('water'),'y',wy);set($('water'),'height',Math.max(0,330-wy));
+  set($('surf'),'y1',wy);set($('surf'),'y2',wy);
+  // lever
+  const a=S.lever*0.12;
+  $('lever').setAttribute('transform',`rotate(${-a*180/Math.PI} 66 44)`);
+  const ex=66+96*Math.cos(a), ey=44-96*Math.sin(a);
+  const ply=296-44*S.lever;
+  $('plunger').querySelector('rect').setAttribute('y',ply-6);
+  $('plunger').querySelector('path').setAttribute('d',`M131,${ply+4} L144,${ply+11} M197,${ply+4} L184,${ply+11}`);
+  set($('wire'),'points',`${ex},${ey} 160,56 160,${ply-6}`);
+  // syphon
+  const running=S.syphon==='running';
+  $('syfill').setAttribute('opacity',running?1:0);
+  const flowOn=running?1:0;
+  const off=-(S.t*60)%22;
+  ['legflow','streakL','streakR','swirl'].forEach(id=>{const e=$(id);e.setAttribute('opacity',(running||(S.breakT>1.0&&id!=='legflow'))?1:0);e.style.strokeDashoffset=off;});
+  // slug
+  const slug=$('slug'),st=$('slugTop');
+  if(!running&&S.lever>0&&wy<ply){
+    const reach=S.primed?(wy-59):Math.min(wy-59,60)*0.8;
+    const top=Math.max(59,wy-reach*S.lever);
+    set(slug,'y',top);set(slug,'height',Math.max(0,wy-top+2));
+    set(st,'y1',top);set(st,'y2',top);st.setAttribute('opacity',1);
+  } else {set(slug,'height',0);st.setAttribute('opacity',0);}
+  $('bubbles').setAttribute('opacity',S.breakT>0.6?1:0);
+  if(S.breakT>0.6){const bs=$('bubbles').children;for(let i=0;i<bs.length;i++){bs[i].setAttribute('cy',330-((S.t*140+i*90)%260));}}
+  // bleed
+  const bleed=$('bleed');
+  bleed.style.fill=(S.half&&(running||S.leverPhase!=='rest'))?'var(--water-deep)':'var(--card)';
+  // fill valve
+  $('refflow').setAttribute('opacity',S.qin>0.0005?Math.min(1,0.3+S.qin*4):0);
+  $('refflow').style.strokeDashoffset=-(S.t*40*(S.qin/0.2+0.2))%22;
+  $('splash').setAttribute('opacity',S.qin>0.0005&&S.level<28?1:0);
+  const fcm=S.level<S.shutoff?Math.max(S.level,4):S.shutoff+Math.min(S.level-S.shutoff,1.5)*0.25;
+  const fy=Y(fcm);
+  set($('fcup'),'y',fy-20);set($('frod'),'y2',fy-20);
+  set($('clip'),'y',Y(S.shutoff)-26);
+  const co=$('coFloat');co.querySelector('circle').setAttribute('cy',fy-5);co.querySelector('text').setAttribute('y',fy-5);
+  // set level
+  const sy=Y(S.shutoff);const sl=$('setG').querySelector('line');set(sl,'y1',sy);set(sl,'y2',sy);set($('setT'),'y',sy-6);
+  $('setT').textContent=`set ${S.shutoff} cm`;
+  const cs=$('coSet');cs.querySelector('circle').setAttribute('cy',sy);cs.querySelector('text').setAttribute('y',sy);
+  // overflow
+  $('ovwater').setAttribute('opacity',S.qov>0.0005?1:0);
+  const d=$('drip');d.setAttribute('opacity',S.qov>0.0005?1:0);d.setAttribute('cy',356+((S.t*60)%40));
+  // readouts
+  const vol=S.level*AREA;
+  $('volTop').textContent=fmt(vol);
+  $('gLevel').innerHTML=`${fmt(S.level)}<small>cm</small>`;
+  $('gVol').innerHTML=`${fmt(vol)}<small>L</small>`;
+  $('gIn').innerHTML=`${fmt(S.qin,2)}<small>L/s</small>`;
+  $('gOut').innerHTML=`${fmt(S.qout+S.qov,2)}<small>L/s</small>`;
+  $('tN').textContent=S.flushes;
+  $('tLast').innerHTML=S.lastFlush?`${fmt(S.lastFlush)}<small>L</small>`:'–';
+  $('tTot').innerHTML=`${fmt(S.flushed)}<small>L</small>`;
+  $('tLost').innerHTML=`${fmt(S.lost)}<small>L</small>`;
+  const pill=$('pill');pill.dataset.p=S.phase;pill.textContent=LABEL[S.phase];
+  const key=S.phase==='broken'?(S.breakHalf?'brokenHalf':'brokenFull'):S.phase==='overflow'&&S.worn?'overflowWorn':S.phase;
+  if(key!==lastPhaseKey){$('explain').textContent=TEXT[key];lastPhaseKey=key;}
+  if(S.msgT<=0&&$('msg').textContent)$('msg').textContent='';
+  // trace
+  if(hist.length>1){
+    const n=240,pts=hist.map((v,i)=>`${(i+(n-hist.length))/(n-1)*300},${90-v*3}`);
+    $('trLine').setAttribute('points',pts.join(' '));
+    $('trArea').setAttribute('d',`M${pts[0].split(',')[0]},90 L${pts.join(' L')} L300,90 Z`);
+  }
+  set($('trSet'),'y1',90-S.shutoff*3);set($('trSet'),'y2',90-S.shutoff*3);
+}
+function expect(){
+  const f=(S.shutoff-FULLBREAK)*AREA*1.09,h=(S.shutoff-HALFBREAK)*AREA*1.08;
+  $('shutV').textContent=`${S.shutoff} cm`;
+  $('expect').textContent=`Full flush ≈ ${fmt(f)} L · half ≈ ${fmt(h)} L · refill ≈ ${Math.round((S.shutoff-FULLBREAK)*AREA/0.2*1.15)} s`;
+}
+
+function advance(sec){const h=0.01;let n=Math.round(sec/h);while(n-->0){step(h);sample(h);}draw();}
+let last=performance.now();
+function loop(now){
+  let dt=Math.min(0.1,(now-last)/1000)*S.speed;last=now;
+  const h=0.01;while(dt>1e-6){const s=Math.min(h,dt);step(s);sample(s);dt-=s;}
+  draw();requestAnimationFrame(loop);
+}
+
+$('bFull').addEventListener('click',()=>flush(false));
+$('bHalf').addEventListener('click',()=>flush(true));
+$('shut').addEventListener('input',e=>{S.shutoff=+e.target.value;expect();});
+$('worn').addEventListener('change',e=>{S.worn=e.target.checked;});
+$('labels').addEventListener('change',e=>{$('rig').classList.toggle('nolabels',!e.target.checked);});
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{
+  S.speed=+b.dataset.sp;document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b));}));
+$('reset').addEventListener('click',()=>{Object.assign(S,{level:S.shutoff,syphon:'off',lever:0,leverPhase:'rest',failT:0,breakT:0,flushes:0,flushed:0,lost:0,lastFlush:0,curFlush:0});hist.length=0;say('');});
+
+S.level=S.shutoff;expect();
+for(let i=0;i<240;i++)hist.push(S.level);
+draw();requestAnimationFrame(loop);
+
+window.__flush={get state(){return {level:S.level,litres:S.level*AREA,phase:S.phase,syphon:S.syphon,flushes:S.flushes,flushed:S.flushed,lastFlush:S.lastFlush,lost:S.lost,inflow:S.qin,outflow:S.qout,overflow:S.qov,shutoff:S.shutoff,worn:S.worn,speed:S.speed};},advance};
+})();
+</script>
+
+</body></html>

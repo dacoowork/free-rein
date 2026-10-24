@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -79,7 +79,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-10-23c"></script>
+<script src="builds.js?v=2026-10-24b"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -90,6 +90,27 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    cistern(b,r){
+      let g='';for(let x=0;x<=320;x+=28)g+=`M${x} 0V180`;for(let y=0;y<=180;y+=28)g+=`M0 ${y}H320`;
+      const ink=b.fg, w=b.accent2, air='#f7fafa';
+      return `<rect width="320" height="180" fill="${b.bg}"/><path d="${g}" stroke="#d6dfde" stroke-width="2"/>
+        <rect x="40" y="18" width="240" height="130" rx="3" fill="#ffffff" stroke="${ink}" stroke-width="3"/>
+        <rect x="42" y="75" width="236" height="71" fill="${w}"/><line x1="42" y1="75" x2="278" y2="75" stroke="${b.accent}" stroke-width="1.5"/>
+        <rect x="118" y="33" width="12" height="115" fill="${air}"/>
+        <path d="M80,136 V44 Q80,30 94,30 H118 Q132,30 132,44 V180 M116,148 V180" fill="none" stroke="${ink}" stroke-width="3" stroke-linejoin="round"/>
+        <rect x="112" y="38" width="6" height="110" rx="3" fill="${ink}"/>
+        <line x1="40" y1="46" x2="256" y2="46" stroke="#cf3b24" stroke-width="1" stroke-dasharray="3 3"/>
+        <line x1="140" y1="75" x2="224" y2="75" stroke="#c98714" stroke-width="1.6" stroke-dasharray="5 3"/>
+        <path d="M100,22 V30 M97,30 V128" stroke="${ink}" stroke-width="1.3" fill="none"/>
+        <rect x="84" y="127" width="26" height="4" rx="1" fill="#c98714" stroke="${ink}" stroke-width="1"/>
+        <rect x="14" y="17" width="26" height="7" rx="3.5" fill="#c98714" stroke="${ink}" stroke-width="1"/>
+        <line x1="40" y1="21" x2="102" y2="21" stroke="${ink}" stroke-width="3" stroke-linecap="round"/>
+        <rect x="262" y="46" width="6" height="134" fill="${air}" stroke="${ink}" stroke-width="1.5"/>
+        <rect x="236" y="28" width="6" height="152" fill="${w}" stroke="${ink}" stroke-width="1.5"/>
+        <line x1="248" y1="30" x2="248" y2="66" stroke="${ink}" stroke-width="1.5"/>
+        <rect x="226" y="20" width="28" height="10" rx="2" fill="#c98714" stroke="${ink}" stroke-width="1.5"/>
+        <rect x="228" y="64" width="24" height="14" rx="3" fill="#c98714" fill-opacity=".9" stroke="${ink}" stroke-width="1.5"/>`;
+    },
     flock(b,r){
       let s=`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${b.bg}"/><stop offset="1" stop-color="${b.bg2}"/></linearGradient></defs>
       <rect width="320" height="180" fill="url(#sk)"/>`;
@@ -258,7 +279,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
     a.className='tile'; a.href='play.html?b='+encodeURIComponent(b.slug);
     a.style.setProperty('--bg',b.panel||b.bg); a.style.setProperty('--fg',b.fg); a.style.setProperty('--accent',b.accent);
     const art = MOTIFS[b.motif] ? `<svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid ${b.motif==='dial'?'meet':'slice'}" aria-hidden="true">${MOTIFS[b.motif](b,rng(seed(b.slug)))}</svg>` : '';
-    const ts=`font-family:${b.font};font-style:${b.fontStyle||'normal'};font-weight:${b.fontWeight||400};letter-spacing:${b.letterSpacing||'normal'}`;
+    const ts=`font-family:${b.font};font-style:${b.fontStyle||'normal'};font-weight:${b.fontWeight||400};letter-spacing:${b.letterSpacing||'normal'};font-stretch:${b.fontStretch||'normal'}`;
     a.innerHTML=`${art}<div class="txt"><span class="kind">${esc(b.kind)}</span><h2 style="${ts}">${esc(b.title)}</h2><p>${esc(b.blurb)}</p></div>`;
     li.appendChild(a); grid.appendChild(li);
   });
