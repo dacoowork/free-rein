@@ -1,0 +1,403 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Viewing Recommended</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:ital,wght@0,500;0,700;1,500&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: an estate agent's window. Honest facts on a clipboard panel at left, the glossy listing card at right; on phones the listing comes first. */
+:root{
+  --bg:#eef1ee; --card:#ffffff; --ink:#1f1c24; --muted:#5f5a68; --rule:#d5dbd6;
+  --brand:#c2185b; --brand-ink:#ffffff; --teal:#0d7a6f; --hl:#f4ec5a; --hl-ink:#1f1c24;
+  --brick:#c46a4a; --brick2:#b55e40; --stone:#d9d3c7; --roof:#4a4f5a; --glass:#bfd9e6; --sky:#e3ece8; --dim:#c9cfca; --warn:#b3261e;
+  --display:'Zilla Slab','Rockwell','Roboto Slab',Georgia,serif;
+  --body:'Figtree','Avenir Next','Segoe UI',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17181b; --card:#212226; --ink:#eeecef; --muted:#a9a5b0; --rule:#35373c;
+  --brand:#ff5c97; --brand-ink:#1b0a12; --teal:#4fd1bf; --hl:#e9df4a; --hl-ink:#1f1c24;
+  --brick:#9a5038; --brick2:#874632; --stone:#4a4740; --roof:#2b2e35; --glass:#3c5a6a; --sky:#26292c; --dim:#3a3d42; --warn:#ff7a6e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17181b; --card:#212226; --ink:#eeecef; --muted:#a9a5b0; --rule:#35373c;
+  --brand:#ff5c97; --brand-ink:#1b0a12; --teal:#4fd1bf; --hl:#e9df4a; --hl-ink:#1f1c24;
+  --brick:#9a5038; --brick2:#874632; --stone:#4a4740; --roof:#2b2e35; --glass:#3c5a6a; --sky:#26292c; --dim:#3a3d42; --warn:#ff7a6e; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:1160px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.agent{display:flex;align-items:center;gap:10px;font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+.agent i{width:26px;height:26px;border-radius:4px;background:var(--brand);display:grid;place-items:center;color:var(--brand-ink);font-style:normal;font-family:var(--display);font-size:15px;letter-spacing:0}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(40px,7vw,72px);line-height:.95;letter-spacing:-.015em;margin:0;text-wrap:balance}
+.lede{margin:0;max-width:62ch;color:var(--muted);font-size:17px;text-wrap:pretty}
+.grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:20px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}.facts{order:2}.listing{order:1}}
+
+/* facts panel */
+.facts{background:var(--card);border:1.5px solid var(--rule);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:18px}
+.facts h2,.lhead h2{font-family:var(--display);font-weight:700;font-size:22px;margin:0}
+.facts .sub{margin:-12px 0 0;color:var(--muted);font-size:14px}
+.f{display:flex;flex-direction:column;gap:7px;border:0;margin:0;padding:0;min-width:0}
+.f>legend,.f>.lab{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:0;margin-bottom:7px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button,.chip{font:inherit;font-size:14px;font-weight:600;padding:6px 11px;border-radius:99px;border:1.5px solid var(--rule);background:transparent;color:var(--ink);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--card)}
+.seg button:hover,.chip:hover{border-color:var(--ink)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.stepper{display:inline-flex;align-items:center;border:1.5px solid var(--rule);border-radius:99px;overflow:hidden}
+.stepper button{font:inherit;font-size:18px;font-weight:700;width:38px;height:34px;border:0;background:transparent;color:var(--ink);cursor:pointer}
+.stepper button:disabled{color:var(--dim);cursor:not-allowed}
+.stepper output{min-width:34px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+.val{font-weight:700;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--brand)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.chip:disabled{opacity:.4;cursor:not-allowed}
+.msg{min-height:1.5em;margin:0;font-size:14px;font-weight:600;color:var(--warn)}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+
+/* listing card */
+.listing{display:flex;flex-direction:column;gap:12px;min-width:0}
+.lhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font:inherit;font-size:14px;font-weight:700;padding:8px 14px;border-radius:6px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+.btn.main{background:var(--hl);border-color:var(--hl);color:var(--hl-ink)}
+.btn.main[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--card)}
+.btn:active{transform:translateY(1px)}
+.card{background:var(--card);border-radius:8px;border:1.5px solid var(--rule);overflow:hidden;min-width:0}
+.photo{background:var(--sky);position:relative}
+.photo svg{display:block;width:100%;height:auto}
+.badge{position:absolute;left:14px;top:14px;background:var(--brand);color:var(--brand-ink);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border-radius:3px}
+.body{padding:20px 22px 22px;display:flex;flex-direction:column;gap:14px}
+.price{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,34px);line-height:1.1;margin:0;font-variant-numeric:tabular-nums}
+.price small{display:block;font-family:var(--body);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.headline{font-family:var(--display);font-weight:500;font-size:clamp(20px,2.6vw,25px);line-height:1.25;margin:0;text-wrap:balance}
+.facts-line{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--muted);padding:10px 0;border-block:1px solid var(--rule)}
+.facts-line b{color:var(--ink);font-variant-numeric:tabular-nums}
+.feats{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 20px}
+@media (max-width:560px){.feats{grid-template-columns:minmax(0,1fr)}}
+.feats li{position:relative;padding-left:18px}
+.feats li::before{content:"";position:absolute;left:0;top:.6em;width:8px;height:8px;background:var(--brand);border-radius:2px}
+.desc{margin:0;max-width:66ch;text-wrap:pretty}
+.close{margin:0;font-family:var(--display);font-style:italic;font-weight:500;font-size:19px;color:var(--brand)}
+.eu{cursor:help;text-decoration:underline dotted var(--brand) 2px;text-underline-offset:4px;border-radius:2px}
+.eu .truth{display:none}
+.eu.open,.translated .eu{text-decoration:none}
+.eu.open .said,.translated .eu .said{text-decoration:line-through 1.5px;color:var(--muted)}
+.eu.open .truth,.translated .eu .truth{display:inline;background:var(--hl);color:var(--hl-ink);font-family:var(--body);font-style:normal;font-weight:700;font-size:.82em;padding:1px 6px;border-radius:3px;margin-left:5px;white-space:normal;box-decoration-break:clone;-webkit-box-decoration-break:clone;letter-spacing:0;text-transform:none}
+.tally{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.tally b{color:var(--ink);font-variant-numeric:tabular-nums}
+.foot{margin:28px 0 0;font-size:13px;color:var(--muted);max-width:80ch}
+@media (prefers-reduced-motion: reduce){.btn:active{transform:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="agent"><i>G</i>Gable &amp; Gloss · Estate Agents</div>
+    <h1>Viewing Recommended</h1>
+    <p class="lede">Tell the agent the truth about a property and it writes the listing the way estate agents do. Then press Translate to see what every phrase really means.</p>
+  </header>
+
+  <div class="grid">
+    <section class="facts" aria-label="The honest facts">
+      <h2>The honest facts</h2>
+      <p class="sub">What the surveyor would say.</p>
+
+      <fieldset class="f"><legend>Property</legend>
+        <div class="seg" id="type">
+          <button type="button" data-v="studio">Studio flat</button><button type="button" data-v="flat">Flat</button><button type="button" data-v="terrace">Terraced</button><button type="button" data-v="semi">Semi</button><button type="button" data-v="bungalow">Bungalow</button>
+        </div>
+      </fieldset>
+
+      <div class="f">
+        <div class="row">
+          <span class="lab" style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Bedrooms</span>
+          <div class="stepper"><button type="button" id="bedDown" aria-label="One fewer bedroom">−</button><output id="beds">2</output><button type="button" id="bedUp" aria-label="One more bedroom">+</button></div>
+        </div>
+      </div>
+
+      <div class="f">
+        <div class="row"><label for="area" style="font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Floor area</label><span class="val" id="areaV">46 m²</span></div>
+        <input type="range" id="area" min="14" max="220" step="1" value="46">
+      </div>
+
+      <fieldset class="f"><legend>Condition</legend>
+        <div class="seg" id="cond">
+          <button type="button" data-v="immaculate">Immaculate</button><button type="button" data-v="tired">Tired</button><button type="button" data-v="wreck">Needs gutting</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="f"><legend>Where</legend>
+        <div class="seg" id="setting">
+          <button type="button" data-v="centre">City centre</button><button type="button" data-v="suburb">Suburb</button><button type="button" data-v="village">Village</button><button type="button" data-v="rough">Rough area</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="f"><legend>What the photos leave out</legend>
+        <div class="chips" id="quirks"></div>
+      </fieldset>
+
+      <p class="msg" id="msg" aria-live="polite"></p>
+    </section>
+
+    <section class="listing" aria-label="The listing">
+      <div class="lhead">
+        <h2>In the window</h2>
+        <div class="tools">
+          <button class="btn" type="button" id="rewrite">Rewrite</button>
+          <button class="btn" type="button" id="random">Another property</button>
+          <button class="btn main" type="button" id="translate" aria-pressed="false">Translate</button>
+        </div>
+      </div>
+      <article class="card" id="card">
+        <div class="photo"><span class="badge" id="badge">For sale</span><svg id="facade" viewBox="0 0 320 180" role="img" aria-label="Drawing of the front of the property"></svg></div>
+        <div class="body" id="out"></div>
+      </article>
+      <div class="tally"><span>Euphemisms in this listing: <b id="nEu">0</b></span><span>Tap any dotted phrase to translate just that one.</span></div>
+    </section>
+  </div>
+  <p class="foot">Gable &amp; Gloss is invented, and so is every property. The phrases are the real stock vocabulary of British property listings. Prices are a rough model: a price per square metre for the area, adjusted for condition and for each thing the photos leave out. EPC is the energy rating every UK listing must show, from A (best) to G.</p>
+</div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const QUIRKS=[
+ ['road','On a main road'],['rail','Railway behind'],['takeaway','Above a takeaway'],['pub','Next to a pub'],
+ ['topfloor','Top floor, no lift'],['galley','Tiny kitchen'],['damp','Damp'],['overlooked','Overlooked'],
+ ['noparking','Nowhere to park'],['northgarden','North-facing garden'],['nogarden','No garden'],
+ ['school','Good school nearby'],['culdesac','Quiet cul-de-sac'],
+];
+const MAXBEDS={studio:0,flat:3,terrace:4,semi:5,bungalow:4};
+const TYPE_ADJ={studio:1,flat:1,terrace:1,semi:1.06,bungalow:1.1};
+const PPM={centre:6200,suburb:3900,village:3400,rough:2300};
+const F={type:'flat',beds:2,area:46,cond:'tired',setting:'rough',quirks:new Set(['road','takeaway','galley','topfloor'])};
+let seed=3,translated=false,lastMsg='';
+const minArea=()=>F.type==='studio'?14:20+F.beds*9;
+
+function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function say(m){lastMsg=m;$('msg').textContent=m;}
+
+// quirk chips
+QUIRKS.forEach(([k,l])=>{const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.k=k;b.textContent=l;b.id='q-'+k;
+  b.addEventListener('click',()=>toggleQuirk(k));$('quirks').appendChild(b);});
+function toggleQuirk(k){
+  say('');
+  if(F.quirks.has(k)){F.quirks.delete(k);render();return;}
+  if(k==='topfloor'&&!['flat','studio'].includes(F.type)){say('Only a flat can be on the top floor.');return;}
+  const clash={northgarden:'nogarden',nogarden:'northgarden',road:'culdesac',culdesac:'road'};
+  if(clash[k]&&F.quirks.has(clash[k])){
+    const names={northgarden:'a north-facing garden',nogarden:'no garden',road:'a main road',culdesac:'a quiet cul-de-sac'};
+    say(`It can’t have ${names[k]} and ${names[clash[k]]}. Swapped one for the other.`);F.quirks.delete(clash[k]);}
+  F.quirks.add(k);render();
+}
+function segInit(id,key){document.querySelectorAll(`#${id} button`).forEach(b=>b.addEventListener('click',()=>{say('');F[key]=b.dataset.v;if(key==='type')fixType();render();}));}
+segInit('type','type');segInit('cond','cond');segInit('setting','setting');
+function fixType(){
+  const mx=MAXBEDS[F.type];
+  if(F.type==='studio'){F.beds=0;}
+  else{if(F.beds<1)F.beds=1;if(F.beds>mx){say(`A ${tName()} here tops out at ${mx} bedrooms, so it now has ${mx}.`);F.beds=mx;}}
+  if(F.quirks.has('topfloor')&&!['flat','studio'].includes(F.type)){F.quirks.delete('topfloor');say('Houses don’t have a top-floor flat, so that’s been dropped.');}
+  if(F.area<minArea()){F.area=minArea();}
+}
+function tName(){return {studio:'studio',flat:'flat',terrace:'terraced house',semi:'semi',bungalow:'bungalow'}[F.type];}
+$('bedUp').addEventListener('click',()=>{say('');const mx=MAXBEDS[F.type];
+  if(F.beds>=mx){say(F.type==='studio'?'A studio is one room. Pick Flat for a separate bedroom.':`A ${tName()} here tops out at ${mx} bedrooms.`);return;}
+  F.beds++;if(F.area<minArea()){F.area=minArea();say(`${F.beds} bedrooms need at least ${minArea()} m², so the floor area went up.`);}render();});
+$('bedDown').addEventListener('click',()=>{say('');if(F.beds<=(F.type==='studio'?0:1)){say(F.type==='studio'?'A studio has no separate bedroom.':'It needs at least one bedroom. Pick Studio flat for none.');return;}F.beds--;render();});
+$('area').addEventListener('input',e=>{const v=+e.target.value;if(v<minArea()){F.area=minArea();e.target.value=F.area;say(`${F.beds?F.beds+' bedroom'+(F.beds>1?'s':''):'A studio'} can’t fit in less than ${minArea()} m².`);}else{F.area=v;if(lastMsg.includes('m²'))say('');}render();});
+$('rewrite').addEventListener('click',()=>{seed++;render();});
+$('random').addEventListener('click',()=>{randomProperty();});
+$('translate').addEventListener('click',()=>{translated=!translated;render();});
+$('out').addEventListener('click',e=>{const s=e.target.closest('.eu');if(s&&!translated)s.classList.toggle('open');});
+$('out').addEventListener('keydown',e=>{const s=e.target.closest('.eu');if(s&&(e.key==='Enter'||e.key===' ')&&!translated){e.preventDefault();s.classList.toggle('open');}});
+
+function randomProperty(){
+  const r=rng(Date.now()%100000+seed*7);const pick=a=>a[Math.floor(r()*a.length)];
+  F.type=pick(['studio','flat','flat','terrace','terrace','semi','bungalow']);
+  F.beds=F.type==='studio'?0:1+Math.floor(r()*MAXBEDS[F.type]);
+  const ma=minArea();F.area=Math.round(ma+r()*r()*(ma*1.3));
+  F.cond=pick(['immaculate','tired','tired','wreck']);F.setting=pick(['centre','suburb','village','rough']);
+  F.quirks=new Set();const n=1+Math.floor(r()*4);
+  for(let i=0;i<n*3&&F.quirks.size<n;i++){const k=pick(QUIRKS)[0];
+    if(k==='topfloor'&&!['flat','studio'].includes(F.type))continue;
+    if((k==='nogarden'&&F.quirks.has('northgarden'))||(k==='northgarden'&&F.quirks.has('nogarden'))||(k==='road'&&F.quirks.has('culdesac'))||(k==='culdesac'&&F.quirks.has('road')))continue;
+    F.quirks.add(k);}
+  seed++;say('');render();
+}
+
+// ---------- the writing machine ----------
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let EU=0;
+function eu(text,truth){EU++;return `<span class="eu" tabindex="0" role="button" aria-label="${esc(text)}, meaning: ${esc(truth)}"><span class="said">${esc(text)}</span><span class="truth">${esc(truth)}</span></span>`;}
+const NUM=['no','one','two','three','four','five'];const ORD=['','first','second','third','fourth','fifth'];
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const money=n=>'£'+Math.round(n).toLocaleString('en-GB');
+
+function price(){
+  let p=F.area*PPM[F.setting]*TYPE_ADJ[F.type]*({immaculate:1.08,tired:.92,wreck:.68}[F.cond]);
+  ['road','rail','takeaway','pub','damp','overlooked','noparking','northgarden','galley'].forEach(k=>{if(F.quirks.has(k))p*=.96;});
+  if(F.quirks.has('topfloor'))p*=.97;if(F.quirks.has('nogarden')&&F.type!=='flat'&&F.type!=='studio')p*=.94;
+  if(F.quirks.has('school'))p*=1.09;if(F.quirks.has('culdesac'))p*=1.04;
+  const step=p<250000?1000:5000;return Math.max(35000,Math.round(p/step)*step);
+}
+function band(p){const b=[[40000,'A'],[52000,'B'],[68000,'C'],[88000,'D'],[120000,'E'],[160000,'F'],[320000,'G']];for(const[x,l]of b)if(p<=x*2.6)return l;return 'H';}
+
+function write(){
+  EU=0;const r=rng(seed*9973+1);const pick=a=>a[Math.floor(r()*a.length)];const Q=k=>F.quirks.has(k);
+  const expected=F.type==='studio'?30:24+F.beds*15+(F.type==='flat'?0:10);
+  const ratio=F.area/expected;
+  // size words
+  let size='';
+  if(ratio<.8)size=eu(pick(['deceptively spacious','bijou','cosy','compact']),pick(['small','tiny','smaller than it looks','no room to swing a cat']));
+  else if(ratio>1.35)size=pick(['generously proportioned','spacious']);
+  else size=pick(['charming','well-presented','delightful']);
+  if(F.cond==='wreck'&&ratio>=.8)size=eu(pick(['characterful','unmodernised']),'falling apart');
+  if(F.cond==='immaculate'&&ratio>=.8&&ratio<=1.35)size='beautifully presented';
+  // the thing itself
+  let thing;
+  if(F.type==='studio')thing=eu(pick(['studio apartment','open-plan studio']),'one room with a bed in it');
+  else if(F.type==='flat')thing=`${NUM[F.beds]}-bedroom `+eu(pick(['apartment','residence']),'flat');
+  else if(F.type==='terrace')thing=`${NUM[F.beds]}-bedroom `+(ratio<.9?eu('period cottage','terraced house'):'Victorian terrace');
+  else if(F.type==='semi')thing=`${NUM[F.beds]}-bedroom `+(F.beds>=3?'family home':'semi-detached house');
+  else thing=`${NUM[F.beds]}-bedroom detached bungalow`;
+  const where={
+    centre:()=>Q('road')||Q('pub')||Q('takeaway')?'in a '+eu('vibrant','noisy all night')+' city-centre location':'in the heart of the city',
+    suburb:()=>'in a '+pick(['popular','highly regarded'])+' residential area',
+    village:()=>'in a '+eu(pick(['rural idyll','tranquil village setting']),pick(['last bus at 6pm','no shop, no bus, no signal']))+'',
+    rough:()=>'in an '+eu(pick(['up-and-coming','emerging','increasingly sought-after']),pick(['rough','rough, and has been for years']))+' area',
+  }[F.setting]();
+  const plain=size.replace(/<span class="truth">.*?<\/span>/g,'').replace(/<[^>]+>/g,'');
+  const article=/^[aeiou]/i.test(plain)?'an':'a';
+  const opener=F.cond==='wreck'?eu(pick(['A rare opportunity to acquire','An exciting opportunity to purchase']),'nobody else wanted it')+' '+article:'A';
+  const headline=F.cond==='wreck'?`${opener} ${size} ${thing} ${where}`:`${cap(article)} ${size} ${thing} ${where}`;
+
+  // features
+  const feats=[];
+  if(F.beds>=2&&F.area/F.beds<17)feats.push(cap(ORD[F.beds])+' bedroom '+eu(pick(['ideal as a study or nursery','perfect as a home office']),'a cupboard with a window'));
+  if(F.cond==='wreck')feats.push(eu(pick(['In need of some modernisation','A blank canvas','Huge potential to add value']),pick(['needs gutting','no working boiler','needs a new everything'])));
+  if(F.cond==='tired')feats.push(eu(pick(['Retaining many original features','Ready for your personal touch','Lovingly maintained by the same owner for decades']),'untouched since 1987'));
+  if(F.cond==='immaculate')feats.push('Beautifully presented throughout');
+  const QF={
+    road:()=>eu(pick(['Excellent transport links on the doorstep','Superbly well connected']),'on a main road'),
+    rail:()=>eu(pick(['Moments from the railway','Ideal for the commuter']),'trains rattle past the back window'),
+    takeaway:()=>eu(pick(['Amenities right on the doorstep','Close to local eateries']),'above a kebab shop'),
+    pub:()=>eu(pick(['At the heart of the community','Lively neighbourhood']),'next door to a pub at closing time'),
+    topfloor:()=>eu(pick(['Elevated position with far-reaching views','Top-floor position']),'five flights of stairs, no lift'),
+    galley:()=>eu(pick(['Galley kitchen','Efficient kitchenette']),'a corridor with a hob'),
+    damp:()=>eu(pick(['Full of character','Brimming with charm']),'damp'),
+    overlooked:()=>eu(pick(['Sociable position','Friendly neighbours close at hand']),'the neighbours can see in'),
+    noparking:()=>eu(pick(['Permit parking available','On-street parking']),'park three streets away'),
+    northgarden:()=>eu(pick(['Private garden offering a cool, shaded retreat','Low-maintenance garden']),'the sun never reaches it'),
+    nogarden:()=>eu(pick(['A short stroll to green open space','Close to the park']),'no garden'),
+    school:()=>eu('Within catchment of a sought-after school','the reason it costs this much'),
+    culdesac:()=>'Tucked away in a quiet cul-de-sac',
+  };
+  QUIRKS.forEach(([k])=>{if(Q(k))feats.push(QF[k]());});
+  if(feats.length<6)feats.push(pick(['No onward chain','Gas central heating','Double glazing throughout','Close to local shops']));
+  if(feats.length<6&&F.type!=='studio'&&F.type!=='flat'&&!Q('nogarden')&&!Q('northgarden'))feats.push('Rear garden');
+
+  // description
+  const s=[];
+  s.push(`${pick(['We are delighted to offer','Gable & Gloss are pleased to bring to the market','We are proud to present'])} this ${size} ${thing.replace(/^(\w+)-bedroom/,'$1-bedroom')} ${where}.`);
+  let rooms;
+  if(F.type==='studio')rooms='The accommodation comprises an '+eu('open-plan living space','one room')+(Q('galley')?' with '+eu('a cleverly designed kitchen area','a hob next to the bed'):' with kitchen area')+' and a shower room';
+  else{const lounge=ratio<.8?eu(pick(['a snug reception room','a cosy lounge']),'room for one sofa'):'a '+pick(['bright','generous','light-filled'])+' reception room';
+    rooms=`The accommodation comprises an entrance hall, ${lounge}, ${Q('galley')?'a '+eu('galley kitchen','a corridor with a hob'):'a fitted kitchen'}, ${NUM[F.beds]} bedroom${F.beds>1?'s':''} and a family bathroom`;}
+  s.push(rooms+'.');
+  if(F.cond==='wreck')s.push(`The property would benefit from ${eu(pick(['some updating','a degree of modernisation','some TLC']),'a builder for six months')} and offers ${eu('enormous scope','it is cheaper to knock down')} for the ${eu('discerning buyer','someone with cash and no fear')}.`);
+  else if(F.cond==='tired')s.push(`Offered to the market for the first time in many years, the home is ${eu('ready for the next owner to make their own','very brown')}.`);
+  else s.push('Recently refurbished to a high standard, it is ready to move straight into.');
+  if(Q('rail'))s.push(`It is ${eu('perfect for commuters','you will hear every train')}.`);
+  if(Q('pub'))s.push(`${eu('A thriving local','a pub beer garden')} is right next door.`);
+  if(Q('takeaway'))s.push(`There is ${eu('a wealth of dining options','the smell of chips')} on the doorstep.`);
+  if(Q('school'))s.push('It sits within catchment of a highly rated school.');
+  if(Q('damp')&&r()<.7)s.push(`Many period features add ${eu('real character','the smell of a cellar')}.`);
+  const desc=s.join(' ');
+
+  const p=price();
+  const mode=F.cond==='wreck'||r()<.4?'oieo':(r()<.5?'guide':'asking');
+  let priceHTML;
+  if(mode==='oieo')priceHTML=`<small>${eu('Offers in excess of','will take ' + money(Math.round(p*.93/1000)*1000))}</small>${money(p)}`;
+  else if(mode==='guide')priceHTML=`<small>Guide price</small>${money(p)}`;
+  else priceHTML=`<small>Asking price</small>${money(p)}`;
+  const epc={immaculate:'C',tired:'E',wreck:'G'}[F.cond];
+  const ct=band(p);
+  const close=eu(pick(['Viewing highly recommended.','Early viewing essential.','Viewing is a must.']),pick(['the photos are flattering','the photos were taken with a wide-angle lens']));
+  return {html:`<p class="price">${priceHTML}</p>
+    <h3 class="headline">${headline}</h3>
+    <div class="facts-line"><span><b>${F.beds}</b> bed${F.beds===1?'':'s'}</span><span><b>${F.area}</b> m² (${Math.round(F.area*10.764)} sq ft)</span><span>EPC <b>${epc}</b></span><span>Council tax band <b>${ct}</b></span></div>
+    <ul class="feats">${feats.map(f=>`<li>${f}</li>`).join('')}</ul>
+    <p class="desc">${desc}</p>
+    <p class="close">${close}</p>`,price:p,mode};
+}
+
+// ---------- the photo ----------
+function facade(){
+  const r=rng(seed*31+F.beds);const Q=k=>F.quirks.has(k);const W='style="fill:var(--glass);stroke:var(--ink);stroke-width:1.5"';
+  const wreck=F.cond==='wreck',tired=F.cond==='tired';
+  let s='<rect width="320" height="180" style="fill:var(--sky)"/>';
+  if(Q('rail'))s+='<g><rect x="0" y="118" width="320" height="6" style="fill:var(--dim)"/>'+Array.from({length:9},(_,i)=>`<rect x="${i*40+4}" y="96" width="34" height="20" rx="3" style="fill:var(--teal);opacity:.55"/>`).join('')+'</g>';
+  s+='<rect x="0" y="160" width="320" height="20" style="fill:var(--stone)"/>';
+  if(Q('road'))s+='<rect x="0" y="168" width="320" height="12" style="fill:var(--roof)"/>'+Array.from({length:8},(_,i)=>`<rect x="${i*42+6}" y="173" width="20" height="2.5" style="fill:var(--hl)"/>`).join('');
+  const win=(x,y,w,h,board)=>board?`<rect x="${x}" y="${y}" width="${w}" height="${h}" style="fill:var(--stone);stroke:var(--ink);stroke-width:1.5"/><path d="M${x} ${y}L${x+w} ${y+h}M${x+w} ${y}L${x} ${y+h}" style="stroke:var(--brick2);stroke-width:3"/>`:`<rect x="${x}" y="${y}" width="${w}" height="${h}" ${W}/><line x1="${x+w/2}" y1="${y}" x2="${x+w/2}" y2="${y+h}" style="stroke:var(--ink);stroke-width:1"/>`;
+  const house=(x,w,h,ours,beds)=>{
+    const top=160-h;let g=`<rect x="${x}" y="${top}" width="${w}" height="${h}" style="fill:${ours?'var(--brick)':'var(--dim)'};stroke:var(--ink);stroke-width:1.5"/>`;
+    g+=`<path d="M${x-4} ${top}L${x+w/2} ${top-26}L${x+w+4} ${top}Z" style="fill:var(--roof);stroke:var(--ink);stroke-width:1.5"/>`;
+    if(ours&&wreck)g+=`<path d="M${x+w*.6} ${top-10}l10 6l-4 4z" style="fill:var(--sky)"/>`;
+    const up=Math.max(1,Math.min(3,beds));const ww=Math.min(22,(w-16)/up-8);
+    for(let i=0;i<up;i++){const wx=x+(w/(up))*(i+.5)-ww/2;g+=win(wx,top+12,ww,22,ours&&wreck&&i===0);}
+    g+=`<rect x="${x+8}" y="${140}" width="16" height="20" style="fill:${ours?'var(--brand)':'var(--roof)'};stroke:var(--ink);stroke-width:1.5"/>`;
+    g+=win(x+w-34,132,24,18,false);
+    if(ours&&Q('damp'))g+=`<path d="M${x+2} 160 q10 -26 24 -14 q14 -18 22 14z" style="fill:var(--ink);opacity:.18"/>`;
+    if(ours&&tired)g+=`<rect x="${x}" y="${top}" width="${w}" height="${h}" style="fill:var(--stone);opacity:.35"/>`;
+    return g;};
+  if(F.type==='flat'||F.type==='studio'){
+    const x=96,w=128,floors=4,fh=24,top=160-floors*fh-10;
+    s+=`<rect x="${x}" y="${top}" width="${w}" height="${160-top}" style="fill:var(--stone);stroke:var(--ink);stroke-width:1.5"/><rect x="${x-4}" y="${top-6}" width="${w+8}" height="8" style="fill:var(--roof);stroke:var(--ink);stroke-width:1.5"/>`;
+    const ourFloor=Q('topfloor')?0:1+Math.floor(r()*2);
+    for(let f=0;f<floors;f++)for(let c=0;c<3;c++){const wx=x+12+c*40,wy=top+8+f*fh;const ours=f===ourFloor;
+      s+=ours?`<rect x="${wx-3}" y="${wy-3}" width="30" height="21" style="fill:var(--brand)"/>`+win(wx,wy,24,15,wreck&&c===1):win(wx,wy,24,15,false);}
+    if(Q('takeaway'))s+=`<rect x="${x}" y="130" width="${w}" height="30" style="fill:var(--hl);stroke:var(--ink);stroke-width:1.5"/><path d="M${x} 130 h${w} l-6 10 h-${w-12}z" style="fill:var(--warn)"/><text x="${x+w/2}" y="154" text-anchor="middle" style="fill:var(--hl-ink);font:700 9px var(--body)">KEBAB · PIZZA · CHIPS</text>`;
+    else s+=`<rect x="${x+w/2-10}" y="138" width="20" height="22" style="fill:var(--roof);stroke:var(--ink);stroke-width:1.5"/>`;
+    if(tired)s+=`<rect x="${x}" y="${top}" width="${w}" height="${160-top}" style="fill:var(--stone);opacity:.3"/>`;
+    if(Q('damp'))s+=`<path d="M${x+2} 128 q14 -22 30 -8 q12 -16 26 8z" style="fill:var(--ink);opacity:.15"/>`;
+    if(Q('pub'))s+=`<rect x="232" y="110" width="70" height="50" style="fill:var(--dim);stroke:var(--ink);stroke-width:1.5"/><rect x="240" y="96" width="34" height="14" rx="2" style="fill:var(--roof)"/><text x="257" y="106" text-anchor="middle" style="fill:var(--hl);font:700 7px var(--body)">THE OAK</text>`;
+  }else if(F.type==='bungalow'){
+    s+=house(88,144,52,true,F.beds);
+    if(Q('pub'))s+=`<rect x="250" y="104" width="62" height="56" style="fill:var(--dim);stroke:var(--ink);stroke-width:1.5"/><rect x="258" y="90" width="34" height="14" rx="2" style="fill:var(--roof)"/><text x="275" y="100" text-anchor="middle" style="fill:var(--hl);font:700 7px var(--body)">THE OAK</text>`;
+  }else if(F.type==='semi'){
+    s+=house(70,90,74,true,F.beds)+house(160,90,74,false,2);
+  }else{
+    s+=house(10,96,78,false,2)+house(112,96,78,true,F.beds)+house(214,96,78,false,2);
+  }
+  if(Q('takeaway')&&F.type!=='flat'&&F.type!=='studio')s+=`<rect x="262" y="132" width="54" height="28" style="fill:var(--hl);stroke:var(--ink);stroke-width:1.5"/><text x="289" y="150" text-anchor="middle" style="fill:var(--hl-ink);font:700 8px var(--body)">KEBABS</text>`;
+  // for-sale board
+  s+=`<rect x="44" y="112" width="3" height="48" style="fill:var(--ink)"/><rect x="18" y="88" width="56" height="30" rx="2" style="fill:var(--brand);stroke:var(--ink);stroke-width:1.5"/><text x="46" y="101" text-anchor="middle" style="fill:var(--brand-ink);font:700 9px var(--body);letter-spacing:.06em">FOR SALE</text><text x="46" y="112" text-anchor="middle" style="fill:var(--brand-ink);font:600 7px var(--body)">Gable &amp; Gloss</text>`;
+  return s;
+}
+
+let last={};
+function render(){
+  // controls
+  document.querySelectorAll('#type button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===F.type));
+  document.querySelectorAll('#cond button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===F.cond));
+  document.querySelectorAll('#setting button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===F.setting));
+  document.querySelectorAll('#quirks .chip').forEach(b=>{b.setAttribute('aria-pressed',F.quirks.has(b.dataset.k));
+    b.disabled=b.dataset.k==='topfloor'&&!['flat','studio'].includes(F.type);b.title=b.disabled?'Only flats have a top floor':'';});
+  $('beds').textContent=F.beds;$('bedDown').disabled=F.beds<=(F.type==='studio'?0:1);$('bedUp').disabled=F.beds>=MAXBEDS[F.type];
+  $('area').value=F.area;$('areaV').textContent=`${F.area} m²`;
+  const w=write();last=w;
+  $('out').innerHTML=w.html;$('out').classList.toggle('translated',translated);
+  EU=$('out').querySelectorAll('.eu').length;$('nEu').textContent=EU;
+  $('translate').setAttribute('aria-pressed',translated);$('translate').textContent=translated?'Show the listing':'Translate';
+  $('badge').textContent=F.cond==='wreck'?'Auction':(seed%5===0?'Reduced':'For sale');
+  $('facade').innerHTML=facade();
+}
+render();
+
+window.__viewing={get state(){return {facts:{...F,quirks:[...F.quirks]},seed,translated,euphemisms:EU,price:last.price,msg:lastMsg,
+  text:$('out').innerText,truthsVisible:[...document.querySelectorAll('#out .truth')].filter(e=>getComputedStyle(e).display!=='none').length};}};
+})();
+</script>
+
+</body></html>

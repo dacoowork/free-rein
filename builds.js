@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "viewing",
+    title: "Viewing Recommended",
+    date: "2026-10-24",
+    kind: "Writing machine",
+    blurb: "Tell an estate agent the truth about a property, from the main road to the kebab shop downstairs, and it writes the glossy listing. Then press Translate to see what every phrase really means.",
+    font: "'Zilla Slab', Rockwell, Georgia, serif", fontWeight: 700, letterSpacing: "-0.01em",
+    bg: "#eef1ee", fg: "#1f1c24", accent: "#c2185b", accent2: "#f4ec5a",
+    motif: "listing"
+  },
+  {
     slug: "checkout",
     title: "Checkout",
     date: "2026-10-23",
