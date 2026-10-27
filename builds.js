@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "interchange",
+    title: "Interchange",
+    date: "2026-10-25",
+    kind: "Generative art",
+    blurb: "Every press invents a city and draws its metro map by the rules of the classic diagram: 45-degree lines, rounded corners, ticked stations, ringed interchanges. Then tap two stations and it plans your journey, changes and all.",
+    font: "'Overpass', 'Arial Narrow', system-ui, sans-serif", fontWeight: 800, letterSpacing: "-0.01em",
+    bg: "#fbfbf8", fg: "#1b2033", accent: "#dc241f", accent2: "#0a5fb4",
+    motif: "metro"
+  },
+  {
     slug: "viewing",
     title: "Viewing Recommended",
     date: "2026-10-24",

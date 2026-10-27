@@ -1,0 +1,544 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Interchange</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:ital,wght@0,400;0,600;0,800;1,400&display=swap">
+<style>
+/* Layout: a header strip like a station poster, the generated map as the page's one big object, and a side column (below on phones) for the journey planner and line key. */
+:root{
+  --ground:#fbfbf8;      /* map paper: a cool clean poster white */
+  --ink:#1b2033;         /* station names, rings */
+  --muted:#5f6577;
+  --rule:#d9dbe2;
+  --zone:#eef0f5;        /* fare-zone wash */
+  --zone2:#e4e7ef;
+  --panel:#ffffff;
+  --accent:#e0261f;      /* roundel red, used for the brand bar and selection */
+  --dim:.16;
+  --f-display:'Overpass','Highway Gothic','Arial Narrow',system-ui,sans-serif;
+  --f-body:'Overpass',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#14161d;--ink:#eceef4;--muted:#9aa0b2;--rule:#2c303c;--zone:#1a1d26;--zone2:#20242f;--panel:#1b1e27;--accent:#ff4a3d;--dim:.2;color-scheme:dark}}
+:root[data-theme="dark"]{--ground:#14161d;--ink:#eceef4;--muted:#9aa0b2;--rule:#2c303c;--zone:#1a1d26;--zone2:#20242f;--panel:#1b1e27;--accent:#ff4a3d;--dim:.2;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--ground);color:var(--ink)}
+body{font-family:var(--f-body);font-size:15px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 28px}
+.wrap{max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 20px;border-bottom:3px solid var(--ink);padding-bottom:10px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.roundel{flex:none;width:40px;height:40px}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,4vw,40px);line-height:1;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{margin:4px 0 0;color:var(--muted);font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:600 14px/1 var(--f-body);color:var(--ink);background:var(--panel);border:1.5px solid var(--ink);border-radius:999px;padding:9px 14px 7px;cursor:pointer}
+button:hover{background:var(--zone2)}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--ink);color:var(--ground)}
+button.primary:hover{opacity:.88}
+button[aria-pressed="true"]{background:var(--ink);color:var(--ground)}
+.stepper{display:flex;align-items:center;gap:6px;font-weight:600;font-size:14px}
+.stepper button{width:34px;padding:8px 0 6px;text-align:center}
+.stepper output{min-width:62px;text-align:center;font-variant-numeric:tabular-nums}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
+.mapbox{min-width:0;background:var(--ground);border:1.5px solid var(--rule);border-radius:6px;overflow:hidden}
+#map{display:block;width:100%;height:auto;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+#map .hit{cursor:pointer}
+#map text{font-family:var(--f-body)}
+#map.routing .base{opacity:var(--dim)}
+#map.routing .lbl{opacity:.28}
+#map.routing .lbl.on{opacity:1;font-weight:800}
+aside{display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:var(--panel);border:1.5px solid var(--rule);border-radius:6px;padding:14px}
+.card h2{font:800 12px/1 var(--f-display);text-transform:uppercase;letter-spacing:.1em;margin:0 0 10px;color:var(--muted)}
+#journey p{margin:0}
+.prompt{color:var(--muted)}
+.ends{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center;margin-bottom:10px}
+.ends span:nth-child(odd){font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.ends b{font-weight:800}
+ol.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}
+ol.steps li{display:grid;grid-template-columns:14px 1fr;gap:10px;padding:6px 0}
+.bar{width:8px;border-radius:4px;justify-self:center;align-self:stretch;min-height:28px}
+.chg{width:14px;height:14px;border:3px solid var(--ink);border-radius:50%;background:var(--panel);align-self:center}
+.leg small{display:block;color:var(--muted);font-size:13px}
+.total{margin-top:8px;padding-top:8px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;font-variant-numeric:tabular-nums;font-weight:600}
+#clear{margin-top:10px}
+.key{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.key li{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center}
+.sw{height:8px;border-radius:4px}
+.key b{display:block;font-weight:800;font-size:14px}
+.key small{display:block;color:var(--muted);font-size:12.5px;line-height:1.3}
+.facts{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.facts b{color:var(--ink)}
+.note{font-size:12.5px;color:var(--muted);margin:0}
+@media (max-width:860px){.main{grid-template-columns:minmax(0,1fr)}aside{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}}
+@media (max-width:640px){
+  aside{display:flex}
+  .main{display:flex;flex-direction:column;gap:12px}
+  .main aside{display:contents}
+  #journeyCard{order:-1}
+  .mapbox{order:0}
+  #keyCard{order:1}
+  #aboutCard{order:2}
+  header{align-items:flex-start}
+}
+@media (prefers-reduced-motion:no-preference){#map .route path{animation:draw .6s ease-out both}}
+@keyframes draw{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg class="roundel" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="15" style="fill:none;stroke:var(--accent);stroke-width:7"/><rect x="1" y="15" width="38" height="10" style="fill:var(--ink)"/></svg>
+      <div style="min-width:0">
+        <h1 id="city">Interchange</h1>
+        <p class="sub" id="mapno">Network map</p>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="primary" id="new">New city</button>
+      <div class="stepper" aria-label="Number of lines">
+        <button id="less" aria-label="Fewer lines">−</button>
+        <output id="nlines">5 lines</output>
+        <button id="more" aria-label="More lines">+</button>
+      </div>
+      <button id="style" aria-pressed="false">Station dots</button>
+      <button id="zones" aria-pressed="true">Fare zones</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="mapbox"><svg id="map" role="img" aria-label="Generated metro map"></svg></div>
+    <aside>
+      <section class="card" id="journeyCard"><h2>Plan a journey</h2><div id="journey"></div></section>
+      <section class="card" id="keyCard"><h2>Lines</h2><ul class="key" id="key"></ul></section>
+      <section class="card" id="aboutCard"><h2>How the map is drawn</h2>
+        <p class="note">Every city is invented by rules. Lines run only at 0°, 45° and 90° and never turn back sharper than a right angle. No two lines share a stretch of track, every line meets another, and stations sit about two grid squares apart. Labels try eight positions each and take the first one that clears the lines and the other names.</p>
+        <div class="facts" id="facts" style="margin-top:10px"></div>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<script>
+(()=>{
+const SVGNS='http://www.w3.org/2000/svg';
+const U=32, PAD=24;
+const LINE_COLOURS=[
+  {l:'#dc241f',d:'#ff5a4e'},{l:'#0a5fb4',d:'#4c9cf0'},{l:'#00843d',d:'#2fbf6c'},{l:'#f2a900',d:'#ffc53d'},
+  {l:'#7b2d8b',d:'#b56ad0'},{l:'#e86a10',d:'#ff8c3a'},{l:'#00a3a6',d:'#2fd2cf'},{l:'#e2479a',d:'#ff78bb'}];
+const LINE_NAMES=['Copper','Foundry','Orchard','Meridian','Lantern','Juniper','Quarry','Viaduct','Signal','Beacon','Bramble','Cinder','Kestrel','Mill','Ember','Ridgeway','Tannery','Oriel','Chalk','Saffron'];
+const P1=['Ash','Bram','Cal','Dun','Fen','Gor','Hal','Kel','Lin','Mor','Nor','Pell','Quen','Ros','Stan','Tor','Wel','Yar','Ard','Bel','Cro','Ell','Hep','Ock','Sal','Brig','Thorn','Wim','Har','Lox','Bir','Cam','Dal','Ever','Gil','Mar','Pen','Rad','Sel','Ux'];
+const P2=['ford','ley','wick','ham','ton','bury','worth','by','stead','field','more','gate','well','holm','combe','den','hurst','thorpe','mere','dale','cote','ing'];
+const SUF=['Road','Cross','Park','Hill','Green','Square','Market','Common','Lane','Broadway','Heath','Fields','Street','Gardens','Yard','Works','Arches','Rise'];
+const CITY_SUF=['Metro','Underground','Rapid Transit','Subway','U-Bahn','Rail'];
+
+let rng;
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const R=()=>rng(), ri=(a,b)=>a+Math.floor(R()*(b-a+1)), pick=a=>a[Math.floor(R()*a.length)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+const S={seed:0,nLines:5,dots:false,zones:true,portrait:false,map:null,sel:[],route:null};
+
+/* ---------- generation ---------- */
+const key=(x,y)=>x+','+y;
+const ekey=(a,b)=>{const k1=key(a[0],a[1]),k2=key(b[0],b[1]);return k1<k2?k1+'|'+k2:k2+'|'+k1};
+const sgn=v=>v>0?1:v<0?-1:0;
+
+function leg(a,b,diagFirst){ // octilinear 2-segment path from a to b, as unit steps
+  const dx=b[0]-a[0],dy=b[1]-a[1],d=Math.min(Math.abs(dx),Math.abs(dy));
+  const diag=[sgn(dx),sgn(dy)], rest=Math.abs(dx)>Math.abs(dy)?[sgn(dx),0]:[0,sgn(dy)];
+  const nRest=Math.abs(Math.abs(dx)-Math.abs(dy));
+  const steps=[];
+  const push=(v,n)=>{for(let i=0;i<n;i++)steps.push(v)};
+  if(diagFirst){push(diag,d);push(rest,nRest)}else{push(rest,nRest);push(diag,d)}
+  return steps;
+}
+function tryLine(W,H,used,nodesUsed,first){
+  // endpoints on opposite sides of the city, through 1-2 waypoints near the middle
+  const ang=R()*Math.PI*2, cx=W/2, cy=H/2;
+  const rx=(W/2-1.5), ry=(H/2-1.5);
+  const ept=(t,s)=>[Math.round(cx+Math.cos(t)*rx*s),Math.round(cy+Math.sin(t)*ry*s)];
+  const a=ept(ang,0.75+R()*0.25), b=ept(ang+Math.PI+(R()-.5)*1.1,0.75+R()*0.25);
+  const nW=ri(1,2), wps=[];
+  for(let i=0;i<nW;i++){
+    const t=(i+1)/(nW+1);
+    wps.push([Math.round(a[0]+(b[0]-a[0])*t+(R()-.5)*W*.5),Math.round(a[1]+(b[1]-a[1])*t+(R()-.5)*H*.5)]);
+  }
+  const pts=[a,...wps,b];
+  for(const p of pts){p[0]=Math.max(1,Math.min(W-1,p[0]));p[1]=Math.max(1,Math.min(H-1,p[1]))}
+  let steps=[];
+  for(let i=0;i<pts.length-1;i++)steps=steps.concat(leg(pts[i],pts[i+1],R()<.5));
+  if(steps.length<8)return null;
+  // reject sharp turns
+  for(let i=1;i<steps.length;i++){const p=steps[i-1],q=steps[i];if(p[0]*q[0]+p[1]*q[1]<0)return null}
+  // count corners: too wiggly looks wrong
+  let corners=0;for(let i=1;i<steps.length;i++)if(steps[i][0]!==steps[i-1][0]||steps[i][1]!==steps[i-1][1])corners++;
+  if(corners>5)return null;
+  const nodes=[a.slice()];
+  for(const s of steps){const l=nodes[nodes.length-1];nodes.push([l[0]+s[0],l[1]+s[1]])}
+  const seen=new Set();
+  for(const n of nodes){const k=key(n[0],n[1]);if(seen.has(k))return null;seen.add(k);if(n[0]<1||n[1]<1||n[0]>W-1||n[1]>H-1)return null}
+  let shares=0;
+  for(let i=0;i<nodes.length-1;i++){if(used.has(ekey(nodes[i],nodes[i+1])))return null}
+  // forbid two diagonals crossing in the same square (an X with no node): keep it, it reads fine. Count shared nodes instead.
+  for(const n of nodes)if(nodesUsed.has(key(n[0],n[1])))shares++;
+  if(!first&&shares<1)return null;
+  if(shares>3)return null;
+  // keep interchanges apart: no two within one grid square of each other
+  const inter=[...nodesUsed.keys()].filter(k=>nodesUsed.get(k).length>1).map(k=>k.split(',').map(Number));
+  const mine=nodes.filter(n=>nodesUsed.has(key(n[0],n[1])));
+  const near=(a,b)=>Math.max(Math.abs(a[0]-b[0]),Math.abs(a[1]-b[1]))<=1;
+  for(let i=0;i<mine.length;i++){
+    for(const q of inter)if(near(mine[i],q)&&!(mine[i][0]===q[0]&&mine[i][1]===q[1]))return null;
+    for(let j=i+1;j<mine.length;j++)if(near(mine[i],mine[j]))return null;
+  }
+  // don't let a line just graze another's terminus
+  return nodes;
+}
+function genName(used,bias){
+  for(let t=0;t<60;t++){
+    let base=pick(P1)+pick(P2);
+    const r=R();let n;
+    if(r<.42)n=base;else if(r<.82+bias)n=base+' '+pick(SUF);else n=(R()<.5?'North ':'East ')+base;
+    if(bias>0&&R()<.3)n=base+' Central';
+    if(n.length>17)continue;
+    if(!used.has(n)){used.add(n);return n}
+  }
+  const n=pick(P1)+pick(P2)+' '+used.size;used.add(n);return n;
+}
+function generate(){
+  rng=mulberry(S.seed);
+  const portrait=S.portrait;
+  const W=portrait?11:30, H=portrait?17:19;
+  const used=new Set(), nodesUsed=new Map();
+  const lines=[];
+  const names=shuffle(LINE_NAMES), cols=shuffle(LINE_COLOURS.map((c,i)=>i));
+  for(let li=0;li<S.nLines;li++){
+    let nodes=null;
+    for(let t=0;t<900&&!nodes;t++)nodes=tryLine(W,H,used,nodesUsed,li===0);
+    if(!nodes)continue;
+    for(let i=0;i<nodes.length-1;i++)used.add(ekey(nodes[i],nodes[i+1]));
+    const id=lines.length;
+    nodes.forEach((n,i)=>{const k=key(n[0],n[1]);if(!nodesUsed.has(k))nodesUsed.set(k,[]);nodesUsed.get(k).push([id,i])});
+    lines.push({id,nodes,name:names[li],col:LINE_COLOURS[cols[li]]});
+  }
+  // corners per line
+  for(const L of lines){
+    L.corner=new Set();
+    for(let i=1;i<L.nodes.length-1;i++){
+      const a=L.nodes[i-1],b=L.nodes[i],c=L.nodes[i+1];
+      if(b[0]-a[0]!==c[0]-b[0]||b[1]-a[1]!==c[1]-b[1])L.corner.add(i);
+    }
+  }
+  // stations
+  const stations=new Map(); // key -> {id,x,y,lines:Set,name}
+  const nameSet=new Set();
+  const addSt=(n)=>{const k=key(n[0],n[1]);if(!stations.has(k))stations.set(k,{k,x:n[0],y:n[1],lines:new Set()});return stations.get(k)};
+  for(const L of lines){
+    const mand=[0,L.nodes.length-1];
+    L.nodes.forEach((n,i)=>{if(nodesUsed.get(key(n[0],n[1])).length>1)mand.push(i)});
+    const m=[...new Set(mand)].sort((a,b)=>a-b);
+    const idx=new Set(m);
+    for(let j=0;j<m.length-1;j++){
+      const i0=m[j],i1=m[j+1],g=i1-i0;
+      const cnt=Math.max(0,Math.round(g/(S.portrait?2.7:2.2))-1);
+      for(let c=1;c<=cnt;c++){
+        let p=Math.round(i0+c*g/(cnt+1));
+        if(L.corner.has(p)){if(!L.corner.has(p+1)&&p+1<i1)p++;else if(!L.corner.has(p-1)&&p-1>i0)p--;}
+        if(p>i0&&p<i1)idx.add(p);
+      }
+    }
+    L.stIdx=[...idx].sort((a,b)=>a-b);
+    for(const i of L.stIdx)addSt(L.nodes[i]).lines.add(L.id);
+  }
+  // remove accidental adjacency of interchange and plain station? keep
+  let sid=0;
+  const stList=[...stations.values()];
+  stList.sort((a,b)=>b.lines.size-a.lines.size);
+  for(const s of stList){s.id=sid++;s.name=genName(nameSet,s.lines.size>1?.1:0)}
+  for(const L of lines){L.st=L.stIdx.map(i=>stations.get(key(L.nodes[i][0],L.nodes[i][1])));}
+  const cityBase=pick(P1)+pick(P2);
+  const city=cityBase+' '+pick(CITY_SUF);
+  return {W,H,lines,stations:stList.sort((a,b)=>a.id-b.id),city,cityBase};
+}
+
+/* ---------- drawing ---------- */
+const px=n=>[PAD+n[0]*U,PAD+n[1]*U];
+function tok(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim()}
+function isDark(){return getComputedStyle(document.documentElement).colorScheme.includes('dark')&&tok('--ground').toLowerCase()!=='#fbfbf8'}
+function el(tag,attrs,parent){const e=document.createElementNS(SVGNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+function roundedPath(nodes){
+  const P=nodes.map(px);
+  // collapse to corner points
+  const C=[P[0]];
+  for(let i=1;i<P.length-1;i++){
+    const a=P[i-1],b=P[i],c=P[i+1];
+    if(Math.abs((b[0]-a[0])*(c[1]-b[1])-(b[1]-a[1])*(c[0]-b[0]))>1e-6)C.push(b);
+  }
+  C.push(P[P.length-1]);
+  let d='M'+C[0][0].toFixed(1)+' '+C[0][1].toFixed(1);
+  for(let i=1;i<C.length-1;i++){
+    const a=C[i-1],b=C[i],c=C[i+1];
+    const l1=Math.hypot(b[0]-a[0],b[1]-a[1]),l2=Math.hypot(c[0]-b[0],c[1]-b[1]);
+    const r=Math.min(U*.75,l1/2,l2/2);
+    const p1=[b[0]-(b[0]-a[0])/l1*r,b[1]-(b[1]-a[1])/l1*r],p2=[b[0]+(c[0]-b[0])/l2*r,b[1]+(c[1]-b[1])/l2*r];
+    d+=` L${p1[0].toFixed(1)} ${p1[1].toFixed(1)} Q${b[0].toFixed(1)} ${b[1].toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+  }
+  d+=` L${C[C.length-1][0].toFixed(1)} ${C[C.length-1][1].toFixed(1)}`;
+  let len=0;for(let i=1;i<C.length;i++)len+=Math.hypot(C[i][0]-C[i-1][0],C[i][1]-C[i-1][1]);
+  return {d,len};
+}
+function dirAt(L,i){
+  const n=L.nodes; const a=n[Math.max(0,i-1)], b=n[Math.min(n.length-1,i+1)];
+  let dx=b[0]-a[0],dy=b[1]-a[1];const m=Math.hypot(dx,dy)||1;return [dx/m,dy/m];
+}
+const FS=()=>S.portrait?15:13.5;
+function textW(s,fs){return s.length*fs*0.54+2}
+
+function draw(){
+  const M=S.map, svg=document.getElementById('map');
+  svg.innerHTML='';
+  const VW=M.W*U+PAD*2, VH=M.H*U+PAD*2;
+  svg.setAttribute('viewBox',`0 0 ${VW} ${VH}`);
+  const dark=isDark();
+  const ink=tok('--ink'), ground=tok('--ground'), zone=tok('--zone'), zone2=tok('--zone2'), muted=tok('--muted');
+  const col=L=>dark?L.col.d:L.col.l;
+  el('rect',{x:0,y:0,width:VW,height:VH,style:`fill:${ground}`},svg);
+  // zones
+  const zoneRects=[];let zg=null;
+  if(S.zones){
+    zg=el('g',{class:'zones'},svg);
+    const cx=VW/2, cy=VH/2;
+    const zs=[[.86,zone2],[.56,zone],[.28,zone2]];
+    zs.forEach(([f,c],i)=>{
+      const w=(VW-PAD*2)*f, h=(VH-PAD*2)*f;
+      el('rect',{x:cx-w/2,y:cy-h/2,width:w,height:h,rx:Math.min(w,h)*.22,style:`fill:${c};stroke:${muted};stroke-opacity:.25;stroke-width:1;stroke-dasharray:6 5`},zg);
+      zoneRects.push({x:cx-w/2,y:cy-h/2,w,h,n:i===0?3:i===1?2:1});
+    });
+  }
+  const base=el('g',{class:'base'},svg);
+  // lines (casing first for contrast where lines cross)
+  const LW=9;
+  for(const L of M.lines){const r=roundedPath(L.nodes);el('path',{d:r.d,style:`fill:none;stroke:${ground};stroke-width:${LW+5};stroke-linecap:round;stroke-linejoin:round`},base)}
+  for(const L of M.lines){const r=roundedPath(L.nodes);el('path',{d:r.d,'data-line':L.id,style:`fill:none;stroke:${col(L)};stroke-width:${LW};stroke-linecap:butt;stroke-linejoin:round`},base)}
+  // label placement
+  const fs=FS();
+  const obstacles=[]; // sample points along lines
+  for(const L of M.lines){for(let i=0;i<L.nodes.length-1;i++){const a=px(L.nodes[i]),b=px(L.nodes[i+1]);for(let t=0;t<=1;t+=.125)obstacles.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t])}}
+  for(const s of M.stations){const p=px([s.x,s.y]);for(const [dx,dy] of [[0,0],[-7,-7],[7,7],[-7,7],[7,-7]])obstacles.push([p[0]+dx,p[1]+dy])}
+  const boxes=[];
+  const hitsBox=(bx)=>{
+    if(bx.x<4||bx.y<4||bx.x+bx.w>VW-4||bx.y+bx.h>VH-4)return 99;
+    let c=0;
+    for(const p of obstacles)if(p[0]>bx.x-6&&p[0]<bx.x+bx.w+6&&p[1]>bx.y-6&&p[1]<bx.y+bx.h+6)c++;
+    for(const o of boxes)if(bx.x<o.x+o.w+3&&bx.x+bx.w+3>o.x&&bx.y<o.y+o.h+2&&bx.y+bx.h+2>o.y)c+=40;
+    return c;
+  };
+  const DIRS=[[1,0],[-1,0],[0,-1],[0,1],[.7071,-.7071],[.7071,.7071],[-.7071,-.7071],[-.7071,.7071]];
+  const place=new Map();
+  // interchanges first, then the rest
+  const order=M.stations.slice().sort((a,b)=>b.lines.size-a.lines.size);
+  for(const s of order){
+    const p=px([s.x,s.y]);
+    // perpendicular of first serving line
+    const L=M.lines[[...s.lines][0]]; const i=L.nodes.findIndex(n=>n[0]===s.x&&n[1]===s.y);
+    const d=dirAt(L,i), nrm=[-d[1],d[0]];
+    const cands=DIRS.slice().sort((A,B)=>Math.abs(B[0]*nrm[0]+B[1]*nrm[1])-Math.abs(A[0]*nrm[0]+A[1]*nrm[1]));
+    const w=textW(s.name,fs), h=fs*1.05;
+    let best=null;
+    const tries=[];for(const o of [0,9])for(const c of cands)tries.push([c,o]);
+    for(const [c,o2] of tries){
+      const off=(s.lines.size>1?17:15)+o2;
+      const q=[p[0]+c[0]*off,p[1]+c[1]*off];
+      let anchor='middle',x=q[0]-w/2;
+      if(c[0]>.3){anchor='start';x=q[0]}else if(c[0]<-.3){anchor='end';x=q[0]-w}
+      let y;
+      if(c[1]>.3)y=q[1];else if(c[1]<-.3)y=q[1]-h;else y=q[1]-h/2;
+      const bx={x,y,w,h};
+      const score=hitsBox(bx);
+      if(!best||score<best.score)best={score,bx,anchor,c};
+      if(score===0)break;
+    }
+    boxes.push(best.bx);
+    place.set(s.id,best);
+  }
+  // zone numbers: first corner of each zone that is clear of lines and names
+  if(zg)for(const z of zoneRects){
+    const tw=52,th=13;const inset=z.h*.08+8;
+    const spots=[[z.x+inset,z.y+inset],[z.x+z.w-inset-tw,z.y+inset],[z.x+inset,z.y+z.h-inset-th],[z.x+z.w-inset-tw,z.y+z.h-inset-th],[z.x+z.w/2-tw/2,z.y+6],[z.x+z.w/2-tw/2,z.y+z.h-th-6]];
+    for(const [x,y] of spots){const bx={x,y,w:tw,h:th};if(hitsBox(bx)===0){boxes.push(bx);const t=el('text',{x,y:y+th-2,style:`fill:${muted};font-size:12px;font-weight:600;letter-spacing:.1em`},zg);t.textContent='ZONE '+z.n;break}}
+  }
+  // ticks / dots
+  const st=el('g',{class:'base'},svg);
+  for(const L of M.lines){
+    L.stIdx.forEach((i,j)=>{
+      const s=L.st[j]; if(s.lines.size>1)return;
+      const p=px(L.nodes[i]);
+      if(S.dots){el('circle',{cx:p[0],cy:p[1],r:5.2,style:`fill:${ground};stroke:${col(L)};stroke-width:3`},st);return}
+      const d=dirAt(L,i); let n=[-d[1],d[0]]; const c=place.get(s.id).c;
+      if(c[0]*n[0]+c[1]*n[1]<0)n=[-n[0],-n[1]];
+      const end=j===0||j===L.stIdx.length-1;
+      if(end){ // terminus: a cross bar
+        el('line',{x1:p[0]-n[0]*8,y1:p[1]-n[1]*8,x2:p[0]+n[0]*9,y2:p[1]+n[1]*9,style:`stroke:${col(L)};stroke-width:6`},st);
+      }else el('line',{x1:p[0],y1:p[1],x2:p[0]+n[0]*10,y2:p[1]+n[1]*10,style:`stroke:${col(L)};stroke-width:6`},st);
+    });
+  }
+  for(const s of M.stations){if(s.lines.size<2)continue;const p=px([s.x,s.y]);el('circle',{cx:p[0],cy:p[1],r:8.5,style:`fill:${ground};stroke:${ink};stroke-width:3.4`},st)}
+  // route overlay
+  const rg=el('g',{class:'route'},svg);
+  if(S.route){
+    for(const lg of S.route.legs){
+      const L=M.lines[lg.line]; const a=L.stIdx[lg.from], b=L.stIdx[lg.to];
+      const sub=L.nodes.slice(Math.min(a,b),Math.max(a,b)+1);
+      const r=roundedPath(sub);
+      el('path',{d:r.d,style:`fill:none;stroke:${col(L)};stroke-width:${LW+3};stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:${r.len+2};--len:${r.len+2}`},rg);
+    }
+    S.route.stops.forEach((s,i)=>{
+      const p=px([s.x,s.y]); const endp=i===0||i===S.route.stops.length-1; const chg=S.route.changes.has(s.id);
+      el('circle',{cx:p[0],cy:p[1],r:endp?10:chg?8.5:4.5,style:`fill:${endp?ink:ground};stroke:${ink};stroke-width:${endp?3:chg?3.4:2.4}`},rg);
+      if(endp)el('circle',{cx:p[0],cy:p[1],r:4,style:`fill:${ground}`},rg);
+    });
+  } else if(S.sel.length===1){
+    const s=M.stations[S.sel[0]],p=px([s.x,s.y]);
+    el('circle',{cx:p[0],cy:p[1],r:13,style:`fill:none;stroke:${tok('--accent')};stroke-width:3.5`},rg);
+  }
+  // labels
+  const lg=el('g',{},svg);
+  const onRoute=new Set(S.route?S.route.stops.map(s=>s.id):[]);
+  for(const s of M.stations){
+    const b=place.get(s.id); const bx=b.bx;
+    const x=b.anchor==='start'?bx.x:b.anchor==='end'?bx.x+bx.w:bx.x+bx.w/2;
+    const t=el('text',{x:x.toFixed(1),y:(bx.y+fs*.82).toFixed(1),'text-anchor':b.anchor,class:'lbl'+(onRoute.has(s.id)?' on':''),style:`fill:${ink};font-size:${fs}px;font-weight:${s.lines.size>1?800:400};paint-order:stroke;stroke:${ground};stroke-width:3.5px;stroke-linejoin:round`},lg);
+    t.textContent=s.name;
+  }
+  // hit targets
+  const hg=el('g',{},svg), hc=el('g',{},svg);
+  for(const s of M.stations){
+    const p=px([s.x,s.y]);const b=place.get(s.id).bx;
+    el('rect',{class:'hit','data-st':s.id,x:b.x,y:b.y,width:b.w,height:b.h,style:'fill:transparent'},hg);
+    el('circle',{class:'hit','data-st':s.id,tabindex:0,role:'button','aria-label':s.name,cx:p[0],cy:p[1],r:14,style:'fill:transparent'},hc);
+  }
+  svg.classList.toggle('routing',!!S.route);
+  // title in corner of the map (part of the exported poster)
+  const ct=el('text',{x:VW-PAD,y:VH-10,'text-anchor':'end',style:`fill:${muted};font-size:11px;letter-spacing:.08em`},svg);
+  ct.textContent=`${M.city.toUpperCase()} · MAP NO. ${S.seed}`;
+}
+
+/* ---------- journeys ---------- */
+function travel(L,j){const a=L.nodes[L.stIdx[j]],b=L.nodes[L.stIdx[j+1]];let d=0;for(let i=L.stIdx[j];i<L.stIdx[j+1];i++){const p=L.nodes[i],q=L.nodes[i+1];d+=Math.hypot(q[0]-p[0],q[1]-p[1])}return 1+d*0.8}
+function plan(fromId,toId){
+  const M=S.map; if(fromId===toId)return null;
+  const CHANGE=4;
+  const dist=new Map(),prev=new Map();
+  const K=(s,l)=>s+':'+l;
+  const pq=[];
+  const from=M.stations[fromId];
+  for(const l of from.lines){dist.set(K(fromId,l),0);pq.push([0,fromId,l])}
+  let best=null;
+  while(pq.length){
+    pq.sort((a,b)=>a[0]-b[0]);const [d,s,l]=pq.shift();
+    if(d>(dist.get(K(s,l))??1e9))continue;
+    if(s===toId){best=[s,l,d];break}
+    const L=M.lines[l]; const j=L.st.findIndex(x=>x.id===s);
+    const nb=[];
+    if(j>0)nb.push([L.st[j-1].id,l,travel(L,j-1)]);
+    if(j<L.st.length-1)nb.push([L.st[j+1].id,l,travel(L,j)]);
+    for(const l2 of M.stations[s].lines)if(l2!==l)nb.push([s,l2,CHANGE]);
+    for(const [s2,l2,c] of nb){const nd=d+c;if(nd<(dist.get(K(s2,l2))??1e9)){dist.set(K(s2,l2),nd);prev.set(K(s2,l2),[s,l]);pq.push([nd,s2,l2])}}
+  }
+  if(!best)return null;
+  const path=[];let cur=[best[0],best[1]];
+  while(cur){path.unshift(cur);cur=prev.get(K(cur[0],cur[1]))}
+  // legs
+  const legs=[];
+  for(let i=0;i<path.length-1;i++){
+    const [s,l]=path[i],[s2,l2]=path[i+1];
+    if(l!==l2)continue;
+    const L=M.lines[l];const j=L.st.findIndex(x=>x.id===s),j2=L.st.findIndex(x=>x.id===s2);
+    const lastLeg=legs[legs.length-1];
+    if(lastLeg&&lastLeg.line===l&&lastLeg.to===j)lastLeg.to=j2;else legs.push({line:l,from:j,to:j2});
+  }
+  const stops=[];const changes=new Set();
+  legs.forEach((lg,k)=>{
+    const L=M.lines[lg.line];const step=lg.to>lg.from?1:-1;
+    for(let j=lg.from;j!==lg.to+step;j+=step){const s=L.st[j];if(!stops.length||stops[stops.length-1].id!==s.id)stops.push(s)}
+    if(k>0)changes.add(L.st[lg.from].id);
+  });
+  return {legs,stops,changes,mins:Math.round(best[2]*1.5)};
+}
+
+/* ---------- UI ---------- */
+function journeyHTML(){
+  const M=S.map, J=document.getElementById('journey');
+  if(!S.sel.length){J.innerHTML=`<p class="prompt">Tap a station on the map to start, then tap where you want to go.</p>`;return}
+  const a=M.stations[S.sel[0]];
+  if(S.sel.length===1){J.innerHTML=`<div class="ends"><span>From</span><b>${a.name}</b></div><p class="prompt">Now tap your destination.</p><button id="clear">Clear</button>`;return}
+  const b=M.stations[S.sel[1]], r=S.route;
+  const dark=isDark();
+  let h=`<div class="ends"><span>From</span><b>${a.name}</b><span>To</span><b>${b.name}</b></div><ol class="steps">`;
+  r.legs.forEach((lg,k)=>{
+    const L=M.lines[lg.line];const n=Math.abs(lg.to-lg.from);
+    const toward=lg.to>lg.from?L.st[L.st.length-1]:L.st[0];
+    if(k>0)h+=`<li><span class="chg"></span><span class="leg">Change at <b>${L.st[lg.from].name}</b></span></li>`;
+    h+=`<li><span class="bar" style="background:${dark?L.col.d:L.col.l}"></span><span class="leg"><b>${L.name} line</b> towards ${toward.name}<small>${n} stop${n>1?'s':''} to ${L.st[lg.to].name}</small></span></li>`;
+  });
+  const ch=r.legs.length-1;
+  h+=`</ol><div class="total"><span>${r.stops.length-1} stops · ${ch===0?'no changes':ch===1?'1 change':ch+' changes'}</span><span>about ${r.mins} min</span></div><button id="clear">Clear journey</button>`;
+  J.innerHTML=h;
+}
+function keyHTML(){
+  const M=S.map,dark=isDark();
+  document.getElementById('key').innerHTML=M.lines.map(L=>`<li><span class="sw" style="background:${dark?L.col.d:L.col.l}"></span><span><b>${L.name} line</b><small>${L.st[0].name} – ${L.st[L.st.length-1].name} · ${L.st.length} stations</small></span></li>`).join('');
+  const inter=M.stations.filter(s=>s.lines.size>1).length;
+  document.getElementById('facts').innerHTML=`<span><b>${M.lines.length}</b> lines</span><span><b>${M.stations.length}</b> stations</span><span><b>${inter}</b> interchanges</span>`;
+  document.getElementById('city').textContent=M.city;
+  document.getElementById('mapno').textContent=`Network map · No. ${S.seed}`;
+  document.getElementById('nlines').textContent=`${M.lines.length} lines`;
+  document.title='Interchange';
+}
+function render(){draw();journeyHTML();keyHTML()}
+function build(){S.map=generate();S.sel=[];S.route=null;render()}
+function choose(id){
+  if(S.sel.length===2||S.route){S.sel=[];S.route=null}
+  if(S.sel.length===1&&S.sel[0]===id){S.sel=[];render();return}
+  S.sel.push(id);
+  if(S.sel.length===2){S.route=plan(S.sel[0],S.sel[1]);if(!S.route)S.sel=[S.sel[1]]}
+  render();
+}
+document.getElementById('map').addEventListener('click',e=>{const g=e.target.closest('.hit');if(g)choose(+g.dataset.st)});
+document.getElementById('map').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const g=e.target.closest('.hit');if(g){e.preventDefault();choose(+g.dataset.st)}}});
+document.getElementById('journey').addEventListener('click',e=>{if(e.target.id==='clear'){S.sel=[];S.route=null;render()}});
+document.getElementById('new').onclick=()=>{S.seed=1+Math.floor(Math.random()*9999);build()};
+document.getElementById('less').onclick=()=>{if(S.nLines>3){S.nLines--;build()}};
+document.getElementById('more').onclick=()=>{if(S.nLines<(S.portrait?6:8)){S.nLines++;build()}};
+document.getElementById('style').onclick=e=>{S.dots=!S.dots;e.currentTarget.setAttribute('aria-pressed',S.dots);draw()};
+document.getElementById('zones').onclick=e=>{S.zones=!S.zones;e.currentTarget.setAttribute('aria-pressed',S.zones);draw()};
+const mqP=matchMedia('(max-width:640px)');
+const setOrient=()=>{const p=mqP.matches;if(p!==S.portrait){S.portrait=p;if(p)S.nLines=Math.min(S.nLines,6);if(S.map)build()}};
+mqP.addEventListener('change',setOrient);
+matchMedia('(prefers-color-scheme:dark)').addEventListener('change',()=>S.map&&render());
+new MutationObserver(()=>S.map&&render()).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+S.portrait=mqP.matches;S.seed=2417;
+build();
+window.__interchange={
+  get state(){const M=S.map;return{seed:S.seed,city:M.city,lines:M.lines.length,requestedLines:S.nLines,stations:M.stations.length,interchanges:M.stations.filter(s=>s.lines.size>1).length,selected:S.sel.slice(),route:S.route?{legs:S.route.legs.length,stops:S.route.stops.map(s=>s.name),changes:[...S.route.changes].length,mins:S.route.mins}:null,portrait:S.portrait,dots:S.dots,zones:S.zones}},
+  stations(){return S.map.stations.map(s=>({id:s.id,name:s.name,lines:[...s.lines]}))},
+  check(){ // validate the rules the page claims
+    const M=S.map,errs=[];const E=new Set();
+    for(const L of M.lines){
+      for(let i=0;i<L.nodes.length-1;i++){const a=L.nodes[i],b=L.nodes[i+1];const dx=Math.abs(b[0]-a[0]),dy=Math.abs(b[1]-a[1]);if(dx>1||dy>1||(dx===0&&dy===0))errs.push('bad step');const k=ekey(a,b);if(E.has(k))errs.push('shared track');E.add(k)}
+      for(let i=1;i<L.nodes.length-1;i++){const a=L.nodes[i-1],b=L.nodes[i],c=L.nodes[i+1];if((b[0]-a[0])*(c[0]-b[0])+(b[1]-a[1])*(c[1]-b[1])<0)errs.push('sharp turn '+L.name)}
+    }
+    // connectivity
+    const seen=new Set([0]),q=[0];
+    while(q.length){const l=q.pop();for(const s of M.lines[l].st)for(const l2 of s.lines)if(!seen.has(l2)){seen.add(l2);q.push(l2)}}
+    if(seen.size!==M.lines.length)errs.push('disconnected');
+    return errs;
+  },
+  choose
+};
+})();
+</script>
+
+</body></html>

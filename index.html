@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -79,7 +79,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-10-24d"></script>
+<script src="builds.js?v=2026-10-27"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -90,6 +90,18 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    metro(b,r){
+      // three octilinear lines with rounded corners, ticked stations and ringed interchanges, over a dashed fare-zone
+      const ink=b.fg, red=b.accent, blue='#0a5fb4', green='#00843d';
+      const ring=(x,y)=>`<circle cx="${x}" cy="${y}" r="7" fill="#fff" stroke="${ink}" stroke-width="3"/>`;
+      return `<rect width="320" height="180" fill="${b.bg}"/>
+        <rect x="70" y="34" width="180" height="112" rx="40" fill="none" stroke="#c9ccd6" stroke-width="2" stroke-dasharray="6 5"/>
+        <path d="M20 90H140Q148 90 154 84L204 34Q210 28 218 28H300" fill="none" stroke="${red}" stroke-width="7" stroke-linecap="round"/>
+        <path d="M60 160L106 114Q112 108 112 100V40" fill="none" stroke="${blue}" stroke-width="7" stroke-linecap="round" transform="translate(28 0)"/>
+        <path d="M40 30L174 164" fill="none" stroke="${green}" stroke-width="7" stroke-linecap="round"/>
+        <path d="M60 90v-9M100 90v-9M250 28v-9M280 28v-9M140 40h9M110 138l6 6" stroke="${ink}" stroke-width="3"/>
+        ${ring(140,90)}${ring(100,90)}${ring(129,119)}`;
+    },
     listing(b,r){
       // a property card in the agent's window: a terrace with the for-sale board, and a listing line translated
       const ink=b.fg, mag=b.accent, hl=b.accent2, brick='#c46a4a', glass='#bfd9e6', roof='#4a4f5a', dim='#c9cfca';
