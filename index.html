@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -79,7 +79,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-10-27"></script>
+<script src="builds.js?v=2026-10-27b"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -90,6 +90,21 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    decimal(b,r){
+      // a ten-hour decimal clock face at 9h 47m beside one décade of the Republican calendar (Quartidi 4 Brumaire picked out)
+      const ink=b.fg, red=b.accent, blue=b.accent2, cx=96, cy=90, R=66;
+      let s=`<rect width="320" height="180" fill="${b.bg}"/><circle cx="${cx}" cy="${cy}" r="${R}" fill="#fff" stroke="${ink}" stroke-width="2.5"/>`;
+      for(let i=0;i<100;i++){const a=i*3.6*Math.PI/180,big=i%10===0,r2=big?R-12:R-6;s+=`<line x1="${cx+(R-3)*Math.sin(a)}" y1="${cy-(R-3)*Math.cos(a)}" x2="${cx+r2*Math.sin(a)}" y2="${cy-r2*Math.cos(a)}" stroke="${big?ink:'#9a8fab'}" stroke-width="${big?2.2:0.8}"/>`;}
+      for(let h=1;h<=10;h++){const a=h*36*Math.PI/180;s+=`<text x="${cx+44*Math.sin(a)}" y="${cy-44*Math.cos(a)+6}" text-anchor="middle" font-family="'Pinyon Script', cursive" font-size="${h===10?20:17}" fill="${h===10?red:ink}">${h}</text>`;}
+      const hand=(deg,len,w,c)=>`<line x1="${cx}" y1="${cy}" x2="${cx+len*Math.sin(deg*Math.PI/180)}" y2="${cy-len*Math.cos(deg*Math.PI/180)}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
+      s+=hand(341.2,30,4.5,ink)+hand(172.3,50,2.5,blue)+hand(306,56,1,red)+`<circle cx="${cx}" cy="${cy}" r="3.5" fill="${red}"/>`;
+      for(let k=0;k<10;k++){const x=184+(k%5)*24, y=k<5?58:92, on=k===3;
+        s+=`<rect x="${x}" y="${y}" width="20" height="28" rx="4" fill="${on?'#c07a17':'#fbf9fe'}" stroke="${on?'#c07a17':'#cfc4de'}" stroke-width="1.2" ${k===9?'stroke-dasharray="3 2"':''}/>
+          <text x="${x+10}" y="${y+18}" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="${on?'#fff':ink}">${k+1}</text>`;}
+      s+=`<text x="184" y="44" font-family="'Pinyon Script', cursive" font-size="22" fill="${ink}">Brumaire</text>
+        <rect x="184" y="134" width="40" height="3" fill="${blue}"/><rect x="224" y="134" width="40" height="3" fill="#ffffff"/><rect x="264" y="134" width="40" height="3" fill="${red}"/>`;
+      return s;
+    },
     metro(b,r){
       // three octilinear lines with rounded corners, ticked stations and ringed interchanges, over a dashed fare-zone
       const ink=b.fg, red=b.accent, blue='#0a5fb4', green='#00843d';

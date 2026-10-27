@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "tenth-hour",
+    title: "Tenth Hour",
+    date: "2026-10-26",
+    kind: "Time and ritual",
+    blurb: "The French Revolution's decimal clock, running now: ten hours a day, a hundred minutes an hour. Below it, the Republican calendar for any date, with its ten-day week, its feast days and a converter that works both ways.",
+    font: "'Pinyon Script', 'Snell Roundhand', cursive", fontWeight: 400, letterSpacing: "0",
+    bg: "#f1ecf7", fg: "#271a35", accent: "#d33a2c", accent2: "#2b45b8",
+    motif: "decimal"
+  },
+  {
     slug: "interchange",
     title: "Interchange",
     date: "2026-10-25",

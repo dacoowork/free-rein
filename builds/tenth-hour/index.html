@@ -1,0 +1,436 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Tenth Hour</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Albert+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one centred column that reads top to bottom — clock, the day, the year ring, the converter. */
+:root{
+  --bg:#f1ecf7; --panel:#fbf9fe; --fg:#271a35; --muted:#6c5f7b; --line:#d8cfe5;
+  --bleu:#2b45b8; --rouge:#d33a2c;
+  --autumn:#c07a17; --winter:#2b45b8; --spring:#2f8a52; --summer:#d33a2c; --compl:#8a6fb0;
+  --face:#ffffff; --hand:#271a35;
+  --display:'Pinyon Script','Snell Roundhand','Apple Chancery',cursive;
+  --body:'Albert Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'DM Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1b1424; --panel:#251c31; --fg:#efe8f7; --muted:#a99bbb; --line:#3d3150;
+  --bleu:#8ea2ff; --rouge:#ff7d6c;
+  --autumn:#e7a64a; --winter:#8ea2ff; --spring:#6fcf8d; --summer:#ff7d6c; --compl:#c0a6e6;
+  --face:#2c2239; --hand:#efe8f7; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1b1424; --panel:#251c31; --fg:#efe8f7; --muted:#a99bbb; --line:#3d3150;
+  --bleu:#8ea2ff; --rouge:#ff7d6c;
+  --autumn:#e7a64a; --winter:#8ea2ff; --spring:#6fcf8d; --summer:#ff7d6c; --compl:#c0a6e6;
+  --face:#2c2239; --hand:#efe8f7; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.55 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+main{max-width:860px;margin:0 auto;display:grid;gap:44px}
+h1,h2,h3{margin:0;text-wrap:balance;font-weight:400}
+p{margin:0}
+.eyebrow{font:500 12px/1.3 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+header{display:grid;gap:10px;text-align:center;justify-items:center}
+header h1{font-family:var(--display);font-size:clamp(64px,13vw,118px);line-height:.95;color:var(--fg);padding-top:6px}
+header h1 .ten{color:var(--rouge)}
+.tri{display:flex;width:84px;height:5px;border-radius:3px;overflow:hidden}
+.tri i{flex:1}.tri i:nth-child(1){background:var(--bleu)}.tri i:nth-child(2){background:var(--panel);border-block:1px solid var(--line)}.tri i:nth-child(3){background:var(--rouge)}
+.lede{max-width:58ch;color:var(--muted);font-size:17px}
+section{display:grid;gap:18px}
+.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:8px}
+.sechead h2{font-family:var(--display);font-size:42px;line-height:1.1}
+/* clocks */
+.clocks{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:28px;align-items:center}
+.dial{width:100%;max-width:380px;justify-self:center;aspect-ratio:1}
+.dial svg{width:100%;height:100%;display:block}
+.side{display:grid;gap:18px;min-width:0}
+.read{display:grid;gap:2px}
+.read .big{font:500 clamp(38px,6vw,54px)/1 var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:var(--rouge)}
+.read .big small{font-size:.45em;color:var(--muted);letter-spacing:0;margin:0 .15em}
+.read .old{font:400 22px/1.2 var(--mono);font-variant-numeric:tabular-nums;color:var(--fg)}
+.oldrow{display:flex;gap:14px;align-items:center}
+.minidial{width:86px;height:86px;flex:none}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px;color:var(--muted)}
+.facts b{font:500 14px var(--mono);color:var(--fg);font-variant-numeric:tabular-nums}
+.scrub{display:grid;gap:8px}
+.scrub label{font-size:14px;color:var(--muted)}
+.scrubrow{display:flex;gap:10px;align-items:center}
+input[type=range]{flex:1;min-width:0;accent-color:var(--rouge)}
+button{font:500 14px var(--body);color:var(--fg);background:var(--panel);border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer}
+button:hover{border-color:var(--bleu)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2.5px solid var(--bleu);outline-offset:2px}
+button.on{background:var(--bleu);color:var(--panel);border-color:var(--bleu)}
+/* day card */
+.day{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px clamp(18px,4vw,34px);display:grid;gap:20px}
+.repdate{font-family:var(--display);font-size:clamp(44px,8vw,72px);line-height:1.05}
+.repdate .num{color:var(--season,var(--rouge))}
+.daymeta{display:flex;flex-wrap:wrap;gap:8px 20px;color:var(--muted)}
+.daymeta span b{color:var(--fg);font-weight:500}
+.decade{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px}
+.decade.c5{grid-template-columns:repeat(5,minmax(0,1fr))}.decade.c6{grid-template-columns:repeat(6,minmax(0,1fr))}
+.dcell{border:1.5px solid var(--line);border-radius:10px;padding:8px 4px 6px;text-align:center;display:grid;gap:2px;min-width:0}
+.dcell .n{font:500 18px var(--mono)}
+.dcell .w{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dcell.rest{border-style:dashed}
+.dcell.sel{background:var(--season,var(--rouge));border-color:var(--season,var(--rouge));color:var(--panel)}
+.dcell.sel .w{color:var(--panel)}
+.note{font-size:14px;color:var(--muted)}
+/* ring */
+.ringwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:center}
+.ring{width:100%;max-width:400px;justify-self:center;aspect-ratio:1}
+.ring svg{width:100%;height:100%;display:block}
+.ring .m{cursor:pointer}
+.ring text{pointer-events:none}
+.ring .m:hover path{opacity:.8}
+.seasons{display:grid;gap:12px}
+.seasons div{display:grid;grid-template-columns:14px 1fr;gap:4px 12px;align-items:start}
+.seasons i{width:14px;height:14px;border-radius:4px;margin-top:5px}
+.seasons p{font-size:15px}
+.seasons p b{font-weight:500}
+.seasons p span{color:var(--muted)}
+/* converter */
+.conv{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:18px;align-items:end}
+.field{display:grid;gap:6px;min-width:0}
+.field label{font-size:13px;color:var(--muted)}
+input[type=date],input[type=number],select{font:500 16px var(--mono);color:var(--fg);background:var(--panel);border:1.5px solid var(--line);border-radius:10px;padding:9px 10px;width:100%;min-width:0}
+.repfields{display:grid;grid-template-columns:72px minmax(0,1fr) 84px;gap:8px}
+.arrow{font:500 22px var(--mono);color:var(--muted);padding-bottom:10px}
+.err{color:var(--rouge);font-size:14px;min-height:1.4em}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{text-align:left;border-radius:12px;display:grid;gap:0;padding:8px 12px}
+.chips button small{color:var(--muted);font-size:12px;font-weight:400}
+footer{color:var(--muted);font-size:14px;max-width:62ch;margin:0 auto;display:grid;gap:10px}
+@media (max-width:700px){
+  .clocks,.ringwrap{grid-template-columns:minmax(0,1fr)}
+  .dial{max-width:320px}
+  .conv{grid-template-columns:minmax(0,1fr)}
+  .arrow{display:none}
+  .decade{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .decade.c6{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .dcell .w{font-size:11px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<main>
+<header>
+  <p class="eyebrow">Heure décimale · Calendrier républicain</p>
+  <h1><span class="ten">T</span>enth Hour</h1>
+  <div class="tri" aria-hidden="true"><i></i><i></i><i></i></div>
+  <p class="lede">In 1793 the French Republic decimalised time. The day was cut into ten hours of a hundred minutes of a hundred seconds, and the year into twelve months of thirty days, with a ten-day week. Here is that clock running now, and that calendar for any date you like.</p>
+</header>
+
+<section aria-labelledby="h-clock">
+  <div class="sechead"><h2 id="h-clock">The decimal clock</h2><span class="eyebrow" id="clockmode">Live · your local time</span></div>
+  <div class="clocks">
+    <div class="dial"><svg id="dial" viewBox="0 0 300 300" role="img" aria-label="Decimal clock face"></svg></div>
+    <div class="side">
+      <div class="read">
+        <span class="eyebrow">Decimal time</span>
+        <span class="big" id="dec">0<small>h</small>00<small>m</small>00<small>s</small></span>
+      </div>
+      <div class="oldrow">
+        <svg class="minidial" id="mini" viewBox="0 0 100 100" aria-hidden="true"></svg>
+        <div class="read"><span class="eyebrow">Ordinary time</span><span class="old" id="old">00:00:00</span></div>
+      </div>
+      <div class="facts">
+        <span>1 decimal hour</span><b>2 h 24 min</b>
+        <span>1 decimal minute</span><b>1 min 26.4 s</b>
+        <span>1 decimal second</span><b>0.864 s</b>
+        <span>Midday</span><b>5h 00m 00s</b>
+      </div>
+      <div class="scrub">
+        <label for="scrub">Drag through the day</label>
+        <div class="scrubrow"><input type="range" id="scrub" min="0" max="86399" step="1" value="0"><button id="live" class="on" type="button">Now</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-day">
+  <div class="sechead"><h2 id="h-day">The day</h2><button id="today" type="button">Back to today</button></div>
+  <div class="day" id="daycard">
+    <div style="display:grid;gap:6px">
+      <span class="eyebrow" id="greg">—</span>
+      <h3 class="repdate" id="repdate">—</h3>
+    </div>
+    <div class="daymeta" id="daymeta"></div>
+    <div class="decade" id="decade" aria-label="The ten days of this décade"></div>
+    <p class="note" id="decnote"></p>
+  </div>
+</section>
+
+<section aria-labelledby="h-year">
+  <div class="sechead"><h2 id="h-year">The year</h2><span class="eyebrow" id="yearlabel">—</span></div>
+  <div class="ringwrap">
+    <div class="ring"><svg id="ring" viewBox="0 0 400 400" role="img" aria-label="The Republican year as a ring of twelve months"></svg></div>
+    <div class="seasons">
+      <p class="note">The year began on the day of the autumn equinox at the Paris Observatory. Months were named by the poet Fabre d’Églantine for the weather and work of each season. Tap a month to jump to its first day.</p>
+      <div><i style="background:var(--autumn)"></i><p><b>Autumn</b> <span>Vendémiaire, vintage · Brumaire, mist · Frimaire, frost</span></p></div>
+      <div><i style="background:var(--winter)"></i><p><b>Winter</b> <span>Nivôse, snow · Pluviôse, rain · Ventôse, wind</span></p></div>
+      <div><i style="background:var(--spring)"></i><p><b>Spring</b> <span>Germinal, seed · Floréal, blossom · Prairial, meadow</span></p></div>
+      <div><i style="background:var(--summer)"></i><p><b>Summer</b> <span>Messidor, harvest · Thermidor, heat · Fructidor, fruit</span></p></div>
+      <div><i style="background:var(--compl)"></i><p><b>Sansculottides</b> <span>Five feast days to close the year, six in a leap year (a sextile year)</span></p></div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-conv">
+  <div class="sechead"><h2 id="h-conv">Convert a date</h2><span class="eyebrow">Either side works</span></div>
+  <div class="conv">
+    <div class="field"><label for="gdate">Ordinary date</label><input type="date" id="gdate" min="1792-09-22" max="2791-09-21"></div>
+    <div class="arrow" aria-hidden="true">⇄</div>
+    <div class="field"><label for="rday">Republican date: day, month, year</label>
+      <div class="repfields">
+        <input type="number" id="rday" min="1" max="30" aria-label="Day">
+        <select id="rmonth" aria-label="Month"></select>
+        <input type="number" id="ryear" min="1" max="1000" aria-label="Year of the Republic">
+      </div>
+    </div>
+  </div>
+  <p class="err" id="err" role="status"></p>
+  <div class="chips" id="chips"></div>
+</section>
+
+<footer>
+  <p>Decimal clocks were made official in 1794 and suspended the next spring; hardly anyone bought one. The calendar lasted longer, until Napoleon ended it after 10 Nivôse XIV, the last day of 1805. The Paris Commune used it again for a few weeks in 1871.</p>
+  <p>Year starts here come from the equinox, computed for each year and taken in Paris local time, as the 1793 decree specified. Decimal time is counted from your own midnight.</p>
+</footer>
+</main>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+const MONTHS=[
+ ['Vendémiaire','vintage','autumn'],['Brumaire','mist','autumn'],['Frimaire','frost','autumn'],
+ ['Nivôse','snow','winter'],['Pluviôse','rain','winter'],['Ventôse','wind','winter'],
+ ['Germinal','seed','spring'],['Floréal','blossom','spring'],['Prairial','meadow','spring'],
+ ['Messidor','harvest','summer'],['Thermidor','heat','summer'],['Fructidor','fruit','summer']];
+const DAYS=['Primidi','Duodi','Tridi','Quartidi','Quintidi','Sextidi','Septidi','Octidi','Nonidi','Décadi'];
+const FEASTS=['Fête de la Vertu','Fête du Génie','Fête du Travail','Fête de l’Opinion','Fête des Récompenses','Fête de la Révolution'];
+const FEAST_EN=['Virtue','Genius','Labour','Opinion','Rewards','Revolution'];
+const GMONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const GDAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+/* ---- calendar maths ---- */
+const TERMS=[[485,324.96,1934.136],[203,337.23,32964.467],[199,342.08,20.186],[182,27.85,445267.112],[156,73.14,45036.886],[136,171.52,22518.443],[77,222.54,65928.934],[74,296.72,3034.906],[70,243.58,9037.513],[58,119.81,33718.147],[52,297.17,150.678],[50,21.02,2281.226],[45,247.54,29929.562],[44,325.15,31555.956],[29,60.93,4443.417],[18,155.12,67555.328],[17,288.79,4562.452],[16,198.04,62894.029],[14,199.76,31436.921],[12,95.39,14577.848],[12,287.11,31931.756],[12,320.81,34777.259],[9,227.73,1222.114],[8,15.45,16859.074]];
+const R=Math.PI/180;
+function equinoxJD(gy){ // September equinox, Julian Day (UT), Meeus ch. 27
+  const Y=(gy-2000)/1000;
+  const j0=2451810.21715+365242.01767*Y-0.11575*Y*Y+0.00337*Y**3+0.00078*Y**4;
+  const T=(j0-2451545)/36525, W=(35999.373*T-2.47)*R;
+  const dl=1+0.0334*Math.cos(W)+0.0007*Math.cos(2*W);
+  let S=0; for(const [a,b,c] of TERMS) S+=a*Math.cos((b+c*T)*R);
+  const u=(gy-1820)/100;
+  return j0+0.00001*S/dl-(-20+32*u*u)/86400;
+}
+const PARIS=(2+20/60+14/3600)/360; // Paris Observatory longitude as a fraction of a day
+const startCache={};
+function yearStart(gy){ return startCache[gy] ??= Math.floor(equinoxJD(gy)+PARIS+0.5); }
+function jdn(y,m,d){const a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3;
+  return d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;}
+function fromJdn(J){const a=J+32044,b=Math.floor((4*a+3)/146097),c=a-Math.floor(146097*b/4),d=Math.floor((4*c+3)/1461),e=c-Math.floor(1461*d/4),m=Math.floor((5*e+2)/153);
+  return {y:100*b+d-4800+Math.floor(m/10),m:m+3-12*Math.floor(m/10),d:e-Math.floor((153*m+2)/5)+1};}
+function toRep(J){
+  let gy=fromJdn(J).y, s=yearStart(gy);
+  if(J<s){gy--; s=yearStart(gy);}
+  const len=yearStart(gy+1)-s, idx=J-s, ry=gy-1791;
+  if(ry<1) return null;
+  const month=Math.floor(idx/30), day=idx%30+1;
+  return {year:ry,month,day,idx,len,sextile:len===366,startJ:s};
+}
+function fromRep(ry,month,day){
+  if(!Number.isInteger(ry)||ry<1||ry>1000) return {error:'Choose a year of the Republic from 1 to 1000.'};
+  if(!Number.isInteger(day)||day<1) return {error:'The day must be a whole number from 1.'};
+  const gy=ry+1791, s=yearStart(gy), len=yearStart(gy+1)-s;
+  if(month<12&&day>30) return {error:'Every Republican month has exactly 30 days.'};
+  if(month===12&&day>len-360) return {error:`Year ${roman(ry)} has ${len-360} sansculottides, not ${day}. Only sextile years have a sixth, the Fête de la Révolution.`};
+  return {J:s+month*30+day-1};
+}
+function roman(n){const t=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];let s='';for(const [v,r] of t)while(n>=v){s+=r;n-=v;}return s;}
+function todayJ(){const n=new Date();return jdn(n.getFullYear(),n.getMonth()+1,n.getDate());}
+function iso(J){const g=fromJdn(J);return `${String(g.y).padStart(4,'0')}-${String(g.m).padStart(2,'0')}-${String(g.d).padStart(2,'0')}`;}
+function gLong(J){const g=fromJdn(J);return `${GDAYS[(J+1)%7]} ${g.d} ${GMONTHS[g.m-1]} ${g.y}`;}
+function repName(r){
+  if(r.month===12) return {day:FEASTS[r.day-1],line:`${FEASTS[r.day-1]}, an ${roman(r.year)}`};
+  return {day:DAYS[(r.day-1)%10],line:`${DAYS[(r.day-1)%10]} ${r.day} ${MONTHS[r.month][0]}, an ${roman(r.year)}`};
+}
+const MIN_J=yearStart(1792), MAX_J=yearStart(2791)-1;
+
+/* ---- decimal time ---- */
+function decimalOf(secs){ // secs since midnight -> decimal h, m, s
+  const d=Math.floor(secs/0.864+1e-9); // decimal seconds into the day (0..99999)
+  return {total:d,h:Math.floor(d/10000),m:Math.floor(d/100)%100,s:d%100};
+}
+
+/* ---- clock faces ---- */
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent&&parent.appendChild(e);return e;}
+const dial=$('dial'), C=150;
+el('circle',{cx:C,cy:C,r:144,style:'fill:var(--face);stroke:var(--fg)','stroke-width':2.5},dial);
+el('circle',{cx:C,cy:C,r:136,style:'fill:none;stroke:var(--line)','stroke-width':1},dial);
+for(let i=0;i<100;i++){
+  const a=i*3.6*R, big=i%10===0, mid=i%5===0;
+  const r1=136, r2=big?118:mid?126:130;
+  el('line',{x1:C+r1*Math.sin(a),y1:C-r1*Math.cos(a),x2:C+r2*Math.sin(a),y2:C-r2*Math.cos(a),style:`stroke:${big?'var(--fg)':'var(--muted)'}`,'stroke-width':big?3:mid?1.6:1,'stroke-linecap':'round'},dial);
+}
+for(let h=1;h<=10;h++){
+  const a=h*36*R, r=98;
+  const t=el('text',{x:C+r*Math.sin(a),y:C-r*Math.cos(a)+9,'text-anchor':'middle',style:`fill:${h===10?'var(--rouge)':'var(--fg)'};font-family:var(--display);font-size:${h===10?34:30}px`},dial);
+  t.textContent=h;
+}
+const tx=el('text',{x:C,y:C+52,'text-anchor':'middle',style:'fill:var(--muted);font-family:var(--mono);font-size:9px;letter-spacing:2px'},dial);tx.textContent='HEURE DÉCIMALE';
+const hand=(len,w,col,tail)=>el('line',{x1:C,y1:C+tail,x2:C,y2:C-len,style:`stroke:${col}`,'stroke-width':w,'stroke-linecap':'round'},dial);
+const hH=hand(64,7,'var(--hand)',12), hM=hand(104,4,'var(--bleu)',16), hS=hand(118,1.6,'var(--rouge)',24);
+el('circle',{cx:C,cy:C,r:6,style:'fill:var(--rouge)'},dial);
+
+const mini=$('mini');
+el('circle',{cx:50,cy:50,r:46,style:'fill:var(--face);stroke:var(--line)','stroke-width':2},mini);
+for(let i=0;i<12;i++){const a=i*30*R;el('line',{x1:50+44*Math.sin(a),y1:50-44*Math.cos(a),x2:50+(i%3?39:35)*Math.sin(a),y2:50-(i%3?39:35)*Math.cos(a),style:'stroke:var(--muted)','stroke-width':i%3?1.2:2.2},mini);}
+const mh=(len,w,col)=>el('line',{x1:50,y1:54,x2:50,y2:50-len,style:`stroke:${col}`,'stroke-width':w,'stroke-linecap':'round'},mini);
+const oH=mh(22,4,'var(--muted)'), oM=mh(34,2.5,'var(--muted)');
+el('circle',{cx:50,cy:50,r:3,style:'fill:var(--muted)'},mini);
+
+let live=true, scrubSecs=0, lastShown=-1;
+function nowSecs(){const n=new Date();return n.getHours()*3600+n.getMinutes()*60+n.getSeconds()+n.getMilliseconds()/1000;}
+function drawTime(secs){
+  const d=decimalOf(secs);
+  const frac=secs/86400;
+  hH.setAttribute('transform',`rotate(${frac*360} ${C} ${C})`);
+  hM.setAttribute('transform',`rotate(${(d.total%10000)/10000*360} ${C} ${C})`);
+  hS.setAttribute('transform',`rotate(${d.s*3.6} ${C} ${C})`);
+  if(d.total!==lastShown){
+    lastShown=d.total;
+    $('dec').innerHTML=`${d.h}<small>h</small>${String(d.m).padStart(2,'0')}<small>m</small>${String(d.s).padStart(2,'0')}<small>s</small>`;
+    const s=Math.floor(secs);
+    $('old').textContent=[Math.floor(s/3600),Math.floor(s/60)%60,s%60].map(v=>String(v).padStart(2,'0')).join(':');
+    oH.setAttribute('transform',`rotate(${(secs/43200)*360} 50 50)`);
+    oM.setAttribute('transform',`rotate(${(secs/3600)*360} 50 50)`);
+    if(live) $('scrub').value=Math.floor(secs);
+  }
+  state.decimal=d; state.secs=secs;
+}
+function tick(){ if(live) drawTime(nowSecs()); requestAnimationFrame(tick); }
+$('scrub').addEventListener('input',e=>{live=false;scrubSecs=+e.target.value;$('live').classList.remove('on');$('clockmode').textContent='Scrubbing · drag or press Now';drawTime(scrubSecs);});
+$('live').addEventListener('click',()=>{live=true;$('live').classList.add('on');$('clockmode').textContent='Live · your local time';lastShown=-1;});
+
+/* ---- year ring ---- */
+const ring=$('ring'), RC=200;
+function arc(r1,r2,a0,a1){
+  const p=(r,a)=>`${(RC+r*Math.sin(a)).toFixed(2)} ${(RC-r*Math.cos(a)).toFixed(2)}`, large=a1-a0>Math.PI?1:0;
+  return `M${p(r2,a0)}A${r2} ${r2} 0 ${large} 1 ${p(r2,a1)}L${p(r1,a1)}A${r1} ${r1} 0 ${large} 0 ${p(r1,a0)}Z`;
+}
+let ringLen=-1; const ringMarker=el('g',{},null);
+function drawRing(r){
+  if(ringLen!==r.len){
+    ringLen=r.len; ring.innerHTML='';
+    const per=2*Math.PI/r.len;
+    for(let m=0;m<13;m++){
+      const days=m<12?30:r.len-360, a0=m*30*per+0.004, a1=(m*30+days)*per-0.004;
+      const g=el('g',{class:'m','data-month':m},ring);
+      const col=m<12?`var(--${MONTHS[m][2]})`:'var(--compl)';
+      el('path',{d:arc(118,170,a0,a1),style:`fill:${col}`},g);
+      for(let k=10;k<days;k+=10){const a=(m*30+k)*per;el('line',{x1:RC+118*Math.sin(a),y1:RC-118*Math.cos(a),x2:RC+128*Math.sin(a),y2:RC-128*Math.cos(a),style:'stroke:var(--bg)','stroke-width':1.5},g);}
+      const am=(m*30+days/2)*per, lr=m<12?144:186;
+      const t=el('text',{x:RC+lr*Math.sin(am),y:RC-lr*Math.cos(am)+4,'text-anchor':'middle',style:`fill:${m<12?'var(--panel)':'var(--muted)'};font-family:var(--body);font-weight:700;font-size:${m<12?11:10}px`,transform:`rotate(${(am/R>90&&am/R<270)?am/R+180:am/R} ${RC+lr*Math.sin(am)} ${RC-lr*Math.cos(am)})`},g);
+      t.textContent=m<12?MONTHS[m][0].slice(0,4).toUpperCase()+'.':'S-C';
+      const title=el('title',{},g);title.textContent=m<12?`${MONTHS[m][0]}, month of ${MONTHS[m][1]}`:'Sansculottides';
+      g.addEventListener('click',()=>{const f=fromRep(state.rep.year,m,1);if(f.J!=null)select(f.J);});
+    }
+    ring.appendChild(ringMarker);
+  }
+  const per=2*Math.PI/r.len, a=(r.idx+0.5)*per;
+  ringMarker.innerHTML='';
+  el('line',{x1:RC+104*Math.sin(a),y1:RC-104*Math.cos(a),x2:RC+184*Math.sin(a),y2:RC-184*Math.cos(a),style:'stroke:var(--fg)','stroke-width':2.5,'stroke-linecap':'round'},ringMarker);
+  el('circle',{cx:RC+104*Math.sin(a),cy:RC-104*Math.cos(a),r:5,style:'fill:var(--fg)'},ringMarker);
+  ringMarker.querySelector('circle');
+  // centre text
+  const c1=el('text',{x:RC,y:RC-8,'text-anchor':'middle',style:'fill:var(--fg);font-family:var(--display);font-size:40px'},ringMarker);c1.textContent=`an ${roman(r.year)}`;
+  try{const w=c1.getComputedTextLength();if(w>190){c1.setAttribute('textLength',190);c1.setAttribute('lengthAdjust','spacingAndGlyphs');}}catch(e){}
+  const c2=el('text',{x:RC,y:RC+22,'text-anchor':'middle',style:'fill:var(--muted);font-family:var(--mono);font-size:12px;letter-spacing:1px'},ringMarker);c2.textContent=`DAY ${r.idx+1} OF ${r.len}`;
+  const c3=el('text',{x:RC,y:RC+40,'text-anchor':'middle',style:'fill:var(--muted);font-family:var(--mono);font-size:11px'},ringMarker);c3.textContent=`from ${fromJdn(r.startJ).d} Sep ${fromJdn(r.startJ).y}`;
+}
+
+/* ---- day card ---- */
+const state={sel:null,rep:null,decimal:null,secs:0,error:''};
+function render(){
+  const r=state.rep, J=state.sel, name=repName(r);
+  const season=r.month<12?MONTHS[r.month][2]:'compl';
+  $('daycard').style.setProperty('--season',`var(--${season})`);
+  $('greg').textContent=gLong(J)+(J===todayJ()?' · today':'');
+  $('repdate').innerHTML=r.month<12
+    ? `${name.day} <span class="num">${r.day}</span> ${MONTHS[r.month][0]}`
+    : `<span class="num">${name.day}</span>`;
+  const meta=[`<span>Year <b>${roman(r.year)}</b> (${r.year}) of the Republic</span>`];
+  if(r.month<12){meta.push(`<span>Month of <b>${MONTHS[r.month][1]}</b>, ${MONTHS[r.month][2]}</span>`);meta.push(`<span>Décade <b>${Math.floor((r.day-1)/10)+1}</b> of 3, day <b>${(r.day-1)%10+1}</b></span>`);}
+  else meta.push(`<span>Sansculottide <b>${r.day}</b> of ${r.len-360}, feast of ${FEAST_EN[r.day-1]}</span>`);
+  meta.push(`<span>${r.sextile?'<b>Sextile</b> year, 366 days':'Ordinary year, 365 days'}</span>`);
+  $('daymeta').innerHTML=meta.join('');
+  const dec=$('decade'); dec.innerHTML='';
+  if(r.month<12){
+    dec.className='decade';
+    const first=Math.floor((r.day-1)/10)*10+1;
+    for(let k=0;k<10;k++){const d=first+k;const c=document.createElement('div');c.className='dcell'+(k===9?' rest':'')+(d===r.day?' sel':'');c.innerHTML=`<span class="n">${d}</span><span class="w">${DAYS[k]}</span>`;dec.appendChild(c);}
+    const toRest=10-((r.day-1)%10+1);
+    $('decnote').textContent=toRest===0?'Today is décadi, the day of rest. A week here is ten days long, so rest comes one day in ten instead of one in seven.':`Décadi, the day of rest, is ${toRest} day${toRest>1?'s':''} away. A week here is ten days long, so rest comes one day in ten instead of one in seven.`;
+  } else {
+    dec.className='decade c'+(r.len-360);
+    for(let k=0;k<r.len-360;k++){const c=document.createElement('div');c.className='dcell'+(k+1===r.day?' sel':'');c.innerHTML=`<span class="n">${k+1}</span><span class="w">${FEAST_EN[k]}</span>`;dec.appendChild(c);}
+    $('decnote').textContent='The sansculottides sit outside the months and the décades: public holidays that close the year before 1 Vendémiaire.';
+  }
+  $('yearlabel').textContent=`an ${roman(r.year)} · ${r.len} days`;
+  drawRing(r);
+  // sync converter
+  $('gdate').value=iso(J);
+  $('rday').value=r.day; $('rmonth').value=r.month; $('ryear').value=r.year;
+  $('rday').max=r.month<12?30:r.len-360;
+}
+function select(J){
+  if(J<MIN_J){ state.error='The calendar starts on 22 September 1792, the first day of year I. Pick a date from then on.'; $('err').textContent=state.error; return false; }
+  if(J>MAX_J){ state.error='This converter stops at year M (1000), in 2791.'; $('err').textContent=state.error; return false; }
+  state.error=''; $('err').textContent='';
+  state.sel=J; state.rep=toRep(J); render(); return true;
+}
+
+/* ---- converter ---- */
+const rm=$('rmonth');
+MONTHS.forEach((m,i)=>{const o=document.createElement('option');o.value=i;o.textContent=m[0];rm.appendChild(o);});
+{const o=document.createElement('option');o.value=12;o.textContent='Sansculottides';rm.appendChild(o);}
+$('gdate').addEventListener('change',e=>{
+  const v=e.target.value; if(!v){return;}
+  const [y,m,d]=v.split('-').map(Number); select(jdn(y,m,d));
+});
+function fromFields(){
+  const f=fromRep(parseInt($('ryear').value,10),parseInt(rm.value,10),parseInt($('rday').value,10));
+  if(f.error){state.error=f.error;$('err').textContent=f.error;return false;}
+  return select(f.J);
+}
+['rday','ryear'].forEach(id=>$(id).addEventListener('change',fromFields));
+rm.addEventListener('change',fromFields);
+$('today').addEventListener('click',()=>select(todayJ()));
+
+const FAMOUS=[
+  ['Day one of the Republic',1792,9,22],
+  ['9 Thermidor: Robespierre falls',1794,7,27],
+  ['18 Brumaire: Bonaparte’s coup',1799,11,9],
+  ['The calendar’s last day',1805,12,31],
+  ['First day of the Paris Commune',1871,3,18],
+];
+const chips=$('chips');
+FAMOUS.forEach(([label,y,m,d])=>{const b=document.createElement('button');b.type='button';const J=jdn(y,m,d);const r=toRep(J);
+  b.innerHTML=`${label}<small>${d} ${GMONTHS[m-1].slice(0,3)} ${y} · ${r.month<12?r.day+' '+MONTHS[r.month][0]:FEASTS[r.day-1]} ${roman(r.year)}</small>`;
+  b.addEventListener('click',()=>{select(J);document.getElementById('h-day').scrollIntoView({behavior:'smooth',block:'start'});});chips.appendChild(b);});
+
+select(todayJ());
+requestAnimationFrame(tick);
+
+window.__tenthHour={
+  get state(){return {sel:state.sel?iso(state.sel):null,rep:state.rep&&{...state.rep,name:repName(state.rep).line},decimal:state.decimal,live,error:state.error};},
+  toRep:(y,m,d)=>{const r=toRep(jdn(y,m,d));return r&&{...r,name:repName(r).line};},
+  fromRep:(ry,m,d)=>{const f=fromRep(ry,m,d);return f.error?f:{date:iso(f.J)};},
+  decimalOf
+};
+})();
+</script>
+
+</body></html>
