@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -79,7 +79,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-10-29d"></script>
+<script src="builds.js?v=2026-10-29e"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -90,6 +90,32 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    handsigns(b,r){
+      // three of the hands the build draws: thumbs up (fist, thumb raised), the OK ring and the V with the back of the hand showing, each with its verdict badge
+      const ink=b.fg, red=b.accent, teal=b.accent2, card=b.panel, skin='#fff0e3';
+      let s=`<rect width="320" height="180" fill="${b.bg}"/>`;
+      const sw=`stroke="${ink}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
+      const badge=(x,c,g)=>`<circle cx="${x}" cy="30" r="12" fill="${c}"/><text x="${x}" y="35" text-anchor="middle" font-family="Figtree, sans-serif" font-weight="800" font-size="14" fill="#fff">${g}</text>`;
+      // thumbs up
+      s+=`<rect x="14" y="14" width="92" height="152" rx="12" fill="${card}" stroke="${ink}" stroke-width="2.5"/>`;
+      s+=`<rect x="44" y="124" width="32" height="38" rx="5" fill="${skin}" ${sw}/><g transform="translate(0,6)"><rect x="32" y="78" width="56" height="52" rx="14" fill="${skin}" ${sw}/><rect x="30" y="52" width="20" height="58" rx="10" fill="${skin}" ${sw} transform="rotate(-8 40 110)"/>`;
+      for(let i=0;i<3;i++) s+=`<rect x="${52+i*12}" y="74" width="12" height="20" rx="6" fill="${skin}" ${sw}/>`;
+      s+=`</g>`+badge(88,'#a85a00','!');
+      // OK ring
+      s+=`<rect x="114" y="14" width="92" height="152" rx="12" fill="${card}" stroke="${ink}" stroke-width="2.5"/>`;
+      s+=`<rect x="144" y="124" width="32" height="38" rx="5" fill="${skin}" ${sw}/><rect x="134" y="82" width="56" height="52" rx="14" fill="${skin}" ${sw}/>`;
+      [[158,48,34],[172,56,30],[184,66,26]].forEach(([x,y,h])=>s+=`<rect x="${x-5}" y="${y}" width="12" height="${h+40}" rx="6" fill="${skin}" ${sw}/>`);
+      s+=`<rect x="134" y="82" width="56" height="52" rx="14" fill="${skin}" ${sw}/><circle cx="145" cy="78" r="17" fill="${skin}" ${sw}/><circle cx="145" cy="78" r="7" fill="${card}" ${sw}/>`;
+      s+=badge(188,red,'✕');
+      // V, back of hand
+      s+=`<rect x="214" y="14" width="92" height="152" rx="12" fill="${card}" stroke="${ink}" stroke-width="2.5"/>`;
+      s+=`<rect x="244" y="124" width="32" height="38" rx="5" fill="${skin}" ${sw}/>`;
+      s+=`<rect x="248" y="40" width="13" height="80" rx="6.5" fill="${skin}" ${sw}/><rect x="263" y="34" width="13" height="86" rx="6.5" fill="${skin}" ${sw}/><rect x="250" y="46" width="9" height="9" rx="4.5" fill="none" ${sw} stroke-width="2"/><rect x="265" y="40" width="9" height="9" rx="4.5" fill="none" ${sw} stroke-width="2"/>`;
+      s+=`<rect x="234" y="92" width="52" height="46" rx="14" fill="${skin}" ${sw}/>`;
+      [0,1].forEach(i=>s+=`<rect x="${238+i*12}" y="86" width="12" height="20" rx="6" fill="${skin}" ${sw}/>`);
+      s+=`<rect x="276" y="94" width="10" height="20" rx="5" fill="${skin}" ${sw}/>`+badge(288,red,'✕');
+      return s;
+    },
     ringcourt(b,r){
       // the court as the build draws it: curved floor, a real flight (landing spinward, below the dashed gym guess), the hoop it passes through, the thrower and the outside-view window
       const ink=b.fg, co=b.accent, cb=b.accent2;

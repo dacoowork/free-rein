@@ -1,0 +1,309 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Thumbs Up, Maybe</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Figtree:wght@400;600;800&display=swap">
+<style>
+:root{
+  --bg:#ffc9d9; --bg2:#ffb5cb; --card:#fff7f9; --ink:#2b1030; --muted:#6d4a73; --line:#2b103033;
+  --hand:#fff0e3; --hole:#fff7f9;
+  --warm:#0b7a75; --plain:#5c5470; --mixed:#a85a00; --rude:#cf1f3a;
+  --head:'Permanent Marker','Marker Felt','Comic Sans MS',cursive;
+  --body:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#240b2b; --bg2:#31123a; --card:#3a1844; --ink:#ffe9f1; --muted:#cfa6d6; --line:#ffe9f133;
+  --hand:#5a2a55; --hole:#3a1844;
+  --warm:#5fe0d6; --plain:#c9bfd8; --mixed:#ffb454; --rude:#ff6b82;
+}}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--body);-webkit-text-size-adjust:100%}
+.wrap{max-width:1120px;margin:0 auto;padding:24px 16px 56px}
+h1{font:400 clamp(40px,8vw,84px)/.95 var(--head);margin:0 0 10px;transform:rotate(-1.5deg);transform-origin:left}
+h2{font:400 22px/1.1 var(--head);margin:0 0 10px}
+.lede{max-width:60ch;margin:0 0 22px;color:var(--muted);font-size:17px}
+.lede b{color:var(--ink)}
+.where{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:18px}
+.where .lab{font:400 18px var(--head);margin-right:4px}
+.chip{font:600 14px var(--body);color:var(--ink);background:var(--card);border:2px solid var(--ink);border-radius:999px;padding:7px 14px;cursor:pointer;min-height:38px}
+.chip:hover{background:var(--bg2)}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--card)}
+.chip:disabled{opacity:.35;cursor:not-allowed}
+.chip:focus-visible,.tile:focus-visible{outline:3px solid var(--rude);outline-offset:2px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:18px;align-items:start}
+.card{background:var(--card);border:2.5px solid var(--ink);border-radius:18px;padding:18px;box-shadow:5px 5px 0 var(--ink)}
+.handbox{display:flex;justify-content:center}
+.handbox svg{width:100%;max-width:300px;height:auto;display:block}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.ctrl .sep{flex-basis:100%;font:600 12px var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:6px}
+.fing{cursor:pointer}
+.fing:hover .sh{stroke-width:5}
+.sh{stroke:var(--ink);stroke-width:3.5;fill:var(--hand);stroke-linejoin:round;stroke-linecap:round}
+.dt{stroke:var(--ink);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.7}
+.hole{fill:var(--hole)}
+.res h2{font-size:30px;margin-bottom:4px}
+.hook{margin:0 0 12px;color:var(--muted)}
+.face{display:inline-block;font:600 12px var(--body);text-transform:uppercase;letter-spacing:.07em;border:1.5px solid var(--ink);border-radius:6px;padding:2px 7px;margin-bottom:8px}
+.reg{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.reg li{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:9px 10px;border:2px solid var(--line);border-radius:12px;background:var(--bg)}
+.reg li.sel{border-color:var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.reg li.none{opacity:.6}
+.reg .nm{font-weight:800;font-size:14px}
+.reg .tx{font-size:14.5px}
+.badge{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-width:84px;font:800 12px var(--body);text-transform:uppercase;letter-spacing:.05em;border-radius:8px;padding:4px 8px;color:#fff;align-self:start;white-space:nowrap}
+.badge.warm{background:var(--warm)}.badge.plain{background:var(--plain)}.badge.mixed{background:var(--mixed)}.badge.rude{background:var(--rude)}
+@media (prefers-color-scheme:dark){.badge{color:#240b2b}}
+.near{margin-top:12px;font-size:14px;color:var(--muted)}
+.near button{margin:4px 6px 0 0}
+.nomatch h2{color:var(--muted)}
+.plate{margin-top:26px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.tile{position:relative;font:inherit;color:var(--ink);text-align:center;background:var(--card);border:2.5px solid var(--ink);border-radius:14px;padding:10px 6px 10px;cursor:pointer}
+.tile:hover{background:var(--bg2)}
+.tile[aria-pressed=true]{background:var(--ink);color:var(--card)}
+.tile[aria-pressed=true] .sh{stroke:var(--card)}
+.tile[aria-pressed=true] .dt{stroke:var(--card)}
+.tile svg{width:78px;height:auto;display:block;margin:0 auto 4px}
+.tile .n{display:block;font:600 14px/1.2 var(--body)}
+.tile .f{display:block;font:600 11px var(--body);text-transform:uppercase;letter-spacing:.06em;opacity:.7}
+.tile .mk{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font:800 14px var(--body)}
+.mk.warm{background:var(--warm)}.mk.plain{background:var(--plain)}.mk.mixed{background:var(--mixed)}.mk.rude{background:var(--rude)}.mk.none{background:transparent;border:2px dashed var(--line);color:var(--muted)}
+@media (prefers-color-scheme:dark){.mk{color:#240b2b}}
+.key{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted);margin:0 0 12px}
+.key span b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;color:#fff;font-size:11px;margin-right:5px}
+.foot{margin-top:22px;font-size:13.5px;color:var(--muted);max-width:70ch}
+@media (max-width:760px){
+  .grid{grid-template-columns:1fr}
+  .card{padding:14px;box-shadow:4px 4px 0 var(--ink)}
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .reg li{grid-template-columns:1fr;gap:6px}
+}
+</style>
+<div class="wrap">
+  <h1>Thumbs Up, Maybe</h1>
+  <p class="lede">The same hand shape can be a compliment in one airport and an insult in the next. <b>Build a hand</b> by raising and folding fingers, and the guide tells you what it says in seven parts of the world. Or say where you are going first, and every hand in the plate below is marked for that trip.</p>
+
+  <div class="where" role="group" aria-label="Where are you going?"><span class="lab">Where are you going?</span><div id="regions" style="display:contents"></div></div>
+
+  <div class="grid">
+    <section class="card" aria-labelledby="hb">
+      <h2 id="hb">Build a hand</h2>
+      <div class="handbox"><svg id="big" viewBox="-6 40 312 316" role="img" aria-label="The hand you have built"></svg></div>
+      <div class="ctrl" id="fingers" role="group" aria-label="Fingers"></div>
+      <div class="ctrl" id="opts" role="group" aria-label="Options"></div>
+    </section>
+    <section class="card res" id="res" aria-live="polite"></section>
+  </div>
+
+  <section class="plate" aria-labelledby="pl">
+    <h2 id="pl">The plate: fourteen hands</h2>
+    <div class="key" aria-hidden="true"><span><b style="background:var(--warm)">✓</b>friendly</span><span><b style="background:var(--plain)">–</b>neutral</span><span><b style="background:var(--mixed)">!</b>varies, take care</span><span><b style="background:var(--rude)">✕</b>rude somewhere</span></div>
+    <div class="tiles" id="tiles"></div>
+  </section>
+  <p class="foot">Gestures drift, and every region here is a crowd of countries, so read these as the usual story rather than a law. Where the guide says "in places", a particular country, generation or even a city block may disagree. When unsure, ask, or use words.</p>
+</div>
+<script>
+(()=>{
+const REG=[['NA','North America'],['LA','Latin America'],['EU','Europe'],['ME','Middle East & N. Africa'],['AF','Sub-Saharan Africa'],['AS','South & East Asia'],['OC','Oceania']];
+const TONE={warm:['✓','friendly'],plain:['–','neutral'],mixed:['!','varies'],rude:['✕','rude']};
+const FN={t:'Thumb',i:'Index',m:'Middle',r:'Ring',p:'Pinky'};
+// shape: fingers raised, pinch = thumb and index make a ring; face: them = palm shows to the other person, me = back of hand shows to them, any = either
+const G=[
+ {id:'thumbs',name:'Thumbs up',s:'t',face:'any',hook:'A fist with the thumb raised.',r:{
+  NA:['warm','Yes, good, well done. Also what a hitchhiker shows.'],
+  LA:['warm','Good, fine, all right. In Brazil it is an everyday "tudo bem".'],
+  EU:['mixed','Good almost everywhere. In Greece an upward jab has meant "sit on it".'],
+  ME:['mixed','Rude in places (Iran and Iraq are the usual examples), though phones and emoji have made it "good" for many younger people.'],
+  AF:['mixed','Fine in much of the continent; reported as rude in parts of West Africa.'],
+  AS:['warm','Good, well done. In Japan it can also mean "a man" or "the boss".'],
+  OC:['warm','Good. Also what a hitchhiker shows.']}},
+ {id:'ok',name:'OK ring',s:'mrp+',face:'any',hook:'Thumb and index make a ring; the other three fingers stand up.',r:{
+  NA:['warm','"Okay", "perfect". Scuba divers use it for "I am fine".'],
+  LA:['rude','In Brazil, and in other places in the region, a vulgar insult.'],
+  EU:['mixed','"Okay" in Britain, Germany and Spain. In France it can mean "zero" or "worthless".'],
+  ME:['rude','An insult in Turkey and in parts of the Arab world.'],
+  AS:['mixed','In Japan the ring is a coin: it means "money". In Korea it can mean money too.'],
+  OC:['warm','"Okay".']}},
+ {id:'v-them',name:'V, palm out',s:'im',face:'them',hook:'Index and middle finger in a V, palm facing the other person.',r:{
+  NA:['warm','Peace, or the pose in every group photo.'],
+  LA:['warm','Peace or victory.'],
+  EU:['warm','V for victory: Churchill pushed it in 1941. The peace sign came in the 1960s.'],
+  AS:['warm','Peace, and the photo pose in Japan, flashed by nearly everyone.'],
+  OC:['warm','Peace or victory.']}},
+ {id:'v-me',name:'V, back of hand',s:'im',face:'me',hook:'The same V, but the back of the hand faces the other person.',r:{
+  EU:['rude','In Britain and Ireland, "up yours". A story credits the archers of Agincourt, but that is probably a myth.'],
+  OC:['rude','Rude in Australia and New Zealand too.'],
+  AF:['rude','Rude in South Africa.'],
+  NA:['plain','Often read as just a V. When George H. W. Bush flashed it in Canberra in 1992, it made the news.']}},
+ {id:'palm',name:'Open hand',s:'timrp',face:'any',hook:'All five fingers spread.',r:{
+  NA:['plain','Hello, stop, high five.'],
+  EU:['mixed','Hello or stop. In Greece, pushed toward a face, it is the moutza: a curse.'],
+  ME:['mixed','The hamsa hand is a charm against the evil eye, but thrust at a face it is still rude.'],
+  AF:['mixed','Reported as a curse in parts of West Africa when thrust at someone.'],
+  AS:['plain','Hello, stop, stop-that.']}},
+ {id:'horns',name:'Horns',s:'ip',face:'any',hook:'Index and little finger up, the rest folded.',r:{
+  NA:['warm','Rock on. At Texas Longhorns games it is "Hook \'em".'],
+  EU:['rude','In Italy, Spain, Portugal and Greece, pointed at someone it says their partner is cheating (the "cornuto").'],
+  AS:['warm','Rock on. In Buddhist art a similar hand, the karana mudra, wards off evil.']}},
+ {id:'shaka',name:'Shaka',s:'tp',face:'any',hook:'Thumb and little finger out, a shake of the wrist.',r:{
+  NA:['warm','Hawaii\'s shaka: aloha, hang loose. Elsewhere in the US, "call me".'],
+  OC:['warm','The surfers\' greeting.'],
+  EU:['plain','"Call me", or "let\'s have a drink".'],
+  LA:['plain','"Call me", or "let\'s have a drink".'],
+  AS:['plain','"Call me", or a surf-culture import.']}},
+ {id:'point',name:'Pointing',s:'i',face:'any',hook:'A single index finger.',r:{
+  NA:['plain','"That one", "look", "number one". Jabbed at a person, rude.'],
+  LA:['mixed','Fine for things. In parts of Central America people point with their lips instead.'],
+  AF:['mixed','Pointing at a person is rude in many places.'],
+  AS:['mixed','Rude at people in much of the region; people use an open hand, a thumb (Malaysia) or the chin.']}},
+ {id:'middle',name:'Middle finger',s:'m',face:'any',hook:'Only the middle finger raised.',r:{
+  NA:['rude','The standard insult.'],
+  EU:['rude','Understood since Rome, where it was the digitus impudicus.'],
+  LA:['rude','An insult.'],
+  OC:['rude','An insult.'],
+  AS:['mixed','Known from films, but older local insults use different hands.']}},
+ {id:'pinky',name:'Pinky',s:'p',face:'any',hook:'Only the little finger up.',r:{
+  NA:['plain','A pinky promise, or "small".'],
+  EU:['plain','A pinky promise, or "small".'],
+  AS:['mixed','In Japan, a woman or a girlfriend. The pinky swear (yubikiri) is a promise in Japan and Korea.']}},
+ {id:'fist',name:'Fist',s:'',face:'any',hook:'All fingers curled.',r:{
+  NA:['warm','Solidarity and power: the raised fist of the 1968 Olympic podium and of trade unions. A fist bump is a greeting.'],
+  EU:['mixed','The raised fist of labour and anti-fascist movements. Aimed at someone, a threat.'],
+  AS:['plain','Protest and solidarity; elsewhere a fist is a fist.']}},
+ {id:'three',name:'Three fingers',s:'imr',face:'any',hook:'Index, middle and ring fingers up.',r:{
+  NA:['warm','The Scout sign. After 2012 also the Hunger Games salute.'],
+  EU:['warm','Scout\'s honour.'],
+  AS:['mixed','In Myanmar, the Hunger Games salute became a sign of protest after the 2021 coup.'],
+  OC:['warm','Scout\'s honour.']}},
+ {id:'gun',name:'Thumb and index',s:'ti',face:'any',hook:'Thumb and index finger out, an L.',r:{
+  NA:['plain','The finger gun: "gotcha", "nice". Held to the forehead it spells "loser".'],
+  EU:['plain','In Germany and nearby, this is "two": the thumb counts as one.'],
+  AS:['plain','In China it is the number eight.']}},
+ {id:'ily',name:'I love you',s:'tip',face:'any',hook:'Thumb, index and little finger out.',r:{
+  NA:['warm','"I love you" in American Sign Language, flashed at concerts.'],
+  EU:['warm','"I love you", spread by sign language and emoji.'],
+  AS:['warm','"I love you", the same borrowed sign.']}}
+];
+G.forEach(g=>{
+  const raw=g.s; g.pinch=raw.endsWith('+'); const f=raw.replace('+','');
+  g.f={t:f.includes('t'),i:f.includes('i'),m:f.includes('m'),r:f.includes('r'),p:f.includes('p')};
+  if(g.pinch){g.f.t=false;g.f.i=false}
+});
+const st={t:true,i:false,m:false,r:false,p:false,pinch:false,face:'them'};
+let region='ANY';
+const $=id=>document.getElementById(id);
+
+function hand(s,hit){
+  const up=s.i||s.m||s.r||s.p||s.pinch;
+  const L={i:130,m:148,r:134,p:104}, X={i:66,m:104,r:142,p:180};
+  let o='';
+  const g=(k,inner)=>hit?`<g class="fing" data-f="${k}">${inner}</g>`:inner;
+  // wrist
+  o+=`<rect class="sh" x="92" y="296" width="116" height="50" rx="8"/>`;
+  // raised fingers behind palm
+  for(const k of ['i','m','r','p']){
+    if(k==='i'&&s.pinch) continue;
+    if(s[k]){const y=196-L[k];
+      o+=g(k,`<rect class="sh" x="${X[k]}" y="${y}" width="38" height="${L[k]+16}" rx="19"/>`+
+        (s.face==='me'?`<rect class="dt" x="${X[k]+8}" y="${y+7}" width="22" height="18" rx="9"/>`:`<path class="dt" d="M${X[k]+10} ${y+L[k]*.55}h18M${X[k]+10} ${y+L[k]*.8}h18"/>`));
+    }
+  }
+  // palm
+  o+=`<rect class="sh" x="62" y="190" width="160" height="116" rx="30"/>`;
+  if(s.face==='them') o+=`<path class="dt" d="M92 232q30 22 70 6M86 262q40 18 94 0"/>`;
+  else o+=`<path class="dt" d="M84 214q4-8 8 0M120 208q4-8 8 0M158 210q4-8 8 0M194 216q4-8 8 0"/>`;
+  // curled fingers over palm
+  for(const k of ['m','r','p','i']){
+    if(k==='i'&&s.pinch) continue;
+    if(!s[k]) o+=g(k,`<rect class="sh" x="${X[k]}" y="176" width="38" height="46" rx="19"/><path class="dt" d="M${X[k]+9} 213q10 6 20 0"/>`);
+  }
+  // thumb
+  if(s.pinch){
+    o+=g('t',`<circle class="sh" cx="86" cy="178" r="38"/><circle class="sh hole" cx="86" cy="178" r="16"/>`);
+  } else if(s.t){
+    const a=up?-38:-6;
+    o+=g('t',`<g transform="rotate(${a} 72 270)"><rect class="sh" x="46" y="168" width="40" height="124" rx="20"/>${s.face==='me'?'<rect class="dt" x="54" y="174" width="24" height="18" rx="9"/>':''}</g>`);
+  } else {
+    o+=g('t',`<rect class="sh" x="60" y="240" width="108" height="38" rx="19"/><path class="dt" d="M150 250q8 9 0 18"/>`);
+  }
+  return o;
+}
+function mini(s){return `<svg viewBox="-6 40 312 316" aria-hidden="true">${hand(s,false)}</svg>`}
+const shapeOf=g=>({...g.f,pinch:g.pinch,face:g.face==='any'?'them':g.face});
+
+function matches(){
+  return G.filter(g=>{
+    if(g.pinch!==st.pinch) return false;
+    for(const k of ['t','i','m','r','p']){ if(g.pinch&&(k==='t'||k==='i')) continue; if(g.f[k]!==st[k]) return false; }
+    return g.face==='any'||g.face===st.face;
+  });
+}
+function dist(g){
+  let d=0; for(const k of ['t','i','m','r','p']){ if(g.pinch&&(k==='t'||k==='i')) continue; if(st.pinch&&(k==='t'||k==='i')) continue; if(g.f[k]!==st[k]) d++; }
+  if(g.pinch!==st.pinch) d++;
+  if(g.face!=='any'&&g.face!==st.face) d++;
+  return d;
+}
+function worst(g,rg){
+  const list=rg==='ANY'?Object.values(g.r):(g.r[rg]?[g.r[rg]]:[]);
+  if(!list.length) return 'none';
+  for(const t of ['rude','mixed','warm','plain']) if(list.some(x=>x[0]===t)) return t;
+  return 'none';
+}
+function load(g){
+  Object.assign(st,g.f,{pinch:g.pinch});
+  if(g.face!=='any') st.face=g.face;
+  render();
+}
+function render(){
+  // controls
+  $('big').innerHTML=hand(st,true);
+  $('fingers').innerHTML='<span class="sep">Fingers raised</span>'+['t','i','m','r','p'].map(k=>
+    `<button class="chip" data-f="${k}" aria-pressed="${!!st[k]&&!(st.pinch&&(k==='t'||k==='i'))}" ${st.pinch&&(k==='t'||k==='i')?'disabled':''}>${FN[k]}</button>`).join('');
+  $('opts').innerHTML='<span class="sep">Palm shows</span>'+
+    `<button class="chip" data-face="them" aria-pressed="${st.face==='them'}">Palm to them</button><button class="chip" data-face="me" aria-pressed="${st.face==='me'}">Back of hand to them</button>`+
+    '<span class="sep">Shape</span>'+
+    `<button class="chip" data-pinch aria-pressed="${st.pinch}">Thumb + index ring</button><button class="chip" data-clear>Fold all</button>`;
+  // result
+  const m=matches(), res=$('res');
+  if(m.length){
+    const g=m[0];
+    const fc=g.face==='any'?'':`<span class="face">${g.face==='them'?'Palm facing them':'Back of hand facing them'}</span><br>`;
+    let rows=REG.map(([k,n])=>{
+      const e=g.r[k]; const sel=region===k;
+      if(!e) return `<li class="none${sel?' sel':''}" data-reg="${k}"><span class="badge plain">· no story</span><div><div class="nm">${n}</div><div class="tx">Nothing special I can vouch for.</div></div></li>`;
+      return `<li class="${sel?'sel':''}" data-reg="${k}"><span class="badge ${e[0]}">${TONE[e[0]][0]} ${TONE[e[0]][1]}</span><div><div class="nm">${n}</div><div class="tx">${e[1]}</div></div></li>`;
+    });
+    if(region!=='ANY'){const i=REG.findIndex(r=>r[0]===region); rows.unshift(rows.splice(i,1)[0]);}
+    res.className='card res';
+    res.innerHTML=`<h2>${g.name}</h2>${fc}<p class="hook">${g.hook}</p><ul class="reg">${rows.join('')}</ul>`;
+  } else {
+    const near=G.map(g=>[dist(g),g]).sort((a,b)=>a[0]-b[0]).filter(x=>x[0]<=2).slice(0,3);
+    res.className='card res nomatch';
+    res.innerHTML=`<h2>No meaning on file</h2><p class="hook">Nobody I know of has pinned a meaning on this shape. That may mean it is safe, or only that you have not met the right person yet.</p>`+
+      (near.length?`<div class="near">Closest hands in the guide:<br>${near.map(([d,g])=>`<button class="chip" data-load="${g.id}">${g.name}</button>`).join('')}</div>`:'');
+  }
+  // tiles
+  $('tiles').innerHTML=G.map(g=>{
+    const w=worst(g,region), sel=m.includes(g);
+    return `<button class="tile" data-load="${g.id}" aria-pressed="${sel}"><span class="mk ${w}" aria-label="${w==='none'?'no entry':TONE[w][1]}">${w==='none'?'·':TONE[w][0]}</span>${mini(shapeOf(g))}<span class="n">${g.name}</span><span class="f">${g.face==='them'?'palm out':g.face==='me'?'back of hand':''}&nbsp;</span></button>`;
+  }).join('');
+  $('regions').innerHTML=[['ANY','Anywhere'],...REG].map(([k,n])=>`<button class="chip" data-region="${k}" aria-pressed="${region===k}">${n}</button>`).join('');
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-f],[data-face],[data-pinch],[data-clear],[data-load],[data-region]'); if(!b) return;
+  const d=b.dataset;
+  if(d.region){region=d.region;render();return}
+  if(d.load){load(G.find(g=>g.id===d.load));return}
+  if(b.hasAttribute('data-clear')){Object.assign(st,{t:false,i:false,m:false,r:false,p:false,pinch:false});render();return}
+  if(b.hasAttribute('data-pinch')){st.pinch=!st.pinch;if(st.pinch){st.m=st.m||false} render();return}
+  if(d.face){st.face=d.face;render();return}
+  if(d.f){ if(st.pinch&&(d.f==='t'||d.f==='i')) return; st[d.f]=!st[d.f]; render(); }
+});
+document.addEventListener('click',e=>{const li=e.target.closest('li[data-reg]'); if(li){region=region===li.dataset.reg?'ANY':li.dataset.reg;render()}});
+render();
+})();
+</script>
+
+</body></html>

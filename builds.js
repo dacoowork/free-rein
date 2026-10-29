@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "thumbs-up-maybe",
+    title: "Thumbs Up, Maybe",
+    date: "2026-10-29",
+    kind: "Field guide and reference",
+    blurb: "The same hand can be a compliment in one airport and an insult in the next. Raise and fold the fingers of a drawn hand, turn its palm, and the guide tells you what that shape says in seven parts of the world. Or pick your destination first and every hand in the plate is marked friendly, neutral, varies or rude.",
+    font: "'Permanent Marker', 'Marker Felt', cursive", fontWeight: 400, letterSpacing: "0.01em",
+    bg: "#ffc9d9", fg: "#2b1030", accent: "#cf1f3a", accent2: "#0b7a75", panel: "#fff7f9",
+    motif: "handsigns"
+  },
+  {
     slug: "ringball",
     title: "Ringball",
     date: "2026-10-29",
