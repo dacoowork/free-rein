@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "scoville",
+    title: "Scoville Bench",
+    date: "2026-10-27",
+    kind: "Food",
+    blurb: "Weigh chillies, fruit, vinegar and salt onto the bench and it bottles the batch: its heat in Scoville units, an estimated pH, whether a ferment has enough salt, and whether the sauce is acid enough to keep or belongs in the fridge.",
+    font: "'Rubik Mono One', 'Arial Black', Impact, sans-serif", fontWeight: 400, letterSpacing: "-0.02em",
+    bg: "#f7d35a", fg: "#3a0e06", accent: "#d2231b", accent2: "#f47a12", panel: "#fffaea",
+    motif: "woozy"
+  },
+  {
     slug: "tenth-hour",
     title: "Tenth Hour",
     date: "2026-10-26",

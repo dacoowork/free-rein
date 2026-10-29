@@ -1,0 +1,348 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Scoville Bench</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&family=Rubik:wght@400;500;700&display=swap">
+<style>
+/* Layout: one column. A bottle and its label sit side by side above a full-width heat scale; the ingredient shelf runs below. */
+:root{
+  --bg:#f7d35a;        /* mustard */
+  --panel:#fffaea;
+  --panel2:#fdeec0;
+  --ink:#3a0e06;       /* deep chilli brown */
+  --soft:#6e3a22;
+  --line:#3a0e0633;
+  --chilli:#d2231b;
+  --good:#2f7d14; --warn:#b86a00; --bad:#c41a12;
+  --goodbg:#e3f2cf; --warnbg:#ffe6b0; --badbg:#ffd6cf;
+  --glass:#ffffff;
+  --display:'Rubik Mono One','Arial Black',Impact,sans-serif;
+  --body:'Rubik',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#240b06;--panel:#36130b;--panel2:#4a1c10;--ink:#fce8c3;--soft:#e2b48d;--line:#fce8c333;
+  --chilli:#ff5a3c;--good:#93d65c;--warn:#ffb648;--bad:#ff6b5a;--goodbg:#21380f;--warnbg:#47300b;--badbg:#4e140d;--glass:#fce8c3;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#240b06;--panel:#36130b;--panel2:#4a1c10;--ink:#fce8c3;--soft:#e2b48d;--line:#fce8c333;
+  --chilli:#ff5a3c;--good:#93d65c;--warn:#ffb648;--bad:#ff6b5a;--goodbg:#21380f;--warnbg:#47300b;--badbg:#4e140d;--glass:#fce8c3;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--body);margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+header{display:grid;gap:10px}
+.eyebrow{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--soft)}
+h1{font:400 clamp(2rem,7vw,4.4rem)/.95 var(--display);margin:0;letter-spacing:-.02em;color:var(--chilli);text-wrap:balance}
+.lede{max-width:62ch;margin:0;font-size:1.05rem}
+.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.group>span{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--soft);margin-right:4px}
+button{font:500 .92rem var(--body);color:var(--ink);background:var(--panel);border:2px solid var(--ink);border-radius:999px;padding:6px 14px;cursor:pointer}
+button:hover{background:var(--panel2)}
+button:focus-visible{outline:3px solid var(--chilli);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.hero{display:grid;grid-template-columns:minmax(150px,240px) 1fr;gap:24px;align-items:center}
+.bottle svg{width:100%;height:auto;display:block}
+.label{background:var(--panel);border:3px solid var(--ink);border-radius:18px;padding:20px 22px;display:grid;gap:14px;min-width:0}
+.label .style{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--soft)}
+.label h2{font:400 clamp(1.3rem,3.6vw,2.2rem)/1.05 var(--display);margin:0;text-wrap:balance;overflow-wrap:anywhere}
+.rating{display:flex;align-items:center;gap:8px;font-weight:700}
+.rating svg{width:22px;height:22px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px 18px;margin:0}
+.stats div{border-top:2px solid var(--ink);padding-top:6px}
+.stats dt{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);font-weight:700}
+.stats dd{margin:0;font-size:1.35rem;font-weight:700;font-variant-numeric:tabular-nums}
+.stats dd small{font-size:.8rem;font-weight:500;color:var(--soft)}
+.verdict{border-radius:12px;padding:12px 14px;display:grid;gap:6px;border:2px solid currentColor}
+.verdict[data-level="good"]{background:var(--goodbg);color:var(--good)}
+.verdict[data-level="warn"]{background:var(--warnbg);color:var(--warn)}
+.verdict[data-level="bad"]{background:var(--badbg);color:var(--bad)}
+.verdict[data-level="empty"]{background:var(--panel2);color:var(--soft)}
+.verdict strong{font-size:1.05rem}
+.verdict p{margin:0;color:var(--ink);font-size:.93rem}
+.verdict .fixes{display:flex;flex-wrap:wrap;gap:8px}
+.notes{margin:0;padding-left:1.1em;font-size:.9rem;color:var(--soft)}
+.notes:empty{display:none}
+.scale{background:var(--panel);border:2px solid var(--ink);border-radius:18px;padding:16px 20px 18px;display:grid;gap:8px}
+.scale h3,.shelf h3,.how h3{margin:0;font:400 1rem var(--display);letter-spacing:.02em}
+.compare{margin:0;font-size:.95rem}
+.track{position:relative;height:118px;margin:0 4px}
+.bar{position:absolute;left:0;right:0;top:50px;height:18px;border-radius:9px;background:linear-gradient(90deg,#9cc44a,#f2c12e 30%,#ef7d1a 55%,#d2231b 78%,#6e0d0d)}
+.tick{position:absolute;top:44px;height:30px;width:2px;background:var(--ink);transform:translateX(-1px)}
+.tl{position:absolute;font-size:.72rem;line-height:1.15;white-space:nowrap;transform:translateX(-50%);color:var(--soft);text-align:center}
+.tl.up{top:4px}.tl.dn{top:78px}
+.tl b{color:var(--ink);font-weight:500;display:block}
+.marker{position:absolute;top:36px;width:0;transition:left .4s ease}
+.marker::before{content:"";position:absolute;left:-9px;top:-2px;border:9px solid transparent;border-top:12px solid var(--chilli)}
+.marker::after{content:"";position:absolute;left:-2px;top:8px;width:4px;height:40px;background:var(--chilli);border-radius:2px}
+.shelf{display:grid;gap:18px}
+.shelf-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}
+.cat{display:grid;gap:8px}
+.cat h4{margin:0;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.tile{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:10px 12px;display:grid;grid-template-columns:28px 1fr auto;gap:4px 10px;align-items:center}
+.tile.on{border-color:var(--ink)}
+.sw{width:28px;height:28px;border-radius:50%;border:2px solid var(--ink)}
+.tname{font-weight:700;line-height:1.2;min-width:0}
+.tsub{font-size:.75rem;color:var(--soft);grid-column:2;min-width:0;font-variant-numeric:tabular-nums}
+.step{grid-column:3;grid-row:1 / span 2;display:flex;align-items:center;gap:4px}
+.step button{width:32px;height:32px;padding:0;font-size:1.1rem;line-height:1;font-weight:700}
+.step output{min-width:52px;text-align:center;font-variant-numeric:tabular-nums;font-weight:700}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.how div{min-width:0}
+.how p{margin:.4em 0 0;font-size:.92rem;max-width:60ch}
+@media (max-width:640px){
+  .hero{grid-template-columns:110px 1fr;gap:12px;align-items:start}
+  .label{padding:14px}
+  .stats dd{font-size:1.1rem}
+  .tl{font-size:.64rem}
+}
+@media (max-width:420px){.stats{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:reduce){.marker{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Hot sauce kitchen maths</div>
+    <h1>Scoville Bench</h1>
+    <p class="lede">Weigh chillies, fruit and acid onto the bench. It works out the batch's heat in Scoville units, estimates the pH, and tells you whether the sauce is acid enough to bottle or belongs in the fridge.</p>
+    <div class="controls">
+      <div class="group" id="presets"><span>Start from</span></div>
+      <div class="group" id="method"><span>Method</span>
+        <button id="m-fresh" data-m="fresh" aria-pressed="false">Fresh blend</button>
+        <button id="m-ferment" data-m="ferment" aria-pressed="true">Fermented</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" aria-label="Your batch">
+    <div class="bottle"><svg id="bottle" viewBox="0 0 200 360" role="img" aria-label="Bottle of sauce"></svg></div>
+    <div class="label">
+      <div>
+        <div class="style" id="style"></div>
+        <h2 id="name"></h2>
+      </div>
+      <div class="rating" id="rating"></div>
+      <dl class="stats">
+        <div><dt>Heat</dt><dd id="s-shu"></dd></div>
+        <div><dt>pH (est.)</dt><dd id="s-ph"></dd></div>
+        <div><dt>Salt</dt><dd id="s-salt"></dd></div>
+        <div><dt>Batch</dt><dd id="s-batch"></dd></div>
+      </dl>
+      <div class="verdict" id="verdict" data-level="empty"><strong id="v-head"></strong><p id="v-body"></p><div class="fixes" id="fixes"></div></div>
+      <ul class="notes" id="notes"></ul>
+    </div>
+  </section>
+
+  <section class="scale" aria-label="Heat scale">
+    <h3>Where it sits on the Scoville scale</h3>
+    <p class="compare" id="compare"></p>
+    <div class="track" id="track"><div class="bar"></div><div class="marker" id="marker"></div></div>
+  </section>
+
+  <section class="shelf" aria-label="Ingredient shelf">
+    <div class="shelf-head"><h3>The shelf</h3><button id="clear">Clear the bench</button></div>
+    <div id="cats"></div>
+  </section>
+
+  <section class="how" aria-label="How the numbers work">
+    <div><h3>Heat</h3><p>Capsaicin spreads through the whole batch, so the sauce's Scoville rating is each chilli's rating weighted by its share of the total weight. Chilli figures are typical fresh-pod values; real pods vary by two or three times either way.</p></div>
+    <div><h3>Acid</h3><p>Food that stays above pH 4.6 can grow botulism in a sealed bottle. Peppers and fruit buffer acid, so it takes roughly a quarter of the batch as vinegar to bring a fresh pepper mash under pH 4. The bench models that buffering, but only roughly. Always check the finished sauce with a pH meter or strips before you bottle it.</p></div>
+    <div><h3>Fermenting</h3><p>A lacto-ferment needs 2 to 5% salt by weight of the mash. Over two to four weeks the bacteria turn sugars into lactic acid and bring the mash down to about pH 3.6. Vinegar and lime are added after, so they are left out of the salt sum.</p></div>
+  </section>
+</div>
+
+<script>
+const ING=[
+ {id:'jalapeno',name:'Jalapeño',g:'chilli',shu:5000,ph:5.3,col:'#3f7d1f',pig:3,sub:'2,500–8,000 SHU'},
+ {id:'serrano',name:'Serrano',g:'chilli',shu:15000,ph:5.3,col:'#57a02c',pig:3,sub:'10,000–23,000 SHU'},
+ {id:'cayenne',name:'Cayenne',g:'chilli',shu:40000,ph:5.2,col:'#c8231a',pig:3,sub:'30,000–50,000 SHU'},
+ {id:'birdseye',name:"Bird's eye",g:'chilli',shu:75000,ph:5.2,col:'#e0301e',pig:3,sub:'50,000–100,000 SHU'},
+ {id:'scotch',name:'Scotch bonnet',g:'chilli',shu:200000,ph:5.4,col:'#f2a20f',pig:3,sub:'100,000–350,000 SHU'},
+ {id:'habanero',name:'Habanero',g:'chilli',shu:225000,ph:5.4,col:'#f47a12',pig:3,sub:'100,000–350,000 SHU'},
+ {id:'ghost',name:'Ghost pepper',g:'chilli',shu:1000000,ph:5.3,col:'#a8141a',pig:3,sub:'about 1,000,000 SHU'},
+ {id:'reaper',name:'Carolina Reaper',g:'chilli',shu:1640000,ph:5.3,col:'#8d0e13',pig:3,sub:'1,640,000 SHU average'},
+ {id:'redpepper',name:'Red pepper',g:'veg',shu:0,ph:5.0,col:'#d9361f',pig:2,sub:'sweet, 0 SHU · pH 5.0'},
+ {id:'carrot',name:'Carrot',g:'veg',shu:0,ph:6.0,col:'#ef8a1c',pig:1.6,sub:'body and colour · pH 6.0'},
+ {id:'onion',name:'Onion',g:'veg',shu:0,ph:5.5,col:'#eadcbf',pig:.3,sub:'pH 5.5'},
+ {id:'garlic',name:'Garlic',g:'veg',shu:0,ph:5.8,col:'#efe6cf',pig:.3,sub:'pH 5.8',step:5},
+ {id:'mango',name:'Mango',g:'veg',shu:0,ph:4.0,col:'#f6b21a',pig:1.6,sub:'pH 4.0'},
+ {id:'pineapple',name:'Pineapple',g:'veg',shu:0,ph:3.5,col:'#f1d24a',pig:1.1,sub:'pH 3.5'},
+ {id:'lime',name:'Lime juice',g:'acid',shu:0,ph:2.2,col:'#c9de6e',pig:.4,str:1.2,sub:'pH 2.2 · added after'},
+ {id:'cider',name:'Cider vinegar',g:'acid',shu:0,ph:3.1,col:'#d7a35a',pig:.25,sub:'pH 3.1 · added after'},
+ {id:'vinegar',name:'White vinegar',g:'acid',shu:0,ph:2.4,col:'#f2efe6',pig:.05,sub:'5% acidity · pH 2.4'},
+ {id:'water',name:'Water',g:'liquid',shu:0,ph:7.0,col:'#dbe9f2',pig:.02,sub:'thins the mash · pH 7.0'},
+ {id:'salt',name:'Salt',g:'season',shu:0,ph:null,col:'#ffffff',pig:0,sub:'aim 2–5% to ferment',step:5},
+ {id:'sugar',name:'Sugar',g:'season',shu:0,ph:null,col:'#f7f1e3',pig:0,sub:'rounds off sharp acid',step:5},
+ {id:'honey',name:'Honey',g:'season',shu:0,ph:3.9,col:'#e2a43a',pig:.4,sub:'pH 3.9',step:5},
+];
+const BY=Object.fromEntries(ING.map(i=>[i.id,i]));
+const CATS=[['chilli','Chillies'],['veg','Fruit and veg'],['acid','Acid'],['liquid','Liquid'],['season','Seasoning']];
+const PRESETS=[
+ {id:'mango',name:'Mango habanero',method:'ferment',r:{habanero:150,mango:200,carrot:150,garlic:30,onion:70,water:200,salt:25}},
+ {id:'louisiana',name:'Louisiana red',method:'fresh',r:{cayenne:500,vinegar:250,salt:15,garlic:10}},
+ {id:'green',name:'Green',method:'fresh',r:{jalapeno:300,serrano:100,lime:80,garlic:20,onion:50,cider:150,salt:10,water:50}},
+ {id:'reaper',name:'Reaper dare',method:'fresh',r:{reaper:30,redpepper:300,pineapple:150,vinegar:120,salt:10,sugar:20}},
+ {id:'nacid',name:'Pepper mash, no acid',method:'fresh',r:{scotch:200,redpepper:300,onion:100,garlic:20,salt:10}},
+];
+const MAX=1000, FERM_PH=3.6, TARGET=3.8;
+let S={method:'ferment',g:{}};
+const $=id=>document.getElementById(id);
+const fmt=n=>Math.round(n).toLocaleString('en-GB');
+
+// pH model: the acids are soaked up by the buffering of the peppers and fruit.
+// base = weighted mean pH of the buffered ingredients; floor = weighted mean pH of the acids;
+// the mix moves from base towards floor as acid strength per kg of buffered food rises.
+const K=1.73;
+function phOf(g,fermented){
+  let bw=0,bp=0,aw=0,ap=0,A=0,water=0;
+  for(const i of ING){const w=g[i.id]||0; if(!w||i.ph==null) continue;
+    if(i.id==='water'){water+=w;continue}
+    if(i.g==='acid'){aw+=w;ap+=w*i.ph;A+=w*(i.str||1);continue}
+    let ph=i.ph; if(fermented && i.id!=='honey') ph=Math.min(ph,FERM_PH);
+    bw+=w;bp+=w*ph;}
+  if(!bw&&!aw) return water?7:null;
+  if(!bw) return ap/aw;
+  const base=bp/bw; if(!aw) return base;
+  const floor=ap/aw; return Math.min(base, floor+(base-floor)*Math.exp(-K*A/bw));
+}
+function compute(){
+  const g=S.g; let total=0,phMass=0,H=0,heat=0,mash=0,salt=g.salt||0;
+  for(const i of ING){const w=g[i.id]||0; if(!w) continue; total+=w; heat+=w*i.shu; if(i.g!=='acid') mash+=w;}
+  const fermentStatus = S.method!=='ferment' ? 'n/a' : mash===0 ? 'n/a' : salt/mash<0.02 ? 'low' : salt/mash>0.05 ? 'high' : 'ok';
+  const fermented = fermentStatus==='ok';
+  const ph = phOf(g, fermented);
+  const shu = total? heat/total : 0;
+  const saltPct = S.method==='ferment' ? (mash? salt/mash*100:0) : (total? salt/total*100:0);
+  let vinegarNeeded=0;
+  if(ph!=null && ph>TARGET+0.05){ const t={...g}; let add=0; while(add<2000){ add+=5; t.vinegar=(g.vinegar||0)+add; if(phOf(t,fermented)<=TARGET) break; } vinegarNeeded=add; }
+  return {total,shu,ph,saltPct,mash,fermentStatus,vinegarNeeded};
+}
+
+function verdictFor(c){
+  if(!c.total) return {level:'empty',head:'The bench is empty',body:'Pick a starting recipe above, or add chillies and an acid from the shelf.',fixes:[]};
+  if(c.fermentStatus==='low') return {level:'bad',head:"Won't ferment safely",body:`Salt is ${c.saltPct.toFixed(1)}% of the mash. Below 2% spoilage bacteria can win before the lactic acid builds up.`,fixes:['salt']};
+  if(c.fermentStatus==='high') return {level:'bad',head:"Too salty to ferment",body:`Salt is ${c.saltPct.toFixed(1)}% of the mash. Above about 5% the lactic bacteria stall and the mash won't sour.`,fixes:['salt']};
+  if(c.ph==null) return {level:'bad',head:'No pH to judge',body:'Only salt and sugar are on the bench. Add chillies and something acid.',fixes:[]};
+  const ph=c.ph.toFixed(1);
+  if(c.ph<=4.0) return {level:'good',head:'Acid enough to bottle',body:`Estimated pH ${ph}, under the 4.6 safety line with a margin. Hot-fill clean bottles at 85 °C, then check with a meter.`,fixes:[]};
+  if(c.ph<=4.6) return {level:'warn',head:'Borderline: keep it in the fridge',body:`Estimated pH ${ph} is close to the 4.6 safety line. Add acid for a margin before bottling it for the cupboard.`,fixes:['acid']};
+  return {level:'bad',head:'Not acid enough to keep',body:`Estimated pH ${ph} is above 4.6. Keep it in the fridge and use it within a week, or add acid.`,fixes:['acid']};
+}
+
+function nameFor(c){
+  const g=S.g; let best=null,bv=0,part=null,pv=0;
+  for(const i of ING){const w=g[i.id]||0; if(!w) continue;
+    if(i.g==='chilli'&&w*i.shu>bv){bv=w*i.shu;best=i}
+    if(((i.g==='veg'&&i.id!=='redpepper'&&i.id!=='onion')||i.id==='lime')&&w>pv){pv=w;part=i}}
+  if(!c.total) return {name:'Nothing on the bench',style:'Empty bottle'};
+  const n = best ? best.name+(part?' & '+part.name.replace(' juice',''):'') : (part?part.name+' sauce':'Pepperless sauce');
+  const acid = g.lime?'with lime':g.cider?'with cider vinegar':g.vinegar?'with white vinegar':'';
+  const style=[S.method==='ferment'?(c.fermentStatus==='ok'?'Fermented 3 weeks':'Fermented (failed)'):'Fresh blend',acid].filter(Boolean).join(' · ');
+  return {name:n,style};
+}
+
+const LEVELS=[[0,'No heat'],[1,'Mild'],[1000,'Warm'],[5000,'Hot'],[25000,'Very hot'],[100000,'Extreme']];
+function rating(shu){let k=0;for(let j=1;j<LEVELS.length;j++) if(shu>=LEVELS[j][0]&&shu>0) k=j; return k}
+
+const REFS=[{n:'Red pepper',v:0},{n:'Poblano',v:1500},{n:'Jalapeño',v:5000},{n:'Serrano',v:15000},{n:'Cayenne',v:40000},{n:"Bird's eye",v:75000},{n:'Habanero',v:225000},{n:'Ghost pepper',v:1000000},{n:'Carolina Reaper',v:1640000}];
+function compareText(shu){
+  if(shu<1) return 'No capsaicin in this batch, so it rates 0 SHU.';
+  let lo=null,hi=null; for(const r of REFS){ if(r.v<=shu) lo=r; else if(!hi) hi=r; }
+  const s=`${fmt(shu)} SHU: `;
+  if(!hi) return s+'hotter than a whole Carolina Reaper pod. That is not possible from these ingredients.';
+  if(lo.v===0) return s+`milder than a fresh ${hi.n.toLowerCase()}.`;
+  return s+`hotter than a fresh ${lo.n.toLowerCase()}, milder than a ${hi.n.toLowerCase()}.`;
+}
+
+// log scale 100..3,000,000
+const LMIN=Math.log10(100),LMAX=Math.log10(3e6);
+const pos=v=>Math.max(0,Math.min(1,(Math.log10(Math.max(v,100))-LMIN)/(LMAX-LMIN)))*100;
+function buildScale(){
+  const t=$('track'); const marks=[{v:100,n:'100'},{v:1500,n:'Poblano',s:'1,500'},{v:5000,n:'Jalapeño',s:'5,000'},{v:40000,n:'Cayenne',s:'40k'},{v:225000,n:'Habanero',s:'225k'},{v:1640000,n:'Reaper',s:'1.64M'}];
+  marks.forEach((m,k)=>{const x=pos(m.v);const tk=document.createElement('div');tk.className='tick';tk.style.left=x+'%';t.appendChild(tk);
+    const l=document.createElement('div');l.className='tl '+(k%2?'dn':'up');l.style.left=x+'%';
+    l.innerHTML=m.s?`<b>${m.n}</b>${m.s}`:`<b>${m.n}</b>SHU`;
+    if(x<4){l.style.transform='none';l.style.textAlign='left'} if(x>94){l.style.transform='translateX(-100%)';l.style.textAlign='right'}
+    t.appendChild(l)});
+}
+
+function chilliIcon(on){return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5c1-2 3-2 4-1" style="fill:none;stroke:var(--good);stroke-width:2;stroke-linecap:round"/><path d="M6 6c-2 5 1 13 14 14-6-3-6-9-6-12C13 5 8 4 6 6z" style="fill:${on?'var(--chilli)':'none'};stroke:var(--ink);stroke-width:1.6"/></svg>`}
+
+function mixColour(){
+  let r=0,gg=0,b=0,wt=0;
+  for(const i of ING){const w=(S.g[i.id]||0)*i.pig; if(!w) continue; const h=i.col; r+=w*parseInt(h.slice(1,3),16);gg+=w*parseInt(h.slice(3,5),16);b+=w*parseInt(h.slice(5,7),16);wt+=w}
+  if(!wt) return null; return `rgb(${Math.round(r/wt)},${Math.round(gg/wt)},${Math.round(b/wt)})`;
+}
+function rand(seed){return()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}}
+function drawBottle(c,nm){
+  const col=mixColour(); const body='M86 58 L86 118 C86 150 38 158 38 200 L38 328 Q38 346 56 346 L144 346 Q162 346 162 328 L162 200 C162 158 114 150 114 118 L114 58 Z';
+  let flecks=''; if(col){ let seed=0; for(const k in S.g) seed=(seed*31+S.g[k]+k.length)>>>0; const R=rand(seed||7);
+    const chilliW=ING.filter(i=>i.g==='chilli').reduce((a,i)=>a+(S.g[i.id]||0),0); const n=Math.min(60,Math.round(chilliW/c.total*70));
+    for(let k=0;k<n;k++){const x=46+R()*108,y=170+R()*170;flecks+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(0.8+R()*1.6).toFixed(1)}" style="fill:${R()<.5?'#f6e7b0':'#5a0f08'};opacity:.55"/>`}}
+  const lvl=c.total?Math.max(0,1-Math.min(1,c.total/900)):1; const top=col?100+ (lvl*30):346;
+  const k=rating(c.shu);
+  $('bottle').innerHTML=`<defs><clipPath id="cp"><path d="${body}"/></clipPath></defs>
+  <rect x="80" y="12" width="40" height="46" rx="6" style="fill:var(--chilli);stroke:var(--ink);stroke-width:3"/>
+  ${[22,30,38,46].map(y=>`<line x1="84" x2="116" y1="${y}" y2="${y}" style="stroke:var(--ink);stroke-width:1.2;opacity:.45"/>`).join('')}
+  <g clip-path="url(#cp)"><rect x="0" y="0" width="200" height="360" style="fill:var(--glass);opacity:.35"/>
+  ${col?`<rect x="0" y="${top}" width="200" height="${360-top}" style="fill:${col}"/>${flecks}`:''}</g>
+  <path d="${body}" style="fill:none;stroke:var(--ink);stroke-width:3.5;stroke-linejoin:round"/>
+  <rect x="83" y="100" width="34" height="8" rx="3" style="fill:none;stroke:var(--ink);stroke-width:2.5"/>
+  <path d="M50 206 C50 186 62 176 74 170" style="fill:none;stroke:#ffffff;stroke-width:5;stroke-linecap:round;opacity:.55"/>
+  <rect x="50" y="222" width="100" height="94" rx="10" style="fill:var(--panel);stroke:var(--ink);stroke-width:2.5"/>
+  <text x="100" y="246" text-anchor="middle" style="font:400 10px var(--display);fill:var(--chilli)">SCOVILLE</text>
+  <text x="100" y="259" text-anchor="middle" style="font:400 10px var(--display);fill:var(--chilli)">BENCH</text>
+  <g transform="translate(62 266)">${[0,1,2,3,4].map(j=>`<g transform="translate(${j*16} 0) scale(.66)">${chilliIcon(j<k).replace(/<\/?svg[^>]*>/g,'')}</g>`).join('')}</g>
+  <text x="100" y="304" text-anchor="middle" style="font:500 9px var(--body);fill:var(--ink)">${c.shu?fmt(c.shu)+' SHU':'no heat'}</text>`;
+}
+
+function render(){
+  const c=compute(), v=verdictFor(c), nm=nameFor(c), k=rating(c.shu);
+  $('name').textContent=nm.name; $('style').textContent=nm.style;
+  $('rating').innerHTML=[0,1,2,3,4].map(j=>chilliIcon(j<k)).join('')+`<span>${LEVELS[k][1]}</span>`;
+  $('s-shu').innerHTML=c.total?`${fmt(c.shu)} <small>SHU</small>`:'–';
+  $('s-ph').textContent=c.ph==null?'–':c.ph.toFixed(1);
+  $('s-salt').innerHTML=c.total?`${c.saltPct.toFixed(1)}% <small>${S.method==='ferment'?'of mash':'of batch'}</small>`:'–';
+  const bottles=c.total/(148*1.05);
+  $('s-batch').innerHTML=c.total?`${fmt(c.total)} g <small>≈ ${bottles<1?'under 1 bottle':Math.floor(bottles)+' × 5 oz bottles'}</small>`:'–';
+  const vd=$('verdict'); vd.dataset.level=v.level; $('v-head').textContent=v.head; $('v-body').textContent=v.body;
+  const fx=$('fixes'); fx.innerHTML='';
+  if(v.fixes.includes('acid')&&c.vinegarNeeded>0&&c.vinegarNeeded<=2000){const b=document.createElement('button');b.id='fix-acid';b.textContent=`Add ${c.vinegarNeeded} g white vinegar (to pH ${TARGET})`;b.onclick=()=>{S.g.vinegar=(S.g.vinegar||0)+c.vinegarNeeded;render()};fx.appendChild(b)}
+  if(v.fixes.includes('salt')&&c.mash){const want=Math.round((c.mash-(S.g.salt||0))*0.03/0.97);const b=document.createElement('button');b.id='fix-salt';b.textContent=`Set salt to ${want} g (3% of mash)`;b.onclick=()=>{S.g.salt=want;render()};fx.appendChild(b)}
+  const notes=[];
+  if(c.total&&!ING.some(i=>i.g==='chilli'&&S.g[i.id])) notes.push('No chillies yet, so there is no heat. Add one from the shelf.');
+  if(c.total&&S.method==='fresh'&&!S.g.salt) notes.push('No salt: most sauces taste flat below about 1.5%.');
+  if(S.method==='fresh'&&c.saltPct>4) notes.push('Over 4% salt in a fresh sauce tastes briny. Fine for a ferment, heavy for a blend.');
+  if(S.method==='ferment'&&c.fermentStatus==='ok'&&!S.g.water) notes.push('No water: a dry mash ferments, but weigh it down so air cannot reach it.');
+  if(c.shu>300000) notes.push('Over 300,000 SHU: wear gloves, blend with a lid on and ventilate the kitchen.');
+  $('notes').innerHTML=notes.map(n=>`<li>${n}</li>`).join('');
+  $('compare').textContent=c.total?compareText(c.shu):'Add something to the bench to see where it lands.';
+  $('marker').style.left=pos(c.shu)+'%'; $('marker').hidden=!c.total;
+  for(const i of ING){const o=$('q-'+i.id); if(o){o.textContent=(S.g[i.id]||0)+' g'; o.closest('.tile').classList.toggle('on',!!S.g[i.id])}}
+  document.querySelectorAll('#method button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===S.method));
+  document.querySelectorAll('#presets button').forEach(b=>b.setAttribute('aria-pressed',S.preset===b.dataset.p));
+  drawBottle(c,nm);
+}
+
+function setQty(id,delta){const cur=S.g[id]||0;const nv=Math.max(0,Math.min(MAX,cur+delta));if(nv)S.g[id]=nv;else delete S.g[id];S.preset=null;render()}
+
+function build(){
+  const pr=$('presets');
+  PRESETS.forEach(p=>{const b=document.createElement('button');b.id='p-'+p.id;b.dataset.p=p.id;b.textContent=p.name;b.onclick=()=>{S.g={...p.r};S.method=p.method;S.preset=p.id;render()};pr.appendChild(b)});
+  document.querySelectorAll('#method button').forEach(b=>b.onclick=()=>{S.method=b.dataset.m;render()});
+  $('clear').onclick=()=>{S.g={};S.preset=null;render()};
+  const host=$('cats');
+  CATS.forEach(([g,label])=>{const sec=document.createElement('div');sec.className='cat';sec.innerHTML=`<h4>${label}</h4><div class="tiles"></div>`;
+    const tiles=sec.querySelector('.tiles');
+    ING.filter(i=>i.g===g).forEach(i=>{const st=i.step||10;const t=document.createElement('div');t.className='tile';
+      t.innerHTML=`<span class="sw" style="background:${i.col}"></span><span class="tname">${i.name}</span><span class="tsub">${i.sub}</span>
+      <span class="step"><button id="dn-${i.id}" aria-label="Remove ${st} g ${i.name}">−</button><output id="q-${i.id}">0 g</output><button id="up-${i.id}" aria-label="Add ${st} g ${i.name}">+</button></span>`;
+      t.querySelector('#dn-'+i.id).onclick=()=>setQty(i.id,-st); t.querySelector('#up-'+i.id).onclick=()=>setQty(i.id,st);
+      tiles.appendChild(t)});
+    host.appendChild(sec)});
+  buildScale();
+  const p=PRESETS[0]; S.g={...p.r}; S.method=p.method; S.preset=p.id; render();
+}
+build();
+window.__scoville={get state(){const c=compute();const v=verdictFor(c);return {grams:{...S.g},method:S.method,total:c.total,shu:c.shu,ph:c.ph,saltPct:c.saltPct,fermentStatus:c.fermentStatus,verdict:v.level,head:v.head,name:nameFor(c).name,vinegarNeeded:c.vinegarNeeded}}};
+</script>
+
+</body></html>

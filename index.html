@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -79,7 +79,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-10-27b"></script>
+<script src="builds.js?v=2026-10-29"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -90,6 +90,27 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    woozy(b,r){
+      // a woozy bottle of the default batch (fermented habanero and mango, 40,909 SHU) beside the log Scoville scale with its marker
+      const ink=b.fg, red=b.accent, sauce=b.accent2, panel=b.panel||'#fffaea';
+      const body='M66 46L66 80C66 98 36 104 36 126L36 160Q36 170 46 170L106 170Q116 170 116 160L116 126C116 104 86 98 86 80L86 46Z';
+      const pod=(x,on)=>`<path transform="translate(${x} 26) scale(.9)" d="M6 6c-2 5 1 13 14 14-6-3-6-9-6-12C13 5 8 4 6 6z" fill="${on?red:'none'}" stroke="${ink}" stroke-width="1.6"/>`;
+      let flecks=''; for(let i=0;i<18;i++){flecks+=`<circle cx="${44+r()*64}" cy="${112+r()*54}" r="${0.8+r()*1.3}" fill="${r()<.5?'#f6e7b0':'#5a0f08'}" opacity=".6"/>`;}
+      return `<rect width="320" height="180" fill="${b.bg}"/>
+        <defs><clipPath id="wz"><path d="${body}"/></clipPath></defs>
+        <g clip-path="url(#wz)"><rect width="320" height="180" fill="#ffffff" opacity=".35"/><rect x="0" y="94" width="320" height="90" fill="${sauce}"/>${flecks}</g>
+        <path d="${body}" fill="none" stroke="${ink}" stroke-width="3" stroke-linejoin="round"/>
+        <rect x="62" y="12" width="28" height="34" rx="4" fill="${red}" stroke="${ink}" stroke-width="2.5"/>
+        <rect x="64" y="70" width="24" height="6" rx="2" fill="none" stroke="${ink}" stroke-width="2"/>
+        <rect x="46" y="128" width="60" height="34" rx="6" fill="${panel}" stroke="${ink}" stroke-width="2"/>
+        <text x="76" y="149" text-anchor="middle" font-family="'Rubik Mono One', 'Arial Black', sans-serif" font-size="9" fill="${red}">SCOVILLE</text>
+        <g>${[0,1,2,3,4].map(i=>pod(150+i*24,i<4)).join('')}</g>
+        <text x="150" y="80" font-family="'Rubik Mono One', 'Arial Black', sans-serif" font-size="17" fill="${ink}">40,909 SHU</text>
+        <defs><linearGradient id="wzg"><stop offset="0" stop-color="#9cc44a"/><stop offset=".3" stop-color="#f2c12e"/><stop offset=".55" stop-color="#ef7d1a"/><stop offset=".78" stop-color="#d2231b"/><stop offset="1" stop-color="#6e0d0d"/></linearGradient></defs>
+        <rect x="150" y="116" width="150" height="14" rx="7" fill="url(#wzg)"/>
+        <line x1="206.9" x2="206.9" y1="112" y2="134" stroke="${ink}" stroke-width="1.5"/><text x="206.9" y="148" text-anchor="middle" font-family="Rubik, system-ui, sans-serif" font-size="9" fill="${ink}">5k</text><line x1="237.2" x2="237.2" y1="112" y2="134" stroke="${ink}" stroke-width="1.5"/><text x="237.2" y="148" text-anchor="middle" font-family="Rubik, system-ui, sans-serif" font-size="9" fill="${ink}">40k</text><line x1="262.3" x2="262.3" y1="112" y2="134" stroke="${ink}" stroke-width="1.5"/><text x="262.3" y="148" text-anchor="middle" font-family="Rubik, system-ui, sans-serif" font-size="9" fill="${ink}">225k</text><line x1="291.2" x2="291.2" y1="112" y2="134" stroke="${ink}" stroke-width="1.5"/><text x="291.2" y="148" text-anchor="middle" font-family="Rubik, system-ui, sans-serif" font-size="9" fill="${ink}">1.6M</text>
+        <path d="M237.5 104l-7 -10h14z" fill="${red}"/><rect x="235.5" y="104" width="4" height="30" rx="2" fill="${red}"/>`;
+    },
     decimal(b,r){
       // a ten-hour decimal clock face at 9h 47m beside one décade of the Republican calendar (Quartidi 4 Brumaire picked out)
       const ink=b.fg, red=b.accent, blue=b.accent2, cx=96, cy=90, R=66;
