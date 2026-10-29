@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Federo&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -79,7 +79,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-10-29c"></script>
+<script src="builds.js?v=2026-10-29d"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -90,6 +90,19 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    ringcourt(b,r){
+      // the court as the build draws it: curved floor, a real flight (landing spinward, below the dashed gym guess), the hoop it passes through, the thrower and the outside-view window
+      const ink=b.fg, co=b.accent, cb=b.accent2;
+      let s=`<rect width="320" height="180" fill="${b.bg}"/>`;
+      for(let i=0;i<3;i++) s+=`<path d="M0 ${38+i*16} Q160 ${8+i*16} 320 ${38+i*16}" fill="none" stroke="${ink}" stroke-width="3" opacity=".08"/>`;
+      s+=`<path d="M0 138 Q160 172 320 138 L320 180 L0 180Z" fill="#9fd0dc"/><path d="M0 138 Q160 172 320 138" fill="none" stroke="${ink}" stroke-width="2.5"/>`;
+      s+=`<path d="M92 152 Q150 40 252 150" fill="none" stroke="${ink}" stroke-width="2" stroke-dasharray="6 5" opacity=".5"/>`;
+      s+=`<path d="M92 152 Q140 72 228 146" fill="none" stroke="${cb}" stroke-width="3.5" stroke-linecap="round"/>`;
+      s+=`<line x1="179" y1="128" x2="179" y2="150" stroke="${ink}" stroke-width="3" opacity=".4"/><circle cx="179" cy="115" r="18" fill="${co}" opacity=".14"/><circle cx="179" cy="115" r="12" fill="none" stroke="${co}" stroke-width="4"/>`;
+      s+=`<rect x="84" y="136" width="16" height="20" rx="6" fill="${cb}"/><circle cx="92" cy="132" r="6" fill="${cb}"/><circle cx="228" cy="146" r="5.5" fill="${co}" stroke="${ink}" stroke-width="1.5"/>`;
+      s+=`<rect x="240" y="12" width="68" height="68" rx="10" fill="${ink}"/><circle cx="274" cy="46" r="26" fill="none" stroke="#e9f7fa" stroke-width="2.5"/><path d="M286 66 L262 28" stroke="${co}" stroke-width="2.5" stroke-linecap="round"/><circle cx="286" cy="66" r="3.5" fill="${cb}" stroke="#fff"/>`;
+      return s;
+    },
     liftcar(b,r){
       // Car Two at twelve: the indicator strip with 12 lit, the doors open on the story, the button strip with Dora's floor (12) as "here", 18 as a passenger's floor and a call lamp at B
       const ink=b.fg, jade=b.accent, lamp=b.accent2, card=b.panel;

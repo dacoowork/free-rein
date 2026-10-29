@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "ringball",
+    title: "Ringball",
+    date: "2026-10-29",
+    kind: "Speculative world",
+    blurb: "The sport of Halcyon, a space habitat two hundred metres in radius: throw a ball at a hoop and watch it curve, because the floor is turning under it. Drag to aim, compare your throw with the gym guess, and see the same flight from outside, where it never bends.",
+    font: "'Lilita One', 'Trebuchet MS', sans-serif", fontWeight: 400, letterSpacing: "0.01em",
+    bg: "#d3edf2", fg: "#0c2a3a", accent: "#ee4b37", accent2: "#2556d9", panel: "#f7fcfd",
+    motif: "ringcourt"
+  },
+  {
     slug: "going-up",
     title: "Going Up",
     date: "2026-10-29",

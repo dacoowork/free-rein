@@ -1,0 +1,396 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Ringball</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito+Sans:wght@400;600;800&display=swap">
+<style>
+:root{
+  --bg:#d3edf2;        /* ice-blue concourse glass */
+  --bg2:#bfe2ea;
+  --card:#f7fcfd;
+  --ink:#0c2a3a;
+  --muted:#46687a;
+  --line:#0c2a3a26;
+  --coral:#ee4b37;
+  --cobalt:#2556d9;
+  --sky1:#eaf8fb; --sky2:#c4e6ee;
+  --floor:#0c2a3a;
+  --ground:#9fd0dc;
+  --inset:#0c2a3a;
+  --insetfg:#e9f7fa;
+  --chalk:#1a8a64;
+  --head:'Lilita One','Trebuchet MS',system-ui,sans-serif;
+  --body:'Nunito Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#071d29; --bg2:#0a2634; --card:#0e3042; --ink:#e4f5fa; --muted:#93b8c7; --line:#e4f5fa26;
+  --coral:#ff6a55; --cobalt:#7ea0ff; --sky1:#0f3a4f; --sky2:#0a2a3b; --floor:#cdeaf3; --ground:#164a60;
+  --inset:#041219; --insetfg:#cdeaf3; --chalk:#4fe0a8;
+}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.55 var(--body);margin:0}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 56px}
+.eyebrow{font:800 12px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--cobalt);margin:8px 0 10px}
+h1{font:400 clamp(52px,12vw,112px)/.92 var(--head);margin:0;letter-spacing:.005em}
+h1 span{color:var(--coral)}
+.lede{font-size:clamp(17px,2.4vw,21px);max-width:44ch;margin:14px 0 22px;color:var(--ink)}
+h2{font:400 clamp(26px,4.4vw,38px)/1.05 var(--head);margin:0 0 10px}
+.stage{position:relative;background:var(--card);border:2px solid var(--ink);border-radius:20px;overflow:hidden;box-shadow:0 5px 0 var(--ink)}
+#court{display:block;width:100%;height:auto;touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none}
+#court text{font-family:var(--body);font-weight:800;pointer-events:none}
+.inset{position:absolute;top:8px;right:8px;width:clamp(96px,21%,150px);background:var(--inset);border-radius:14px;padding:4px 4px 2px;pointer-events:none;color:var(--insetfg)}
+.inset svg{display:block;width:100%;height:auto}
+.inset b{display:block;font:800 9px/1.2 var(--body);letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:1px 0 3px;opacity:.85}
+.hint{position:absolute;left:12px;top:10px;background:var(--ink);color:var(--bg);font:800 12px/1.2 var(--body);padding:6px 10px;border-radius:999px;pointer-events:none;transition:opacity .3s}
+.panel{display:grid;grid-template-columns:1fr 1fr;gap:12px 22px;margin:18px 0 0;align-items:end}
+.panel label{display:block;font:800 13px/1.2 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.panel label output{float:right;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:0}
+input[type=range]{width:100%;margin:8px 0 0;accent-color:var(--coral);height:28px}
+.btns{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{font:400 20px/1 var(--head);letter-spacing:.02em;border:2px solid var(--ink);background:var(--card);color:var(--ink);border-radius:999px;padding:12px 20px;cursor:pointer;min-height:46px;box-shadow:0 3px 0 var(--ink)}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+button.go{background:var(--coral);color:#fff}
+button:focus-visible,input:focus-visible{outline:3px solid var(--cobalt);outline-offset:2px}
+button:disabled{opacity:.5;cursor:default}
+.chk{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;cursor:pointer;margin-left:4px}
+.chk input{width:20px;height:20px;accent-color:var(--chalk)}
+.tally{margin-left:auto;font:800 14px/1.2 var(--body);color:var(--muted);font-variant-numeric:tabular-nums}
+.tally b{color:var(--ink);font:400 24px/1 var(--head)}
+.read{margin:14px 0 0;min-height:3.2em;font-size:16px;background:var(--bg2);border-radius:14px;padding:12px 16px;border-left:6px solid var(--cobalt)}
+.read.goal{border-left-color:var(--chalk)}
+.read strong{font-weight:800}
+.key{display:flex;flex-wrap:wrap;gap:6px 20px;margin:12px 2px 0;font-size:13px;font-weight:600;color:var(--muted)}
+.key i{display:inline-block;width:26px;height:0;border-top:3px solid;vertical-align:middle;margin-right:6px}
+section{margin-top:56px}
+.specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:16px}
+.spec{background:var(--card);border:2px solid var(--ink);border-radius:16px;padding:14px 16px}
+.spec b{display:block;font:400 clamp(30px,4vw,40px)/1 var(--head);color:var(--cobalt)}
+.spec span{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-top:4px;line-height:1.35}
+.two{display:grid;grid-template-columns:1.1fr .9fr;gap:36px}
+ol.rules{margin:12px 0 0;padding:0;list-style:none;counter-reset:r}
+ol.rules li{counter-increment:r;position:relative;padding:0 0 14px 52px}
+ol.rules li::before{content:counter(r);position:absolute;left:0;top:-2px;width:36px;height:36px;border-radius:50%;background:var(--coral);color:#fff;font:400 20px/36px var(--head);text-align:center}
+ol.rules li b{font-weight:800}
+dl.gloss{margin:12px 0 0;display:grid;gap:10px}
+dl.gloss div{background:var(--card);border:2px solid var(--ink);border-radius:14px;padding:10px 14px}
+dl.gloss dt{font:400 20px/1.1 var(--head);color:var(--cobalt)}
+dl.gloss dd{margin:2px 0 0;font-size:14.5px}
+.why{background:var(--ink);color:var(--bg);border-radius:20px;padding:26px clamp(18px,4vw,36px)}
+.why h2{color:var(--bg)}
+.why p{max-width:62ch;margin:10px 0 0}
+.why em{font-style:normal;font-weight:800;color:#ffb3a7}
+@media (prefers-color-scheme:dark){.why{background:#041219;color:#cdeaf3}.why h2{color:#e4f5fa}.why em{color:#ff9d8e}}
+footer{margin-top:44px;font-size:13px;color:var(--muted)}
+@media (max-width:760px){
+  .two{grid-template-columns:1fr;gap:34px}
+  .panel{grid-template-columns:1fr}
+  .tally{margin-left:0;width:100%}
+  .hint{font-size:11px;top:8px;left:8px}
+}
+@media (prefers-reduced-motion:reduce){.hint{transition:none}}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Halcyon Ring League · practice yard</p>
+  <h1>Ring<span>ball</span></h1>
+  <p class="lede">The only ball game where the ball curves because the floor is turning. Aim for the hoop, and discover that "straight up" isn't.</p>
+
+  <div class="stage">
+    <svg id="court" viewBox="-50 0 100 48" role="img" aria-label="Side view of the court. Drag from the thrower to aim, or use the sliders below."></svg>
+    <div class="inset" aria-hidden="true"><b>From outside</b><svg id="outer" viewBox="-60 -60 120 120"></svg></div>
+    <div class="hint" id="hint">Drag from the player to aim and throw</div>
+  </div>
+
+  <div class="panel">
+    <div><label for="ang">Angle <output id="angO">90°</output></label><input id="ang" type="range" min="0" max="180" step="1" value="90"></div>
+    <div><label for="spd">Speed <output id="spdO">15 m/s</output></label><input id="spd" type="range" min="4" max="28" step="0.5" value="15"></div>
+    <div class="btns">
+      <button class="go" id="throw">Throw</button>
+      <button id="show">Show me one</button>
+      <button id="move">New hoop</button>
+      <label class="chk"><input type="checkbox" id="chalk"> Chalk the real curve</label>
+      <span class="tally" id="tally"><b>0</b> through · 0 throws</span>
+    </div>
+  </div>
+  <p class="read" id="read" aria-live="polite">Straight up is 90°. In a gym that ball would drop back in your hands. Try it here.</p>
+  <div class="key"><span><i style="border-color:var(--cobalt)"></i>real flight</span><span><i style="border-color:var(--muted);border-top-style:dashed"></i>gym guess</span><span><i style="border-color:var(--chalk);border-top-style:dotted"></i>chalked curve</span></div>
+
+  <section>
+    <h2>The Ring</h2>
+    <p style="max-width:60ch;margin:0">Halcyon is a wheel, two hundred metres in radius, turning once every thirty-two seconds. People live on the inside of the rim, where the floor pushes up on them hard enough to pass for gravity. Nothing else about it is like gravity.</p>
+    <div class="specs">
+      <div class="spec"><b>200 m</b><span>radius, axis to floor</span></div>
+      <div class="spec"><b>1.89 rpm</b><span>one turn every 31.7 seconds</span></div>
+      <div class="spec"><b>0.8 g</b><span>at the floor, falling to 0 at the axis</span></div>
+      <div class="spec"><b>143 km/h</b><span>the speed of the floor itself</span></div>
+      <div class="spec"><b>100 m</b><span>court width, with 30 m of headroom</span></div>
+    </div>
+  </section>
+
+  <section class="two">
+    <div>
+      <h2>How it's played</h2>
+      <ol class="rules">
+        <li><b>Three a side.</b> Two teams of three share a court with five hoops, each hung on a post at a different place and height.</li>
+        <li><b>One ball, one touch.</b> Catch it, then throw it. No dribbling, no walking with the ball, and no putting it down.</li>
+        <li><b>Through the hoop.</b> A ball that passes through a lit hoop scores a point for the team that threw it. Only one hoop is lit at a time.</li>
+        <li><b>Lag is yours.</b> The ball doesn't know the floor is moving. Where it comes down is the thrower's problem, not the referee's.</li>
+        <li><b>The floor is out of bounds.</b> A ball that lands before it scores goes to the other side. Hubward walls are padded, because balls reach them.</li>
+        <li><b>Five minutes a period</b>, because after that the stand starts to feel it.</li>
+      </ol>
+    </div>
+    <div>
+      <h2>Words from the rim</h2>
+      <dl class="gloss">
+        <div><dt>Spinward</dt><dd>The way the floor is travelling. Right, on every court drawing.</dd></div>
+        <div><dt>Antispinward</dt><dd>Back the way you came, against the turning floor.</dd></div>
+        <div><dt>Hubward</dt><dd>Up, towards the axis. Hubward is also where the air gets thin of weight.</dd></div>
+        <div><dt>Lag</dt><dd>The sideways drift of a ball while it hangs in the air, and the reason for a lot of shouting.</dd></div>
+        <div><dt>Gym guess</dt><dd>A throw aimed as if the floor stood still. Every rookie's first, and last, cheap point.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="why">
+    <h2>Why the ball curves</h2>
+    <p>Once a ball leaves your hand nothing is pushing it round with the ring any more, so it flies in a straight line through space, at the speed you and the floor had when you let go. The floor keeps turning underneath it. From the outside (the little dark window above) the ball never bends at all.</p>
+    <p>To someone standing on the rim that looks like a sideways force, so the ball seems to bend. A ball thrown straight up at <em id="ex1">15 m/s</em> hangs for <em id="ex2"></em> and lands <em id="ex3"></em> ahead of the thrower, spinward. Throw it twice as fast and it lands about four times as far ahead.</p>
+    <p>A smaller ring turns faster and curves everything harder. That is why Halcyon's court is on the widest stretch of the rim.</p>
+  </section>
+  <footer>Ringball is invented. The physics isn't: every throw here is computed exactly in a ring of 200 m radius spinning for 0.8 g.</footer>
+</div>
+
+<script>
+(function(){
+const R=200, G=0.8*9.81, W=Math.sqrt(G/R), HAND=1.6, HOOP_R=2.2, NS='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id);
+const court=$('court'), outer=$('outer');
+const mk=(p,tag,a)=>{const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e};
+const Y=h=>38-h;
+
+// exact flight in the rotating frame: straight line in space, then rotate back
+function flight(ang,v,dtStep){
+  const a=ang*Math.PI/180, vx=v*Math.cos(a), vy=v*Math.sin(a);
+  const px0=0, py0=-(R-HAND), Vx=vx+W*(R-HAND), Vy=vy, dt=dtStep||0.02;
+  const pts=[];
+  for(let t=0;t<=40;t+=dt){
+    const Px=px0+Vx*t, Py=py0+Vy*t, c=Math.cos(W*t), s=Math.sin(W*t);
+    const x=Px*c+Py*s, y=-Px*s+Py*c;
+    const r=Math.hypot(Px,Py);
+    pts.push({t,x,h:y+R,Px,Py});
+    if(t>0.05 && r>=R){ // came back to the floor
+      const f=pts[pts.length-1], q=pts[pts.length-2], k=(R-Math.hypot(q.Px,q.Py))/(r-Math.hypot(q.Px,q.Py));
+      f.x=q.x+(f.x-q.x)*k; f.h=q.h+(f.h-q.h)*k; f.t=q.t+dt*k; f.land=true;
+      break;
+    }
+  }
+  return pts;
+}
+function guess(ang,v){
+  const a=ang*Math.PI/180, vx=v*Math.cos(a), vy=v*Math.sin(a), pts=[];
+  for(let t=0;t<40;t+=0.04){const h=HAND+vy*t-0.5*G*t*t;pts.push({t,x:vx*t,h});if(h<=0&&t>0)break}
+  return pts;
+}
+function passes(pts,hx,hh){let m=1e9;for(const p of pts){m=Math.min(m,Math.hypot(p.x-hx,p.h-hh))}return m<=HOOP_R}
+
+// ---------- court drawing ----------
+const defs=mk(court,'defs',{});
+const gr=mk(defs,'linearGradient',{id:'sk',x1:0,y1:0,x2:0,y2:1});
+mk(gr,'stop',{offset:0,style:'stop-color:var(--sky2)'});mk(gr,'stop',{offset:1,style:'stop-color:var(--sky1)'});
+mk(court,'rect',{x:-50,y:0,width:100,height:48,fill:'url(#sk)'});
+// far ring arching overhead: ghost bands
+for(let i=0;i<4;i++) mk(court,'path',{d:`M-50 ${6+i*5} Q0 ${-4+i*5} 50 ${6+i*5}`,fill:'none',style:'stroke:var(--ink)',opacity:.07,'stroke-width':1.4});
+// height ticks
+for(let h=10;h<=30;h+=10){
+  mk(court,'line',{x1:-50,x2:-48,y1:Y(h),y2:Y(h),style:'stroke:var(--muted)','stroke-width':.3});
+  const t=mk(court,'text',{x:-47.2,y:Y(h)+.9,'font-size':2.4,style:'fill:var(--muted)'});t.textContent=h+' m';
+}
+// floor: it curves up towards both ends because the ring curves
+let fd='M-50 48 ';
+for(let x=-50;x<=50;x+=2){const h=R-Math.sqrt(R*R-x*x);fd+=`L${x} ${Y(h)} `}
+fd+='L50 48 Z';
+mk(court,'path',{d:fd,style:'fill:var(--ground)'});
+let fl='M-50 '+Y(R-Math.sqrt(R*R-2500));
+for(let x=-48;x<=50;x+=2){fl+=` L${x} ${Y(R-Math.sqrt(R*R-x*x))}`}
+mk(court,'path',{d:fl,fill:'none',style:'stroke:var(--floor)','stroke-width':.6});
+for(let x=-40;x<=40;x+=10){
+  const h=R-Math.sqrt(R*R-x*x);
+  mk(court,'line',{x1:x,x2:x,y1:Y(h),y2:Y(h)+2,style:'stroke:var(--floor)','stroke-width':.3});
+  if(x){const t=mk(court,'text',{x:x,y:Y(h)+4.4,'text-anchor':'middle','font-size':2.4,style:'fill:var(--floor)'});t.textContent=Math.abs(x)}
+}
+const lab1=mk(court,'text',{x:48.5,y:46.4,'text-anchor':'end','font-size':2.5,style:'fill:var(--ink)'});lab1.textContent='SPINWARD →';
+const lab2=mk(court,'text',{x:-48.5,y:46.4,'text-anchor':'start','font-size':2.5,style:'fill:var(--ink)'});lab2.textContent='← ANTISPINWARD';
+// hoop
+const hoopG=mk(court,'g',{});
+const post=mk(hoopG,'line',{style:'stroke:var(--muted)','stroke-width':.7,'stroke-linecap':'round'});
+const hoopGlow=mk(hoopG,'circle',{r:HOOP_R+1.4,style:'fill:var(--coral)',opacity:.13});
+const hoop=mk(hoopG,'circle',{r:HOOP_R,fill:'none',style:'stroke:var(--coral)','stroke-width':.9});
+// thrower
+const th=mk(court,'g',{});
+mk(th,'rect',{x:-1.7,y:Y(HAND)+.2,width:3.4,height:HAND-.2,rx:1.2,style:'fill:var(--cobalt)'});
+mk(th,'circle',{cx:0,cy:Y(HAND)-.2,r:1.1,style:'fill:var(--cobalt)'});
+mk(th,'rect',{x:-1.7,y:Y(0.7),width:3.4,height:.7,style:'fill:var(--ink)',opacity:.35});
+// paths
+const gPath=mk(court,'path',{fill:'none',style:'stroke:var(--muted)','stroke-width':.45,'stroke-dasharray':'1.2 1',opacity:.0});
+const cPath=mk(court,'path',{fill:'none',style:'stroke:var(--chalk)','stroke-width':.6,'stroke-dasharray':'.4 1','stroke-linecap':'round',opacity:0});
+const rPath=mk(court,'path',{fill:'none',style:'stroke:var(--cobalt)','stroke-width':.7,'stroke-linecap':'round','stroke-linejoin':'round'});
+const aim=mk(court,'line',{style:'stroke:var(--coral)','stroke-width':.6,'stroke-linecap':'round',opacity:0});
+const aimHead=mk(court,'circle',{r:1,style:'fill:var(--coral)',opacity:0});
+const mark=mk(court,'path',{d:'M-1 -1L1 1M1 -1L-1 1',style:'stroke:var(--cobalt)','stroke-width':.6,'stroke-linecap':'round',opacity:0});
+const ball=mk(court,'circle',{r:1.05,cx:0,cy:Y(HAND),style:'fill:var(--coral);stroke:var(--ink)','stroke-width':.35});
+
+// ---------- outside view ----------
+const OS=0.25, ringR=R*OS;
+const oRing=mk(outer,'circle',{cx:0,cy:0,r:ringR,fill:'none',style:'stroke:currentColor','stroke-width':3,opacity:.9});
+const oSpin=mk(outer,'g',{});
+for(let i=0;i<12;i++){const a=i*Math.PI/6;mk(oSpin,'line',{x1:Math.sin(a)*(ringR-7),y1:-Math.cos(a)*(ringR-7),x2:Math.sin(a)*(ringR-1),y2:-Math.cos(a)*(ringR-1),style:'stroke:currentColor','stroke-width':1.4,opacity:.55})}
+mk(oSpin,'circle',{cx:0,cy:0,r:2.2,style:'fill:currentColor',opacity:.5});
+const oLine=mk(outer,'path',{fill:'none',style:'stroke:var(--coral)','stroke-width':1.5,'stroke-linecap':'round'});
+const oBall=mk(outer,'circle',{r:2.6,style:'fill:var(--coral)'});
+const oMan=mk(outer,'circle',{r:3,style:'fill:var(--cobalt);stroke:#fff','stroke-width':1});
+const spinTxt=mk(outer,'text',{x:0,y:16,'text-anchor':'middle','font-size':9,style:'fill:currentColor','font-family':'var(--body)','font-weight':800,opacity:.7});spinTxt.textContent='↻ spin';
+
+function setOuter(t,pts){
+  const th=W*t, c=Math.cos(th), s=Math.sin(th);
+  oSpin.setAttribute('transform',`rotate(${-th*180/Math.PI})`);
+  oMan.setAttribute('cx',(s*(R-HAND)*OS).toFixed(2)); oMan.setAttribute('cy',(c*(R-HAND)*OS).toFixed(2)); // floor point, y down in svg
+  if(pts){
+    let d='';
+    for(const p of pts){ if(p.t>t) break; d+=(d?'L':'M')+(p.Px*OS).toFixed(2)+' '+(-p.Py*-1*OS).toFixed(2)+' ';}
+    // svg y is down; our y is up, so a position (Px,Py) maps to (Px, -Py)
+    d='';for(const p of pts){if(p.t>t)break;d+=(d?'L':'M')+(p.Px*OS).toFixed(2)+' '+(-p.Py*OS).toFixed(2)+' '}
+    oLine.setAttribute('d',d);
+    const last=[...pts].reverse().find(p=>p.t<=t)||pts[0];
+    oBall.setAttribute('cx',(last.Px*OS).toFixed(2)); oBall.setAttribute('cy',(-last.Py*OS).toFixed(2)); oBall.style.display='';
+  } else {oLine.setAttribute('d','');oBall.style.display='none'}
+}
+// the thrower sits at the floor (svg y = +): floor point at angle th, position (R-HAND)*(sin th, +cos th) in svg coords (y down)
+
+// ---------- state ----------
+const angI=$('ang'), spdI=$('spd'), readEl=$('read'), hint=$('hint');
+let hx=30, hh=10, throws=0, goals=0, anim=null, scored=false, needNew=false;
+const vals=()=>[+angI.value,+spdI.value];
+function drawHoop(){
+  hoop.setAttribute('cx',hx);hoop.setAttribute('cy',Y(hh));hoopGlow.setAttribute('cx',hx);hoopGlow.setAttribute('cy',Y(hh));
+  const fh=R-Math.sqrt(R*R-hx*hx);
+  post.setAttribute('x1',hx);post.setAttribute('x2',hx);post.setAttribute('y1',Y(hh)+HOOP_R);post.setAttribute('y2',Y(fh));
+}
+const pathD=(pts,n)=>{let d='';for(let i=0;i<pts.length&&(n==null||i<=n);i++){const p=pts[i];d+=(i?'L':'M')+p.x.toFixed(2)+' '+Y(p.h).toFixed(2)+' '}return d};
+function sync(){
+  const [a,v]=vals();
+  $('angO').textContent=a+'°';$('spdO').textContent=v+' m/s';
+  const g=guess(a,v);
+  gPath.setAttribute('d',pathD(g));gPath.setAttribute('opacity',.8);
+  const f=flight(a,v,0.05);
+  cPath.setAttribute('d',pathD(f));cPath.setAttribute('opacity',$('chalk').checked?1:0);
+  const rad=a*Math.PI/180, len=v/0.8;
+  aim.setAttribute('x1',0);aim.setAttribute('y1',Y(HAND));
+  aim.setAttribute('x2',(Math.cos(rad)*len*0.55).toFixed(2));aim.setAttribute('y2',Y(HAND+Math.sin(rad)*len*0.55).toFixed(2));
+  aim.setAttribute('opacity',.9);
+  aimHead.setAttribute('cx',aim.getAttribute('x2'));aimHead.setAttribute('cy',aim.getAttribute('y2'));aimHead.setAttribute('opacity',.9);
+}
+function chooseHoop(){
+  for(let i=0;i<60;i++){
+    const side=Math.random()<.5?-1:1;
+    hx=side*(14+Math.random()*32); hh=4+Math.random()*13; hx=+hx.toFixed(1); hh=+hh.toFixed(1);
+    if(solve()) break;
+  }
+  drawHoop();
+}
+function solve(){
+  let best=null;
+  for(let a=0;a<=180;a+=1.5){for(let v=4;v<=28;v+=.5){
+    const f=flight(a,v,0.05);
+    if(passes(f,hx,hh)){ if(!best||v<best.v) best={a,v};}
+  }}
+  return best;
+}
+function say(html,cls){readEl.innerHTML=html;readEl.className='read'+(cls?' '+cls:'')}
+function tally(){$('tally').innerHTML=`<b>${goals}</b> through · ${throws} throw${throws===1?'':'s'}`}
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function doThrow(){
+  if(anim) return;
+  if(needNew){chooseHoop();needNew=false}
+  const [a,v]=vals(); const pts=flight(a,v,0.02);
+  const g=guess(a,v);
+  throws++; tally(); hint.style.opacity=0;
+  aim.setAttribute('opacity',0);aimHead.setAttribute('opacity',0);mark.setAttribute('opacity',0);
+  const last=pts[pts.length-1], hit=passes(pts,hx,hh);
+  $('throw').disabled=true;
+  const finish=()=>{
+    rPath.setAttribute('d',pathD(pts));
+    ball.setAttribute('cx',last.x);ball.setAttribute('cy',Y(last.h));
+    mark.setAttribute('transform',`translate(${last.x} ${Y(last.h)})`);mark.setAttribute('opacity',1);
+    const dir=last.x>=0?'spinward':'antispinward';
+    const gl=g[g.length-1].x, gdir=gl>=0?'spinward':'antispinward';
+    let top=0;for(const p of pts)top=Math.max(top,p.h);
+    let msg=`Airborne <strong>${last.t.toFixed(1)} s</strong>, topped out <strong>${top.toFixed(1)} m</strong> up, landed <strong>${Math.abs(last.x).toFixed(1)} m ${dir}</strong> of you. The gym guess said ${Math.abs(gl).toFixed(1)} m ${gdir}.`;
+    if(hit){goals++;needNew=true;msg='<strong>Through the hoop.</strong> '+msg+' The hoop moves on your next throw.'}
+    say(msg,hit?'goal':'');tally();
+    $('throw').disabled=false;anim=null;
+  };
+  if(reduce){setOuter(last.t,pts);finish();return}
+  const t0=performance.now(), SP=1.6;
+  anim={};
+  const step=now=>{
+    const t=Math.min((now-t0)/1000*SP,last.t);
+    let i=0;while(i<pts.length-1&&pts[i+1].t<=t)i++;
+    const p=pts[i];
+    rPath.setAttribute('d',pathD(pts,i));
+    ball.setAttribute('cx',p.x);ball.setAttribute('cy',Y(p.h));
+    setOuter(t,pts);
+    if(t<last.t) requestAnimationFrame(step); else {setOuter(last.t,pts);finish()}
+  };
+  requestAnimationFrame(step);
+}
+
+// ---------- input ----------
+function toM(ev){
+  const pt=court.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;
+  const q=pt.matrixTransform(court.getScreenCTM().inverse());
+  return {x:q.x,h:38-q.y};
+}
+let dragging=false;
+function aimTo(ev){
+  const m=toM(ev); let dx=m.x, dh=m.h-HAND;
+  if(Math.hypot(dx,dh)<1.5) return;
+  const a=Math.max(0,Math.min(180,Math.atan2(Math.max(dh,0),dx)*180/Math.PI));
+  const v=Math.max(4,Math.min(28,Math.hypot(dx,Math.max(dh,0))*0.8));
+  angI.value=Math.round(a);spdI.value=(Math.round(v*2)/2);
+  sync();
+}
+court.addEventListener('pointerdown',ev=>{if(anim)return;dragging=true;court.setPointerCapture(ev.pointerId);rPath.setAttribute('d','');mark.setAttribute('opacity',0);setOuter(0,null);ball.setAttribute('cx',0);ball.setAttribute('cy',Y(HAND));aimTo(ev);ev.preventDefault()});
+court.addEventListener('pointermove',ev=>{if(dragging)aimTo(ev)});
+const up=ev=>{if(!dragging)return;dragging=false;try{court.releasePointerCapture(ev.pointerId)}catch(e){};doThrow()};
+court.addEventListener('pointerup',up);
+court.addEventListener('pointercancel',()=>{dragging=false});
+function onSlide(){if(anim)return;rPath.setAttribute('d','');mark.setAttribute('opacity',0);setOuter(0,null);ball.setAttribute('cx',0);ball.setAttribute('cy',Y(HAND));sync()}
+angI.addEventListener('input',onSlide);spdI.addEventListener('input',onSlide);
+$('chalk').addEventListener('change',sync);
+$('throw').addEventListener('click',doThrow);
+$('move').addEventListener('click',()=>{if(anim)return;needNew=false;chooseHoop();say('New hoop. Same floor, same turning.');onSlide()});
+$('show').addEventListener('click',()=>{
+  if(anim)return;
+  if(needNew){chooseHoop();needNew=false}
+  const s=solve();
+  if(s){angI.value=Math.round(s.a);spdI.value=s.v;onSlide();
+    // make sure the rounded slider values still hit; otherwise search nearby integers
+    let [a,v]=vals();
+    if(!passes(flight(a,v,0.05),hx,hh)){outer:for(let da=-3;da<=3;da++)for(let dv=-2;dv<=2;dv+=.5){const A=Math.max(0,Math.min(180,Math.round(s.a)+da)),V=s.v+dv;if(V>=4&&V<=28&&passes(flight(A,V,0.05),hx,hh)){angI.value=A;spdI.value=V;break outer}}}
+    onSlide();$('chalk').checked=true;sync();
+    say('One way in: '+angI.value+'° at '+spdI.value+' m/s. Notice how little of it points at the hoop.');
+  } else say('No clean line to that one from here. Try a new hoop.');
+});
+
+// worked example for the explainer
+(function(){const f=flight(90,15,0.01),l=f[f.length-1];
+  $('ex1').textContent='15 m/s';$('ex2').textContent=l.t.toFixed(1)+' seconds';$('ex3').textContent=Math.abs(l.x).toFixed(1)+' metres';
+})();
+
+chooseHoop();sync();setOuter(0,null);tally();
+window.__rb={flight,guess,passes,solve,get hoop(){return{hx,hh}},setHoop(x,h){hx=x;hh=h;drawHoop()}};
+})();
+</script>
+</body></html>
