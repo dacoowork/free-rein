@@ -1,0 +1,341 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Squad Numbers</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;600;800&display=swap">
+<style>
+/* Layout: a mown pitch. The shirt and its "from the stand" readout share the top band; the lettering controls sit below on white kit-room cards; a 0–9 specimen plate closes the page. */
+:root{
+  --pitch:#237a3a; --pitch2:#1f6f34;   /* mowing stripes */
+  --chalk:#ffffff;                     /* text on the pitch */
+  --chalk-soft:#d9efdc;
+  --panel:#fbfdf9; --panel2:#eaf3ea;
+  --ink:#0f2416; --soft:#4a6151; --line:#0f241626;
+  --accent:#ff5a2a;                    /* captain's armband */
+  --good:#1d7a32; --warn:#a86500; --bad:#c3241a;
+  --display:'Anton','Impact','Haettenschweiler','Arial Narrow Bold',sans-serif;
+  --body:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --pitch:#0f2d19;--pitch2:#0c2715;--chalk:#eef8ef;--chalk-soft:#a9cdb1;--panel:#15301e;--panel2:#1d3d27;--ink:#e8f4ea;--soft:#a3c2aa;--line:#e8f4ea2e;
+  --accent:#ff7a4d;--good:#7fd88f;--warn:#ffc061;--bad:#ff7d70;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --pitch:#0f2d19;--pitch2:#0c2715;--chalk:#eef8ef;--chalk-soft:#a9cdb1;--panel:#15301e;--panel2:#1d3d27;--ink:#e8f4ea;--soft:#a3c2aa;--line:#e8f4ea2e;
+  --accent:#ff7a4d;--good:#7fd88f;--warn:#ffc061;--bad:#ff7d70;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--pitch);background-image:repeating-linear-gradient(90deg,var(--pitch) 0 90px,var(--pitch2) 90px 180px);color:var(--ink);font:16px/1.5 var(--body)}
+.wrap{max-width:1120px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:24px}
+header{color:var(--chalk);display:grid;gap:8px}
+.eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--chalk-soft)}
+h1{margin:0;font:400 clamp(2.8rem,9vw,5.6rem)/.9 var(--display);letter-spacing:.01em;text-transform:uppercase;text-wrap:balance}
+.lede{margin:0;max-width:62ch;font-size:1.05rem;color:var(--chalk)}
+.stage{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px;align-items:stretch}
+.card{background:var(--panel);border-radius:16px;padding:18px 20px;display:grid;gap:14px;align-content:start;min-width:0}
+.shirt-card{padding:10px;display:grid;place-items:center;background:var(--panel2)}
+#shirt{width:100%;max-width:470px;height:auto;display:block}
+h2{margin:0;font:400 1.35rem/1.1 var(--display);letter-spacing:.03em;text-transform:uppercase}
+h3{margin:0;font-size:.74rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+.stand{display:grid;gap:14px}
+.reach{display:grid;gap:4px}
+.reach .big{font:400 2.6rem/1 var(--display);font-variant-numeric:tabular-nums}
+.grade{display:inline-flex;align-items:center;gap:8px;font-weight:800;padding:4px 12px;border-radius:999px;border:2px solid currentColor;width:max-content;max-width:100%}
+.grade[data-level="good"]{color:var(--good)}.grade[data-level="warn"]{color:var(--warn)}.grade[data-level="bad"]{color:var(--bad)}
+.view{position:relative;height:190px;border-radius:12px;overflow:hidden;background:linear-gradient(#9fc4e6,#d9e9f4 55%,#2f8f46 55%,#2a8540);display:grid;place-items:center}
+.view svg{display:block;transition:height .25s ease}
+.view .tag{position:absolute;left:10px;top:8px;font-size:.75rem;font-weight:800;color:#0f2416;background:#ffffffcc;border-radius:999px;padding:2px 10px}
+.meter{position:relative;height:30px;margin-top:2px}
+.meter .rail{position:absolute;left:0;right:0;top:10px;height:10px;border-radius:5px;background:var(--panel2);overflow:hidden}
+.meter .fill{position:absolute;left:0;top:0;bottom:0;background:var(--good);border-radius:5px;transition:width .3s ease}
+.meter .you{position:absolute;top:2px;width:4px;height:26px;border-radius:2px;background:var(--accent);transform:translateX(-2px)}
+.scale-l{display:flex;justify-content:space-between;font-size:.72rem;color:var(--soft);font-variant-numeric:tabular-nums}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0}
+.facts div{border-top:2px solid var(--ink);padding-top:4px;min-width:0}
+.facts dt{font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+.facts dd{margin:0;font-weight:800;font-variant-numeric:tabular-nums}
+.note{margin:0;font-size:.9rem;color:var(--soft)}
+label.rng{display:grid;grid-template-columns:7.5em 1fr 3.2em;align-items:center;gap:10px;font-size:.92rem;font-weight:600}
+label.rng output{text-align:right;font-variant-numeric:tabular-nums;color:var(--soft)}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.field{display:grid;gap:6px}
+.field label{font-size:.85rem;font-weight:800}
+.field input[type=text]{font:400 1.6rem/1.1 var(--display);text-transform:uppercase;letter-spacing:.04em;padding:8px 12px;border:2px solid var(--ink);border-radius:10px;background:var(--panel);color:var(--ink);width:100%}
+.field input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.err{margin:0;min-height:1.3em;font-size:.88rem;font-weight:600;color:var(--bad)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+button{font:600 .9rem var(--body);color:var(--ink);background:var(--panel);border:2px solid var(--ink);border-radius:999px;padding:6px 14px;cursor:pointer}
+button:hover{background:var(--panel2)}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.kits{display:flex;flex-wrap:wrap;gap:8px}
+.kits button{border-radius:10px;padding:6px 12px}
+.swrow{display:grid;gap:6px}
+.swrow .lab{font-size:.8rem;font-weight:800}
+.sw{display:flex;flex-wrap:wrap;gap:6px}
+.sw button{width:28px;height:28px;padding:0;border-radius:50%;border:2px solid var(--line)}
+.sw button[aria-pressed="true"]{border:3px solid var(--accent);box-shadow:0 0 0 2px var(--panel) inset}
+.plate{background:var(--panel);border-radius:16px;padding:18px 20px;display:grid;gap:10px}
+.plate-scroll{overflow-x:auto}
+#spec{display:block;width:100%;height:auto;border-radius:10px}
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;color:var(--chalk)}
+.how h3{color:var(--chalk-soft)}
+.how p{margin:.35em 0 0;font-size:.92rem;max-width:60ch}
+@media (max-width:900px){.controls{grid-template-columns:1fr 1fr}.controls .card:last-child{grid-column:1 / -1}}
+@media (max-width:760px){.stage{grid-template-columns:1fr}.controls{grid-template-columns:1fr}.how{grid-template-columns:1fr}}
+@media (max-width:420px){label.rng{grid-template-columns:6.4em 1fr 2.8em}.card{padding:16px 14px}.facts{gap:8px}.reach .big{font-size:2.2rem}}
+@media (prefers-reduced-motion:reduce){.view svg,.meter .fill{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Kit-room lettering</div>
+    <h1>Squad Numbers</h1>
+    <p class="lede">Letter a shirt back. Every numeral is drawn from strokes, so you set its weight, width, corners, slant, outlines and shadow. Then step back into the stand and see how far away the number still reads.</p>
+  </header>
+
+  <section class="stage" aria-label="The shirt">
+    <div class="card shirt-card"><svg id="shirt" viewBox="0 0 400 460" role="img" aria-label="Back of the shirt"></svg></div>
+    <div class="card stand">
+      <h2>From the stand</h2>
+      <div class="reach">
+        <h3>Reads clearly to about</h3>
+        <div class="big" id="reach">0 m</div>
+        <div class="grade" id="grade" data-level="good"></div>
+      </div>
+      <div class="view" id="view"><span class="tag" id="viewtag">40 m away</span><svg id="far" viewBox="0 0 400 460" aria-hidden="true"></svg></div>
+      <label class="rng" for="dist">Your seat<input id="dist" type="range" min="5" max="100" step="1" value="40"><output id="dist-o">40 m</output></label>
+      <div class="meter" aria-hidden="true"><div class="rail"><div class="fill" id="mfill"></div></div><div class="you" id="myou"></div></div>
+      <div class="scale-l" aria-hidden="true"><span>Touchline</span><span>25 m</span><span>50 m</span><span>75 m</span><span>Back row 100 m</span></div>
+      <dl class="facts">
+        <div><dt>Number</dt><dd id="f-h"></dd></div>
+        <div><dt>Edge contrast</dt><dd id="f-c"></dd></div>
+        <div><dt>Stroke</dt><dd id="f-s"></dd></div>
+      </dl>
+      <p class="note" id="advice"></p>
+    </div>
+  </section>
+
+  <section class="controls" aria-label="Lettering controls">
+    <div class="card">
+      <h2>Name and number</h2>
+      <div class="field"><label for="name-in">Surname</label><input id="name-in" type="text" value="Okafor" maxlength="24" autocomplete="off" spellcheck="false"><p class="err" id="name-err" role="status"></p></div>
+      <div class="field"><label for="num-in">Squad number</label><input id="num-in" type="text" inputmode="numeric" value="9" maxlength="4" autocomplete="off"><p class="err" id="num-err" role="status"></p></div>
+      <div class="field"><label>Name line</label><div class="seg" id="arch"><button id="a-arch" data-v="arch">Arched</button><button id="a-flat" data-v="flat">Straight</button></div></div>
+      <div class="field"><label>Start from a kit</label><div class="kits" id="kits"></div></div>
+    </div>
+    <div class="card">
+      <h2>Letterform</h2>
+      <div class="field"><label>Corners</label><div class="seg" id="corners"><button id="c-square" data-v="square">Square</button><button id="c-round" data-v="round">Round</button><button id="c-chamfer" data-v="chamfer">Chamfered</button></div></div>
+      <label class="rng" for="r-weight">Weight<input id="r-weight" type="range" min="12" max="44" step="1"><output id="o-weight"></output></label>
+      <label class="rng" for="r-width">Width<input id="r-width" type="range" min="70" max="140" step="1"><output id="o-width"></output></label>
+      <label class="rng" for="r-slant">Slant<input id="r-slant" type="range" min="0" max="14" step="1"><output id="o-slant"></output></label>
+      <label class="rng" for="r-o1">Outline<input id="r-o1" type="range" min="0" max="10" step="1"><output id="o-o1"></output></label>
+      <label class="rng" for="r-o2">2nd outline<input id="r-o2" type="range" min="0" max="8" step="1"><output id="o-o2"></output></label>
+      <label class="rng" for="r-sh">Shadow<input id="r-sh" type="range" min="0" max="10" step="1"><output id="o-sh"></output></label>
+      <div class="field"><label>Inline</label><div class="seg" id="inline"><button id="i-off" data-v="off">Solid</button><button id="i-on" data-v="on">Split by an inline</button></div></div>
+    </div>
+    <div class="card">
+      <h2>Colours</h2>
+      <div class="field"><label>Shirt pattern</label><div class="seg" id="pattern"><button id="p-plain" data-v="plain">Plain</button><button id="p-stripes" data-v="stripes">Stripes</button><button id="p-hoops" data-v="hoops">Hoops</button><button id="p-halves" data-v="halves">Halves</button></div></div>
+      <div id="swatches" style="display:grid;gap:10px"></div>
+    </div>
+  </section>
+
+  <section class="plate" aria-label="Specimen">
+    <h2>Specimen plate</h2>
+    <p class="note" id="spec-note"></p>
+    <div class="plate-scroll"><svg id="spec" viewBox="0 0 1000 170" role="img" aria-label="Numerals 0 to 9 in the current style"></svg></div>
+  </section>
+
+  <section class="how" aria-label="How it works">
+    <div><h3>Drawn from strokes</h3><p>Each numeral is a skeleton of straight strokes, like the block figures cut from heat-transfer vinyl. Weight sets the stroke, corners set how strokes meet and end, and outlines are the same skeleton drawn wider underneath.</p></div>
+    <div><h3>Reading distance</h3><p>A number is printed about 30 cm tall. The model asks how far away its strokes stay wide enough to pick out on a moving player, then cuts that distance as the edge contrast with the shirt falls. Wide styles that have to shrink to fit the back lose height and reach.</p></div>
+    <div><h3>Patterns</h3><p>On stripes, hoops and halves the number sits on two colours at once, so the edge has to contrast with both. A white outline vanishes on the white stripe and a black one on the black; a red figure stands apart from both.</p></div>
+  </section>
+</div>
+
+<script>
+const COLS=[['White','#ffffff'],['Black','#111111'],['Red','#d7191c'],['Claret','#6d1a36'],['Orange','#f36c1f'],['Gold','#f2b705'],['Green','#0f7a3a'],['Sky','#79b8ef'],['Royal','#1f4fd1'],['Navy','#13235b'],['Purple','#4b2a86'],['Silver','#b9bcc2']];
+const KITS=[
+ {id:'classic',name:'Classic block',s:{corners:'square',weight:30,width:112,slant:0,o1:0,o2:0,sh:0,inline:false,pattern:'plain',shirt:'#d7191c',shirt2:'#ffffff',fill:'#ffffff',trim:'#111111',trim2:'#111111'}},
+ {id:'seventies',name:'Seventies',s:{corners:'round',weight:38,width:124,slant:0,o1:4,o2:0,sh:0,inline:false,pattern:'plain',shirt:'#13235b',shirt2:'#ffffff',fill:'#f2b705',trim:'#ffffff',trim2:'#111111'}},
+ {id:'nineties',name:'Nineties away',s:{corners:'chamfer',weight:28,width:104,slant:10,o1:4,o2:3,sh:6,inline:true,pattern:'halves',shirt:'#4b2a86',shirt2:'#1f4fd1',fill:'#ffffff',trim:'#f36c1f',trim2:'#111111'}},
+ {id:'stripes',name:'Black and white',s:{corners:'square',weight:34,width:108,slant:0,o1:0,o2:0,sh:0,inline:false,pattern:'stripes',shirt:'#111111',shirt2:'#ffffff',fill:'#d7191c',trim:'#ffffff',trim2:'#111111'}},
+ {id:'modern',name:'Modern thin',s:{corners:'square',weight:16,width:92,slant:0,o1:0,o2:0,sh:0,inline:false,pattern:'plain',shirt:'#ffffff',shirt2:'#13235b',fill:'#13235b',trim:'#d7191c',trim2:'#111111'}},
+ {id:'tangerine',name:'Tangerine third',s:{corners:'round',weight:24,width:100,slant:4,o1:0,o2:0,sh:0,inline:false,pattern:'hoops',shirt:'#f36c1f',shirt2:'#f2b705',fill:'#f2b705',trim:'#ffffff',trim2:'#111111'}},
+];
+const SWROWS=[['shirt','Shirt'],['shirt2','Second shirt colour'],['fill','Number fill'],['trim','Outline'],['trim2','2nd outline and shadow']];
+const S={name:'OKAFOR',number:9,arch:'arch',kit:'classic',...KITS[0].s};
+const H=200, BASE=360, MAXW=250, CM=30;
+const $=id=>document.getElementById(id);
+
+// ---------- colour ----------
+function lum(h){const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4));return .2126*c[0]+.7152*c[1]+.0722*c[2]}
+function contrast(a,b){const x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)}
+function shirtCols(){return S.pattern==='plain'?[S.shirt]:[S.shirt,S.shirt2]}
+
+// ---------- numeral skeletons ----------
+function glyph(ch,W,t){
+  const i=t/2, ym=H/2;
+  const w = ch==='1'? Math.max(W*0.55,t*1.8) : W;
+  const x0=i,x1=w-i,y0=i,y1=H-i;
+  const P={
+    '0':`M${x0} ${y0}H${x1}V${y1}H${x0}Z`,
+    '1':`M${x0} ${y0}H${x1}V${y1}`,
+    '2':`M${x0} ${y0}H${x1}V${ym}H${x0}V${y1}H${x1}`,
+    '3':`M${x0} ${y0}H${x1}V${y1}H${x0}M${x0+(x1-x0)*0.3} ${ym}H${x1}`,
+    '4':`M${x0} ${y0}V${H*0.62}H${x1}M${x1} ${y0}V${y1}`,
+    '5':`M${x1} ${y0}H${x0}V${ym}H${x1}V${y1}H${x0}`,
+    '6':`M${x1} ${y0}H${x0}V${y1}H${x1}V${ym}H${x0}`,
+    '7':`M${x0} ${y0}H${x1}L${x0+(x1-x0)*0.32} ${y1}`,
+    '8':`M${x0} ${y0}H${x1}V${y1}H${x0}ZM${x0} ${ym}H${x1}`,
+    '9':`M${x1} ${ym}H${x0}V${y0}H${x1}V${y1}H${x0}`,
+  };
+  return {d:P[ch],w};
+}
+function shift(d,dx){return d.replace(/([MLHVZ])([^MLHVZ]*)/g,(m,c,a)=>{if(c==='Z')return m;const n=a.trim().split(/[ ,]+/).map(Number);if(c==='H')return 'H'+(n[0]+dx);if(c==='V')return 'V'+n[0];return c+(n[0]+dx)+' '+n[1]})}
+function numeralPaths(str,W,t){
+  let x=0,parts=[];const gap=W*0.14;
+  [...str].forEach((ch,k)=>{const g=glyph(ch,W,t);if(k)x+=gap;parts.push(shift(g.d,x));x+=g.w});
+  return {d:parts.join(''),w:x};
+}
+function joins(){return S.corners==='round'?['round','round']:S.corners==='chamfer'?['bevel','square']:['miter','square']}
+
+// Builds the layered number: shadow, 2nd outline, outline, fill, inline. Returns svg markup and the scale applied.
+function numberSVG(str,cx,base,maxW,scaleIn){
+  const t=S.weight, W=S.width, {d,w}=numeralPaths(str,W,t);
+  const skew=Math.tan(S.slant*Math.PI/180)*H;
+  const ext=2*(S.o1+S.o2)+S.sh*0.7;
+  const full=w+skew+ext;
+  const sc=scaleIn??Math.min(1,maxW/full);
+  const [lj,lc]=joins();
+  const st=(c,wd)=>`style="fill:none;stroke:${c};stroke-width:${wd};stroke-linejoin:${lj};stroke-linecap:${lc};stroke-miterlimit:6"`;
+  const T1=t+2*S.o1, T2=T1+2*S.o2;
+  let g='';
+  if(S.sh>0) g+=`<path d="${d}" transform="translate(${S.sh*0.7} ${S.sh})" ${st(S.trim2,T2)}/>`;
+  if(S.o2>0) g+=`<path d="${d}" ${st(S.trim2,T2)}/>`;
+  if(S.o1>0) g+=`<path d="${d}" ${st(S.trim,T1)}/>`;
+  g+=`<path d="${d}" ${st(S.fill,t)}/>`;
+  if(S.inline) g+=`<path d="${d}" ${st(S.shirt,Math.max(2,t*0.16))}/>`;
+  const tx=cx-(w+skew)/2*sc;
+  return {svg:`<g transform="translate(${tx} ${base-H*sc}) scale(${sc}) translate(0 ${H}) skewX(${-S.slant}) translate(0 ${-H})">${g}</g>`,sc};
+}
+
+// ---------- shirt ----------
+const BODY='M140 30Q200 50 260 30L332 54L394 124L350 172L318 146L318 442Q200 456 82 442L82 146L50 172L6 124L68 54Z';
+function patternSVG(){
+  const a=S.shirt,b=S.shirt2;let p=`<rect width="400" height="460" style="fill:${a}"/>`;
+  if(S.pattern==='stripes'){for(let x=-6;x<400;x+=56)p+=`<rect x="${x+28}" y="0" width="28" height="460" style="fill:${b}"/>`}
+  if(S.pattern==='hoops'){for(let y=40;y<460;y+=64)p+=`<rect x="0" y="${y+32}" width="400" height="32" style="fill:${b}"/>`}
+  if(S.pattern==='halves')p+=`<rect x="200" y="0" width="200" height="460" style="fill:${b}"/>`;
+  return p;
+}
+function shirtSVG(id,withName){
+  const dark=lum(S.shirt)<.2;
+  const fold=dark?'#ffffff':'#000000';
+  const num=numberSVG(String(S.number),200,BASE,MAXW);
+  const arc=S.arch==='arch'?'M92 132Q200 84 308 132':'M92 118L308 118';
+  const nameCol=S.fill, nameTrim=S.o1>0?S.trim:'none';
+  const name=withName&&S.name?`<path id="${id}-arc" d="${arc}" style="fill:none"/>
+    <text id="${id}-name" style="font:400 34px var(--display);letter-spacing:2px;fill:${nameCol};stroke:${nameTrim};stroke-width:${S.o1>0?Math.min(S.o1,4):0};paint-order:stroke" text-anchor="middle"><textPath href="#${id}-arc" startOffset="50%">${esc(S.name)}</textPath></text>`:'';
+  return {svg:`<defs><clipPath id="${id}-cp"><path d="${BODY}"/></clipPath></defs>
+  <g clip-path="url(#${id}-cp)">${patternSVG()}
+    <path d="M82 146L82 442" style="stroke:${fold};stroke-width:2;opacity:.08"/>
+    <path d="M318 146L318 442" style="stroke:${fold};stroke-width:2;opacity:.08"/>
+    ${name}${num.svg}
+    <path d="M150 34Q200 54 250 34" style="fill:none;stroke:${fold};stroke-width:6;opacity:.12"/>
+  </g>
+  <path d="${BODY}" style="fill:none;stroke:#0f2416;stroke-width:3;stroke-linejoin:round"/>`,sc:num.sc};
+}
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+// ---------- legibility model ----------
+// Strokes must subtend ~2.5 arcminutes on a moving player to be read reliably.
+function legibility(sc){
+  const mmPerUnit=CM*10/H*sc;
+  const cols=shirtCols();
+  const outer=S.o2>0?S.trim2:S.o1>0?S.trim:S.fill;
+  const Cedge=Math.min(...cols.map(c=>contrast(outer,c)));
+  const T=S.weight+2*(S.o1+S.o2);
+  const ring=S.o1>0?S.trim:null;
+  const Ccore=ring?contrast(S.fill,ring):Cedge;
+  const f=C=>Math.pow(Math.max(0,Math.min(1,(C-1)/3.5)),0.6);
+  const reach=(units,C)=>units*mmPerUnit/1000*3438/2.5*f(C);
+  let m=Math.max(reach(T,Cedge), ring?reach(S.weight,Ccore)*0.8*(Cedge>1.6?1:0.7):0);
+  if(S.inline) m*=0.85;
+  // the holes inside 0, 6, 8, 9 shrink as outlines grow; once they close the figure stops reading
+  const counter=Math.min(S.width-2*S.weight,(H-3*S.weight)/2)-2*(S.o1+S.o2);
+  const closed=counter<=S.weight*0.5;
+  if(closed) m*=Math.max(0.25,0.25+0.75*Math.max(0,counter)/(S.weight*0.5));
+  return {closed,metres:Math.round(m),Cedge,heightCm:Math.round(CM*sc*10)/10,strokeMm:Math.round(T*mmPerUnit),outer};
+}
+function grade(m){return m>=75?['good','Readable from the back row']:m>=45?['good','Readable from mid-stand']:m>=25?['warn','Lower tier only']:m>=10?['bad','Touchline only']:['bad','Lost in the crowd']}
+
+// ---------- UI ----------
+function setPressed(group,v){document.querySelectorAll('#'+group+' button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===v))}
+function render(){
+  const main=shirtSVG('m',true);$('shirt').innerHTML=main.svg;
+  const t=$('m-name');
+  if(t){t.removeAttribute('textLength');const L=t.getComputedTextLength();if(L>200){t.setAttribute('textLength',200);t.setAttribute('lengthAdjust','spacingAndGlyphs')}}
+  const L=legibility(main.sc);
+  const [lvl,txt]=grade(L.metres);
+  $('reach').textContent=L.metres<5?'Under 5 m':L.metres+' m';$('grade').dataset.level=lvl;$('grade').textContent=txt;
+  $('f-h').textContent=L.heightCm+' cm';$('f-c').textContent=L.Cedge.toFixed(1)+':1';$('f-s').textContent=L.strokeMm+' mm';
+  const adv=[];
+  if(L.Cedge<2) adv.push(S.pattern==='plain'?'The number blends into the shirt. Add an outline in a contrasting colour or change the fill.':'The edge of the number disappears against one of the shirt colours. A thick outline that contrasts with both is the usual fix.');
+  if(L.closed) adv.push('The outlines have nearly filled the holes inside the numerals, so 0, 6, 8 and 9 turn into blocks. Lighten the outlines or the weight, or widen the figures.');
+  if(main.sc<0.97) adv.push(`This style is too wide for the back, so the number has been shrunk to ${L.heightCm} cm. Narrow it or lighten the outlines to get the full 30 cm.`);
+  if(S.weight<20&&L.Cedge>=2) adv.push('Thin strokes look sharp up close and fade first at distance.');
+  if(!adv.length) adv.push(L.metres>=75?'Clear from every seat in the ground.':'Heavier strokes or a stronger edge would carry it further.');
+  $('advice').textContent=adv.join(' ');
+  // stand view
+  const d=+$('dist').value;$('dist-o').textContent=d+' m';$('viewtag').textContent=d+' m away';
+  const far=shirtSVG('f',false);const fv=$('far');fv.innerHTML=far.svg;
+  const hpx=Math.max(14,Math.min(170,1700/d));fv.style.height=hpx+'px';fv.style.width=(hpx*400/460)+'px';
+  const strokePx=(S.weight+2*(S.o1+S.o2))*main.sc*hpx/460;
+  const blur=L.metres>0?Math.min(8,strokePx*0.6*Math.pow(d/L.metres,2)):8;
+  fv.style.filter=`blur(${blur.toFixed(2)}px)`;
+  $('mfill').style.width=Math.min(100,L.metres)+'%';$('mfill').style.background=`var(--${lvl})`;$('myou').style.left=d+'%';
+  // controls
+  for(const k of ['weight','width','slant','o1','o2','sh']){$('r-'+k).value=S[k];$('o-'+k).textContent=S[k]+(k==='slant'?'°':'')}
+  setPressed('corners',S.corners);setPressed('pattern',S.pattern);setPressed('arch',S.arch);setPressed('inline',S.inline?'on':'off');setPressed('kits',S.kit);
+  for(const [k] of SWROWS) document.querySelectorAll(`#sw-${k} button`).forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===S[k]));
+  // specimen
+  const narrow=$('spec').parentNode.clientWidth<600, per=narrow?5:10, VW=per*100, VH=narrow?330:170;
+  $('spec').setAttribute('viewBox',`0 0 ${VW} ${VH}`);
+  let sp=`<rect width="${VW}" height="${VH}" style="fill:${S.shirt}"/>`;
+  for(let n=0;n<10;n++){const col=n%per,row=Math.floor(n/per);const r=numberSVG(String(n),100*col+50,150+row*160,92,0.55);sp+=r.svg}
+  $('spec').innerHTML=sp;
+  $('spec-note').textContent=`${({square:'Square',round:'Round',chamfer:'Chamfered'})[S.corners]} corners, weight ${S.weight}, width ${S.width}${S.slant?', slanted '+S.slant+'°':''}${S.inline?', inline':''}${S.o1?', '+(S.o2?'double':'single')+' outline':''}${S.sh?', drop shadow':''}.`;
+  window.__last=L;
+}
+function custom(){S.kit=null}
+function build(){
+  const kits=$('kits');
+  KITS.forEach(k=>{const b=document.createElement('button');b.id='k-'+k.id;b.dataset.v=k.id;b.textContent=k.name;b.onclick=()=>{Object.assign(S,k.s);S.kit=k.id;render()};kits.appendChild(b)});
+  const sw=$('swatches');
+  SWROWS.forEach(([k,lab])=>{const row=document.createElement('div');row.className='swrow';row.innerHTML=`<span class="lab">${lab}</span><div class="sw" id="sw-${k}"></div>`;
+    const box=row.querySelector('.sw');COLS.forEach(([n,c])=>{const b=document.createElement('button');b.dataset.c=c;b.style.background=c;b.setAttribute('aria-label',`${lab}: ${n}`);b.title=n;b.onclick=()=>{S[k]=c;custom();render()};box.appendChild(b)});sw.appendChild(row)});
+  for(const k of ['weight','width','slant','o1','o2','sh']) $('r-'+k).oninput=e=>{S[k]=+e.target.value;custom();render()};
+  document.querySelectorAll('#corners button').forEach(b=>b.onclick=()=>{S.corners=b.dataset.v;custom();render()});
+  document.querySelectorAll('#pattern button').forEach(b=>b.onclick=()=>{S.pattern=b.dataset.v;custom();render()});
+  document.querySelectorAll('#arch button').forEach(b=>b.onclick=()=>{S.arch=b.dataset.v;render()});
+  document.querySelectorAll('#inline button').forEach(b=>b.onclick=()=>{S.inline=b.dataset.v==='on';custom();render()});
+  $('dist').oninput=render;
+  addEventListener('resize',()=>{clearTimeout(window.__rz);window.__rz=setTimeout(render,150)});
+  $('name-in').oninput=e=>{const v=e.target.value.trim();let err='';
+    if(v.length>16) err='Keep it to 16 characters or fewer. Longer names are cut down on real shirts too.';
+    else if(v&&!/^\p{L}[\p{L} .'’\-]*$/u.test(v)) err='Letters only, plus spaces, hyphens and apostrophes. Numbers go below.';
+    $('name-err').textContent=err; if(!err){S.name=v.toLocaleUpperCase();render()}};
+  $('num-in').oninput=e=>{const v=e.target.value.trim();let err='';
+    if(!v) err='Enter a number from 1 to 99.';
+    else if(!/^\d+$/.test(v)) err='Digits only.';
+    else if(v.length>1&&v[0]==='0') err=`No leading zeros: the shirt says ${+v||'nothing'}, not ${v}.`;
+    else if(+v<1||+v>99) err='Squad numbers run from 1 to 99.';
+    $('num-err').textContent=err; if(!err){S.number=+v;render()}};
+  render();
+}
+build();
+window.__squad={get state(){const L=window.__last;return {name:S.name,number:S.number,kit:S.kit,corners:S.corners,weight:S.weight,width:S.width,slant:S.slant,o1:S.o1,o2:S.o2,sh:S.sh,inline:S.inline,pattern:S.pattern,shirt:S.shirt,fill:S.fill,metres:L.metres,edgeContrast:+L.Cedge.toFixed(2),heightCm:L.heightCm,grade:$('grade').textContent,nameError:$('name-err').textContent,numberError:$('num-err').textContent}}};
+</script>
+
+</body></html>

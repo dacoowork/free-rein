@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -79,7 +79,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-10-29"></script>
+<script src="builds.js?v=2026-10-29b"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -90,6 +90,28 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    shirtback(b,r){
+      // the default shirt: red, OKAFOR arched, a square-cornered block 9 (weight 30, width 112), read to 62 m with the seat marker at 40 m
+      const ink='#0f2416', chalk='#ffffff', red=b.accent2, orange=b.accent;
+      let s=`<rect width="320" height="180" fill="${b.bg}"/>`; for(let x=20;x<320;x+=40) s+=`<rect x="${x}" y="0" width="20" height="180" fill="#1f6f34"/>`;
+      const body='M140 30Q200 50 260 30L332 54L394 124L350 172L318 146L318 442Q200 456 82 442L82 146L50 172L6 124L68 54Z';
+      return s+`<g transform="translate(14 8) scale(.355)">
+          <defs><clipPath id="sbk"><path d="${body}"/></clipPath></defs>
+          <g clip-path="url(#sbk)"><rect width="400" height="460" fill="${red}"/>
+            <path id="sbn" d="M92 132Q200 84 308 132" fill="none"/>
+            <text font-family="Anton, Impact, sans-serif" font-size="34" letter-spacing="2" fill="${chalk}" text-anchor="middle"><textPath href="#sbn" startOffset="50%">OKAFOR</textPath></text>
+            <path transform="translate(144 160)" d="M97 100H15V15H97V185H15" fill="none" stroke="${chalk}" stroke-width="30" stroke-linejoin="miter" stroke-linecap="square"/>
+          </g>
+          <path d="${body}" fill="none" stroke="${ink}" stroke-width="6" stroke-linejoin="round"/>
+        </g>
+        <text x="176" y="74" font-family="Anton, Impact, sans-serif" font-size="46" fill="${chalk}">62 m</text>
+        <text x="178" y="96" font-family="Manrope, system-ui, sans-serif" font-size="10" font-weight="800" letter-spacing="1.5" fill="${chalk}">MID-STAND</text>
+        <rect x="178" y="116" width="124" height="8" rx="4" fill="#ffffff" opacity=".3"/>
+        <rect x="178" y="116" width="${124*0.62}" height="8" rx="4" fill="${chalk}"/>
+        <rect x="${178+124*0.4-2}" y="110" width="4" height="20" rx="2" fill="${orange}"/>
+        <text x="178" y="144" font-family="Manrope, system-ui, sans-serif" font-size="9" fill="${chalk}">0 m</text>
+        <text x="302" y="144" text-anchor="end" font-family="Manrope, system-ui, sans-serif" font-size="9" fill="${chalk}">100 m</text>`;
+    },
     woozy(b,r){
       // a woozy bottle of the default batch (fermented habanero and mango, 40,909 SHU) beside the log Scoville scale with its marker
       const ink=b.fg, red=b.accent, sauce=b.accent2, panel=b.panel||'#fffaea';

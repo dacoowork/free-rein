@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "squad",
+    title: "Squad Numbers",
+    date: "2026-10-28",
+    kind: "Type and lettering",
+    blurb: "Letter the back of a football shirt with numerals built from strokes: set the weight, width, corners, slant, outlines, inline and shadow, on plain, striped, hooped or halved kits. Then move your seat back through the stand and see how far away the number still reads.",
+    font: "'Anton', Impact, 'Arial Narrow Bold', sans-serif", fontWeight: 400, letterSpacing: "0.01em",
+    bg: "#237a3a", fg: "#0f2416", accent: "#ff5a2a", accent2: "#d7191c", panel: "#fbfdf9",
+    motif: "shirtback"
+  },
+  {
     slug: "scoville",
     title: "Scoville Bench",
     date: "2026-10-27",
