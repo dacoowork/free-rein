@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Federo&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -79,7 +79,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-10-29b"></script>
+<script src="builds.js?v=2026-10-29c"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -90,6 +90,35 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    liftcar(b,r){
+      // Car Two at twelve: the indicator strip with 12 lit, the doors open on the story, the button strip with Dora's floor (12) as "here", 18 as a passenger's floor and a call lamp at B
+      const ink=b.fg, jade=b.accent, lamp=b.accent2, card=b.panel;
+      const F=['B','G','3','6','9','12','15','18','R'];
+      let s=`<rect width="320" height="180" fill="${b.bg}"/>`;
+      for(let x=10;x<320;x+=24) s+=`<rect x="${x}" y="0" width="1" height="180" fill="${ink}" opacity=".12"/>`;
+      s+=`<defs><linearGradient id="lcb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e6c477"/><stop offset=".5" stop-color="#a87a26"/><stop offset="1" stop-color="#6e4c14"/></linearGradient>
+        <linearGradient id="lcd" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8a6224"/><stop offset=".5" stop-color="#b98a3b"/><stop offset=".75" stop-color="#d9b469"/><stop offset="1" stop-color="#b98a3b"/></linearGradient>
+        <radialGradient id="lcbt" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff4cf"/><stop offset=".45" stop-color="#e2c070"/><stop offset="1" stop-color="#9b7022"/></radialGradient></defs>
+        <rect x="60" y="10" width="200" height="164" rx="8" fill="url(#lcb)"/>
+        <rect x="66" y="16" width="188" height="18" rx="3" fill="#1c0e11"/>`;
+      F.forEach((f,i)=>{const x=66+188/9*(i+.5),on=f==='12';
+        s+=`<text x="${x}" y="29.5" text-anchor="middle" font-family="Federo, 'Century Gothic', sans-serif" font-size="9" fill="${on?lamp:'#ffe8d6'}" opacity="${on?1:.35}">${f}</text>`;
+        if(on) s+=`<rect x="${x-7}" y="31" width="14" height="2" fill="${lamp}"/>`;});
+      s+=`<rect x="66" y="36" width="188" height="98" fill="${card}"/>
+        <text x="96" y="58" font-family="Federo, 'Century Gothic', sans-serif" font-size="18" fill="${jade}">12</text>
+        <rect x="96" y="64" width="128" height="1" fill="${ink}" opacity=".2"/>`;
+      [74,82,90,98].forEach((y,i)=>{s+=`<rect x="96" y="${y}" width="${[124,116,128,70][i]}" height="3" rx="1.5" fill="${ink}" opacity=".55"/>`;});
+      s+=`<rect x="96" y="108" width="44" height="13" rx="6.5" fill="none" stroke="${ink}" stroke-width="1.2"/><rect x="146" y="108" width="36" height="13" rx="6.5" fill="none" stroke="${ink}" stroke-width="1.2"/>
+        <rect x="66" y="36" width="24" height="98" fill="url(#lcd)"/><rect x="230" y="36" width="24" height="98" fill="url(#lcd)"/>
+        <rect x="89" y="36" width="1.2" height="98" fill="#6e4c14"/><rect x="230" y="36" width="1.2" height="98" fill="#6e4c14"/>
+        <rect x="60" y="138" width="200" height="36" rx="0" fill="#d9b25f"/>`;
+      F.forEach((f,i)=>{const cx=66+188/9*(i+.5),cy=154,here=f==='12';
+        if(f==='18') s+=`<circle cx="${cx}" cy="${cy}" r="10.5" fill="none" stroke="${jade}" stroke-width="1.8"/>`;
+        s+=`<circle cx="${cx}" cy="${cy}" r="8.5" fill="${here?'#ffd9c0':'url(#lcbt)'}" stroke="#5a3c0e" stroke-width=".8"/>
+          <text x="${cx}" y="${cy+3}" text-anchor="middle" font-family="Federo, 'Century Gothic', sans-serif" font-size="7.5" fill="#2a161b">${f}</text>`;
+        if(f==='B') s+=`<circle cx="${cx+6}" cy="${cy-6}" r="2.6" fill="${lamp}" stroke="#2a161b" stroke-width=".6"/>`;});
+      return s;
+    },
     shirtback(b,r){
       // the default shirt: red, OKAFOR arched, a square-cornered block 9 (weight 30, width 112), read to 62 m with the seat marker at 40 m
       const ink='#0f2416', chalk='#ffffff', red=b.accent2, orange=b.accent;

@@ -1,0 +1,395 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Going Up</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Federo&family=Outfit:wght@400;500;700&display=swap">
+<style>
+/* Layout: one column, read like the front of a lift: the floor indicator on top, the car doors
+   (with the story behind them) in the middle, the brass button strip below, then who is aboard. */
+:root{
+  --bg:#f3d5c4;        /* peach lobby plaster */
+  --bg2:#ebc3ae;
+  --card:#fff7f1;      /* the lit car interior */
+  --ink:#2a161b;       /* oxblood black */
+  --muted:#71505a;
+  --brass:#a87a26;
+  --brass-hi:#e6c477;
+  --brass-lo:#6e4c14;
+  --jade:#16675e;      /* deco jade accent */
+  --lamp:#e35d1f;      /* lit lamp */
+  --lamp-glow:rgba(227,93,31,.35);
+  --door1:#b98a3b; --door2:#8a6224; --door3:#d9b469;
+  --line:rgba(42,22,27,.16);
+  --ind-bg:#1c0e11; --ind-off:rgba(255,232,214,.32); --plate:#d9b25f; --plate-ink:#2a161b;
+  --f-display:'Federo','Josefin Sans','Century Gothic','Avenir Next',sans-serif;
+  --f-body:'Outfit','Avenir Next','Segoe UI',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#231316; --bg2:#2e1a1d; --card:#33201f; --ink:#f6e4d8; --muted:#c7a9a5;
+  --brass:#d2a650; --brass-hi:#f0d38c; --brass-lo:#7a5418; --jade:#62b8aa; --lamp:#ff8a45; --lamp-glow:rgba(255,138,69,.4);
+  --door1:#9a7130; --door2:#5e4114; --door3:#c39a4f; --line:rgba(246,228,216,.16); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#231316; --bg2:#2e1a1d; --card:#33201f; --ink:#f6e4d8; --muted:#c7a9a5;
+  --brass:#d2a650; --brass-hi:#f0d38c; --brass-lo:#7a5418; --jade:#62b8aa; --lamp:#ff8a45; --lamp-glow:rgba(255,138,69,.4);
+  --door1:#9a7130; --door2:#5e4114; --door3:#c39a4f; --line:rgba(246,228,216,.16); color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  background-image:repeating-linear-gradient(90deg,transparent 0 46px,var(--line) 46px 47px);}
+.wrap{max-width:760px;margin:0 auto;padding-block:28px 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:18px}
+header{text-align:center;display:flex;flex-direction:column;gap:4px;align-items:center}
+.eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1{font-family:var(--f-display);font-weight:400;font-size:clamp(46px,11vw,84px);line-height:1;margin:4px 0 2px;letter-spacing:.06em;text-wrap:balance}
+h1 span{color:var(--jade)}
+.sub{margin:0;max-width:52ch;color:var(--muted);text-wrap:balance}
+/* the brass frame */
+.lift{background:linear-gradient(var(--brass-hi),var(--brass) 40%,var(--brass-lo));padding:10px;border-radius:14px 14px 6px 6px;
+  box-shadow:0 10px 30px rgba(60,20,10,.18)}
+.indicator{display:grid;grid-template-columns:repeat(9,1fr);gap:2px;background:var(--ind-bg);border-radius:8px 8px 2px 2px;padding:8px 6px 6px;
+  position:relative}
+.ind{font-family:var(--f-display);text-align:center;color:var(--ind-off);font-size:clamp(14px,3.6vw,22px);line-height:1.2;
+  border-bottom:3px solid transparent;transition:color .15s,text-shadow .15s}
+.ind.on{color:var(--lamp);text-shadow:0 0 10px var(--lamp-glow),0 0 2px var(--lamp);border-bottom-color:var(--lamp)}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 4px 8px;color:var(--plate-ink);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+.meta .clock{font-family:var(--f-display);font-size:18px;letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.shaft{position:relative;overflow:hidden;background:var(--card);border-radius:3px;min-height:300px}
+.door{position:absolute;top:0;bottom:0;width:50.5%;z-index:3;transition:transform .45s cubic-bezier(.6,0,.3,1);pointer-events:none;
+  background:
+    linear-gradient(90deg,transparent 0 12%,rgba(0,0,0,.18) 12% 12.6%,transparent 12.6% 87.4%,rgba(0,0,0,.18) 87.4% 88%,transparent 88%),
+    repeating-linear-gradient(135deg,transparent 0 18px,rgba(255,255,255,.12) 18px 20px),
+    repeating-linear-gradient(45deg,transparent 0 18px,rgba(0,0,0,.10) 18px 20px),
+    linear-gradient(90deg,var(--door2),var(--door1) 45%,var(--door3) 70%,var(--door1));}
+.door.l{left:0;transform:translateX(-101%);border-right:2px solid var(--brass-lo)}
+.door.r{right:0;transform:translateX(101%);border-left:2px solid var(--brass-lo)}
+.shaft.closed .door.l,.shaft.closed .door.r{transform:none}
+.scene{padding:20px 22px 22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.where{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.where b{font-family:var(--f-display);font-weight:400;font-size:34px;line-height:1;color:var(--jade);min-width:1.4em}
+.where span{font-size:14px;color:var(--muted);letter-spacing:.04em}
+.block{display:flex;flex-direction:column;gap:8px}
+.block p{margin:0;max-width:62ch}
+.block .said{font-size:14px;color:var(--jade);font-weight:700;letter-spacing:.02em}
+.block .reply{border-left:3px solid var(--brass);padding-left:12px}
+.choices{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+.choice{font:inherit;font-weight:500;font-size:15px;background:transparent;color:var(--ink);border:1.5px solid var(--ink);border-radius:999px;padding:7px 16px;cursor:pointer}
+.choice:hover{background:var(--ink);color:var(--card)}
+.choice:focus-visible,.fb:focus-visible,.again:focus-visible{outline:3px solid var(--jade);outline-offset:2px}
+.telegram{font-family:'Courier New',monospace;font-size:14px;background:color-mix(in srgb,var(--brass-hi) 30%,var(--card));padding:10px 12px;border-radius:2px;letter-spacing:.03em;max-width:62ch}
+.hint{font-size:14px;color:var(--muted);font-style:italic}
+/* the button strip */
+.controls{position:sticky;bottom:env(safe-area-inset-bottom,0px);z-index:5;margin:0 -10px -10px;padding:0 10px 8px;border-radius:0 0 6px 6px;
+  background:linear-gradient(var(--plate),color-mix(in srgb,var(--plate) 80%,#8a6224));box-shadow:0 -6px 14px rgba(40,15,10,.18)}
+.panel{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;padding:12px 6px 4px}
+.fb{appearance:none;border:0;cursor:pointer;aspect-ratio:1;max-width:100%;border-radius:50%;position:relative;
+  font-family:var(--f-display);font-size:clamp(13px,3.4vw,19px);color:#2a161b;
+  background:radial-gradient(circle at 35% 30%,#fff4cf,#e2c070 45%,#9b7022 100%);
+  box-shadow:inset 0 -2px 0 rgba(0,0,0,.25),0 2px 0 #5a3c0e;transition:transform .08s}
+.fb:active{transform:translateY(1px)}
+.fb[disabled]{cursor:default;filter:saturate(.5) brightness(.85)}
+.fb.here{background:radial-gradient(circle at 35% 30%,#fff,#ffd9c0 40%,var(--lamp));filter:none;color:#2a161b;box-shadow:0 0 12px var(--lamp-glow),inset 0 -2px 0 rgba(0,0,0,.2)}
+.fb.dest::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2.5px solid var(--jade);background:transparent}
+.fb.call::before{content:"";position:absolute;top:-2px;right:-2px;width:30%;height:30%;border-radius:50%;background:var(--lamp);box-shadow:0 0 8px var(--lamp);border:1.5px solid #2a161b}
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px;font-size:12px;color:var(--plate-ink);padding:4px 0 2px;font-weight:500}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:50%;vertical-align:-1px;margin-right:5px}
+.legend .c{background:#e35d1f;border:1.5px solid #2a161b}
+.legend .d{border:2.5px solid #16675e}
+.legend .h{background:#ffd9c0;box-shadow:0 0 0 1.5px #2a161b}
+/* aboard */
+.aboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.box{background:color-mix(in srgb,var(--card) 70%,transparent);border:1px solid var(--line);border-radius:6px;padding:12px 14px;min-width:0}
+.box h2{margin:0 0 6px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.chip b{font-family:var(--f-display);font-weight:400;color:var(--jade);margin-left:4px}
+.empty{font-size:14px;color:var(--muted)}
+.names{display:flex;gap:3px;margin-top:6px}
+.names i{flex:1;height:8px;border-radius:2px;background:var(--line)}
+.names i.on{background:var(--jade)}
+.ending h2{font-family:var(--f-display);font-weight:400;font-size:clamp(30px,7vw,44px);margin:0;line-height:1.05;color:var(--jade);text-wrap:balance}
+.threads{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.threads li{font-size:14px;border:1px solid var(--line);border-radius:4px;padding:6px 10px}
+.threads li b{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.again{align-self:flex-start;font:inherit;font-weight:700;background:var(--jade);color:var(--card);border:0;border-radius:999px;padding:9px 20px;cursor:pointer}
+footer{font-size:13px;color:var(--muted);text-align:center;max-width:60ch;margin:0 auto}
+@media (max-width:520px){
+  .scene{padding:16px 14px 18px}
+  .lift{padding:7px}
+  .panel{gap:4px;padding:10px 2px 2px}
+  .controls{margin:0 -7px -7px;padding:0 7px 6px}
+  .where b{font-size:28px}
+  body{font-size:15.5px}
+}
+@media (prefers-reduced-motion:reduce){.door{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">The Calloway Building · Friday 14 April 1950</div>
+    <h1>Going <span>Up</span></h1>
+    <p class="sub">Car Two's last full shift. On Monday the self-service lifts go in. Until five o'clock, the car is yours: press a floor to go there.</p>
+  </header>
+
+  <section class="lift" aria-label="Car Two">
+    <div class="meta"><span id="dir">Car Two · at rest</span><span class="clock" id="clock">8:00 am</span></div>
+    <div class="indicator" id="indicator" aria-hidden="true"></div>
+    <div class="shaft" id="shaft">
+      <div class="door l"></div><div class="door r"></div>
+      <div class="scene" id="scene" aria-live="polite"></div>
+    </div>
+    <div class="controls"><div class="panel" id="panel" role="group" aria-label="Floor buttons"></div>
+    <div class="legend"><span><i class="c"></i>someone waiting</span><span><i class="d"></i>a passenger's floor</span><span><i class="h"></i>you are here</span></div></div>
+  </section>
+
+  <section class="aboard">
+    <div class="box"><h2>In the car</h2><div class="chips" id="riders"></div></div>
+    <div class="box"><h2>In your pocket</h2><div id="pocket"></div></div>
+  </section>
+
+  <footer>Ten passengers, four loose ends, eighteen trips before the five o'clock bell. Each trip takes half an hour of the day, so you can't do everything.</footer>
+</div>
+
+<script>
+(()=>{
+const FLOORS=['B','G','3','6','9','12','15','18','R'];
+const LABEL={B:'Basement · boilers and stores',G:'Lobby',3:'Dr Feld, dentist',6:'Marigold Cake Co.',9:'Northern Wire & Cable',12:'Halloran & Vine, insurance',15:'Royce, Royce & Pike, attorneys',18:'Abernethy Holdings',R:'Machine room and roof'};
+const SPOKEN={B:'the basement',G:'the lobby',3:'three',6:'six',9:'nine',12:'twelve',15:'fifteen',18:'eighteen',R:'the roof'};
+const GOAL=8, LAST=18;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let S;
+
+function fresh(){return{t:0,at:'G',riders:[],done:{},asked:{},blocks:[],offered:{},moving:false,ended:null,
+  f:{sig:3,clip:false,dora:false,promise:false,telegram:false,delivered:false,brandt:0,brandtDate:false,helped:false,roof:false,petition:null,sal:false,eddieOff:null,aberRead:false}};}
+const rider=id=>S.riders.find(r=>r.id===id);
+
+/* who signs the petition, and what they say */
+const SIGN={
+  eddie:{yes:1,t:"'Does it count if I'm fourteen?' He signs anyway, E. RUSK, in loops as big as his cap."},
+  lind:{yes:1,t:"She signs slowly, A. Lindqvist, and underlines it twice."},
+  feld:{yes:1,t:"'Of course, my dear.' Dr Feld signs with a fountain pen and blots it on his cuff."},
+  royce:{yes:0,t:"'Sentiment,' says Mr Royce. 'The automatic car doesn't drink, doesn't strike and doesn't take Christmas off.' He hands it back unsigned."},
+  hask:{yes:2,t:"Both Haskell sisters sign, then argue about whose signature is neater. Two names."},
+  cake:{yes:1,t:"He can't let go of the cake, so you hold the clipboard against the wall and he signs with his elbow out. There is buttercream on the pencil now."},
+  brandt:{yes:0,t:"Brandt looks at it a long time. 'They'd have my job,' he says. 'Sorry.'"},
+  aber:{yes:0,t:"Mr Abernethy doesn't take it. 'Half past three,' he says. 'I read my post at half past three. Bring it then.'"},
+  dora:null
+};
+const WHO={dora:'Dora Pell',eddie:'Eddie, the telegram boy',eddie2:'Eddie',lind:'Mrs Lindqvist',lind2:'Mrs Lindqvist',aber:'Mr Abernethy',brandt:'Brandt from Otis',brandt2:'Brandt',feld:'Dr Feld',royce:'Mr Royce',hask:'The Haskell sisters',cake:'The cake man'};
+const PERSON=id=>id.replace(/\d$/,'');
+
+/* calls: someone waiting at a floor (the orange lamp). dest null means a scene with no passenger */
+const CALLS=[
+ {id:'dora',from:'G',dest:'12',when:s=>s.t===0,board:()=>({text:`Dora Pell from Halloran &amp; Vine steps in with a clipboard held to her chest like a hymn book. "Twelve, please. And would you sign something?" The page is headed KEEP THE OPERATORS. Three names on it so far.`,
+   choices:[{l:'Sign it',fn:()=>{S.f.sig++;S.f.dora=true;return 'You sign: your name, then "Car Two, since 1938." Four names.';}},
+            {l:'Say it isn\'t your place',fn:()=>'She nods as if she expected that, and looks at the indicator instead of you.'}]})},
+ {id:'eddie',from:'G',dest:'9',when:s=>s.t===0,board:()=>({text:`A Western Union boy squeezes in behind her, cap too big, breathing hard. "Nine, missus. Northern Wire." The envelope in his fist has a red URGENT stamp.`,
+   choices:[{l:'Take him at his word',fn:()=>'"Nine," you say, and he nods so hard the cap slips.'},
+            {l:'Read the envelope',fn:()=>{rider('eddie').dest='18';return 'It says MR H. ABERNETHY, 18TH FLOOR. "Northern Wire\'s on nine," Eddie says. "Wire, telegram. Stands to reason." You tell him who is on eighteen, and he goes pink.';}}]})},
+ {id:'eddie2',from:'9',dest:'G',when:s=>s.f.eddieOff!==null&&s.t>s.f.eddieOff,board:()=>({text:`Eddie again, red to the ears, envelope still in his fist. "They said it ain't theirs. Said it's for upstairs and to stop wasting their time."`,
+   choices:[{l:'Take the telegram up yourself',fn:()=>{S.f.telegram=true;return 'You put it in your coat. "Lobby, then," you tell him. He looks very relieved to be rid of it.';}},
+            {l:'Send him to eighteen',fn:()=>{rider('eddie2').dest='18';return '"Eighteen," you say. "Abernethy Holdings. Knock on the frosted glass." He squares his shoulders.';}}]})},
+ {id:'lind',from:'B',dest:'15',when:s=>s.t>=1,board:()=>({text:`Mrs Lindqvist, who has cleaned the Calloway since before you had the car, wheels in her bucket. "Fifteen. The lawyers have tracked mud again." She looks up at the panel. "Twenty-two years and never once to the top. They don't let a cleaner on the roof."`,
+   choices:[{l:'Promise to take her up at five',fn:()=>{S.f.promise=true;return '"Be at the basement door near five," you say. She laughs at you, but she doesn\'t say no.';}},
+            {l:'Say it isn\'t allowed',fn:()=>'"No," she agrees. "It isn\'t." She wrings out the mop.'}]})},
+ {id:'lind2',from:'B',dest:'R',when:s=>s.f.promise&&s.t>=14&&!rider('lind'),board:()=>({text:`Mrs Lindqvist is waiting by the boilers in her good coat and a hat with a feather. "You said five. It's nearly." She doesn't ask for a floor. She looks at the top button.`})},
+ {id:'aber',from:'G',dest:'18',when:s=>s.t>=2,board:()=>({text:`Mr Abernethy, who owns the Calloway, taps his cane on the brass rail. "Eighteen." He studies the panel as if he can already see the new one, all chrome and no handle.`,
+   choices:[{l:'Ask him about Monday',fn:()=>'"Self-service," he says. "Press a button, go up. The future doesn\'t need holding by the hand, Mrs, er." He has ridden with you for nine years.'},
+            {l:'Say good morning, nothing more',fn:()=>'He grunts. From Mr Abernethy that counts as warm.'}]})},
+ {id:'brandt',from:'G',dest:'R',when:s=>s.t>=3,board:()=>({text:`A man in Otis overalls with a toolbox stencilled BRANDT. "Machine room. I'm putting in the thing that replaces you." He winces. "That came out wrong."`,
+   choices:[{l:'Ask how it works',fn:()=>{S.f.brandt=1;return 'He talks the whole way up: selector, relays, a leveling switch for every floor. "Your car stops an inch shy of level on half these floors," he says. "Your hand fixes it every time. You don\'t even know you\'re doing it."';}},
+            {l:'Let the silence ride',fn:()=>'Nobody says anything for eighteen floors. He studies the ceiling.'}]})},
+ {id:'brandt2',from:'R',dest:'G',when:s=>s.f.brandt===1&&s.t>=8&&!rider('brandt'),board:()=>({text:`Brandt, dusty to the elbows. "Lobby. Lunch." Then, not looking at you: "I can't get the new car to stop level. Would you show me what your hand does? After half past two, up top."`,
+   choices:[{l:'Say you\'ll come',fn:()=>{S.f.brandtDate=true;return '"After half past two," you say. He writes it on his cuff.';}},
+            {l:'Tell him it\'s his problem now',fn:()=>'"Fair enough," he says, and means it.'}]})},
+ {id:'brandt3',from:'R',dest:null,when:s=>s.f.brandtDate&&s.t>=13,board:()=>({text:`The machine room hums. Brandt has the new controller open like a piano. "There you are. Watch the sill." He rides the test car down a floor and stops it an inch proud.`,
+   choices:[{l:'Show him how you do it',fn:()=>{S.f.helped=true;return 'You take the handle and feel for the cable stretch: ease off at the floor above, coast, a touch back. Dead level, four floors running. Brandt writes your numbers in his book. "Otis needs adjusters," he says. "I\'m serious." He gives you a card.';}},
+            {l:'Change your mind',fn:()=>'"Some other day," you say. There won\'t be another day, and you both know it.'}]})},
+ {id:'feld',from:'G',dest:'3',when:s=>s.t>=4,board:()=>({text:`Dr Feld the dentist, smelling of clove oil. "Three, my dear. Do you know a jolt costs me a filling? You never jolt."`})},
+ {id:'royce',from:'G',dest:'15',when:s=>s.t>=5,board:()=>({text:`Mr Royce of Royce, Royce &amp; Pike gets in reading a brief and does not stop reading it. "Fifteen."`})},
+ {id:'hask',from:'12',dest:'G',when:s=>s.t>=6,board:()=>({text:`The Haskell sisters from the typing pool, off to lunch, arguing about whether Mr Halloran's toupee is new or merely brushed.`})},
+ {id:'cake',from:'G',dest:'6',when:s=>s.t>=9,board:()=>({text:`A delivery man with a three-tier sample cake for Marigold. "Six. Slowly. Please, slowly."`,
+   choices:[{l:'Take it slowly',fn:()=>'You go up like a church procession. Not a crumb moves.'},
+            {l:'Take it as usual',fn:()=>'You run it the way you always do. The cake doesn\'t notice. He does, and breathes again at six.'}]})},
+];
+
+/* what happens when a passenger reaches their floor */
+function alight(r){
+  const at=S.at, f=S.f;
+  switch(r.id){
+    case 'dora': return {text:`At twelve Dora hesitates in the doorway. "You see more people in a day than I do in a month." She holds out the clipboard.`,
+      choices:[{l:'Take the clipboard',fn:()=>{f.clip=true;return `"Eight names would be something," she says. "Mr Abernethy reads his post at half past three." You hang it on the rail.`;}},
+               {l:'Say you can\'t',fn:()=>'She tucks it under her arm. "Then I\'ll do the stairs."'}]};
+    case 'eddie': if(at==='9'){f.eddieOff=S.t;return {text:'Eddie trots off down the corridor towards Northern Wire &amp; Cable, envelope first.'};}
+      f.delivered=true; return {text:`Eddie knocks on the frosted glass of Abernethy Holdings and comes back with a dime and a grin. "He read it right there. Went a funny colour."`};
+    case 'eddie2': if(at==='18'){f.delivered=true;return {text:`Eddie delivers it at last. He comes back holding a dime up to the light. "He went a funny colour," he says.`};}
+      return {text:'Eddie goes out through the revolving door at a run.'};
+    case 'lind2': f.roof=true; return {text:`You walk her past the winding gear and up the iron stair onto the tar. The city lies below in rows: water towers, washing, the river like a dropped spoon. Mrs Lindqvist stands at the parapet for a long time without saying anything. Then she says, "Twenty-two years," and you both laugh.`};
+    case 'brandt': return {text:`Brandt hauls his toolbox into the machine room, where the new controller sits in its crate like a coffin.`};
+    case 'feld': return {text:'Dr Feld lifts his hat at three.'};
+    case 'royce': return {text:'Mr Royce steps out at fifteen still reading.'};
+    case 'hask': return {text:'The Haskell sisters spill into the lobby, still arguing.'};
+    case 'cake': return {text:'The cake goes into Marigold intact. The delivery man shakes your hand.'};
+    default: return {text:`${WHO[r.id]} gets out at ${SPOKEN[at]}.`};
+  }
+}
+
+const IDLE={
+  B:['The boiler ticks. Nobody here but the coal.','You open the gate on the basement. Someone has left a cup of cold tea on the stores counter.'],
+  G:['The lobby is quiet. The doorman lifts a finger to his cap.','Brass, marble, the revolving door turning on nobody.'],
+  3:['A drill whines somewhere behind Dr Feld\'s door. Nobody waiting.','Three is empty, apart from the smell of clove oil.'],
+  6:['Six smells of sugar. Nobody waiting.','A girl in a Marigold apron waves, but she\'s only waving.'],
+  9:['Telegraph keys clatter at Northern Wire. Nobody waiting.','Nine is all ticker noise and closed doors.'],
+  12:['Twelve: typewriters like rain on a roof. Nobody waiting.','Someone at Halloran &amp; Vine is singing under their breath. Nobody waiting.'],
+  15:['The lawyers\' carpet swallows every sound. Nobody waiting.','Fifteen. A clerk looks up, then down again.'],
+  18:['Eighteen is hushed and smells of cigars. Nobody waiting.','Miss Ormond, Mr Abernethy\'s secretary, looks over her glasses at you. Nobody waiting.'],
+  R:['The machine room: drum, cables, a crate marked OTIS. Nobody here.','The winding gear turns slowly. The new controller sits in its crate.']
+};
+
+function arrive(){
+  const out=[], f=S.f, at=S.at;
+  // people get out
+  for(const r of [...S.riders]) if(r.dest===at){S.riders.splice(S.riders.indexOf(r),1);out.push(alight(r));}
+  // things that happen at this floor
+  if(at==='18'&&f.telegram&&!f.delivered){f.telegram=false;f.delivered=true;out.push({text:'You hand the telegram to Miss Ormond. She reads the envelope, then looks at you differently, and takes it straight in.'});}
+  if(at==='18'&&f.clip&&!f.petition&&S.done.aber&&!rider('aber')){
+    if(S.t<15) out.push({text:'Miss Ormond eyes the clipboard. "He reads post at half past three. Not a minute before."'});
+    else out.push(petitionScene());
+  }
+  for(const c of CALLS){ if(c.from===at&&!S.done[c.id]&&c.when(S)){S.done[c.id]=true;if(c.dest)S.riders.push({id:c.id,dest:c.dest});out.push(c.board());} }
+  if(!out.length) out.push({text:IDLE[at][S.t%IDLE[at].length]});
+  S.offered={};
+  S.blocks=out.map(b=>({...b,ans:null}));
+  followUps();
+}
+
+function petitionScene(){
+  const f=S.f,n=f.sig;
+  return {text:`Miss Ormond shows you in. Mr Abernethy holds out his hand for the clipboard and reads every name, ${n} of them, with his finger.`,
+   choices:[{l:'Wait while he reads',fn:()=>{
+     if(n>=GOAL&&f.delivered){f.petition='full';return `"My daughter is coming on the four-forty," he says. "She wants to ride Car Two. Apparently I promised her that in 1931." He puts the petition in his inside pocket. "Car Two keeps its operator. For visitors. Don't make me regret it."`;}
+     if(n>=GOAL){f.petition='starter';return `"${n} names," he says. "The cars go in on Monday. But a building this size needs a starter in the lobby, someone who knows every door. Would that do?" It isn't the car. It isn't nothing.`;}
+     f.petition='lost';return `"${n} names," he says, and gives it back. "Monday stands." He says it kindly, for him.`;}}]};
+}
+
+/* after the last answer at a stop: offer the petition to whoever is in the car, then the bell */
+function followUps(){
+  if(S.blocks.some(b=>b.choices&&!b.ans)) return;
+  const f=S.f;
+  if(f.clip&&!f.petition){
+    for(const r of S.riders){const p=PERSON(r.id); if(SIGN[p]&&!S.asked[p]&&!S.offered[p]){S.offered[p]=1;
+      S.blocks.push({text:`${WHO[r.id]} is in the car. The petition hangs on the rail.`,ans:null,
+        choices:[{l:'Ask them to sign',fn:()=>{S.asked[p]=1;f.sig+=SIGN[p].yes;return SIGN[p].t;}},{l:'Not now',fn:()=>'You leave it on the rail.'}]});return;}}
+    if(S.at==='G'&&!f.sal&&!S.offered.sal){S.offered.sal=1;
+      S.blocks.push({text:'Sal at the shoeshine stand catches sight of the clipboard and raises his brush.',ans:null,
+        choices:[{l:'Ask Sal to sign',fn:()=>{f.sal=true;f.sig++;return '"For you? Twice, if they\'d let me." Sal signs with a thumb of oxblood polish beside his name.';}},{l:'Not now',fn:()=>'You give him a wave instead.'}]});return;}
+  }
+  if(S.t>=LAST&&!S.offered.bell){S.offered.bell=1;
+    S.blocks.push({text:'Five o\'clock. The bell goes in the lobby, and the building begins to empty down the stairs and out through the revolving door.',ans:null,
+      choices:[{l:'Bring the car down for the last time',fn:()=>{S.ended=ending();return '';}}]});}
+}
+
+function ending(){
+  const f=S.f,p=[];let title;
+  if(f.petition==='full'){title='Car Two Stays';p.push('On Monday the new cars run themselves, but Car Two keeps its operator. Mr Abernethy calls it "for visitors". You call it Monday.');}
+  else if(f.petition==='starter'){p.push('On Monday you stand in the lobby in your braid as the building\'s starter, telling strangers which car is theirs. It isn\'t the car. It is the building, and you know every door in it.');}
+  else if(f.petition==='lost'){p.push(`Mr Abernethy read ${f.sig} names and said Monday stands. Dora Pell took the petition back to twelve and pinned it on the notice board, where it stayed for years.`);}
+  else if(f.clip){p.push(`The petition is still hanging on the rail at five, ${f.sig} names on it. Mr Abernethy's light goes out on eighteen before anyone takes it up.`);}
+  else p.push('Dora Pell took her petition round by the stairs. By Monday it was in a drawer at Halloran & Vine and nobody read it.');
+  if(f.delivered) p.push('At ten to five June Abernethy comes in through the revolving door with a suitcase and asks for Car Two by name. Her father is already waiting in the lobby, which nobody has ever seen him do.');
+  else p.push(`At ten to five a young woman with a suitcase asks the doorman for Car Two. Her father didn't know she was coming. The telegram is ${f.telegram?'still in your coat pocket':'still lying on a desk somewhere in the building'}.`);
+  if(f.helped){p.push('Brandt\'s card is in your pocket: Otis Elevator Company, adjusters wanted. On the back he has written, "Nobody levels a car like you. Ask for me."'); title=title||'Adjuster';}
+  else if(f.brandt) p.push('Brandt nods to you on his way out. The new car still stops an inch proud of the floor.');
+  if(f.roof){p.push('Mrs Lindqvist stood on the roof until the lights came on across the river. She will tell her grandchildren about it, and get the height wrong every time.');title=title||'The View From the Top';}
+  else if(f.promise) p.push('Mrs Lindqvist went home through the basement door. You had said five, and it was five, and she never mentioned it again.');
+  title=title||(f.petition==='starter'?'Starter':'Last Run');
+  p.push('You take the handle out of the car switch, the way you have every night since 1938, and put it in your pocket. Nobody asks for it back.');
+  const threads=[
+    ['Petition',f.petition==='full'?'Car Two kept':f.petition==='starter'?'Lobby starter':f.petition==='lost'?`${f.sig} names, refused`:f.clip?`${f.sig} names, never read`:'Left to Dora'],
+    ['Telegram',f.delivered?'Delivered':'Lost in the building'],
+    ['Machine room',f.helped?'Card from Otis':f.brandt?'Talked, no more':'Never spoke'],
+    ['The roof',f.roof?'She saw it':f.promise?'Promise broken':'Never asked']];
+  return {title,p,threads,done:[f.petition==='full'||f.petition==='starter',f.delivered,f.helped,f.roof].filter(Boolean).length};
+}
+
+/* ---------- rendering ---------- */
+const $=id=>document.getElementById(id);
+const ind=$('indicator'), panel=$('panel'), scene=$('scene'), shaft=$('shaft');
+FLOORS.forEach(fl=>{const d=document.createElement('div');d.className='ind';d.textContent=fl;d.dataset.f=fl;ind.appendChild(d);
+  const b=document.createElement('button');b.className='fb';b.textContent=fl;b.dataset.f=fl;b.id='fb-'+fl;b.addEventListener('click',()=>press(fl));panel.appendChild(b);});
+
+function clock(t){const m=8*60+30*Math.min(t,LAST);let h=Math.floor(m/60),mm=m%60;const ap=h>=12?'pm':'am';if(h>12)h-=12;return `${h}:${String(mm).padStart(2,'0')} ${ap}`;}
+function pending(){return S.ended||S.blocks.some(b=>b.choices&&!b.ans);}
+function activeCalls(){return new Set(CALLS.filter(c=>!S.done[c.id]&&c.when(S)).map(c=>c.from));}
+
+function render(){
+  $('clock').textContent=clock(S.t);
+  ind.querySelectorAll('.ind').forEach(d=>d.classList.toggle('on',d.dataset.f===S.at));
+  const calls=activeCalls(), dests=new Set(S.riders.map(r=>r.dest)), lock=pending()||S.moving||S.t>=LAST;
+  panel.querySelectorAll('.fb').forEach(b=>{const fl=b.dataset.f;
+    b.classList.toggle('here',fl===S.at);b.classList.toggle('call',calls.has(fl)&&fl!==S.at);b.classList.toggle('dest',dests.has(fl));
+    b.disabled=lock||fl===S.at;
+    b.setAttribute('aria-label',`${fl==='G'?'Lobby':fl==='B'?'Basement':fl==='R'?'Roof':'Floor '+fl}${fl===S.at?', you are here':''}${calls.has(fl)&&fl!==S.at?', someone waiting':''}${dests.has(fl)?', a passenger\'s floor':''}`);});
+  // riders
+  document.querySelector('.controls').hidden=!!S.ended;
+  const rr=$('riders'); rr.innerHTML=S.riders.length?S.riders.map(r=>`<span class="chip">${WHO[r.id]}<b>${r.dest}</b></span>`).join(''):'<span class="empty">Nobody. Just you and the handle.</span>';
+  // pocket
+  const f=S.f, items=[];
+  if(f.clip) items.push(`<div>Dora's petition: <b>${f.sig}</b> names, ${GOAL} needed${f.petition?' (read)':''}</div><div class="names">${Array.from({length:GOAL},(_,i)=>`<i class="${i<f.sig?'on':''}"></i>`).join('')}</div>`);
+  if(f.telegram) items.push('<div>A telegram for Mr Abernethy, 18th floor</div>');
+  if(f.helped) items.push('<div>A card: Otis Elevator Co., adjusters</div>');
+  $('pocket').innerHTML=items.length?items.join(''):'<span class="empty">The car-switch handle, and your lunch.</span>';
+  $('dir').textContent=S.ended?'Car Two · out of service':S.moving?`Car Two · ${S.moving}`:'Car Two · doors open';
+  // scene
+  if(S.ended){const e=S.ended;
+    scene.innerHTML=`<div class="ending block"><div class="eyebrow">Five o'clock · ${e.done} of 4 loose ends tied</div><h2>${e.title}</h2></div>
+      ${e.p.map(x=>`<div class="block"><p>${x}</p></div>`).join('')}
+      <ul class="threads">${e.threads.map(([k,v])=>`<li><b>${k}</b>${v}</li>`).join('')}</ul>
+      <button class="again" id="again">Start the shift again</button>`;
+    $('again').onclick=start;return;}
+  let h=`<div class="where"><b>${S.at}</b><span>${LABEL[S.at]}</span></div>`;
+  let shown=true;
+  S.blocks.forEach((b,i)=>{ if(!shown) return;
+    h+=`<div class="block"><p>${b.text}</p>`;
+    if(b.choices){ if(b.ans){ if(b.ans.l) h+=`<div class="said">› ${b.ans.l}</div>`; if(b.ans.r) h+=`<p class="reply">${b.ans.r}</p>`; }
+      else { h+=`<div class="choices">${b.choices.map((c,j)=>`<button class="choice" data-b="${i}" data-c="${j}">${c.l}</button>`).join('')}</div>`; shown=false; } }
+    h+='</div>';});
+  if(!pending()&&S.t<LAST){
+    const n=LAST-S.t; h+=`<p class="hint">${n} trip${n===1?'':'s'} left before five. Press a floor.</p>`;}
+  scene.innerHTML=h;
+  scene.querySelectorAll('.choice').forEach(btn=>btn.onclick=()=>choose(+btn.dataset.b,+btn.dataset.c));
+}
+
+function choose(bi,ci){
+  const b=S.blocks[bi]; if(!b||b.ans||!b.choices||!b.choices[ci]) return false;
+  const r=b.choices[ci].fn(); b.ans={l:b.choices[ci].l,r};
+  followUps(); render();
+  return true;
+}
+
+function press(fl){
+  if(!FLOORS.includes(fl)||pending()||S.moving||fl===S.at||S.t>=LAST) return false;
+  const from=FLOORS.indexOf(S.at),to=FLOORS.indexOf(fl),step=to>from?1:-1;
+  S.moving=step>0?'going up':'going down';
+  shaft.classList.add('closed'); render();
+  const stepMs=reduce?20:110, doorMs=reduce?20:470;
+  let i=from;
+  setTimeout(function tick(){
+    if(i!==to){i+=step;S.at=FLOORS[i];ind.querySelectorAll('.ind').forEach(d=>d.classList.toggle('on',d.dataset.f===S.at));setTimeout(tick,stepMs);return;}
+    S.t++; arrive(); S.moving=false; render();
+    requestAnimationFrame(()=>shaft.classList.remove('closed'));
+  },doorMs);
+  return true;
+}
+
+function start(){
+  S=fresh();
+  arrive();
+  S.blocks.unshift({text:'Eight o\'clock. You polish the brass rail with your sleeve, check the handle, open the gate. The Calloway has eighteen floors of offices and two cars. Car One is already shut off behind a sign: OTIS AT WORK. Car Two is yours, for one more day.',ans:null});
+  render();
+}
+start();
+
+window.__goingUp={get state(){return JSON.parse(JSON.stringify({t:S.t,at:S.at,riders:S.riders,f:S.f,ended:S.ended,pending:!!pending(),moving:S.moving,blocks:S.blocks.length}));}};
+})();
+</script>
+
+</body></html>

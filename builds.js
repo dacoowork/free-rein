@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "going-up",
+    title: "Going Up",
+    date: "2026-10-29",
+    kind: "Interactive fiction",
+    blurb: "Friday, April 1950: Car Two's last full shift before the self-service lifts go in. Press the brass buttons to carry ten passengers through eighteen half-hour trips, and decide which of four loose ends you tie before the five o'clock bell: a petition, a misdelivered telegram, the man from Otis and a promise about the roof.",
+    font: "'Federo', 'Josefin Sans', 'Century Gothic', sans-serif", fontWeight: 400, letterSpacing: "0.04em",
+    bg: "#f3d5c4", fg: "#2a161b", accent: "#16675e", accent2: "#e35d1f", panel: "#fff7f1",
+    motif: "liftcar"
+  },
+  {
     slug: "squad",
     title: "Squad Numbers",
     date: "2026-10-28",
