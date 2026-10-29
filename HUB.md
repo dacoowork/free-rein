@@ -103,22 +103,22 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 
 ## Adding a new build (the nightly build task)
 
-1. Clone the repo, then get onto the queue: `git fetch origin queue` (it's fine if this fails because there is no `queue` branch). If `origin/queue` exists, `git checkout -b queue origin/queue` and `git rebase origin/main`; otherwise `git checkout -b queue origin/main`. Read `HUB.md` from this checkout: it includes anything already queued.
+1. Clone the repo, then get onto the queue: `git fetch origin queue` (it's fine if this fails because there is no `queue` branch). If `origin/queue` exists, `git checkout -b queue origin/queue`; otherwise `git checkout -b queue origin/main`. Don't rebase: `queue` always sits on top of `main`, because only the publish task moves `main` and it only ever fast-forwards it to `queue`. Read `HUB.md` from this checkout: it includes anything already queued.
 2. Save the build's page to `builds/<slug>/index.html`, wrapped in a full document: copy the one-line `<!doctype html>…<head>…</head><body>` prefix from an existing build, put the build's `<title>` inside that head, and close with `</body></html>`.
 3. Add an entry at the top of `builds.js`: slug, title, date, kind (use the category name), blurb, font (plus fontStyle/fontWeight/letterSpacing/fontStretch if needed; the tile supports `fontStretch` since Flush), bg/fg/accent (optional accent2, bg2, panel), motif. The tile's text area uses `panel` (or `bg`) with `fg`, so when bg is a strong colour give a light `panel` and a dark `fg`, and let the motif paint bg itself.
 4. Add a motif drawing for it in `index.html` (viewBox 320x180), and add its display font to the Google Fonts link if it's new (each family needs its own `family=` parameter). The drawing must be true to the build: a game position must be legal, a pattern must be one the build can actually make.
 5. Bump the `?v=` date on the `builds.js` script tag in both `index.html` and `play.html`. GitHub Pages caches files for about 10 minutes, and without this visitors see the old list. If today's date is already the version, add a letter (2026-10-23b, then c, and so on). Live is 2026-10-29c.
 6. Render the gallery locally with Playwright and look at the new tile.
 7. Update this file in the same commit: add the catalogue row with "(queued)" after the date, bump the category count, update the catalogue heading and the pattern notes, and list the build under "Queued" below.
-8. Commit (message `Add <Title>: <short description> (<Category>)`) and `git push origin queue` (use `--force-with-lease` if you rebased). Never push `main` from the build task.
+8. Commit (message `Add <Title>: <short description> (<Category>)`) and `git push origin HEAD:queue` (a plain push; never force-push, which the session's permission check blocks as destructive). Never push `main` from the build task.
 9. Also publish the tested page as a private artifact, so the report has a link to try it before it goes live.
 
 ## Publishing the queue (the publish task)
 
 1. Clone, `git fetch origin queue`. If there's no `queue` branch, or `git rev-list --count origin/main..origin/queue` is 0, nothing is waiting.
-2. `git checkout -b queue origin/queue`, `git rebase origin/main`. Check the result with Playwright: the gallery at 1280px and 390px with the new tiles, and each `builds/<slug>/index.html` loading with no page errors (blocked Google Fonts requests don't count). If a build is broken, drop its commit (interactive rebase), leave a note in this file and ship the rest.
-3. Mark the builds live in this file (remove "(queued)", update the catalogue heading, clear the "Queued" list, update the "Live is …" note) as one more commit.
-4. `git push origin HEAD:main` (a fast-forward). Then `git push --force-with-lease origin HEAD:queue` so `queue` equals `main` again.
+2. `git checkout -b queue origin/queue`. Confirm `git merge-base --is-ancestor origin/main HEAD` succeeds; if not, `main` has moved independently, so report it and stop rather than rebasing. Check the result with Playwright: the gallery at 1280px and 390px with the new tiles, and each `builds/<slug>/index.html` loading with no page errors (blocked Google Fonts requests don't count). If a build is broken, don't ship anything that night: report which build and why, and leave `queue` as it is for a person to sort out (removing a commit needs a rewrite, which a scheduled run shouldn't do).
+3. Mark the builds live in this file (remove "(queued)", update the catalogue heading, clear the "Queued" list, update the "Live is …" note) as one more commit, unless the top commit on `queue` already does this (a publish that got this far and was stopped).
+4. Push in two separate commands, never forced: `git push origin HEAD:queue` (a fast-forward, so `queue` holds the publish commit), then `git push origin HEAD:main` (a fast-forward). After that `queue` and `main` point at the same commit, so nothing needs resetting. On 29 Oct a combined command that force-pushed `queue` was refused by the permission check as "Git Destructive"; plain fast-forward pushes are fine.
 5. Confirm with `gh api repos/dacoowork/free-rein/commits/main/check-runs` until the check named `deploy` shows completed/success (filter on that name: `build` and `report-build-status` finish first and also say completed/success). Pages redeploys in under a minute (it sat queued for about two minutes on 27 Oct). Don't use the Pages API or fetch the github.io site from a session; the proxy blocks both.
 
 ## Build and process tips
