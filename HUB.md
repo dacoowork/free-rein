@@ -34,7 +34,7 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Field guide and reference | Curated knowledge: almanacs, guides, glossaries, specimen books | 1 |
 | Editorial and zine | A designed long-form read: essay, zine, magazine spread | 0 |
 | Type and lettering | Type specimens, lettering toys, layout play | 1 |
-| Museum and archive | A collection of objects, real or invented, to browse | 0 |
+| Museum and archive | A collection of objects, real or invented, to browse | 1 |
 | Speculative world | Fiction as design: an invented city, sport, product line, holiday | 1 |
 | Food | Recipes, menus, flavour pairings, kitchen maths | 1 |
 | Time and ritual | Clocks, calendars, timers, daily practices | 1 |
@@ -42,12 +42,13 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Puzzle hunt | Linked puzzles with a hidden answer, meant to be solved over time | 0 |
 | How it works | Cutaways, blueprints and diagrams of machines and processes | 1 |
 
-## Catalogue (23 builds, all on the hub)
+## Catalogue (24 builds, 23 on the hub, 1 queued)
 
 A date marked "(queued)" means the build is on the `queue` branch and not live yet.
 
 | Build | Date | Category | What it does | Subject world | Core mechanic | Look |
 |---|---|---|---|---|---|---|
+| Gone Quiet | 30 Oct (queued) | Museum and archive | A museum of eight household sounds that fell silent: rotary dial, typewriter bell, cassette rewind, floppy seek, monophonic ringtone, dial-up modem, fax handshake, CRT whine, each a drawn object with a placard, an era bar and a Web Audio synthesised recording with a live scope. A 1950–2030 year slider dims objects outside their era and counts how many sounds are still audible | Obsolete office and home technology sounds | Scrub a year to filter an exhibit wall; synthesise each sound from oscillators and noise | Syne 800 + IBM Plex Mono; warm gallery grey, charcoal, vermilion (dark mode charcoal) |
 | Thumbs Up, Maybe | 29 Oct | Field guide and reference | Build a hand from five finger buttons, a palm-or-back-of-hand toggle and a thumb-and-index ring; the drawn hand matches one of 14 gestures (thumbs up, OK ring, V both ways, open hand, horns, shaka, pointing, middle finger, pinky, fist, three fingers, thumb and index, I love you) and lists what it means in 7 regions, each marked friendly, neutral, varies or rude. Pick a destination and all 14 plate hands are marked for it; a shape with no entry suggests the nearest ones | Cross-cultural gestures and body language | Direct manipulation of a drawn hand that looks itself up in a reference | Permanent Marker + Figtree; bubblegum pink ground, plum ink, teal/amber/red verdict badges |
 | Ringball | 29 Oct | Speculative world | The invented sport of Halcyon, a ring habitat of 200 m radius spinning for 0.8 g. A side-on court with a curved floor, a thrower and a hoop on a post (placed at random, always reachable). Drag from the thrower (or use angle 0–180° and speed 4–28 m/s sliders) to aim and throw. Every flight is exact: a straight line in space rotated back into the turning frame, landing when it meets the rim. Three paths: the real flight, a dashed "gym guess" (ignoring the spin) and an optional chalked prediction. An inset "From outside" window shows the spinning ring and the same ball moving in a straight line. Readout gives airtime, apex, landing distance spinward/antispinward and the gym guess. "Show me one" solves for a hit; tally of hoops and throws, no grade. Below: ring spec cards, six rules, a glossary (spinward, hubward, lag) and a worked example (straight up at 15 m/s lands 12.5 m spinward after 3.5 s) | Space habitats, rotating frames, an invented sport | Aim-and-throw with exact Coriolis physics, shown beside the inertial view | Lilita One (rounded display) + Nunito Sans; ice-blue glass ground, white cards, ink navy, coral and cobalt; deep teal in dark mode |
 | Going Up | 29 Oct | Interactive fiction | Car Two's last full shift in the Calloway Building, Friday 14 April 1950, before self-service lifts go in on Monday. You are the operator: press brass floor buttons (B, G, 3, 6, 9, 12, 15, 18, R) to travel; each trip is half an hour, 18 trips from 8:00 to the five o'clock bell. Doors close, the indicator steps floor by floor, doors open on the scene. Orange call lamps show who is waiting, jade rings show passengers' floors. Ten passengers (Dora Pell with a KEEP THE OPERATORS petition, Eddie the telegram boy heading for the wrong floor, Mrs Lindqvist the cleaner who has never seen the roof, Mr Abernethy the owner, Brandt the Otis installer, Dr Feld, Mr Royce, the Haskell sisters, a cake delivery man; plus Sal at the shoeshine stand) with two-way choices. Four loose ends: the petition (8 names needed, delivered to 18 after half past three; full win needs the telegram delivered too, else lobby starter or refused), the misdelivered telegram, helping Brandt level the new car (Otis card), and taking Mrs Lindqvist to the roof at five. Ending composed from all four threads with a title (Car Two Stays, Adjuster, The View From the Top, Starter, Last Run) and a 4-thread summary; floor buttons lock while a choice is pending and your own floor is disabled | 1950 office-building lifts, lift operators, automation | Time-budgeted branching story driven by a lift's floor buttons (calls, passengers, choices, composed endings) | Federo (deco geometric sans) + Outfit; peach lobby plaster with faint pilaster lines, brass frame and buttons, near-black floor indicator with orange lamps, jade accent; deep oxblood in dark mode |
@@ -102,6 +103,8 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 - **Pink ground, hand-lettered marker display (Permanent Marker):** taken by Thumbs Up, Maybe. Pick other grounds (no pink) and faces next.
 - **Round dials and rings:** Tenth Hour has a clock face and a year ring. Avoid another radial/dial composition next.
 
+- **Obsolete tech and sound synthesis (30 Oct):** Gone Quiet is dead gadgets rebuilt as Web Audio. Leave retro gadgets, telephones and audio-synth builds alone for a while. Vermilion on warm grey and Syne are taken; the card-grid museum wall is used once.
+
 ## Rejected because they repeated an earlier build
 
 - Treadle (23 Oct): four-shaft weaving draft studio. Same as Drawdown.
@@ -112,7 +115,7 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 2. Save the build's page to `builds/<slug>/index.html`, wrapped in a full document: copy the one-line `<!doctype html>…<head>…</head><body>` prefix from an existing build, put the build's `<title>` inside that head, and close with `</body></html>`.
 3. Add an entry at the top of `builds.js`: slug, title, date, kind (use the category name), blurb, font (plus fontStyle/fontWeight/letterSpacing/fontStretch if needed; the tile supports `fontStretch` since Flush), bg/fg/accent (optional accent2, bg2, panel), motif. The tile's text area uses `panel` (or `bg`) with `fg`, so when bg is a strong colour give a light `panel` and a dark `fg`, and let the motif paint bg itself.
 4. Add a motif drawing for it in `index.html` (viewBox 320x180), and add its display font to the Google Fonts link if it's new (each family needs its own `family=` parameter). The drawing must be true to the build: a game position must be legal, a pattern must be one the build can actually make.
-5. Bump the `?v=` date on the `builds.js` script tag in both `index.html` and `play.html`. GitHub Pages caches files for about 10 minutes, and without this visitors see the old list. If today's date is already the version, add a letter (2026-10-23b, then c, and so on). Live is 2026-10-29e.
+5. Bump the `?v=` date on the `builds.js` script tag in both `index.html` and `play.html`. GitHub Pages caches files for about 10 minutes, and without this visitors see the old list. If today's date is already the version, add a letter (2026-10-23b, then c, and so on). Live is 2026-10-29e (queued: 2026-10-30).
 6. Render the gallery locally with Playwright and look at the new tile.
 7. Update this file in the same commit: add the catalogue row with "(queued)" after the date, bump the category count, update the catalogue heading and the pattern notes, and list the build under "Queued" below.
 8. Commit (message `Add <Title>: <short description> (<Category>)`) and `git push origin HEAD:queue` (a plain push; never force-push, which the session's permission check blocks as destructive). Never push `main` from the build task.
@@ -142,7 +145,7 @@ Process tip (23–28 Oct): scheduled runs with no repo attached had no add_repo 
 
 ## Queued
 
-Nothing queued.
+- **Gone Quiet** (30 Oct, Museum and archive): `builds/gone-quiet/`, on the `queue` branch. Artifact: https://claude.ai/artifact/TYEEEwLVFxdCQMyy3UuBr3
 
 ## Left out on purpose
 

@@ -1,0 +1,92 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Gone Quiet</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<style>
+:root{--bg:#e9e6df;--panel:#f6f4ef;--ink:#1d1d1f;--mute:#5f5c57;--line:#cfcac0;--hot:#d63a14;--hotink:#fff;--obj:#2a2a2d;--objl:#8d8a83}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#1b1b1d;--panel:#262628;--ink:#f1eee8;--mute:#a29e96;--line:#3b3b3e;--hot:#ff6a43;--hotink:#1b1b1d;--obj:#e9e6df;--objl:#77746d}}
+:root[data-theme=dark]{--bg:#1b1b1d;--panel:#262628;--ink:#f1eee8;--mute:#a29e96;--line:#3b3b3e;--hot:#ff6a43;--hotink:#1b1b1d;--obj:#e9e6df;--objl:#77746d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 'IBM Plex Mono',ui-monospace,monospace;padding:0 16px 48px}
+.wrap{max-width:1180px;margin:0 auto}
+header{padding:28px 0 8px}
+h1{font:800 clamp(2.6rem,9vw,5.6rem)/.92 'Syne','Arial Black',sans-serif;letter-spacing:-.03em;margin:0}
+h1 em{font-style:normal;color:var(--hot)}
+.lede{max-width:56ch;color:var(--mute);margin:14px 0 0}
+.dial{position:sticky;top:0;z-index:5;background:var(--bg);padding:14px 0 12px;border-bottom:2px solid var(--ink);margin-top:18px}
+.dialrow{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.year{font:800 clamp(2.4rem,8vw,3.8rem)/1 'Syne',sans-serif;min-width:4.4ch;font-variant-numeric:tabular-nums}
+.heard{font-size:.95rem}
+.heard b{color:var(--hot)}
+input[type=range]{width:100%;margin:10px 0 0;accent-color:var(--hot);height:32px}
+.ticks{display:flex;justify-content:space-between;font-size:.75rem;color:var(--mute)}
+.wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;margin-top:22px}
+.ex{background:var(--panel);border:1px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:8px;transition:opacity .4s,filter .4s}
+.ex.off{opacity:.45;filter:grayscale(1)}
+.ex .art{height:120px;background:var(--bg);display:grid;place-items:center;border:1px solid var(--line)}
+.ex svg{width:100%;height:100%}
+.ex h2{font:800 1.25rem/1.1 'Syne',sans-serif;margin:0;letter-spacing:-.01em}
+.ex .sub{font-size:.8rem;color:var(--mute);margin:0}
+.ex p.d{font-size:.88rem;margin:0}
+.tag{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.ex.on .tag{color:var(--hot)}
+.track{position:relative;height:10px;background:var(--line)}
+.span{position:absolute;top:0;bottom:0;background:var(--obj)}
+.ex.off .span{background:var(--objl)}
+.mark{position:absolute;top:-4px;bottom:-4px;width:3px;background:var(--hot)}
+canvas{width:100%;height:44px;display:block;background:var(--bg);border:1px solid var(--line)}
+button.play{font:700 .95rem 'IBM Plex Mono',monospace;background:var(--ink);color:var(--bg);border:0;padding:12px 14px;cursor:pointer;min-height:44px;text-align:left}
+button.play[aria-pressed=true]{background:var(--hot);color:var(--hotink)}
+button.play:focus-visible,input:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
+footer{margin-top:26px;color:var(--mute);font-size:.8rem;max-width:70ch}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=IBM+Plex+Mono:wght@400;600;700&display=swap">
+<div class="wrap">
+<header>
+<h1>Gone <em>Quiet</em></h1>
+<p class="lede">A museum of eight sounds that filled ordinary rooms and then stopped. Drag the year and the house goes quiet around you. Press play on anything to hear it again, rebuilt here from raw tones.</p>
+</header>
+<div class="dial">
+<div class="dialrow"><div class="year" id="year" aria-live="polite">1994</div><div class="heard" id="heard"></div></div>
+<input type="range" id="slider" min="1950" max="2030" value="1994" aria-label="Year">
+<div class="ticks"><span>1950</span><span>1970</span><span>1990</span><span>2010</span><span>2030</span></div>
+</div>
+<div class="wall" id="wall"></div>
+<footer>Sounds are synthesised approximations, not recordings. Dates are when each sound was ordinary in a typical British home or office, give or take; a few survive in odd corners.</footer>
+</div>
+<script>
+const EX=[
+{id:'rotary',name:'Rotary dial',a:1930,b:1992,d:'A dial tone, then the ratchet of the finger wheel returning. Seven pulses for a seven.',art:()=>`<circle cx="100" cy="60" r="44" fill="none" stroke="var(--obj)" stroke-width="5"/><circle cx="100" cy="60" r="14" fill="var(--obj)"/>${[0,1,2,3,4,5,6,7].map(i=>{const t=(35+i*29)*Math.PI/180;return `<circle cx="${100+30*Math.cos(t)}" cy="${60+30*Math.sin(t)}" r="6" fill="var(--bg)" stroke="var(--obj)" stroke-width="3"/>`}).join('')}`},
+{id:'typebell',name:'Typewriter bell',a:1900,b:1990,d:'The ding near the end of the line, then the carriage thrown back across.',art:()=>`<rect x="40" y="70" width="120" height="30" fill="var(--obj)"/><rect x="50" y="52" width="100" height="10" fill="var(--objl)"/><path d="M150 40 q18 0 18 -14 h-36 q0 14 18 14z" fill="var(--hot)"/><rect x="64" y="104" width="72" height="8" fill="var(--obj)"/>`},
+{id:'cassette',name:'Cassette rewind',a:1970,b:2004,d:'A rising whir as the tape spools back, then the clunk of the stop.',art:()=>`<rect x="40" y="30" width="120" height="76" rx="6" fill="none" stroke="var(--obj)" stroke-width="5"/><circle cx="74" cy="62" r="15" fill="none" stroke="var(--obj)" stroke-width="4"/><circle cx="126" cy="62" r="15" fill="none" stroke="var(--obj)" stroke-width="4"/><rect x="64" y="86" width="72" height="14" fill="var(--hot)"/>`},
+{id:'floppy',name:'Floppy disk seek',a:1984,b:2008,d:'The drive stuttering across tracks: a rattle, a pause, another rattle.',art:()=>`<path d="M52 24h80l16 16v66H52z" fill="var(--obj)"/><rect x="72" y="24" width="48" height="26" fill="var(--objl)"/><rect x="104" y="28" width="9" height="18" fill="var(--obj)"/><rect x="66" y="66" width="68" height="40" fill="var(--bg)"/><rect x="74" y="76" width="52" height="4" fill="var(--hot)"/>`},
+{id:'ringtone',name:'Monophonic ringtone',a:1996,b:2008,d:'One note at a time, square waves, a tune typed in by hand on a phone keypad.',art:()=>`<rect x="70" y="14" width="60" height="100" rx="8" fill="var(--obj)"/><rect x="78" y="24" width="44" height="26" fill="var(--bg)"/>${[0,1,2].map(r=>[0,1,2].map(c=>`<rect x="${80+c*14}" y="${62+r*15}" width="10" height="9" fill="var(--objl)"/>`).join('')).join('')}<rect x="98" y="6" width="4" height="12" fill="var(--obj)"/>`},
+{id:'modem',name:'Dial-up modem',a:1992,b:2008,d:'Two machines negotiating in screeches until one decides it can trust the other.',art:()=>`<rect x="30" y="56" width="140" height="42" fill="var(--obj)"/>${[0,1,2,3,4].map(i=>`<rect x="${46+i*16}" y="66" width="8" height="8" fill="${i%2?'var(--hot)':'var(--objl)'}"/>`).join('')}<rect x="46" y="82" width="108" height="4" fill="var(--objl)"/><path d="M30 77 q-18 0 -18 -28" fill="none" stroke="var(--obj)" stroke-width="4"/>`},
+{id:'fax',name:'Fax handshake',a:1980,b:2012,d:'A long beep every three seconds, a reply, then the warble of a page being sent.',art:()=>`<rect x="36" y="56" width="128" height="46" fill="var(--obj)"/><rect x="60" y="22" width="80" height="38" fill="var(--panel)" stroke="var(--obj)" stroke-width="3"/><path d="M70 34h60M70 44h44" stroke="var(--objl)" stroke-width="3"/><rect x="52" y="88" width="96" height="6" fill="var(--hot)"/>`},
+{id:'crt',name:'CRT television whine',a:1950,b:2010,d:'A thump as the tube degausses, then the thin line-frequency whine only the young hear.',art:()=>`<rect x="34" y="20" width="132" height="92" rx="10" fill="var(--obj)"/><rect x="46" y="32" width="90" height="68" rx="16" fill="var(--bg)"/><circle cx="150" cy="50" r="5" fill="var(--hot)"/><circle cx="150" cy="72" r="5" fill="var(--objl)"/><path d="M60 66h62" stroke="var(--hot)" stroke-width="3"/>`}
+];
+let ctx=null,cur=null,anim=0;
+function ac(){if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)()}if(ctx.state==='suspended')ctx.resume();return ctx}
+function osc(c,dst,type,f,t0,t1,g=.2,f1){const o=c.createOscillator(),v=c.createGain();o.type=type;o.frequency.setValueAtTime(f,t0);if(f1)o.frequency.linearRampToValueAtTime(f1,t1);v.gain.setValueAtTime(0,t0);v.gain.linearRampToValueAtTime(g,t0+.005);v.gain.setValueAtTime(g,Math.max(t0+.006,t1-.01));v.gain.linearRampToValueAtTime(0,t1);o.connect(v);v.connect(dst);o.start(t0);o.stop(t1+.02);return o}
+function noise(c,dst,t0,t1,g=.2,fil){const n=c.sampleRate*Math.max(.05,t1-t0),b=c.createBuffer(1,n,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;const s=c.createBufferSource();s.buffer=b;const v=c.createGain();v.gain.setValueAtTime(g,t0);v.gain.linearRampToValueAtTime(0,t1);let last=s;if(fil){const f=c.createBiquadFilter();f.type=fil.type;f.frequency.setValueAtTime(fil.f,t0);if(fil.f1)f.frequency.linearRampToValueAtTime(fil.f1,t1);f.Q.value=fil.q||1;s.connect(f);last=f}last.connect(v);v.connect(dst);s.start(t0);s.stop(t1+.02)}
+function click(c,dst,t,g=.4){noise(c,dst,t,t+.012,g,{type:'bandpass',f:2500,q:.8})}
+const SYN={
+rotary(c,d,t){osc(c,d,'sine',350,t,t+1,.12);osc(c,d,'sine',440,t,t+1,.12);let x=t+1.2;for(let i=0;i<7;i++){click(c,d,x+i*.1,.5);click(c,d,x+i*.1+.06,.25)}noise(c,d,t+1.2,t+1.9,.05,{type:'lowpass',f:700});return 2.1},
+typebell(c,d,t){[2093,3136,4186].forEach((f,i)=>{const o=c.createOscillator(),v=c.createGain();o.frequency.value=f;v.gain.setValueAtTime(.2/(i+1),t);v.gain.exponentialRampToValueAtTime(.001,t+1.1);o.connect(v);v.connect(d);o.start(t);o.stop(t+1.2)});for(let i=0;i<14;i++)click(c,d,t+1.2+i*.035,.35);click(c,d,t+1.8,.7);return 2.1},
+cassette(c,d,t){noise(c,d,t,t+1.6,.28,{type:'bandpass',f:500,f1:3200,q:2.5});osc(c,d,'sawtooth',90,t,t+1.6,.05,260);noise(c,d,t+1.6,t+1.9,.1,{type:'lowpass',f:900,f1:200});click(c,d,t+1.65,.9);click(c,d,t+1.72,.5);return 2.1},
+floppy(c,d,t){let x=t;[[.35,300],[.2,520],[.5,240],[.15,600]].forEach(([l,f],i)=>{osc(c,d,'square',f,x,x+l,.06,f*1.25);noise(c,d,x,x+l,.3,{type:'bandpass',f:1800,q:3});for(let k=0;k<l/.04;k++)click(c,d,x+k*.04,.35);x+=l+.15});return x-t+.2},
+ringtone(c,d,t){const n=[[659,.12],[587,.12],[370,.24],[415,.24],[554,.12],[494,.12],[294,.24],[330,.24],[494,.12],[440,.12],[277,.24],[330,.24],[440,.5]];let x=t;n.forEach(([f,l])=>{osc(c,d,'square',f,x,x+l-.02,.09);x+=l});return x-t+.2},
+modem(c,d,t){osc(c,d,'sine',2100,t,t+.7,.1);osc(c,d,'sine',1200,t+.85,t+1.1,.1);osc(c,d,'sine',2250,t+1.15,t+1.45,.1);for(let i=0;i<12;i++){osc(c,d,'sine',900+Math.random()*2200,t+1.5+i*.08,t+1.56+i*.08,.12)}noise(c,d,t+1.5,t+3.2,.22,{type:'bandpass',f:1400,f1:3000,q:1.4});osc(c,d,'sine',1800,t+2.6,t+3.1,.1,2400);noise(c,d,t+3.1,t+3.6,.1,{type:'bandpass',f:1900,q:.6});return 3.7},
+fax(c,d,t){for(let i=0;i<2;i++)osc(c,d,'sine',1100,t+i*1.1,t+i*1.1+.5,.15);osc(c,d,'sine',2100,t+2.2,t+2.9,.12);for(let i=0;i<22;i++){const f=i%2?1650:1850;osc(c,d,'square',f,t+3+i*.05,t+3.05+i*.05,.05)}noise(c,d,t+3.6,t+4.8,.15,{type:'bandpass',f:2000,q:2});return 5},
+crt(c,d,t){osc(c,d,'sine',55,t,t+.35,.5,30);noise(c,d,t,t+.3,.25,{type:'lowpass',f:300});osc(c,d,'sine',11800,t+.2,t+2.2,.04);osc(c,d,'sine',11800,t+.2,t+2.2,.04,11000);osc(c,d,'sine',50,t+.3,t+2.2,.04);return 2.4}
+};
+function stop(){if(!cur)return;cur.src&&cur.src.disconnect();cur.stopT&&clearTimeout(cur.stopT);const btn=document.querySelector(`[data-id=${cur.id}] button`);btn&&btn.setAttribute('aria-pressed','false');btn&&(btn.textContent='▶ Play');cur.master.gain.cancelScheduledValues(0);cur.master.gain.value=0;cur.master.disconnect();cur=null}
+function play(id){const was=cur&&cur.id;stop();if(was===id)return;const c=ac(),m=c.createGain(),an=c.createAnalyser();an.fftSize=1024;m.gain.value=.8;m.connect(an);an.connect(c.destination);const len=SYN[id](c,m,c.currentTime+.05);cur={id,master:m,an,stopT:setTimeout(()=>{if(cur&&cur.id===id)stop()},len*1000+100)};const btn=document.querySelector(`[data-id=${id}] button`);btn.setAttribute('aria-pressed','true');btn.textContent='■ Stop';cancelAnimationFrame(anim);draw()}
+function draw(){document.querySelectorAll('canvas').forEach(cv=>{const g=cv.getContext('2d'),w=cv.width=cv.clientWidth*(devicePixelRatio||1),h=cv.height=cv.clientHeight*(devicePixelRatio||1);g.clearRect(0,0,w,h);const act=cur&&cur.id===cv.parentNode.dataset.id;const cs=getComputedStyle(document.body);g.strokeStyle=act?getComputedStyle(document.documentElement).getPropertyValue('--hot'):cs.getPropertyValue('color');g.lineWidth=2*(devicePixelRatio||1);g.beginPath();if(act){const a=new Uint8Array(cur.an.fftSize);cur.an.getByteTimeDomainData(a);for(let i=0;i<a.length;i++){const x=i/a.length*w,y=a[i]/255*h;i?g.lineTo(x,y):g.moveTo(x,y)}}else{g.moveTo(0,h/2);g.lineTo(w,h/2)}g.stroke()});if(cur)anim=requestAnimationFrame(draw)}
+const wall=document.getElementById('wall'),sl=document.getElementById('slider');
+wall.innerHTML=EX.map(e=>`<article class="ex" data-id="${e.id}"><div class="art"><svg viewBox="0 0 200 120" aria-hidden="true">${e.art()}</svg></div><h2>${e.name}</h2><div class="tag"></div><div class="track" title="${e.a}–${e.b}"><div class="span" style="left:${(Math.max(e.a,1950)-1950)/80*100}%;width:${(Math.min(e.b,2030)-Math.max(e.a,1950))/80*100}%"></div><div class="mark"></div></div><p class="sub">${e.a}–${e.b}</p><p class="d">${e.d}</p><canvas></canvas><button class="play" aria-pressed="false">▶ Play</button></article>`).join('');
+wall.querySelectorAll('button').forEach(b=>b.onclick=()=>play(b.parentNode.dataset.id));
+function upd(){const y=+sl.value;document.getElementById('year').textContent=y;let n=0;EX.forEach(e=>{const on=y>=e.a&&y<=e.b,el=wall.querySelector(`[data-id=${e.id}]`);el.classList.toggle('on',on);el.classList.toggle('off',!on);el.querySelector('.tag').textContent=on?'In the house':y<e.a?`Not yet invented here (${e.a})`:`Gone quiet in ${e.b}`;el.querySelector('.mark').style.left=`calc(${(y-1950)/80*100}% - 1px)`;n+=on});document.getElementById('heard').innerHTML=n?`<b>${n}</b> of 8 of these sounds could be heard in a house in ${y}`:`None of the 8 sounds can be heard in ${y}. The house is quiet.`;window.__silence.audible=EX.filter(e=>y>=e.a&&y<=e.b).map(e=>e.id)}
+window.__silence={get year(){return +sl.value},audible:[],get playing(){return cur&&cur.id}};
+sl.oninput=upd;upd();draw();cancelAnimationFrame(anim);
+</script>
+
+</body></html>

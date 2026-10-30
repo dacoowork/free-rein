@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Syne:wght@800&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -79,7 +79,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-10-29e"></script>
+<script src="builds.js?v=2026-10-30"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -90,6 +90,29 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    quietwall(b,r){
+      // three exhibits from the build (rotary dial, cassette, CRT set) on a gallery wall, each with its timeline bar and a sound trace
+      const ink=b.fg, hot=b.accent, mute=b.accent2, card=b.panel;
+      let s=`<rect width="320" height="180" fill="${b.bg}"/>`;
+      const fr=(x,i)=>`<rect x="${x}" y="16" width="92" height="104" fill="${card}" stroke="${ink}" stroke-width="2"/><rect x="${x+10}" y="${i}" width="72" height="5" fill="${mute}" opacity=".5"/>`;
+      s+=fr(14,100)+fr(114,100)+fr(214,100);
+      // rotary dial
+      s+=`<circle cx="60" cy="62" r="30" fill="none" stroke="${ink}" stroke-width="4"/><circle cx="60" cy="62" r="9" fill="${ink}"/>`;
+      for(let i=0;i<8;i++){const t=(35+i*29)*Math.PI/180;s+=`<circle cx="${60+20*Math.cos(t)}" cy="${62+20*Math.sin(t)}" r="4" fill="${card}" stroke="${ink}" stroke-width="2"/>`}
+      // cassette
+      s+=`<rect x="130" y="40" width="60" height="44" rx="4" fill="none" stroke="${ink}" stroke-width="3"/><circle cx="148" cy="58" r="8" fill="none" stroke="${ink}" stroke-width="3"/><circle cx="172" cy="58" r="8" fill="none" stroke="${ink}" stroke-width="3"/><rect x="144" y="72" width="32" height="8" fill="${hot}"/>`;
+      // CRT
+      s+=`<rect x="228" y="36" width="64" height="52" rx="7" fill="${ink}"/><rect x="235" y="43" width="40" height="38" rx="9" fill="${b.bg}"/><path d="M240 62h30" stroke="${hot}" stroke-width="2"/><circle cx="284" cy="52" r="3" fill="${hot}"/>`;
+      s+=`<rect x="24" y="106" width="52" height="5" fill="${ink}" opacity=".35"/><rect x="24" y="106" width="30" height="5" fill="${ink}"/>`;
+      s+=`<rect x="124" y="106" width="52" height="5" fill="${ink}" opacity=".35"/><rect x="141" y="106" width="25" height="5" fill="${ink}"/>`;
+      s+=`<rect x="224" y="106" width="52" height="5" fill="${ink}" opacity=".35"/><rect x="224" y="106" width="42" height="5" fill="${ink}"/>`;
+      // year marker
+      s+=`<rect x="152" y="102" width="3" height="13" fill="${hot}"/>`;
+      // sound trace
+      let d='M14 152';for(let x=0;x<=292;x+=4){const a=Math.sin(x/9)*Math.sin(x/47)*14;d+=` L${14+x} ${(152+a).toFixed(1)}`}
+      s+=`<path d="${d}" fill="none" stroke="${hot}" stroke-width="2.5" stroke-linejoin="round"/>`;
+      return s;
+    },
     handsigns(b,r){
       // three of the hands the build draws: thumbs up (fist, thumb raised), the OK ring and the V with the back of the hand showing, each with its verdict badge
       const ink=b.fg, red=b.accent, teal=b.accent2, card=b.panel, skin='#fff0e3';

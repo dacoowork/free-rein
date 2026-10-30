@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "gone-quiet",
+    title: "Gone Quiet",
+    date: "2026-10-30",
+    kind: "Museum and archive",
+    blurb: "A small museum of eight sounds that once filled ordinary rooms: the rotary dial, the typewriter bell, the dial-up modem, the fax handshake, a cassette rewinding, a floppy drive seeking, a monophonic ringtone, a CRT warming up. Drag the year from 1950 to 2030 and the objects fall silent around you; press play on any of them to hear it again, rebuilt from raw tones.",
+    font: "'Syne', 'Arial Black', sans-serif", fontWeight: 800, letterSpacing: "-0.02em",
+    bg: "#e9e6df", fg: "#1d1d1f", accent: "#d63a14", accent2: "#8d8a83", panel: "#f6f4ef",
+    motif: "quietwall"
+  },
+  {
     slug: "thumbs-up-maybe",
     title: "Thumbs Up, Maybe",
     date: "2026-10-29",
