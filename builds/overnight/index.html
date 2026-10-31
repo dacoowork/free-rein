@@ -1,0 +1,238 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Overnight</title><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=DM+Sans:wght@500;700&display=swap">
+<style>
+:root{--bg:#f4f3ee;--panel:#fff;--ink:#0d1252;--mute:#585d8a;--line:#d5d6e6;--btn:#1f2fd1;--btnink:#fff;--chip:#e7e9fb;--hot:#ff7a1a}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0a0d2b;--panel:#12174a;--ink:#eef0ff;--mute:#a4a9d6;--line:#2a3070;--btn:#ff7a1a;--btnink:#1a0e00;--chip:#1c2260}}
+:root[data-theme=dark]{--bg:#0a0d2b;--panel:#12174a;--ink:#eef0ff;--mute:#a4a9d6;--line:#2a3070;--btn:#ff7a1a;--btnink:#1a0e00;--chip:#1c2260}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 'DM Sans',system-ui,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 48px}
+h1{font:400 clamp(40px,8vw,84px)/.95 'Bowlby One',Impact,sans-serif;margin:8px 0 4px;letter-spacing:-.01em}
+.kick{font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:12px;color:var(--mute)}
+.sub{margin:6px 0 18px;color:var(--mute);max-width:60ch}
+.stage{position:relative;border-radius:14px;overflow:hidden;background:#1f2fd1;box-shadow:0 8px 30px rgba(20,30,160,.25)}
+canvas{display:block;width:100%;aspect-ratio:16/9;cursor:pointer}
+.bar{display:flex;align-items:center;gap:10px;margin:12px 0;flex-wrap:wrap}
+button{font:700 15px 'DM Sans',sans-serif;border:0;border-radius:999px;padding:10px 18px;background:var(--btn);color:var(--btnink);cursor:pointer;min-height:44px}
+button.alt{background:var(--chip);color:var(--ink)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
+input[type=range]{flex:1;min-width:140px;accent-color:var(--btn);height:32px}
+.time{font:700 14px 'DM Sans';font-variant-numeric:tabular-nums;color:var(--mute);min-width:84px;text-align:right}
+.chaps{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:6px 0 16px;padding:0;list-style:none}
+.chaps button{width:100%;text-align:left;border-radius:12px;background:var(--panel);color:var(--ink);border:2px solid var(--line);padding:8px 12px;font-weight:600;font-size:14px}
+.chaps button small{display:block;color:var(--mute);font-weight:500}
+.chaps button[aria-current=true]{border-color:var(--hot);background:var(--chip)}
+.cap{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:14px 18px;min-height:96px}
+.cap h2{margin:0 0 4px;font:400 22px 'Bowlby One',sans-serif}
+.cap p{margin:0;max-width:70ch}
+.sp{display:flex;gap:6px;align-items:center;color:var(--mute);font-size:14px;font-weight:700}
+</style>
+<div class="wrap">
+<div class="kick">A short film · 48 seconds</div>
+<h1>Overnight</h1>
+<p class="sub">One parcel, one night, 18:42 to 05:58. Follow the white box from the back of a van through the depot to the lorry that takes it home. Press play, scrub, or jump to a chapter.</p>
+<div class="stage"><canvas id="c" width="1280" height="720" aria-label="Animated film of a parcel travelling through a sorting depot"></canvas></div>
+<div class="bar">
+<button id="play" aria-label="Play">Play</button>
+<button id="restart" class="alt">Restart</button>
+<input id="scrub" type="range" min="0" max="48" step="0.01" value="0" aria-label="Film position">
+<span class="time" id="tm">0:00 / 0:48</span>
+<span class="sp">Speed <button class="alt" id="spd" aria-label="Playback speed">1×</button></span>
+</div>
+<ul class="chaps" id="chaps"></ul>
+<div class="cap" aria-live="polite"><h2 id="ct"></h2><p id="cb"></p></div>
+</div>
+<script>
+(()=>{
+const DUR=48, W=960, H=540, BY=270, GY=480, V=100, EX=420;
+const LANEX=[1400,1630,1860,2090], LCOL=['#ff8a3d','#5ee0b0','#ff9ec7','#ffe14d'];
+const CH=[
+[0,'Collected','18:42 · The van','Van 14 pulls up at the depot with the last bag of the day. In it: one white box, tape a little crooked, bound for a flat three counties away.'],
+[4.5,'Onto the belt','Label up, please','A hand tosses it onto the induction belt. From here on, nobody has to decide anything. The belt moves at one speed and so does everything on it.'],
+[8,'The arch','It reads the label','A ring of cameras reads the label in a blink. Bay 4, northern route. The box does not slow down, and neither does the one behind it.'],
+[13,'The long belt','Waiting its turn','Parcels of every size share the line. Colours show their bay. Every one will be nudged off exactly once.'],
+[19.8,'The paddle','A small shove','At bay 4 a paddle swings across the belt. The white box slides off sideways down a chute, and the line carries on without it.'],
+[23.5,'The cage','Rolling stock','It lands in a wheeled cage with the others bound the same way. When the cage is full, someone wheels it off.'],
+[33,'Loading','Into the lorry','The cage rolls up the ramp into the lorry. Doors down, lights off in the bay. It is nearly six.'],
+[38,'Out for delivery','05:58 · Dawn','The lorry pulls out as the sky lightens. Somewhere past the last roundabout, someone is about to get a doorbell ring.']
+];
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+// seeded
+let sd=7;const rnd=()=>{sd=(sd*16807)%2147483647;return (sd-1)/2147483646};
+const HT=4.5+(LANEX[3]-EX)/V;
+const parcels=[];
+{let s=-14;while(s<22){s+=0.8+rnd()*0.75;if(Math.abs(s-4.5)<1.5)continue;
+ const lane=Math.floor(rnd()*4);const w=34+rnd()*24,h=26+rnd()*16;
+ parcels.push({s,lane,w,h,tape:rnd()<.6,tL:s+(LANEX[lane]-EX)/V,land:s+(LANEX[lane]-EX)/V+130/120});}}
+// hero landing: slot in lane-3 cage
+const HL=HT+130/120;
+const l3=parcels.filter(p=>p.lane===3&&p.land<HL).length;
+const slot=k=>({dx:((k%3)-1)*32,y:468-11-Math.floor(k/3)*24});
+const cageList=parcels.filter(p=>p.lane===3).map(p=>({land:p.land,hero:false}));cageList.push({land:HL,hero:true});cageList.sort((a,b)=>a.land-b.land);
+cageList.forEach((c,i)=>c.k=i);
+const HK=cageList.find(c=>c.hero).k, HS=slot(HK);
+const sm=x=>x*x*(3-2*x), cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+function cageX(t){const b=LANEX[3]+150;
+ if(t<28)return b; if(t<33)return b+(2800-b)*sm((t-28)/5);
+ if(t<35)return 2800+60*sm((t-33)/2); if(t<36.5)return 2860+40*sm((t-35)/1.5);return 2900}
+// lorry moves
+function lorryX(t){return 2740+(t<37?0:1500*Math.pow(cl((t-37)/9),2))}
+function cageXfix(t){ // cage rides with lorry after loaded
+ const c=cageX(t);return c+(lorryX(t)-2740)}
+function hero(t){
+ if(t<3)return{x:285,y:395,w:50,h:38,r:0,vis:t>1.8};
+ if(t<4.5){const u=(t-3)/1.5;return{x:285+135*u,y:395+(255-395)*u-Math.sin(Math.PI*u)*70,w:50,h:38,r:u*6.28,vis:1}}
+ if(t<HT)return{x:EX+V*(t-4.5),y:BY-19,w:50,h:38,r:0,vis:1};
+ if(t<HL){const u=(t-HT)/(HL-HT);const d=130*u;return{x:LANEX[3]+d,y:BY-14+d,w:50-20*u,h:38-16*u,r:.6*Math.min(1,u*4),vis:1}}
+ const tt=Math.min(1,(t-HL)/.25);
+ return{x:cageXfix(t)+HS.dx,y:(HS.y-(1-sm(tt))*20),w:30,h:22,r:0,vis:1,inCage:1}}
+function camX(t){let a=0;for(let i=-4;i<=4;i++)a+=hero(cl(t+i*.25,0,DUR)).x;a/=9;return Math.max(0,a-300)}
+function sky(t){const u=cl((t-34)/12);const c=(a,b)=>Math.round(a+(b-a)*u);return `rgb(${c(18,86)},${c(26,120)},${c(150,235)})`}
+function rr(x,y,w,h,r,f,s,lw){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(f){ctx.fillStyle=f;ctx.fill()}if(s){ctx.strokeStyle=s;ctx.lineWidth=lw||2;ctx.stroke()}}
+function box(p,x,y,w,h,r,col,tape,hl){ctx.save();ctx.translate(x,y);ctx.rotate(r);rr(-w/2,-h/2,w,h,3,col,'#0d1252',2);
+ if(tape){ctx.fillStyle='rgba(13,18,82,.35)';ctx.fillRect(-3,-h/2,6,h)}
+ ctx.fillStyle='#fff';ctx.fillRect(-w/2+4,-h/2+4,Math.min(14,w*.3),8);ctx.restore()}
+function draw(t){
+ const cx=camX(t);ctx.save();ctx.scale(cv.width/W,cv.height/H);
+ ctx.fillStyle=sky(t);ctx.fillRect(0,0,W,H);
+ // sun
+ const su=cl((t-38)/10);if(su>0){ctx.fillStyle='rgba(255,170,90,'+(.8*su)+')';ctx.beginPath();ctx.arc(700,GY-20-su*150,50,0,7);ctx.fill()}
+ // far skyline (parallax)
+ ctx.fillStyle='rgba(8,12,90,.55)';const pf=.25;const bw=70;
+ for(let i=Math.floor(cx*pf/bw)-1;i<Math.floor((cx*pf+W)/bw)+2;i++){const hh=70+((i*7919)%97)*1.6;const x=i*bw-cx*pf;ctx.fillRect(x,GY-hh,bw-6,hh)}
+ ctx.fillStyle='rgba(255,230,140,.7)';
+ for(let i=Math.floor(cx*pf/bw)-1;i<Math.floor((cx*pf+W)/bw)+2;i++){const hh=70+((i*7919)%97)*1.6;const x=i*bw-cx*pf;for(let k=0;k<3;k++)if(((i*31+k*17)%5)<2)ctx.fillRect(x+10+k*18,GY-hh+14+((i+k)%3)*20,8,8)}
+ ctx.translate(-cx,0);
+ // depot hall
+ const hx0=360,hx1=2700;
+ ctx.fillStyle='#2b3ee8';ctx.fillRect(hx0,80,hx1-hx0,GY-80);
+ ctx.fillStyle='#1a27b5';ctx.fillRect(hx0,80,hx1-hx0,16);
+ for(let x=hx0+40;x<hx1;x+=170){const on=((x/170|0)%7)!==3;ctx.fillStyle=on?'#fff7c9':'#6d78e8';rr(x,104,100,8,4,ctx.fillStyle)}
+ for(let x=hx0+120;x<hx1;x+=340){ctx.fillStyle='rgba(8,12,100,.35)';ctx.fillRect(x,160,6,GY-160)}
+ // bay signs
+ ctx.font="400 22px 'Bowlby One',Impact,sans-serif";ctx.textAlign='center';
+ LANEX.forEach((x,i)=>{rr(x+104,150,92,44,8,LCOL[i]);ctx.fillStyle='#0d1252';ctx.fillText('BAY '+(i+1),x+150,182)});
+ // floor
+ ctx.fillStyle='#0b1170';ctx.fillRect(cx-10,GY,W+20,H-GY+10);
+ ctx.fillStyle='#ff9d3a';for(let x=Math.floor(cx/60)*60;x<cx+W+60;x+=60)ctx.fillRect(x,GY+36,32,5);
+ // van
+ const vx=-300+Math.min(1,t/2.0)*0+ (t<2?-420*(1-sm(t/2)):0)+150;
+ const vOpen=cl((t-1.8)/.8);
+ vanDraw(vx,vOpen);
+ // belt
+ const bx0=EX-40,bx1=LANEX[3]+120;
+ rr(bx0,BY,bx1-bx0,14,6,'#10187f');ctx.fillStyle='#ffd83a';
+ const off=(t*V)%40;for(let x=bx0-40+off;x<bx1;x+=40){if(x<bx0)continue;ctx.fillRect(x,BY+4,18,3)}
+ ctx.fillStyle='#0b1170';for(let x=bx0+30;x<bx1;x+=120){ctx.fillRect(x,BY+14,8,GY-BY-14)}
+ // hopper
+ ctx.fillStyle='#10187f';ctx.beginPath();ctx.moveTo(EX-30,BY-90);ctx.lineTo(EX+30,BY-90);ctx.lineTo(EX+12,BY-34);ctx.lineTo(EX-12,BY-34);ctx.fill();
+ // chutes + cages (static part)
+ LANEX.forEach((x,i)=>{
+  ctx.strokeStyle='#10187f';ctx.lineWidth=14;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x+6,BY+16);ctx.lineTo(x+140,BY+144);ctx.stroke();
+  ctx.strokeStyle=LCOL[i];ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x+10,BY+10);ctx.lineTo(x+138,BY+138);ctx.stroke();
+ });
+ // scan arch
+ const AX=900;ctx.fillStyle='#0d1252';ctx.fillRect(AX-60,BY-120,12,120);ctx.fillRect(AX+48,BY-120,12,120);rr(AX-66,BY-132,132,22,8,'#0d1252');
+ ctx.fillStyle='#fff';ctx.fillRect(AX-30,BY-126,60,10);
+ // parcels on belt
+ let scanHit=null;
+ parcels.forEach(p=>{
+  const u=t-p.s;if(u<0)return;
+  let x,y,r=0,w=p.w,h=p.h;
+  if(t<p.tL){x=EX+V*u;y=BY-h/2-(u<.45?Math.pow(1-u/.45,2)*70:0);}
+  else{const d=Math.min(130,120*(t-p.tL));if(t>=p.land)return;x=LANEX[p.lane]+d;y=BY-h/2+d+2;r=.5*Math.min(1,d/20)}
+  box(p,x,y,w,h,r,LCOL[p.lane],p.tape);
+  if(Math.abs(x-AX)<(V*.12)&&t<p.tL){scanHit=p}
+ });
+ // cages fill (lanes 0-3; lane 3 moves)
+ for(let L=0;L<4;L++){
+  const lx=L===3?cageXfix(t):LANEX[L]+150;
+  cageDraw(lx,L);
+  if(L<3){const items=parcels.filter(p=>p.lane===L&&p.land<=t).slice(-12);items.forEach((p,k)=>{const s=slot(k);box(p,lx+s.dx,s.y,30,22,0,LCOL[L],false)})}
+  else{cageList.forEach(c=>{if(c.hero||c.land>t)return;const s=slot(c.k);box(0,lx+s.dx,s.y,30,22,0,LCOL[3],false)})}
+ }
+ // paddles
+ LANEX.forEach((x,L)=>{let a=-.9;parcels.concat([{lane:3,tL:HT}]).forEach(p=>{if(p.lane!==L)return;const d=t-p.tL;if(d>-.45&&d<.9){a=Math.min(a,0)}});
+  let ang=-1.1;parcels.concat([{lane:3,tL:HT}]).forEach(p=>{if(p.lane!==L)return;const d=t-p.tL;if(d>-.5&&d<1.1){const q=d<.1?sm(cl((d+.5)/.6)):1-sm(cl((d-.1)/1));ang=-1.1+1.05*q}});
+  ctx.save();ctx.translate(x-4,BY-44);ctx.rotate(ang);rr(-5,0,10,60,4,'#ff7a1a','#0d1252',2);ctx.restore();
+  ctx.fillStyle='#0d1252';ctx.beginPath();ctx.arc(x-4,BY-44,7,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.fillRect(x-24,BY-60,40,8)});
+ // scan beam
+ const near=parcels.concat([{s:4.5}]).some(p=>{const x=EX+V*(t-p.s);return Math.abs(x-AX)<30});
+ if(near){ctx.fillStyle='rgba(255,40,60,.75)';const yy=BY-110+((t*8)%1)*100;ctx.fillRect(AX-44,yy,88,3)}
+ // hero
+ const hh=hero(t);
+ if(hh.vis){
+  const k=t>HL?1:0;
+  ctx.save();ctx.translate(hh.x,hh.y);ctx.rotate(hh.r);
+  if(t>=4.5){ctx.strokeStyle='#fff';ctx.lineWidth=3;const pr=(t*2)%1;ctx.globalAlpha=1-pr;ctx.beginPath();ctx.ellipse(0,0,hh.w*.7+pr*20,hh.h*.8+pr*16,0,0,7);ctx.stroke();ctx.globalAlpha=1}
+  rr(-hh.w/2,-hh.h/2,hh.w,hh.h,3,'#ffffff','#0d1252',3);ctx.fillStyle='#ff7a1a';ctx.fillRect(-4,-hh.h/2,8,hh.h);
+  ctx.fillStyle='#ffe14d';ctx.fillRect(-hh.w/2+4,-hh.h/2+4,Math.min(16,hh.w*.32),9);
+  ctx.restore();
+  // label bubble at arch
+  if(t>8.7&&t<12){const u=cl((t-8.7)/.4);ctx.globalAlpha=u*cl((12-t)/.4);const bx=AX+40,by=BY-170-u*0;rr(bx-80,by-26,160,46,10,'#fff','#0d1252',2);ctx.fillStyle='#0d1252';ctx.font="700 15px 'DM Sans',sans-serif";ctx.textAlign='center';ctx.fillText('BAY 4 · NORTH',bx,by-4);ctx.font="500 12px 'DM Sans',sans-serif";ctx.fillText('parcel 0412 · 2.1 kg',bx,by+12);ctx.globalAlpha=1}
+ }
+ lorryDraw(t);
+ ctx.restore();
+ // HUD (screen space)
+ ctx.save();ctx.scale(cv.width/W,cv.height/H);const hk=cv.clientWidth<600?1.45:1;ctx.scale(hk,hk);
+ const mins=Math.round(18*60+42+(t/DUR)*(11*60+16))%1440;
+ const hm=String(Math.floor(mins/60)).padStart(2,'0')+':'+String(mins%60).padStart(2,'0');
+ rr(14,14,150,62,10,'rgba(8,12,90,.78)');ctx.fillStyle='#fff';ctx.font="400 28px 'Bowlby One',Impact,sans-serif";ctx.textAlign='left';ctx.fillText(hm,28,46);
+ ctx.font="700 11px 'DM Sans',sans-serif";ctx.fillStyle='#ffd83a';ctx.fillText('PARCEL 0412 · WHITE BOX',28,66);
+ if(t>44){const u=cl((t-44)/1.2);ctx.globalAlpha=u;ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font="400 "+(hk>1?34:54)+"px 'Bowlby One',Impact,sans-serif";ctx.fillText('Out for delivery',W/2/hk,(hk>1?120:90)/hk);ctx.globalAlpha=1}
+ ctx.restore();
+}
+function vanDraw(vx,open){ // facing left, rear at right
+ const x=vx,y=GY;
+ ctx.fillStyle='#fff';rr(x,y-112,190,100,10,'#f4f4f4','#0d1252',3);
+ ctx.fillStyle='#ff7a1a';ctx.fillRect(x+4,y-52,182,10);
+ ctx.fillStyle='#9ad7ff';ctx.beginPath();ctx.moveTo(x+6,y-100);ctx.lineTo(x+46,y-100);ctx.lineTo(x+46,y-64);ctx.lineTo(x+6,y-64);ctx.fill();
+ ctx.fillStyle='#0d1252';[[x+34,y-12],[x+150,y-12]].forEach(([a,b])=>{ctx.beginPath();ctx.arc(a,b,16,0,7);ctx.fill();ctx.fillStyle='#ccc';ctx.beginPath();ctx.arc(a,b,6,0,7);ctx.fill();ctx.fillStyle='#0d1252'});
+ // rear door open
+ if(open>0){ctx.fillStyle='#10187f';ctx.fillRect(x+186-8*open,y-108,8*open,92)}
+}
+function cageDraw(x,L){ctx.strokeStyle='#d9dcff';ctx.lineWidth=3;ctx.strokeRect(x-55,BY+130,110,GY-BY-130-8);
+ ctx.beginPath();for(let i=1;i<4;i++){ctx.moveTo(x-55+i*27.5,BY+130);ctx.lineTo(x-55+i*27.5,GY-8)}ctx.stroke();
+ ctx.fillStyle=LCOL[L];ctx.fillRect(x-55,BY+124,110,6);
+ ctx.fillStyle='#0d1252';[-40,40].forEach(d=>{ctx.beginPath();ctx.arc(x+d,GY-4,6,0,7);ctx.fill()})}
+function lorryDraw(t){const x=lorryX(t),y=GY;
+ // cutaway body, cab on the right
+ rr(x,y-150,340,138,10,'rgba(8,12,100,.55)','#e8eaff',4);
+ // re-draw cage contents over dark interior
+ const lx=cageXfix(t);
+ if(lx>x-60){cageDraw(lx,3);cageList.forEach(c=>{if(c.land>t)return;const s=slot(c.k);if(c.hero)return;box(0,lx+s.dx,s.y,30,22,0,LCOL[3],false)});
+   const hh=hero(t);if(hh.inCage){rr(hh.x-15,hh.y-11,30,22,3,'#ffffff','#0d1252',3);ctx.fillStyle='#ff7a1a';ctx.fillRect(hh.x-2,hh.y-11,4,22)}}
+ // cab
+ rr(x+340,y-100,110,88,12,'#ff7a1a','#0d1252',3);rr(x+380,y-88,56,38,6,'#bfe4ff','#0d1252',2);
+ ctx.fillStyle='#0d1252';[[x+60,y-12],[x+280,y-12],[x+410,y-12]].forEach(([a,b])=>{ctx.beginPath();ctx.arc(a,b,18,0,7);ctx.fill();ctx.fillStyle='#ccc';ctx.beginPath();ctx.arc(a,b,7,0,7);ctx.fill();ctx.fillStyle='#0d1252'});
+ // headlight beam late
+ const d=cl((t-38)/2);if(d>0){ctx.fillStyle='rgba(255,240,170,'+(.5*d)+')';ctx.beginPath();ctx.moveTo(x+448,y-60);ctx.lineTo(x+620,y-20);ctx.lineTo(x+620,y-100);ctx.fill()}
+ // rear door drops
+ const dr=cl((t-36.2)/.8);if(dr>0){ctx.fillStyle='#e8eaff';ctx.fillRect(x-2,y-150,12,138*dr);}
+}
+// ---- player
+let t=0,playing=false,spd=1,last=0;
+const $=id=>document.getElementById(id);
+const chapsEl=$('chaps');
+CH.forEach((c,i)=>{const li=document.createElement('li'),b=document.createElement('button');b.className='';b.innerHTML=c[1]+'<small>'+fmt(c[0])+'</small>';b.onclick=()=>{seek(c[0]+.05)};li.appendChild(b);chapsEl.appendChild(li)});
+function fmt(s){return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0')}
+function chapIdx(){let k=0;CH.forEach((c,i)=>{if(t>=c[0])k=i});return k}
+function ui(){draw(t);$('scrub').value=t;$('tm').textContent=fmt(t)+' / 0:48';const k=chapIdx();
+ $('ct').textContent=CH[k][2];$('cb').textContent=CH[k][3];
+ [...chapsEl.querySelectorAll('button')].forEach((b,i)=>b.setAttribute('aria-current',i===k))}
+function seek(x){t=cl(x,0,DUR);ui()}
+function setPlay(p){playing=p;$('play').textContent=p?'Pause':(t>=DUR?'Replay':'Play');$('play').setAttribute('aria-label',p?'Pause':'Play');if(p){last=performance.now();requestAnimationFrame(tick)}}
+function tick(n){if(!playing)return;t+=(n-last)/1000*spd;last=n;if(t>=DUR){t=DUR;ui();setPlay(false);return}ui();requestAnimationFrame(tick)}
+$('play').onclick=()=>{if(!playing&&t>=DUR)t=0;setPlay(!playing)};
+cv.onclick=()=>$('play').click();
+$('restart').onclick=()=>{t=0;ui();setPlay(true)};
+$('scrub').oninput=e=>{seek(+e.target.value)};
+$('spd').onclick=()=>{spd=spd===1?2:spd===2?.5:1;$('spd').textContent=spd+'×'};
+document.addEventListener('keydown',e=>{if(e.code==='Space'&&e.target.tagName!=='BUTTON'&&e.target.tagName!=='INPUT'){e.preventDefault();$('play').click()}});
+window.__film={seek,get t(){return t},get playing(){return playing}};
+const rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const go=()=>{ui();if(!rm)setPlay(true);else{seek(2.6)}};
+(document.fonts&&document.fonts.ready?document.fonts.ready.then(go):Promise.resolve().then(go));
+})();
+</script>
+</body></html>

@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "overnight",
+    title: "Overnight",
+    date: "2026-10-31",
+    kind: "Animation and motion",
+    blurb: "A 48-second film about one parcel's night, 18:42 to 05:58. Follow the white box from the back of a van onto a belt, under a scanning arch, past the paddles that shove each parcel down its chute, into a wheeled cage, and out in a lorry at dawn. Play, scrub, change speed or jump to any of eight chapters.",
+    font: "'Bowlby One', Impact, sans-serif", fontWeight: 400, letterSpacing: "0",
+    bg: "#1f2fd1", fg: "#ffffff", accent: "#ff7a1a", accent2: "#ffe14d", panel: "#2b3ee8",
+    motif: "depotbelt"
+  },
+  {
     slug: "gone-quiet",
     title: "Gone Quiet",
     date: "2026-10-30",

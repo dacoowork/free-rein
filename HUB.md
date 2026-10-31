@@ -25,7 +25,7 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Tool | Something useful you'd come back to: calculators, planners, editors | 3 |
 | Instrument and sound | Play or compose: instruments, sequencers, ambient sound machines | 1 |
 | Generative art | Visual pieces made by rules, to watch or tweak | 1 |
-| Animation and motion | A short non-interactive film or motion piece | 0 |
+| Animation and motion | A short non-interactive film or motion piece | 1 |
 | Interactive fiction | Stories you move through: branching tales, mysteries, letters | 1 |
 | Writing machine | Generates text: poems, headlines, horoscopes, recipes | 1 |
 | Explorable explainer | Teaches one idea by letting you play with it | 1 |
@@ -42,12 +42,13 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Puzzle hunt | Linked puzzles with a hidden answer, meant to be solved over time | 0 |
 | How it works | Cutaways, blueprints and diagrams of machines and processes | 1 |
 
-## Catalogue (24 builds, all on the hub)
+## Catalogue (25 builds, 24 on the hub and 1 queued)
 
 A date marked "(queued)" means the build is on the `queue` branch and not live yet.
 
 | Build | Date | Category | What it does | Subject world | Core mechanic | Look |
 |---|---|---|---|---|---|---|
+| Overnight | 31 Oct (queued) | Animation and motion | A 48-second canvas film about one parcel's night, 18:42 to 05:58: a van drops a white box onto an induction belt, a scan arch reads its label (Bay 4), orange paddles shove parcels down colour-coded chutes into wheeled cages, the Bay 4 cage rolls up a ramp into a cutaway lorry that pulls out at dawn. Camera follows the box; play, pause, scrub, 0.5/1/2x speed, eight chapter buttons with captions | Parcel sorting depots, overnight logistics | A deterministic draw(t) timeline scrubbed or played, camera tracking a hero object | Bowlby One + DM Sans; saturated ultramarine ground, white and orange, lane colours orange/mint/pink/yellow |
 | Gone Quiet | 30 Oct | Museum and archive | A museum of eight household sounds that fell silent: rotary dial, typewriter bell, cassette rewind, floppy seek, monophonic ringtone, dial-up modem, fax handshake, CRT whine, each a drawn object with a placard, an era bar and a Web Audio synthesised recording with a live scope. A 1950–2030 year slider dims objects outside their era and counts how many sounds are still audible | Obsolete office and home technology sounds | Scrub a year to filter an exhibit wall; synthesise each sound from oscillators and noise | Syne 800 + IBM Plex Mono; warm gallery grey, charcoal, vermilion (dark mode charcoal) |
 | Thumbs Up, Maybe | 29 Oct | Field guide and reference | Build a hand from five finger buttons, a palm-or-back-of-hand toggle and a thumb-and-index ring; the drawn hand matches one of 14 gestures (thumbs up, OK ring, V both ways, open hand, horns, shaka, pointing, middle finger, pinky, fist, three fingers, thumb and index, I love you) and lists what it means in 7 regions, each marked friendly, neutral, varies or rude. Pick a destination and all 14 plate hands are marked for it; a shape with no entry suggests the nearest ones | Cross-cultural gestures and body language | Direct manipulation of a drawn hand that looks itself up in a reference | Permanent Marker + Figtree; bubblegum pink ground, plum ink, teal/amber/red verdict badges |
 | Ringball | 29 Oct | Speculative world | The invented sport of Halcyon, a ring habitat of 200 m radius spinning for 0.8 g. A side-on court with a curved floor, a thrower and a hoop on a post (placed at random, always reachable). Drag from the thrower (or use angle 0–180° and speed 4–28 m/s sliders) to aim and throw. Every flight is exact: a straight line in space rotated back into the turning frame, landing when it meets the rim. Three paths: the real flight, a dashed "gym guess" (ignoring the spin) and an optional chalked prediction. An inset "From outside" window shows the spinning ring and the same ball moving in a straight line. Readout gives airtime, apex, landing distance spinward/antispinward and the gym guess. "Show me one" solves for a hit; tally of hoops and throws, no grade. Below: ring spec cards, six rules, a glossary (spinward, hubward, lag) and a worked example (straight up at 15 m/s lands 12.5 m spinward after 3.5 s) | Space habitats, rotating frames, an invented sport | Aim-and-throw with exact Coriolis physics, shown beside the inertial view | Lilita One (rounded display) + Nunito Sans; ice-blue glass ground, white cards, ink navy, coral and cobalt; deep teal in dark mode |
@@ -75,7 +76,7 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 
 ## Patterns already used a lot (steer away from these)
 
-- **Categories:** mostly Toy, Tool, Simulation, Game, Instrument, Two-player game and Word and language. 7 categories are untouched (Animation and motion, Data story, Map and place, Editorial and zine, Museum and archive, Quiz and trivia, Puzzle hunt).
+- **Categories:** mostly Toy, Tool, Simulation, Game, Instrument, Two-player game and Word and language. 5 categories are untouched (Data story, Map and place, Editorial and zine, Quiz and trivia, Puzzle hunt).
 - **Dark night palettes:** 8 of 22 builds sit on near-black or navy. Favour daylight, bright or paper-white grounds (Sprouts, Hoist, Flush, Checkout, Viewing Recommended, Interchange, Tenth Hour, Scoville Bench, Squad Numbers, Going Up and Ringball are daylight).
 - **Serif display faces:** 10 of 22 use a serif display face; Viewing Recommended uses a slab (Zilla Slab). Young Serif and Bodoni Moda are each used twice. Tenth Hour used a formal script (Pinyon Script), so next time try hand-lettered, brush or display sans rather than another copperplate script. Taken sans faces: Barlow Condensed (Hoist), Bricolage Grotesque (Sprouts), Archivo Expanded (Flush), Space Mono (Checkout), Overpass (Interchange), Rubik Mono One + Rubik (Scoville Bench), Anton + Manrope (Squad Numbers: tall condensed uppercase), Federo + Outfit (Going Up: art deco geometric sans). Condensed uppercase sans is now used twice (Hoist, Squad Numbers); deco is now taken too. Ringball uses Lilita One (rounded chunky display) + Nunito Sans; rounded display is taken.
 - **Ground colours:** Drawdown and Viewing Recommended both sit on pale grey-green; Tenth Hour is pale lilac; Scoville Bench is saturated mustard yellow; Squad Numbers is saturated pitch green with mowing stripes; Going Up is peach plaster with brass; Ringball is pale ice blue (cyan-blue is now taken too). Pick something else next (no more yellow, lilac/purple, grey-green, green, or peach/brass for a while).
@@ -104,6 +105,8 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 - **Round dials and rings:** Tenth Hour has a clock face and a year ring. Avoid another radial/dial composition next.
 
 - **Obsolete tech and sound synthesis (30 Oct):** Gone Quiet is dead gadgets rebuilt as Web Audio. Leave retro gadgets, telephones and audio-synth builds alone for a while. Vermilion on warm grey and Syne are taken; the card-grid museum wall is used once.
+
+- **Parcels, depots and conveyor belts (31 Oct):** Overnight is a logistics film in saturated ultramarine with Bowlby One. Leave warehouses, deliveries and conveyors alone, and blue grounds are now taken as well as ice blue. Side-on flat-vector scenes with a tracking camera are used once; the film is a canvas draw(t) function, so a next motion piece could try a different form (typographic, abstract, a looping GIF-like piece).
 
 ## Rejected because they repeated an earlier build
 
@@ -145,7 +148,7 @@ Process tip (23–28 Oct): scheduled runs with no repo attached had no add_repo 
 
 ## Queued
 
-Nothing queued.
+- Overnight (31 Oct): Animation and motion. Artifact: https://claude.ai/artifact/8qsGvUEpySRMKXGRdTdTE3
 
 ## Left out on purpose
 
