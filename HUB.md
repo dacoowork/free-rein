@@ -38,16 +38,17 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Speculative world | Fiction as design: an invented city, sport, product line, holiday | 1 |
 | Food | Recipes, menus, flavour pairings, kitchen maths | 1 |
 | Time and ritual | Clocks, calendars, timers, daily practices | 1 |
-| Quiz and trivia | Test what you know | 0 |
+| Quiz and trivia | Test what you know | 1 |
 | Puzzle hunt | Linked puzzles with a hidden answer, meant to be solved over time | 0 |
 | How it works | Cutaways, blueprints and diagrams of machines and processes | 1 |
 
-## Catalogue (25 builds, all on the hub)
+## Catalogue (26 builds, 25 live and 1 queued)
 
 A date marked "(queued)" means the build is on the `queue` branch and not live yet.
 
 | Build | Date | Category | What it does | Subject world | Core mechanic | Look |
 |---|---|---|---|---|---|---|
+| Ballpark | 1 Nov (queued) | Quiz and trivia | Eight Fermi-style estimation questions drawn from a pool of 13 (rice grains in a kilo, heartbeats in a life, ants on Earth, fingernail growth in nm/s, days since the Big Bang). Drag a marker along an 8-decade log scale (or use arrow keys), lock in, and a dashed truth pin appears with the factor you were out by, points (100 at exact, 0 at 2 decades off) and a one-line fact. Final screen: score out of 800, a grade, whether you lean high or low, and a truth-vs-guess strip per question | Orders of magnitude, everyday and cosmic quantities | Drag a marker on a logarithmic scale, scored by decades of error | Unbounded 800 + Instrument Sans; saturated tangerine ground, cream card with hard black shadow, crimson marker; dark mode burnt umber with amber |
 | Overnight | 31 Oct | Animation and motion | A 48-second canvas film about one parcel's night, 18:42 to 05:58: a van drops a white box onto an induction belt, a scan arch reads its label (Bay 4), orange paddles shove parcels down colour-coded chutes into wheeled cages, the Bay 4 cage rolls up a ramp into a cutaway lorry that pulls out at dawn. Camera follows the box; play, pause, scrub, 0.5/1/2x speed, eight chapter buttons with captions | Parcel sorting depots, overnight logistics | A deterministic draw(t) timeline scrubbed or played, camera tracking a hero object | Bowlby One + DM Sans; saturated ultramarine ground, white and orange, lane colours orange/mint/pink/yellow |
 | Gone Quiet | 30 Oct | Museum and archive | A museum of eight household sounds that fell silent: rotary dial, typewriter bell, cassette rewind, floppy seek, monophonic ringtone, dial-up modem, fax handshake, CRT whine, each a drawn object with a placard, an era bar and a Web Audio synthesised recording with a live scope. A 1950–2030 year slider dims objects outside their era and counts how many sounds are still audible | Obsolete office and home technology sounds | Scrub a year to filter an exhibit wall; synthesise each sound from oscillators and noise | Syne 800 + IBM Plex Mono; warm gallery grey, charcoal, vermilion (dark mode charcoal) |
 | Thumbs Up, Maybe | 29 Oct | Field guide and reference | Build a hand from five finger buttons, a palm-or-back-of-hand toggle and a thumb-and-index ring; the drawn hand matches one of 14 gestures (thumbs up, OK ring, V both ways, open hand, horns, shaka, pointing, middle finger, pinky, fist, three fingers, thumb and index, I love you) and lists what it means in 7 regions, each marked friendly, neutral, varies or rude. Pick a destination and all 14 plate hands are marked for it; a shape with no entry suggests the nearest ones | Cross-cultural gestures and body language | Direct manipulation of a drawn hand that looks itself up in a reference | Permanent Marker + Figtree; bubblegum pink ground, plum ink, teal/amber/red verdict badges |
@@ -107,6 +108,7 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 - **Obsolete tech and sound synthesis (30 Oct):** Gone Quiet is dead gadgets rebuilt as Web Audio. Leave retro gadgets, telephones and audio-synth builds alone for a while. Vermilion on warm grey and Syne are taken; the card-grid museum wall is used once.
 
 - **Parcels, depots and conveyor belts (31 Oct):** Overnight is a logistics film in saturated ultramarine with Bowlby One. Leave warehouses, deliveries and conveyors alone, and blue grounds are now taken as well as ice blue. Side-on flat-vector scenes with a tracking camera are used once; the film is a canvas draw(t) function, so a next motion piece could try a different form (typographic, abstract, a looping GIF-like piece).
+- **Log-scale estimation quiz (1 Nov):** Ballpark is a drag-a-marker estimator. Tangerine/orange ground and Unbounded are taken. Quiz and trivia is now used once; try a different quiz form next (picture, map, audio or ordering) rather than another numeric guess.
 
 ## Rejected because they repeated an earlier build
 
@@ -148,7 +150,7 @@ Process tip (23–28 Oct): scheduled runs with no repo attached had no add_repo 
 
 ## Queued
 
-Nothing queued.
+- **Ballpark** (1 Nov, Quiz and trivia): on the `queue` branch. Artifact: https://claude.ai/artifact/MxsFRL8jm9RYH2XkGq4JJy . Goes live at https://dacoowork.github.io/free-rein/play.html?b=ballpark when Free Rein Publish runs.
 
 ## Left out on purpose
 

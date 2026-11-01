@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Syne:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -79,7 +79,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-10-31"></script>
+<script src="builds.js?v=2026-11-01"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -90,6 +90,17 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    tenfold(b,r){
+      // one ballpark question: a ten-fold scale with ticks, the guess marker and the dashed truth pin
+      let s=`<rect width="320" height="180" fill="${b.bg}"/><rect x="14" y="20" width="292" height="140" rx="12" fill="${b.panel}" stroke="${b.fg}" stroke-width="3"/>`;
+      s+=`<rect x="34" y="40" width="120" height="8" rx="4" fill="${b.fg}"/><rect x="34" y="56" width="70" height="8" rx="4" fill="${b.fg}"/>`;
+      s+=`<text x="34" y="100" font-size="26" font-weight="800" fill="${b.accent}" font-family="Unbounded, sans-serif">2.8M</text>`;
+      s+=`<rect x="34" y="124" width="252" height="5" rx="2" fill="${b.fg}"/>`;
+      for(let i=0;i<=8;i++)s+=`<rect x="${34+i*31.5-1}" y="124" width="2" height="12" fill="${b.fg}"/>`;
+      s+=`<line x1="${34+5.3*31.5}" y1="108" x2="${34+5.3*31.5}" y2="130" stroke="${b.fg}" stroke-width="3" stroke-dasharray="4 3"/>`;
+      s+=`<rect x="${34+3.9*31.5-9}" y="110" width="18" height="30" rx="6" fill="${b.accent}" stroke="${b.fg}" stroke-width="3"/>`;
+      return s;
+    },
     depotbelt(b,r){
       // the depot belt from the film: conveyor, scan arch, paddle, a yellow chute into a cage, the white parcel on the belt
       let s=`<rect width="320" height="180" fill="${b.bg}"/><rect y="20" width="320" height="130" fill="${b.panel}"/>`;

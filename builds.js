@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "ballpark",
+    title: "Ballpark",
+    date: "2026-11-01",
+    kind: "Quiz and trivia",
+    blurb: "Eight estimation questions with no calculator: how many grains of rice in a bag, heartbeats in a life, ants on Earth, how fast a fingernail grows. Slide a marker along a scale that jumps ten times at every tick, lock it in, and see the truth pinned beside your guess. Being out by a factor of two still scores well; the final screen shows whether you lean high or low.",
+    font: "'Unbounded', 'Arial Black', sans-serif", fontWeight: 800, letterSpacing: "-0.02em",
+    bg: "#ff7a1a", fg: "#1a0f08", accent: "#d6204a", accent2: "#1a0f08", panel: "#fff6ea",
+    motif: "tenfold"
+  },
+  {
     slug: "overnight",
     title: "Overnight",
     date: "2026-10-31",

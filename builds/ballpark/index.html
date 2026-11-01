@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ballpark</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@800&family=Instrument+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ff7a1a;--card:#fff6ea;--ink:#1a0f08;--mute:#6b4a35;--line:#1a0f08;--pin:#1a0f08;--you:#d6204a;--good:#0f7a4a;--btn:#1a0f08;--btnf:#fff6ea}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#1d1008;--card:#2b1a0f;--ink:#ffe9d2;--mute:#d2a57f;--line:#ffb36b;--pin:#ffb36b;--you:#ff6b8b;--good:#5fe0a0;--btn:#ff8a2a;--btnf:#1d1008}}
+:root[data-theme=dark]{--bg:#1d1008;--card:#2b1a0f;--ink:#ffe9d2;--mute:#d2a57f;--line:#ffb36b;--pin:#ffb36b;--you:#ff6b8b;--good:#5fe0a0;--btn:#ff8a2a;--btnf:#1d1008}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 'Instrument Sans',system-ui,sans-serif;min-height:100vh}
+main{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+h1{font:800 clamp(34px,8vw,64px)/1 'Unbounded',sans-serif;margin:8px 0 6px;letter-spacing:-.02em}
+.sub{margin:0 0 18px;font-weight:600;max-width:520px}
+.bar{display:flex;justify-content:space-between;font-weight:700;font-size:14px;margin-bottom:8px}
+.card{background:var(--card);border:3px solid var(--line);border-radius:18px;padding:18px 16px 20px;box-shadow:6px 6px 0 var(--line)}
+.q{font:800 clamp(20px,5vw,28px)/1.15 'Unbounded',sans-serif;margin:0 0 4px;overflow-wrap:anywhere}
+.unit{color:var(--mute);margin:0 0 18px;font-size:15px}
+.read{font:800 clamp(30px,9vw,48px)/1.05 'Unbounded',sans-serif;color:var(--you);margin:6px 0 2px;overflow-wrap:anywhere}
+.readl{font-size:13px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.08em}
+.track{position:relative;height:84px;margin:10px 8px 6px;touch-action:none;cursor:ew-resize;user-select:none}
+.axis{position:absolute;left:0;right:0;top:34px;height:6px;background:var(--line);border-radius:3px}
+.tick{position:absolute;top:34px;width:2px;height:16px;background:var(--line);transform:translateX(-1px)}
+.tl{position:absolute;top:54px;font-size:11px;font-weight:700;transform:translateX(-50%);white-space:nowrap;color:var(--mute)}
+.tl.alt{display:none}
+.knob{position:absolute;top:14px;width:30px;height:46px;margin-left:-15px;background:var(--you);border:3px solid var(--line);border-radius:10px;outline:none}
+.knob:focus-visible{box-shadow:0 0 0 4px var(--ink)}
+.truth{position:absolute;top:6px;width:0;height:50px;border-left:4px dashed var(--pin);display:none}
+.truth b{position:absolute;top:-4px;left:6px;font-size:12px;white-space:nowrap;background:var(--card);padding:0 3px}
+.truth.r{}
+.btn{font:800 15px 'Unbounded',sans-serif;background:var(--btn);color:var(--btnf);border:0;border-radius:12px;padding:14px 20px;cursor:pointer;min-height:48px}
+.btn:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.res{margin-top:16px;border-top:3px solid var(--line);padding-top:14px}
+.res h2{font:800 20px/1.2 'Unbounded',sans-serif;margin:0 0 6px}
+.res p{margin:4px 0}
+.pts{font:800 28px 'Unbounded',sans-serif}
+.hint{font-size:13px;color:var(--mute);margin:0 0 14px}
+.sum{display:grid;gap:10px;margin:16px 0}
+.row{display:grid;grid-template-columns:1fr;gap:2px}
+.row span{font-size:14px;font-weight:600}
+.mini{position:relative;height:18px}
+.mini i{position:absolute;top:8px;left:0;right:0;height:2px;background:var(--line)}
+.mini u{position:absolute;top:1px;width:16px;height:16px;margin-left:-8px;border-radius:50%;border:2px solid var(--line);background:var(--you)}
+.mini s{position:absolute;top:0;width:0;height:18px;border-left:3px dashed var(--pin)}
+.big{font:800 clamp(44px,12vw,72px)/1 'Unbounded',sans-serif;margin:6px 0}
+.leg{font-size:13px;color:var(--mute)}
+.top{display:flex;justify-content:flex-end}
+.tg{background:transparent;color:var(--ink);border:2px solid var(--ink);border-radius:999px;font:700 12px 'Instrument Sans';padding:6px 12px;cursor:pointer}
+</style></head><body><main>
+<div class="top"><button class="tg" id="tg" aria-label="Toggle light or dark">Light / dark</button></div>
+<h1>Ballpark</h1>
+<p class="sub">Eight questions, no calculators. Slide to where you think the answer sits on a scale that jumps ten times at every tick. Being out by a factor of two still scores well.</p>
+<div class="bar"><span id="prog">Question 1 of 8</span><span id="tot">0 points</span></div>
+<div class="card" id="card"></div>
+</main>
+<script>
+const Q=[
+{q:"Grains of rice in a 1 kg bag",u:"grains",v:50000,lo:1,f:"A grain weighs about 20 milligrams, so a kilo is roughly 50,000 of them."},
+{q:"Water in an Olympic swimming pool",u:"litres",v:2500000,lo:2,f:"50 m × 25 m × 2 m deep is 2,500 cubic metres, which is 2.5 million litres."},
+{q:"Distance from Earth to the Moon",u:"kilometres",v:384400,lo:0,f:"About 30 Earths would fit in the gap, side by side."},
+{q:"Heartbeats in an 80-year life",u:"beats",v:2900000000,lo:3,f:"Around 70 beats a minute for 80 years comes to nearly three billion."},
+{q:"People who have ever lived",u:"people",v:117000000000,lo:4,f:"Demographers estimate about 117 billion, so today's 8 billion are roughly 7% of them."},
+{q:"Cells in an adult human body",u:"cells",v:37000000000000,lo:6,f:"About 37 trillion, and most of them are red blood cells."},
+{q:"Ants alive on Earth",u:"ants",v:20000000000000000,lo:10,f:"A 2022 count put it near 20 quadrillion, about 2.5 million ants per person."},
+{q:"How fast a fingernail grows",u:"nanometres per second",v:1.2,lo:-4,f:"About 3 mm a month, which works out at just over 1 nanometre every second."},
+{q:"Articles on English Wikipedia",u:"articles",v:7000000,lo:2,f:"Just under 7 million in 2024, and it passes a new million every few years."},
+{q:"Days since the Big Bang",u:"days",v:5000000000000,lo:6,f:"13.8 billion years × 365 gives about 5 trillion days."},
+{q:"Teaspoons of sugar in a can of cola",u:"teaspoons",v:9,lo:-3,f:"A 330 ml can holds about 35 g of sugar, and a level teaspoon is about 4 g."},
+{q:"Mass of a blue whale",u:"kilograms",v:150000,lo:1,f:"A big adult is around 150 tonnes, about 25 elephants."},
+{q:"Seconds in one year",u:"seconds",v:31560000,lo:2,f:"60 × 60 × 24 × 365.25, which is about 31.6 million."}];
+const SPAN=8, NAMES={"-4":"0.0001","-3":"0.001","-2":"0.01","-1":"0.1",0:"1",1:"10",2:"100",3:"1K",4:"10K",5:"100K",6:"1M",7:"10M",8:"100M",9:"1B",10:"10B",11:"100B",12:"1T",13:"10T",14:"100T",15:"1Q",16:"10Q",17:"100Q",18:"1Qn"};
+function fmt(v){const g=x=>{let s=x>=100?Math.round(x):x>=10?+x.toFixed(1):+x.toPrecision(2);return s.toString()};
+ if(v<1000)return g(v)==="0"?v.toExponential(1):g(v);
+ const t=[[1e15,"quadrillion"],[1e12,"trillion"],[1e9,"billion"],[1e6,"million"],[1e3,"thousand"]];
+ for(const[d,n]of t)if(v>=d*0.995)return (+(v/d).toPrecision(2))+" "+n;return Math.round(v)}
+const $=id=>document.getElementById(id);
+let deck,i,t,locked,score,hist;
+function newGame(){deck=[...Q].sort(()=>Math.random()-.5).slice(0,8);i=0;score=0;hist=[];show()}
+function val(q,t){return Math.pow(10,q.lo+t*SPAN)}
+function show(){
+ const q=deck[i];t=.5;locked=false;
+ $("prog").textContent=`Question ${i+1} of 8`;$("tot").textContent=score+" points";
+ let ticks="";for(let k=0;k<=SPAN;k++){const e=q.lo+k,p=k/SPAN*100;ticks+=`<div class="tick" style="left:${p}%"></div><div class="tl" style="left:${p}%">${NAMES[e]}</div>`}
+ $("card").innerHTML=`<p class="q">${q.q}</p><p class="unit">Answer in ${q.u}. Drag the marker.</p>
+ <div class="readl">Your guess</div><div class="read" id="read"></div>
+ <div class="track" id="trk"><div class="axis"></div>${ticks}<div class="truth" id="tr"></div><div class="knob" id="kn" tabindex="0" role="slider" aria-label="Your guess" aria-valuemin="0" aria-valuemax="100"></div></div>
+ <p class="hint">Each tick is ten times the one before.</p>
+ <button class="btn" id="lock">Lock it in</button><div id="out"></div>`;
+ upd();bind();
+ const w=$("trk").clientWidth;
+}
+function upd(){const q=deck[i];$("kn").style.left=(t*100)+"%";$("kn").setAttribute("aria-valuenow",Math.round(t*100));$("kn").setAttribute("aria-valuetext",fmt(val(q,t))+" "+q.u);$("read").textContent=fmt(val(q,t))}
+function bind(){
+ const trk=$("trk");
+ const set=e=>{if(locked)return;const r=trk.getBoundingClientRect();t=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));upd()};
+ let d=false;
+ trk.addEventListener("pointerdown",e=>{d=true;trk.setPointerCapture(e.pointerId);set(e);$("kn").focus({preventScroll:true})});
+ trk.addEventListener("pointermove",e=>{if(d)set(e)});
+ trk.addEventListener("pointerup",()=>d=false);trk.addEventListener("pointercancel",()=>d=false);
+ $("kn").addEventListener("keydown",e=>{if(locked)return;const s=e.shiftKey?.1:.02;
+  if(e.key==="ArrowRight"||e.key==="ArrowUp"){t=Math.min(1,t+s)}else if(e.key==="ArrowLeft"||e.key==="ArrowDown"){t=Math.max(0,t-s)}else if(e.key==="Home")t=0;else if(e.key==="End")t=1;else return;e.preventDefault();upd()});
+ $("lock").onclick=lock;
+}
+function lock(){
+ if(locked)return;locked=true;const q=deck[i];const g=val(q,t);
+ const err=Math.abs(Math.log10(g)-Math.log10(q.v)), signed=Math.log10(g)-Math.log10(q.v);
+ const p=Math.max(0,Math.round(100*(1-err/2)));score+=p;hist.push({q,g,err,signed,p});
+ const tt=(Math.log10(q.v)-q.lo)/SPAN;
+ const tr=$("tr");tr.style.display="block";tr.style.left=(tt*100)+"%";tr.innerHTML=`<b style="${tt>.7?'right:6px;left:auto':''}">Truth</b>`;
+ const fac=Math.pow(10,err);
+ let verdict=err<.05?"Bullseye.":err<.18?"Within a whisker.":err<.4?"Right ballpark.":err<1?"In the neighbourhood.":err<2?"A long way out.":"Wildly off.";
+ let how=err<.05?"You were essentially exact.":`That's ${fac<10?fac.toFixed(1):Math.round(fac).toLocaleString()}× too ${signed>0?"high":"low"}.`;
+ $("lock").style.display="none";$("tot").textContent=score+" points";
+ $("out").innerHTML=`<div class="res"><div class="pts">+${p}</div><h2>${verdict} It's ${fmt(q.v)}.</h2><p>${how} You said ${fmt(g)}.</p><p>${q.f}</p><p style="margin-top:14px"><button class="btn" id="nx">${i<7?"Next question":"See my results"}</button></p></div>`;
+ $("nx").onclick=()=>{i++;i<8?show():end()};
+ $("nx").scrollIntoView({block:"nearest"});
+}
+function end(){
+ $("prog").textContent="Finished";
+ const mean=hist.reduce((a,h)=>a+h.signed,0)/hist.length;
+ const lean=Math.abs(mean)<.25?"You lean neither high nor low, which is rare.":mean>0?`You tend to guess high (about ${Math.pow(10,mean).toFixed(1)}× on average).`:`You tend to guess low (about ${Math.pow(10,-mean).toFixed(1)}× under on average).`;
+ const grade=score>=650?"Human calculator":score>=500?"Sharp instincts":score>=350?"Decent nose":score>=200?"Vague feelings":"Pure vibes";
+ let rows=hist.map(h=>{const a=(Math.log10(h.q.v)-h.q.lo)/SPAN*100,b=(Math.log10(h.g)-h.q.lo)/SPAN*100;
+  return `<div class="row"><span>${h.q.q}: ${fmt(h.q.v)} (you ${fmt(h.g)}, +${h.p})</span><div class="mini"><i></i><s style="left:${a}%"></s><u style="left:${b}%"></u></div></div>`}).join("");
+ $("card").innerHTML=`<div class="readl">Final score</div><div class="big" id="final">${score}<span style="font-size:.4em"> / 800</span></div><h2 style="font:800 22px 'Unbounded';margin:0 0 6px">${grade}</h2><p>${lean}</p>
+ <div class="sum">${rows}</div><p class="leg">Dashed line is the truth, the round dot is your guess, each on its own ten-fold scale.</p><button class="btn" id="again">Play again</button>`;
+ $("again").onclick=newGame;
+}
+$("tg").onclick=()=>{const r=document.documentElement,dk=getComputedStyle(r).getPropertyValue("--bg").trim()==="#1d1008";r.dataset.theme=dk?"light":"dark"};
+window.__ballpark={get state(){return{i,t,locked,score,hist:hist.map(h=>({q:h.q.q,p:h.p,err:h.err})),guess:deck&&i<8?val(deck[i],t):null}},fmt};
+newGame();
+</script></body></html>
