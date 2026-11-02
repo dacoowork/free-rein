@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "found-phone",
+    title: "Found Phone",
+    date: "2026-11-02",
+    kind: "Puzzle hunt",
+    blurb: "Someone left a phone on the 8:15 bus and Mo is locked out of their house. Four apps each hide a word: a shopping list with items crossed out, three unnamed alarms, six photos out of order, and a street grid to walk. Each word gives one letter, and together they spell the passcode that says where the spare key is. Hints come in two steps.",
+    font: "'Dela Gothic One', Impact, sans-serif", letterSpacing: "0",
+    bg: "#8c1c2c", fg: "#1d1416", accent: "#8c1c2c", accent2: "#fbf7f1", panel: "#fbf7f1",
+    motif: "passcode"
+  },
+  {
     slug: "ballpark",
     title: "Ballpark",
     date: "2026-11-01",

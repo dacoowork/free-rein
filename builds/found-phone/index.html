@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Found Phone</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one centred phone on an oxblood ground, a story strip above; apps open inside the phone. */
+:root{--bg:#8c1c2c;--bg2:#6f1422;--phone:#fbf7f1;--screen:#fbf7f1;--ink:#1d1416;--mute:#6d5a5e;--line:#e3d8d0;--acc:#8c1c2c;--accf:#fff;--ok:#1d7a52;--bad:#b3261e;--card:#fff;--bezel:#1d1416;--onbg:#fff4ee;
+--disp:'Dela Gothic One',Impact,sans-serif;--body:'Figtree',system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#2a0d12;--bg2:#1c070b;--phone:#171113;--screen:#171113;--ink:#f5ece8;--mute:#b5a3a6;--line:#35282b;--acc:#ff8a8f;--accf:#2a0d12;--ok:#5fd6a0;--bad:#ff8a80;--card:#231a1d;--bezel:#050304;--onbg:#f5ece8;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#2a0d12;--bg2:#1c070b;--phone:#171113;--screen:#171113;--ink:#f5ece8;--mute:#b5a3a6;--line:#35282b;--acc:#ff8a8f;--accf:#2a0d12;--ok:#5fd6a0;--bad:#ff8a80;--card:#231a1d;--bezel:#050304;--onbg:#f5ece8;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--onbg);font-family:var(--body);padding-block:20px 32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:420px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-direction:column;gap:10px}
+h1{font:400 clamp(30px,8vw,40px)/1 var(--disp);margin:0;text-wrap:balance}
+.intro{margin:0;font-size:15px;line-height:1.45;opacity:.92}
+.pass{display:flex;gap:8px;align-items:center}
+.pass b{font:600 11px var(--body);letter-spacing:.14em;text-transform:uppercase;margin-right:4px}
+.slot{width:40px;height:44px;border:2px solid var(--onbg);border-radius:6px;display:grid;place-items:center;font:400 22px var(--disp)}
+.slot.on{background:var(--onbg);color:var(--bg)}
+.phone{background:var(--bezel);border-radius:34px;padding:10px;box-shadow:0 18px 40px #0006}
+.screen{background:var(--screen);color:var(--ink);border-radius:26px;height:560px;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.status{display:flex;justify-content:space-between;padding:10px 20px 4px;font:600 12px var(--body);color:var(--mute)}
+.home{flex:1;padding:18px 20px;display:flex;flex-direction:column;gap:18px;overflow:auto}
+.wall{font:400 15px/1.3 var(--disp);color:var(--acc)}
+.note{margin:0;font-size:13px;color:var(--mute);line-height:1.4}
+.apps{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.app{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border-radius:16px;background:var(--card);border:1px solid var(--line);font-weight:600;font-size:14px;position:relative}
+.app:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.app svg{width:44px;height:44px}
+.app .tick{position:absolute;top:6px;right:8px;font:700 12px var(--body);color:var(--ok);display:none}
+.app.done .tick{display:block}
+.bar{display:flex;align-items:center;gap:8px;padding:6px 14px 10px;border-bottom:1px solid var(--line)}
+.bar button{all:unset;cursor:pointer;font-weight:700;color:var(--acc);font-size:14px;padding:4px 6px}
+.bar h2{margin:0;font:400 16px var(--disp);flex:1;text-align:center;margin-right:40px}
+.body{flex:1;overflow:auto;padding:14px 18px;display:flex;flex-direction:column;gap:14px}
+.ans{border-top:1px solid var(--line);padding:10px 14px 14px;display:flex;flex-direction:column;gap:8px;background:var(--screen)}
+.row{display:flex;gap:8px}
+input[type=text]{flex:1;min-width:0;font:700 17px var(--body);letter-spacing:.12em;text-transform:uppercase;padding:10px 12px;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--ink)}
+.btn{all:unset;cursor:pointer;background:var(--acc);color:var(--accf);font-weight:700;padding:10px 16px;border-radius:10px;font-size:15px;text-align:center}
+.btn.ghost{background:none;color:var(--acc);border:2px solid var(--acc);padding:8px 12px;font-size:13px}
+.msg{min-height:20px;font-size:14px;font-weight:600}
+.msg.ok{color:var(--ok)}.msg.bad{color:var(--bad)}
+.hint{font-size:13px;color:var(--mute);line-height:1.4}
+/* notes */
+.paper{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:17px;line-height:1.9}
+.paper h3{margin:0 0 4px;font:700 18px var(--body)}
+.paper s{color:var(--mute)}
+/* alarms */
+.alarm{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 14px}
+.alarm .t{font:400 30px var(--disp);letter-spacing:.02em}
+.alarm small{display:block;color:var(--mute);font-size:12px}
+.sw{all:unset;cursor:pointer;width:46px;height:28px;border-radius:14px;background:var(--line);position:relative}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:left .15s}
+.sw[aria-pressed=true]{background:var(--ok)}.sw[aria-pressed=true]::after{left:21px}
+/* photos */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ph{all:unset;cursor:pointer;aspect-ratio:1;border-radius:10px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;position:relative;overflow:hidden}
+.ph svg{width:70%;height:70%}
+.ph .ts{position:absolute;inset:auto 0 0 0;background:var(--acc);color:var(--accf);font:700 12px var(--body);text-align:center;padding:3px 0;display:none}
+.ph.show .ts{display:block}
+/* maps */
+.map{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.cell{all:unset;cursor:pointer;aspect-ratio:1;display:grid;place-items:center;border-radius:8px;background:var(--card);border:1px solid var(--line);font:400 20px var(--disp);position:relative}
+.cell.start::before{content:"★";position:absolute;top:1px;left:4px;font-size:11px;color:var(--acc)}
+.cell.on{background:var(--acc);color:var(--accf)}
+.dirs{margin:0;padding-left:20px;font-size:15px;line-height:1.6}
+.trace{font:700 15px var(--body);letter-spacing:.16em;min-height:22px}
+/* final */
+.final{padding:16px;display:flex;flex-direction:column;gap:12px}
+.big{font:400 44px var(--disp);color:var(--acc);letter-spacing:.06em}
+.foot{font-size:12px;opacity:.8}
+.foot button{all:unset;cursor:pointer;text-decoration:underline}
+@media (max-width:420px){.screen{height:min(560px,calc(100dvh - 190px));min-height:480px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<div class="wrap">
+<header>
+<h1>Found Phone</h1>
+<p class="intro">Someone left this phone on the 8:15 bus. The screen is open and the owner, Mo, is locked out of their own house. Four apps each hide one letter of a passcode, and the passcode says where the spare key is.</p>
+</header>
+<div class="pass" aria-label="Passcode letters"><b>Passcode</b><span class="slot" id="s0"></span><span class="slot" id="s1"></span><span class="slot" id="s2"></span><span class="slot" id="s3"></span></div>
+<div class="phone"><div class="screen" id="screen"></div></div>
+<div class="foot">Each answer is a word. Puzzle 1 gives you its 1st letter, puzzle 2 its 2nd, and so on. <button id="reset" type="button">Start again</button></div>
+</div>
+<script>
+const PUZ=[
+ {id:'notes',name:'Notes',answer:'SALAD',n:0,
+  hints:['Some items are crossed out. Mo already bought those.','Read the first letter of each item that is not crossed out, top to bottom.']},
+ {id:'alarms',name:'Alarms',answer:'SHORTS',n:1,
+  hints:['Each alarm time is two numbers: the hour and the minute.','Think A=1, B=2, C=3. Each alarm gives two letters.']},
+ {id:'photos',name:'Photos',answer:'SKETCH',n:2,
+  hints:['Tap a photo to see when it was taken.','Put the photos in the order they were taken, earliest first, and take each object’s first letter.']},
+ {id:'maps',name:'Maps',answer:'GOLDEN',n:3,
+  hints:['Start on the star and follow the moves one at a time. Tap the squares as you go.','Write down the letter you land on after each move, including the start.']}
+];
+const KEY='found-phone-v1';
+let st={solved:{},hints:{},all:false,alarms:[true,false,true]};
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.solved)st=Object.assign(st,s)}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+const $=s=>document.querySelector(s), scr=$('#screen');
+const icons={
+ notes:'<svg viewBox="0 0 44 44"><rect x="7" y="4" width="30" height="36" rx="5" fill="#f3c63b"/><rect x="7" y="4" width="30" height="9" rx="4" fill="#d9a514"/><path d="M13 21h18M13 27h18M13 33h11" stroke="#6b4e00" stroke-width="2.5" stroke-linecap="round"/></svg>',
+ alarms:'<svg viewBox="0 0 44 44"><circle cx="22" cy="24" r="14" fill="#fff" stroke="#1d1416" stroke-width="3"/><path d="M22 15v9l6 4" stroke="#1d1416" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M8 10l6-5M36 10l-6-5" stroke="#e5484d" stroke-width="4" stroke-linecap="round"/></svg>',
+ photos:'<svg viewBox="0 0 44 44"><rect x="5" y="8" width="34" height="28" rx="6" fill="#4aa3df"/><circle cx="16" cy="19" r="4" fill="#fff"/><path d="M5 32l11-9 8 7 6-5 9 7v4a6 6 0 01-6 6H11a6 6 0 01-6-6z" fill="#2f7d4f"/></svg>',
+ maps:'<svg viewBox="0 0 44 44"><rect x="5" y="5" width="34" height="34" rx="7" fill="#e9e2cf"/><path d="M5 28l12-6 10 8 12-9" stroke="#fff" stroke-width="5" fill="none"/><path d="M22 8a7 7 0 017 7c0 6-7 13-7 13s-7-7-7-13a7 7 0 017-7z" fill="#e5484d"/><circle cx="22" cy="15" r="3" fill="#fff"/></svg>'
+};
+function slots(){PUZ.forEach((p,i)=>{const e=$('#s'+i),ok=st.solved[p.id];e.textContent=ok?p.answer[p.n]:'';e.classList.toggle('on',!!ok)})}
+function home(){
+ const done=PUZ.filter(p=>st.solved[p.id]).length;
+ scr.innerHTML=`<div class="status"><span>8:15</span><span>Found on the bus</span></div><div class="home"><div class="wall">Mo’s phone</div>
+ <p class="note">Lock screen note: “If found, please call my sister. Sorry. Locked myself out. The spare is somewhere I would never lose it.”</p>
+ <div class="apps">${PUZ.map(p=>`<button class="app ${st.solved[p.id]?'done':''}" data-id="${p.id}" type="button">${icons[p.id]}<span>${p.name}</span><span class="tick">solved</span></button>`).join('')}</div>
+ ${done===4?`<button class="btn" id="unlock" type="button">Enter passcode</button>`:`<p class="note">${done} of 4 letters found.</p>`}</div>`;
+ scr.querySelectorAll('.app').forEach(b=>b.onclick=()=>open(b.dataset.id));
+ const u=$('#unlock');if(u)u.onclick=final;
+}
+function frame(p,content,extra){
+ scr.innerHTML=`<div class="status"><span>8:15</span><span>${p.name}</span></div><div class="bar"><button id="back" type="button">‹ Home</button><h2>${p.name}</h2></div><div class="body">${content}</div>
+ <div class="ans"><div class="row"><input type="text" id="ans" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Answer word" placeholder="ANSWER WORD" ${st.solved[p.id]?'disabled value="'+p.answer+'"':''}><button class="btn" id="chk" type="button">Check</button></div>
+ <div class="msg ${st.solved[p.id]?'ok':''}" id="msg" role="status">${st.solved[p.id]?'Solved. Letter '+(p.n+1)+' of the passcode is '+p.answer[p.n]+'.':''}</div>
+ <div class="row" style="align-items:center"><button class="btn ghost" id="hint" type="button">Hint</button><span class="hint" id="hinttext">${hintText(p)}</span></div></div>`;
+ $('#back').onclick=home;
+ const go=()=>{const v=$('#ans').value.trim().toUpperCase();if(!v)return;const m=$('#msg');
+  if(v===p.answer){st.solved[p.id]=true;save();slots();m.className='msg ok';m.textContent='Solved. Letter '+(p.n+1)+' of the passcode is '+p.answer[p.n]+'.';$('#ans').disabled=true}
+  else{m.className='msg bad';m.textContent='Not that word. Check it against the clues.'}};
+ $('#chk').onclick=go;$('#ans').onkeydown=e=>{if(e.key==='Enter')go()};
+ $('#hint').onclick=()=>{st.hints[p.id]=Math.min(2,(st.hints[p.id]||0)+1);save();$('#hinttext').textContent=hintText(p)};
+ if(extra)extra();
+}
+function hintText(p){const n=st.hints[p.id]||0;return n?p.hints.slice(0,n).join(' '):'Stuck? Tap Hint.'}
+function open(id){const p=PUZ.find(x=>x.id===id);({notes,alarms,photos,maps})[id](p)}
+function notes(p){frame(p,`<div class="paper"><h3>Shopping</h3><s>Milk</s><br>Soup<br><s>Eggs</s><br>Apples<br>Lemons<br><s>Rice</s><br>Aubergine<br><s>Bread</s><br>Dates</div><p class="hint">A list Mo wrote on the bus. Half of it was already in the bag.</p>`)}
+function alarms(p){
+ const A=[['19:08','Do not snooze'],['15:18','Weekdays'],['20:19','Once']];
+ frame(p,`${A.map((a,i)=>`<div class="alarm"><div><span class="t">${a[0]}</span><small>${a[1]}</small></div><button class="sw" data-i="${i}" aria-pressed="${st.alarms[i]}" aria-label="Alarm ${a[0]}"></button></div>`).join('')}<p class="hint">Three alarms with no names. Mo sets them in code, so the numbers are not times to anyone else.</p>`,()=>{
+  scr.querySelectorAll('.sw').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;st.alarms[i]=!st.alarms[i];b.setAttribute('aria-pressed',st.alarms[i]);save()})})}
+const PH=[['Hat','9:40',`<svg viewBox="0 0 40 40"><path d="M6 28h28M11 28c0-12 4-17 9-17s9 5 9 17" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>`],
+['Cup','9:05',`<svg viewBox="0 0 40 40"><path d="M9 12h18v12a6 6 0 01-6 6h-6a6 6 0 01-6-6zM27 15h4a3 3 0 010 8h-4" fill="none" stroke="currentColor" stroke-width="3"/></svg>`],
+['Sock','7:10',`<svg viewBox="0 0 40 40"><path d="M14 6h12v16l8 6c1 4-3 7-7 5l-13-8z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>`],
+['Egg','7:45',`<svg viewBox="0 0 40 40"><ellipse cx="20" cy="23" rx="10" ry="13" fill="none" stroke="currentColor" stroke-width="3"/></svg>`],
+['Kettle','7:30',`<svg viewBox="0 0 40 40"><path d="M8 18h20v12H8zM28 20h5v6h-5M12 18c0-5 4-7 6-7s6 2 6 7M8 22l-4-3" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>`],
+['Tree','8:55',`<svg viewBox="0 0 40 40"><path d="M20 34V22M20 6l-10 14h20zM20 14L8 28h24z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>`]];
+function photos(p){
+ frame(p,`<div class="grid3">${PH.map((h,i)=>`<button class="ph" data-i="${i}" type="button" aria-label="Photo of a ${h[0].toLowerCase()}, tap to show time">${h[2]}<span class="ts">${h[1]} am</span></button>`).join('')}</div><p class="hint">Six photos from this morning. The camera roll is out of order.</p>`,()=>{
+  scr.querySelectorAll('.ph').forEach(b=>b.onclick=()=>b.classList.toggle('show'))})}
+const GRID='GQMRB'+'XOZPT'+'KCLDE'+'WHVYA'+'FUINS';
+function maps(p){
+ // path: G(0,0) -R1-> O(1,0) -D1-> L(1,1)... laid out on 5x5 rows
+ const cells=[];const L=['G','O','Z','P','T','K','X','L','D','E','W','H','V','N','A','F','U','I','S','R','C','Q','M','Y','B'];
+ // place path: (0,0)G (1,0)O (1,1)L (2,1)D (3,1)E (3,3)N
+ const g=Array(25).fill(null);const put=(x,y,c)=>g[y*5+x]=c;
+ put(0,0,'G');put(1,0,'O');put(1,1,'L');put(2,1,'D');put(3,1,'E');put(3,3,'N');
+ const fill='QMRBXZPTKCWHVYAFUISJ'.split('');let k=0;for(let i=0;i<25;i++)if(!g[i])g[i]=fill[k++];
+ frame(p,`<div class="map">${g.map((c,i)=>`<button class="cell ${i===0?'start':''}" data-i="${i}" type="button" aria-label="Square ${c}">${c}</button>`).join('')}</div><div class="trace" id="trace" aria-live="polite"></div>
+ <ol class="dirs"><li>Start on the star.</li><li>Right 1.</li><li>Down 1.</li><li>Right 1.</li><li>Right 1.</li><li>Down 2.</li></ol>`,()=>{
+  const t=[];scr.querySelectorAll('.cell').forEach(b=>b.onclick=()=>{b.classList.toggle('on');t.length=0;scr.querySelectorAll('.cell.on').forEach(x=>t.push(x.textContent));$('#trace').textContent=t.join(' ')})})}
+function final(){
+ scr.innerHTML=`<div class="status"><span>8:15</span><span>Passcode</span></div><div class="final"><div class="wall">Four letters: ${PUZ.map(p=>p.answer[p.n]).join(' ')}</div>
+ <p class="note">Those letters spell a word, and the word is where Mo keeps the spare key.</p>
+ <div class="row"><input type="text" id="fin" maxlength="8" autocomplete="off" autocapitalize="characters" aria-label="Passcode word" placeholder="PASSCODE"><button class="btn" id="fgo" type="button">Unlock</button></div><div class="msg" id="fmsg" role="status"></div><button class="btn ghost" id="fb" type="button">‹ Home</button></div>`;
+ $('#fb').onclick=home;
+ const go=()=>{const v=$('#fin').value.trim().toUpperCase();if(v==='SHED'){st.all=true;save();ending()}else{$('#fmsg').className='msg bad';$('#fmsg').textContent='The phone shakes. Try the four letters in order.'}};
+ $('#fgo').onclick=go;$('#fin').onkeydown=e=>{if(e.key==='Enter')go()};
+}
+function ending(){
+ scr.innerHTML=`<div class="status"><span>8:15</span><span>Unlocked</span></div><div class="final"><div class="big">SHED</div>
+ <p class="note" style="font-size:16px;color:var(--ink)">The phone unlocks and a message from Mo’s sister is waiting: “If you found this, the spare key is under the flowerpot in the shed. Tell Mo to stop hiding it in the one place the bus does not go.”</p>
+ <p class="note">Solved. Four apps, four letters, one word.</p><button class="btn ghost" id="fb" type="button">‹ Home</button></div>`;
+ $('#fb').onclick=home;
+}
+$('#reset').onclick=()=>{st={solved:{},hints:{},all:false,alarms:[true,false,true]};save();slots();home()};
+slots();st.all?ending():home();
+</script>
+</body></html>
