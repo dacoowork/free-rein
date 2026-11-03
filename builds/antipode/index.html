@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Antipode</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#efe9dc;--sea:#e1d9c6;--ink:#1b1a17;--mute:#6a6457;--line:#cfc6b1;--here:#d6196f;--there:#3c27c9;--card:#f8f4ea;--land:#2a2823;--match:#d6196f}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#1a1815;--sea:#26231e;--ink:#efe9dc;--mute:#a49d8c;--line:#3a362e;--here:#ff5fa8;--there:#8f86ff;--card:#221f1b;--land:#d9d1bd;--match:#ff5fa8}}
+:root[data-theme=dark]{--bg:#1a1815;--sea:#26231e;--ink:#efe9dc;--mute:#a49d8c;--line:#3a362e;--here:#ff5fa8;--there:#8f86ff;--card:#221f1b;--land:#d9d1bd;--match:#ff5fa8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Inter,system-ui,sans-serif}
+main{max-width:980px;margin:0 auto;padding:28px 16px 56px}
+h1{font:700 clamp(44px,9vw,84px)/.95 'Familjen Grotesk',sans-serif;letter-spacing:-.03em;margin:0 0 10px}
+h1 span{color:var(--there)}
+.lede{max-width:56ch;color:var(--mute);margin:0 0 22px}
+h2{font:700 13px 'Familjen Grotesk',sans-serif;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+h2 b{font-weight:700;letter-spacing:0;text-transform:none;font-size:15px}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.chips button,.btn{font:600 14px Inter,sans-serif;border:1.5px solid var(--ink);background:transparent;color:var(--ink);padding:6px 12px;border-radius:99px;cursor:pointer;min-height:36px}
+.chips button:hover,.btn:hover{background:var(--ink);color:var(--bg)}
+.btn.on{background:var(--match);border-color:var(--match);color:#fff}
+.mapwrap{border:1.5px solid var(--ink);background:var(--sea);position:relative}
+svg.map{display:block;width:100%;height:auto;touch-action:none;cursor:crosshair}
+svg.map.there{cursor:default;touch-action:auto}
+.land{fill:var(--land)}
+.grat{stroke:var(--line);stroke-width:.4;fill:none;vector-effect:non-scaling-stroke}
+.eq{stroke:var(--mute);stroke-width:.6;stroke-dasharray:3 3;fill:none;vector-effect:non-scaling-stroke}
+.match{fill:var(--match);opacity:.9}
+.read{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:8px 0 0;font-size:15px}
+.read strong{font-family:'Familjen Grotesk',sans-serif;font-size:18px}
+.mid{display:grid;grid-template-columns:260px 1fr;gap:26px;align-items:center;margin:26px 0}
+.slice{width:100%;max-width:260px;aspect-ratio:1;margin:0 auto}
+.panel{background:var(--card);border:1.5px solid var(--ink);padding:16px 18px}
+.panel p{margin:0 0 10px}
+.big{font:700 clamp(28px,5vw,40px)/1 'Familjen Grotesk',sans-serif;letter-spacing:-.02em;margin:0 0 8px}
+.stats{display:flex;gap:18px;flex-wrap:wrap;margin:12px 0}
+.stats div{min-width:110px}
+.stats b{display:block;font:700 26px 'Familjen Grotesk',sans-serif}
+.stats span{font-size:13px;color:var(--mute)}
+.fact{font-size:14px;color:var(--mute);margin-top:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+@media (max-width:700px){.mid{grid-template-columns:1fr;gap:16px}}
+:focus-visible{outline:3px solid var(--there);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<main>
+<h1>Anti<span>pode</span></h1>
+<p class="lede">Dig straight down from anywhere and you come out at the exact opposite spot on Earth. Drag the pin on the top map, or pick a city, and see what's waiting at the other end.</p>
+
+<h2><span class="dot" style="background:var(--here)"></span>Here <b id="hereName">—</b></h2>
+<div class="chips" id="chips" role="group" aria-label="Cities"></div>
+<div class="mapwrap"><svg class="map" id="mapA" viewBox="0 0 360 180" role="application" tabindex="0" aria-label="Map. Drag the pin or use arrow keys to move it."></svg></div>
+<div class="read"><span id="coordA">—</span><span id="underA">—</span></div>
+
+<div class="mid">
+  <svg class="slice" id="slice" viewBox="-110 -110 220 220" role="img" aria-label="Cross-section of the Earth with a straight tunnel between the two places"></svg>
+  <div class="panel">
+    <p class="big" id="verdict">—</p>
+    <p id="verdictSub">—</p>
+    <div class="stats">
+      <div><b>12,742 km</b><span>straight down and out</span></div>
+      <div><b id="fallT">42:12</b><span>fall time, no air</span></div>
+      <div><b id="fallV">0.0 km/s</b><span>speed right now</span></div>
+    </div>
+    <div class="row">
+      <button class="btn" id="drop">Jump in</button>
+      <button class="btn" id="showMatch" aria-pressed="false">Show land opposite land</button>
+    </div>
+    <p class="fact" id="share">—</p>
+  </div>
+</div>
+
+<h2><span class="dot" style="background:var(--there)"></span>There <b id="thereName">—</b></h2>
+<div class="mapwrap"><svg class="map there" id="mapB" viewBox="0 0 360 180" role="img" aria-label="Map showing the opposite point"></svg></div>
+<div class="read"><span id="coordB">—</span><span id="underB">—</span></div>
+</main>
+<script>
+const SVGNS='http://www.w3.org/2000/svg';
+const LAND=[
+['North America',[[-168,66],[-162,70],[-141,70],[-128,70],[-115,68],[-95,72],[-85,69],[-82,63],[-93,59],[-94,57],[-82,55],[-79,51],[-78,58],[-77,62],[-70,60],[-65,60],[-61,56],[-56,52],[-60,48],[-66,45],[-70,43],[-74,40],[-76,35],[-81,31],[-80,26],[-82,27],[-84,30],[-89,30],[-94,29],[-97,26],[-97,21],[-95,18],[-91,19],[-90,21],[-87,21],[-88,16],[-84,15],[-83,10],[-80,9],[-77,8],[-79,8],[-82,8],[-86,11],[-91,14],[-96,16],[-105,20],[-108,25],[-112,31],[-115,32],[-117,32],[-121,35],[-124,40],[-124,47],[-128,51],[-133,56],[-140,60],[-148,60],[-153,58],[-158,57],[-165,54],[-160,59],[-165,62]]],
+['Baffin Island',[[-80,70],[-70,71],[-62,67],[-65,62],[-75,64]]],
+['Greenland',[[-73,78],[-60,82],[-30,83],[-20,80],[-20,72],[-30,68],[-42,60],[-50,62],[-54,68],[-58,75]]],
+['Cuba',[[-85,22],[-78,23],[-74,20],[-78,20]]],
+['South America',[[-77,8],[-72,12],[-62,10],[-52,5],[-50,0],[-44,-2],[-35,-5],[-39,-14],[-41,-22],[-48,-26],[-53,-34],[-58,-38],[-65,-41],[-65,-47],[-69,-52],[-68,-55],[-72,-53],[-75,-47],[-73,-37],[-71,-30],[-70,-18],[-76,-14],[-81,-5],[-80,0],[-78,3]]],
+['Africa',[[-17,21],[-10,30],[-6,36],[10,37],[11,33],[20,31],[32,31],[34,28],[39,20],[43,12],[51,12],[48,5],[40,-3],[40,-15],[35,-24],[32,-29],[27,-34],[20,-35],[18,-32],[12,-17],[13,-8],[9,-1],[9,4],[4,6],[-5,5],[-12,7],[-17,14]]],
+['Madagascar',[[44,-25],[47,-25],[50,-15],[49,-12],[44,-17]]],
+['Eurasia',[[-9,37],[-9,43],[-2,43.5],[-1,46],[-4,48],[2,51],[5,53],[8,54],[9,57],[11,56],[12,54],[20,55],[22,58],[24,60],[28,60],[22,61],[21,65],[25,65.5],[17,62],[18,59],[12,56],[8,58],[5,62],[14,68],[25,71],[32,70],[41,67],[44,68],[60,69],[70,73],[80,73],[100,77],[112,74],[130,71],[150,71],[170,70],[180,69],[180,65],[170,60],[163,58],[156,51],[156,57],[142,59],[135,55],[141,52],[140,48],[135,43],[130,42],[129,36],[126,35],[126,38],[122,40],[118,39],[121,37],[120,33],[122,30],[120,26],[115,22],[108,21],[106,18],[109,12],[105,9],[100,13],[100,8],[103,1],[100,5],[98,10],[97,17],[94,17],[92,22],[88,22],[80,15],[78,8],[73,16],[72,21],[67,24],[60,25],[57,26],[52,28],[48,30],[50,26],[56,25],[59,22],[52,17],[43,13],[39,21],[35,28],[34,31],[36,36],[27,37],[26,40],[23,40],[24,38],[22,37],[19,41],[14,45],[12,44],[16,41],[18,40],[16,38],[12,42],[8,44],[3,43],[0,39],[-5,36]]],
+['Great Britain',[[-5,50],[1,51],[2,53],[-2,56],[-2,58],[-5,58.5],[-6,56],[-3,54],[-5,52]]],
+['Ireland',[[-10,52],[-6,52],[-6,55],[-9,54]]],
+['Iceland',[[-24,65],[-14,65],[-14,64],[-22,63.5]]],
+['Japan',[[130,32],[135,34],[140,36],[142,40],[141,44],[145,44],[140,41],[137,37],[132,35]]],
+['the Philippines',[[120,18],[122,18],[126,8],[122,7],[120,14]]],
+['Sumatra',[[95,5],[106,-6],[104,-6],[96,2]]],
+['Borneo',[[109,1],[117,7],[119,1],[116,-4],[110,-3]]],
+['Java',[[105,-6],[114,-8],[106,-7.5]]],
+['New Guinea',[[131,-1],[141,-3],[150,-10],[141,-9],[136,-4]]],
+['Australia',[[114,-22],[122,-18],[130,-12],[136,-12],[137,-16],[142,-11],[146,-19],[153,-26],[150,-37],[141,-38],[135,-34],[129,-32],[115,-34],[113,-26]]],
+['North Island, NZ',[[173,-35],[178,-38],[176,-41.5],[174.5,-41.6],[173,-39]]],
+['South Island, NZ',[[172,-41],[174,-42],[171,-45],[167,-46],[168,-44]]],
+['Hawaii',[[-156.2,19.0],[-154.8,19.5],[-155.8,20.3],[-156.1,19.8]]],
+['Antarctica',[[-180,-72],[-70,-72],[-60,-66],[-58,-75],[0,-71],[60,-68],[120,-67],[180,-72],[180,-90],[-180,-90]]]
+];
+const CITIES=[['Madrid',40.4,-3.7],['Wellington',-41.3,174.8],['Beijing',39.9,116.4],['Buenos Aires',-34.6,-58.4],['Perth',-31.95,115.86],['Honolulu',21.3,-157.9],['Lima',-12.05,-77.04],['Nairobi',-1.29,36.82],['Reykjavík',64.1,-21.9],['Singapore',1.35,103.8],['Cape Town',-33.9,18.4]];
+function inPoly(p,lon,lat){let c=false;for(let i=0,j=p.length-1;i<p.length;j=i++){const a=p[i],b=p[j];if((a[1]>lat)!==(b[1]>lat)&&lon<(b[0]-a[0])*(lat-a[1])/(b[1]-a[1])+a[0])c=!c}return c}
+function landAt(lon,lat){for(const [n,p] of LAND)if(inPoly(p,lon,lat))return n;return null}
+function ocean(lon,lat){if(lat>=68)return'the Arctic Ocean';if(lat<=-60)return'the Southern Ocean';if(lon>=147||lon<-75)return'the Pacific Ocean';if(lon>=20&&lat<30)return'the Indian Ocean';if(lon>=20)return'the seas of Asia';return'the Atlantic Ocean'}
+function place(lon,lat){const l=landAt(lon,lat);return l?{land:true,name:l}:{land:false,name:ocean(lon,lat)}}
+function anti(lon,lat){let o=lon+180;if(o>180)o-=360;return [o,-lat]}
+const wrapLon=x=>{x=((x+180)%360+360)%360-180;return x};
+
+// grid of land cells whose opposite is also land
+const STEP=2,cells=[];let landW=0,matchW=0;
+for(let lat=-89;lat<90;lat+=STEP)for(let lon=-179;lon<180;lon+=STEP){
+  if(!landAt(lon,lat))continue;const w=Math.cos(lat*Math.PI/180);landW+=w;
+  const [ao,aa]=anti(lon,lat);if(landAt(ao,aa)){matchW+=w;cells.push([lon,lat])}}
+const matchPct=matchW/landW*100;
+
+function mk(tag,attrs,parent){const e=document.createElementNS(SVGNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+const X=lon=>lon+180,Y=lat=>90-lat;
+function drawBase(svg,withMatch){
+  for(let lon=-150;lon<=150;lon+=30)mk('line',{x1:X(lon),x2:X(lon),y1:0,y2:180,class:'grat'},svg);
+  for(let lat=-60;lat<=60;lat+=30)mk('line',{x1:0,x2:360,y1:Y(lat),y2:Y(lat),class:lat===0?'eq':'grat'},svg);
+  for(const [n,p] of LAND)mk('polygon',{points:p.map(q=>X(q[0])+','+Y(q[1])).join(' '),class:'land'},svg);
+  if(withMatch){const g=mk('g',{id:'matchG',style:'display:none'},svg);for(const [lon,lat] of cells)mk('rect',{x:X(lon)-1,y:Y(lat)-1,width:2,height:2,class:'match'},g)}
+}
+const A=document.getElementById('mapA'),B=document.getElementById('mapB');
+drawBase(A,true);drawBase(B,false);
+function pin(svg,color,id){const g=mk('g',{id},svg);g.style.pointerEvents='none';
+  mk('circle',{r:7,fill:'none',stroke:color,'stroke-width':1.6,'vector-effect':'non-scaling-stroke'},g);
+  mk('circle',{r:2.2,fill:color},g);mk('circle',{r:10,fill:color,opacity:.18},g);return g}
+const pa=pin(A,'var(--here)','pinA'),pb=pin(B,'var(--there)','pinB');
+function sizePins(){for(const [svg,g] of [[A,pa],[B,pb]]){const s=svg.getBoundingClientRect().width/360||1;const k=1/s;g.children[0].setAttribute('r',8*k);g.children[1].setAttribute('r',2.6*k);g.children[2].setAttribute('r',13*k);g.children[0].style.strokeWidth='2px'}}
+
+let cur={lon:-3.7,lat:40.4,name:'Madrid'};
+const f=(v,pos,neg)=>Math.abs(v).toFixed(1)+'° '+(v>=0?pos:neg);
+function setPos(lon,lat,name){
+  lat=Math.max(-89,Math.min(89,lat));lon=wrapLon(lon);cur={lon,lat,name:name||null};
+  const [ao,aa]=anti(lon,lat),pA=place(lon,lat),pB=place(ao,aa);
+  pa.setAttribute('transform',`translate(${X(lon)} ${Y(lat)})`);pb.setAttribute('transform',`translate(${X(ao)} ${Y(aa)})`);
+  document.getElementById('hereName').textContent=name||(pA.land?pA.name:pA.name.replace(/^the /,''));
+  document.getElementById('coordA').textContent=f(lat,'N','S')+', '+f(lon,'E','W');
+  document.getElementById('underA').textContent=pA.land?'Land · '+pA.name:'Sea · '+pA.name;
+  document.getElementById('thereName').textContent=pB.land?pB.name:pB.name.replace(/^the /,'');
+  document.getElementById('coordB').textContent=f(aa,'N','S')+', '+f(ao,'E','W');
+  document.getElementById('underB').textContent=pB.land?'Land · '+pB.name:'Sea · '+pB.name;
+  let v,s;
+  if(pA.land&&pB.land){v='Land to land!';s=`You'd come out in ${pB.name}. On the real Earth only about 4% of land has land opposite it.`}
+  else if(pA.land){v='You’d come out at sea.';s=`Straight down from ${pA.name} you surface in ${pB.name}. Pack a boat.`}
+  else if(pB.land){v='A tunnel up from the sea.';s=`Starting in ${pA.name}, you’d climb out onto ${pB.name}.`}
+  else{v='Sea to sea.';s=`${cap(pA.name)} to ${pB.name}. Nobody to wave at on either end.`}
+  document.getElementById('verdict').textContent=v;document.getElementById('verdictSub').textContent=s;
+  drawSlice(lat,pA,pB);
+}
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+document.getElementById('share').textContent=`On this simplified map, ${matchPct.toFixed(0)}% of land has land opposite it. On the real Earth it is only about 4%.`;
+document.getElementById('fallT').textContent='42:12';
+
+// cross-section
+const SL=document.getElementById('slice');
+const layers=[[100,'#b9a98a'],[88,'#c9753a'],[56,'#e6a23c'],[20,'#f4d77a']];
+let ball,axis;
+function buildSlice(){
+  SL.innerHTML='';
+  mk('circle',{r:100,style:'fill:var(--sea);stroke:var(--ink);stroke-width:2'},SL);
+  mk('circle',{r:88,style:'fill:#a8532b;opacity:.55'},SL);
+  mk('circle',{r:55,style:'fill:#e3892b;opacity:.75'},SL);
+  mk('circle',{r:20,style:'fill:#f6d777'},SL);
+  mk('circle',{r:100,style:'fill:none;stroke:var(--ink);stroke-width:2'},SL);
+  axis=mk('g',{},SL);
+  mk('line',{x1:0,y1:-100,x2:0,y2:100,style:'stroke:var(--ink);stroke-width:2;stroke-dasharray:5 4'},axis);
+  mk('circle',{cx:0,cy:-100,r:7,style:'fill:var(--here);stroke:var(--bg);stroke-width:2'},axis);
+  mk('circle',{cx:0,cy:100,r:7,style:'fill:var(--there);stroke:var(--bg);stroke-width:2'},axis);
+  ball=mk('circle',{cx:0,cy:-100,r:5,style:'fill:var(--ink);stroke:var(--bg);stroke-width:1.5',opacity:0},axis);
+}
+buildSlice();
+const dropBtn=document.getElementById('drop');
+let anim=null;
+dropBtn.onclick=()=>{
+  if(anim){cancelAnimationFrame(anim);anim=null}
+  const T0=performance.now(),DUR=6000,R=6371,w=Math.PI/ (42.2*60); // rad/s of real time
+  ball.setAttribute('opacity',1);dropBtn.disabled=true;
+  const step=t=>{
+    const k=Math.min(1,(t-T0)/DUR),rt=k*42.2*60; // real seconds elapsed
+    const x=Math.cos(w*rt);ball.setAttribute('cy',-100*x);
+    const v=R*w*Math.abs(Math.sin(w*rt));
+    document.getElementById('fallV').textContent=v.toFixed(1)+' km/s';
+    const m=Math.floor(rt/60),s=Math.floor(rt%60);
+    document.getElementById('fallT').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if(k<1)anim=requestAnimationFrame(step);else{anim=null;dropBtn.disabled=false;dropBtn.textContent='Jump in again'}
+  };
+  anim=requestAnimationFrame(step);
+};
+
+// interaction
+function fromEvent(e){const r=A.getBoundingClientRect();return [((e.clientX-r.left)/r.width)*360-180,90-((e.clientY-r.top)/r.height)*180]}
+let drag=false;
+A.addEventListener('pointerdown',e=>{drag=true;A.setPointerCapture(e.pointerId);const [lo,la]=fromEvent(e);setPos(lo,la)});
+A.addEventListener('pointermove',e=>{if(!drag)return;const [lo,la]=fromEvent(e);setPos(lo,la)});
+A.addEventListener('pointerup',()=>drag=false);A.addEventListener('pointercancel',()=>drag=false);
+A.addEventListener('keydown',e=>{const d=e.shiftKey?10:2;const m={ArrowLeft:[-d,0],ArrowRight:[d,0],ArrowUp:[0,d],ArrowDown:[0,-d]}[e.key];if(m){e.preventDefault();setPos(cur.lon+m[0],cur.lat+m[1])}});
+const chips=document.getElementById('chips');
+for(const [n,la,lo] of CITIES){const b=document.createElement('button');b.textContent=n;b.onclick=()=>setPos(lo,la,n);chips.appendChild(b)}
+const sm=document.getElementById('showMatch');
+sm.onclick=()=>{const on=sm.getAttribute('aria-pressed')!=='true';sm.setAttribute('aria-pressed',on);sm.classList.toggle('on',on);document.getElementById('matchG').style.display=on?'':'none';sm.textContent=on?'Hide land opposite land':'Show land opposite land'};
+// slice orientation: rotate by latitude so the tunnel tilts as you move north/south
+function drawSlice(lat){axis.setAttribute('transform',`rotate(${lat*0.75})`)}
+window.addEventListener('resize',sizePins);sizePins();setPos(-3.7,40.4,'Madrid');
+</script></body></html>

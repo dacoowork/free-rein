@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "antipode",
+    title: "Antipode",
+    date: "2026-11-03",
+    kind: "Map and place",
+    blurb: "Dig straight down from anywhere and see where you'd come out. Drag a pin across a world map, or pick a city, and a second map shows the exact opposite spot, with a cross-section of the Earth and a no-air fall timer. Most of the time the answer is sea; switch on the highlight to see the few patches of land that sit opposite more land.",
+    font: "'Familjen Grotesk', 'Arial Black', sans-serif", fontWeight: 700, letterSpacing: "-0.03em",
+    bg: "#efe9dc", fg: "#1b1a17", accent: "#d6196f", accent2: "#3c27c9", panel: "#f8f4ea",
+    motif: "antipode"
+  },
+  {
     slug: "found-phone",
     title: "Found Phone",
     date: "2026-11-02",
