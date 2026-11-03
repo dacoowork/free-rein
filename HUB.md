@@ -42,13 +42,13 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Puzzle hunt | Linked puzzles with a hidden answer, meant to be solved over time | 1 |
 | How it works | Cutaways, blueprints and diagrams of machines and processes | 1 |
 
-## Catalogue (28 builds, 27 on the hub, 1 queued)
+## Catalogue (28 builds, all on the hub)
 
 A date marked "(queued)" means the build is on the `queue` branch and not live yet.
 
 | Build | Date | Category | What it does | Subject world | Core mechanic | Look |
 |---|---|---|---|---|---|---|
-| Antipode | 3 Nov (queued) | Map and place | Drag a pin across a simplified world map (or pick one of 11 cities) and a second map shows the exact antipode, with land or sea and its name at both ends, a verdict (land to land, sea to sea...), an Earth cross-section with the tilted tunnel, and a Jump in button that drops a ball through it on the no-air gravity-train timing (42 min, up to 7.9 km/s). Toggle highlights land cells whose opposite is land; the page states its own simplified-map percentage beside the real figure of about 4% | Geography, the shape of the Earth | Drag a pin; the opposite point is computed and point-in-polygon tested against hand-built continent outlines | Familjen Grotesk 700 + Inter; bone ground, ink land, magenta and ultramarine pins |
+| Antipode | 3 Nov | Map and place | Drag a pin across a simplified world map (or pick one of 11 cities) and a second map shows the exact antipode, with land or sea and its name at both ends, a verdict (land to land, sea to sea...), an Earth cross-section with the tilted tunnel, and a Jump in button that drops a ball through it on the no-air gravity-train timing (42 min, up to 7.9 km/s). Toggle highlights land cells whose opposite is land; the page states its own simplified-map percentage beside the real figure of about 4% | Geography, the shape of the Earth | Drag a pin; the opposite point is computed and point-in-polygon tested against hand-built continent outlines | Familjen Grotesk 700 + Inter; bone ground, ink land, magenta and ultramarine pins |
 | Found Phone | 2 Nov | Puzzle hunt | A lost phone on the 8:15 bus; four apps each hold a word puzzle: Notes (initials of uncrossed shopping items, SALAD), Alarms (times read as A1Z26 letter pairs, SHORTS), Photos (tap for timestamps, order by time, initials give SKETCH), Maps (walk directions on a 5x5 letter grid, GOLDEN). Puzzle n gives its nth letter; S-H-E-D unlocks the phone and says the spare key is in the shed. Two-step hints per puzzle, progress saved locally | Everyday phone apps, a locked-out commuter | Four short extraction puzzles feeding a meta answer | Dela Gothic One + Figtree; oxblood ground, cream phone, dark mode near-black maroon |
 | Ballpark | 1 Nov | Quiz and trivia | Eight Fermi-style estimation questions drawn from a pool of 13 (rice grains in a kilo, heartbeats in a life, ants on Earth, fingernail growth in nm/s, days since the Big Bang). Drag a marker along an 8-decade log scale (or use arrow keys), lock in, and a dashed truth pin appears with the factor you were out by, points (100 at exact, 0 at 2 decades off) and a one-line fact. Final screen: score out of 800, a grade, whether you lean high or low, and a truth-vs-guess strip per question | Orders of magnitude, everyday and cosmic quantities | Drag a marker on a logarithmic scale, scored by decades of error | Unbounded 800 + Instrument Sans; saturated tangerine ground, cream card with hard black shadow, crimson marker; dark mode burnt umber with amber |
 | Overnight | 31 Oct | Animation and motion | A 48-second canvas film about one parcel's night, 18:42 to 05:58: a van drops a white box onto an induction belt, a scan arch reads its label (Bay 4), orange paddles shove parcels down colour-coded chutes into wheeled cages, the Bay 4 cage rolls up a ramp into a cutaway lorry that pulls out at dawn. Camera follows the box; play, pause, scrub, 0.5/1/2x speed, eight chapter buttons with captions | Parcel sorting depots, overnight logistics | A deterministic draw(t) timeline scrubbed or played, camera tracking a hero object | Bowlby One + DM Sans; saturated ultramarine ground, white and orange, lane colours orange/mint/pink/yellow |
@@ -126,7 +126,7 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 2. Save the build's page to `builds/<slug>/index.html`, wrapped in a full document: copy the one-line `<!doctype html>…<head>…</head><body>` prefix from an existing build, put the build's `<title>` inside that head, and close with `</body></html>`.
 3. Add an entry at the top of `builds.js`: slug, title, date, kind (use the category name), blurb, font (plus fontStyle/fontWeight/letterSpacing/fontStretch if needed; the tile supports `fontStretch` since Flush), bg/fg/accent (optional accent2, bg2, panel), motif. The tile's text area uses `panel` (or `bg`) with `fg`, so when bg is a strong colour give a light `panel` and a dark `fg`, and let the motif paint bg itself.
 4. Add a motif drawing for it in `index.html` (viewBox 320x180), and add its display font to the Google Fonts link if it's new (each family needs its own `family=` parameter). The drawing must be true to the build: a game position must be legal, a pattern must be one the build can actually make.
-5. Bump the `?v=` date on the `builds.js` script tag in both `index.html` and `play.html`. GitHub Pages caches files for about 10 minutes, and without this visitors see the old list. If today's date is already the version, add a letter (2026-10-23b, then c, and so on). Live is 2026-11-02.
+5. Bump the `?v=` date on the `builds.js` script tag in both `index.html` and `play.html`. GitHub Pages caches files for about 10 minutes, and without this visitors see the old list. If today's date is already the version, add a letter (2026-10-23b, then c, and so on). Live is 2026-11-03.
 6. Render the gallery locally with Playwright and look at the new tile.
 7. Update this file in the same commit: add the catalogue row with "(queued)" after the date, bump the category count, update the catalogue heading and the pattern notes, and list the build under "Queued" below.
 8. Commit (message `Add <Title>: <short description> (<Category>)`) and `git push origin HEAD:queue` (a plain push; never force-push, which the session's permission check blocks as destructive). Never push `main` from the build task.
@@ -156,7 +156,7 @@ Process tip (23–28 Oct): scheduled runs with no repo attached had no add_repo 
 
 ## Queued
 
-- Antipode (3 Nov, Map and place): artifact https://claude.ai/artifact/FuTfs4uVLeRziFCS1QSdry; goes live at https://dacoowork.github.io/free-rein/play.html?b=antipode when Free Rein Publish runs.
+Nothing queued.
 
 ## Left out on purpose
 
