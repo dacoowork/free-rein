@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "sit",
+    title: "Sit",
+    date: "2026-11-04",
+    kind: "Editorial and zine",
+    blurb: "A short zine about how people have sat down, told in seven postures: the deep squat, the Egyptian stool, the throne, Thonet's bentwood chair, the office swivel, the kneeling chair and the standing desk. A drawn figure follows you down the page and re-poses itself for each chapter, with hip height, knee bend and hip angle measured live from the drawing. A shuffle button at the end cycles through all seven.",
+    font: "'Shrikhand', 'Arial Black', sans-serif", letterSpacing: "0",
+    bg: "#c4986a", fg: "#17120d", accent: "#0e5a57", accent2: "#17120d", panel: "#f4ede1",
+    motif: "sit"
+  },
+  {
     slug: "antipode",
     title: "Antipode",
     date: "2026-11-03",

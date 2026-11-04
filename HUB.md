@@ -32,7 +32,7 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Data story | Real data drawn and narrated | 0 |
 | Map and place | Maps, atlases, journeys, imagined geography | 1 |
 | Field guide and reference | Curated knowledge: almanacs, guides, glossaries, specimen books | 1 |
-| Editorial and zine | A designed long-form read: essay, zine, magazine spread | 0 |
+| Editorial and zine | A designed long-form read: essay, zine, magazine spread | 1 |
 | Type and lettering | Type specimens, lettering toys, layout play | 1 |
 | Museum and archive | A collection of objects, real or invented, to browse | 1 |
 | Speculative world | Fiction as design: an invented city, sport, product line, holiday | 1 |
@@ -42,12 +42,13 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Puzzle hunt | Linked puzzles with a hidden answer, meant to be solved over time | 1 |
 | How it works | Cutaways, blueprints and diagrams of machines and processes | 1 |
 
-## Catalogue (28 builds, all on the hub)
+## Catalogue (29 builds, 28 on the hub, 1 queued)
 
 A date marked "(queued)" means the build is on the `queue` branch and not live yet.
 
 | Build | Date | Category | What it does | Subject world | Core mechanic | Look |
 |---|---|---|---|---|---|---|
+| Sit | 4 Nov (queued) | Editorial and zine | A scrolling zine in seven chapters on how people have sat: deep squat, Egyptian stool, throne, Thonet bentwood chair (1859), office swivel, Balans kneeling chair (1979), standing desk. A sticky side-view figure re-poses itself (IK-solved legs and arms, eased tween) and swaps its drawn chair for each chapter, with hip height, knee bend and hip angle read live off the drawing; chapter chips jump around, and a Shuffle button cycles all seven. | Chairs, furniture history, ergonomics | Scroll-driven pose morph of a drawn figure with measured readouts | Shrikhand (fat display italic) + Karla; kraft cardboard-brown ground, cream sheet, deep teal chairs, black ink; dark brown in dark mode |
 | Antipode | 3 Nov | Map and place | Drag a pin across a simplified world map (or pick one of 11 cities) and a second map shows the exact antipode, with land or sea and its name at both ends, a verdict (land to land, sea to sea...), an Earth cross-section with the tilted tunnel, and a Jump in button that drops a ball through it on the no-air gravity-train timing (42 min, up to 7.9 km/s). Toggle highlights land cells whose opposite is land; the page states its own simplified-map percentage beside the real figure of about 4% | Geography, the shape of the Earth | Drag a pin; the opposite point is computed and point-in-polygon tested against hand-built continent outlines | Familjen Grotesk 700 + Inter; bone ground, ink land, magenta and ultramarine pins |
 | Found Phone | 2 Nov | Puzzle hunt | A lost phone on the 8:15 bus; four apps each hold a word puzzle: Notes (initials of uncrossed shopping items, SALAD), Alarms (times read as A1Z26 letter pairs, SHORTS), Photos (tap for timestamps, order by time, initials give SKETCH), Maps (walk directions on a 5x5 letter grid, GOLDEN). Puzzle n gives its nth letter; S-H-E-D unlocks the phone and says the spare key is in the shed. Two-step hints per puzzle, progress saved locally | Everyday phone apps, a locked-out commuter | Four short extraction puzzles feeding a meta answer | Dela Gothic One + Figtree; oxblood ground, cream phone, dark mode near-black maroon |
 | Ballpark | 1 Nov | Quiz and trivia | Eight Fermi-style estimation questions drawn from a pool of 13 (rice grains in a kilo, heartbeats in a life, ants on Earth, fingernail growth in nm/s, days since the Big Bang). Drag a marker along an 8-decade log scale (or use arrow keys), lock in, and a dashed truth pin appears with the factor you were out by, points (100 at exact, 0 at 2 decades off) and a one-line fact. Final screen: score out of 800, a grade, whether you lean high or low, and a truth-vs-guess strip per question | Orders of magnitude, everyday and cosmic quantities | Drag a marker on a logarithmic scale, scored by decades of error | Unbounded 800 + Instrument Sans; saturated tangerine ground, cream card with hard black shadow, crimson marker; dark mode burnt umber with amber |
@@ -116,6 +117,8 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 
 - **Globe geography and the sea-or-land question (3 Nov):** Antipode is world maps with dragged pins. Bone/cream ground and Familjen Grotesk are taken. Map and place is now used once (a non-transit one); Data story and Editorial and zine are still 0. Leave world maps, latitude/longitude and Earth cross-sections alone for a while; the two-map-stacked-with-pin layout is used once.
 
+- **Chairs, posture and scroll-driven figure morphs (4 Nov):** Sit is a zine with a sticky drawn figure. Kraft/cardboard-brown ground, Shrikhand and teal are taken. Editorial and zine is now used once (Data story is still 0). Leave furniture, ergonomics and stick-figure posture drawings alone for a while; the sticky-figure-beside-scrolling-chapters layout is used once.
+
 ## Rejected because they repeated an earlier build
 
 - Treadle (23 Oct): four-shaft weaving draft studio. Same as Drawdown.
@@ -162,7 +165,7 @@ Process tip (23–28 Oct): scheduled runs with no repo attached had no add_repo 
 
 ## Queued
 
-Nothing queued.
+- **Sit** (4 Nov, Editorial and zine): `builds/sit/index.html`, gallery version `2026-11-04b`.
 
 ## Left out on purpose
 
