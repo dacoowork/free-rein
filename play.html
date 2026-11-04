@@ -28,16 +28,17 @@ iframe{flex:1;width:100%;border:0;display:block;background:var(--bg)}
   <a class="home" href="./">Free Rein</a>
   <span class="title" id="title"></span>
   <a id="next" href="#">Next build</a>
+  <a id="dip" href="#">Lucky dip</a>
   <a class="full" id="full" href="#">Full screen</a>
 </nav>
-<script src="builds.js?v=2026-11-03"></script>
+<script src="builds.js?v=2026-11-04"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
   const slug = new URLSearchParams(location.search).get('b');
   const i = B.findIndex(b => b.slug === slug);
   if (i < 0) {
-    document.getElementById('next').remove(); document.getElementById('full').remove();
+    document.getElementById('next').remove(); document.getElementById('dip').remove(); document.getElementById('full').remove();
     const m = document.createElement('div'); m.className = 'missing';
     m.innerHTML = '<p>That build isn\'t here. <a href="./">See all the builds</a></p>';
     document.body.appendChild(m); return;
@@ -51,6 +52,12 @@ iframe{flex:1;width:100%;border:0;display:block;background:var(--bg)}
   const n = B[(i + 1) % B.length];
   const next = document.getElementById('next');
   if (B.length < 2) next.remove(); else { next.href = 'play.html?b=' + encodeURIComponent(n.slug); next.title = n.title; }
+  const dip = document.getElementById('dip');
+  if (B.length < 3) dip.remove(); else dip.addEventListener('click', e => {
+    e.preventDefault();
+    const pool = B.filter((x, j) => j !== i && x !== n);
+    location.href = 'play.html?b=' + encodeURIComponent(pool[Math.floor(Math.random() * pool.length)].slug);
+  });
   const f = document.createElement('iframe');
   f.src = src; f.title = b.title; f.allow = 'autoplay; fullscreen; clipboard-write';
   document.body.appendChild(f);

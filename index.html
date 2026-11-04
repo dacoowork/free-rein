@@ -27,40 +27,88 @@ h1{margin:0;font-weight:700;font-size:clamp(44px,9vw,96px);line-height:.9;letter
 .tally{grid-column:2;grid-row:1 / span 2;text-align:right;color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
 .tally b{display:block;color:var(--ink);font-size:44px;font-weight:500;line-height:1;letter-spacing:-.03em}
 
-.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;list-style:none;margin:0;padding:0}
-.grid li{grid-column:span 2}
-.grid li:first-child{grid-column:span 4;grid-row:span 2}
-.grid li:nth-child(2){grid-column:span 2;grid-row:span 2}
-
-.tile{position:relative;display:flex;flex-direction:column;height:100%;min-height:300px;border-radius:14px;overflow:hidden;
+.tile{position:relative;display:flex;flex-direction:column;height:100%;border-radius:14px;overflow:hidden;
   background:var(--bg);color:var(--fg);text-decoration:none;outline-offset:4px}
-.tile svg{display:block;width:100%;flex:1;min-height:150px}
-.tile .txt{padding:16px 18px 18px;display:grid;gap:6px}
-.tile h2{margin:0;font-size:clamp(30px,3.6vw,40px);line-height:1;font-weight:400}
-li:first-child .tile h2{font-size:clamp(36px,5.4vw,60px)}
-.tile p{margin:0;font-family:var(--font);font-size:14.5px;line-height:1.45;opacity:.78;max-width:48ch}
+.tile svg{display:block;width:100%}
+.tile .txt{padding:14px 16px 16px;display:grid;gap:5px;align-content:start}
+.tile h2,.tile h3{margin:0;line-height:1;font-weight:400;overflow-wrap:anywhere}
+.tile p{margin:0;font-family:var(--font);font-size:14.5px;line-height:1.45;opacity:.8;max-width:52ch}
 .tile .kind{font-family:var(--font);font-size:13px;color:var(--accent)}
 .tile:focus-visible{outline:3px solid var(--ink)}
 .tile::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);pointer-events:none}
 @media (hover:hover){.tile{transition:transform .25s ease}.tile:hover{transform:translateY(-3px)}}
 
+/* newest build */
+.feature{margin:0 0 40px}
+.feature .tile{min-height:380px}
+.feature svg{flex:1;min-height:200px}
+.feature h2{font-size:clamp(38px,5.6vw,64px)}
+.feature .txt{padding:18px 20px 20px;gap:8px}
+
+/* browse bar */
+.browse{display:grid;gap:12px;margin:0 0 18px;padding-top:4px}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;justify-content:space-between}
+.bar h2{margin:0;font-size:22px;font-weight:700;letter-spacing:-.02em}
+.bar h2 span{color:var(--muted);font-weight:500}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{appearance:none;border:1px solid var(--rule);background:transparent;color:var(--ink);border-radius:999px;padding:7px 14px;font:500 14px/1.2 var(--font);white-space:nowrap;cursor:pointer}
+.chip .n{color:var(--muted);margin-left:5px;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--fog)}
+.chip[aria-pressed="true"] .n{color:inherit;opacity:.65}
+.chip:focus-visible,.dip:focus-visible,.more:focus-visible,.search:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+@media (hover:hover){.chip:not([aria-pressed="true"]):hover{border-color:var(--ink)}}
+.subs .chip{font-size:13px;padding:5px 12px}
+.subs:empty{display:none}
+.dip{appearance:none;display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;background:var(--ink);color:var(--fog);padding:9px 16px 9px 12px;font:700 14px/1 var(--font);cursor:pointer}
+.dip svg{width:20px;height:20px;transition:transform .4s ease}
+@media (hover:hover){.dip:hover svg{transform:rotate(90deg)}}
+.search{border:1px solid var(--rule);background:rgba(255,255,255,.5);border-radius:999px;padding:8px 14px;font:500 14px var(--font);color:var(--ink);width:200px}
+.search[hidden]{display:none}
+
+/* the archive */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;list-style:none;margin:0;padding:0}
+.card{position:relative;height:100%}
+.grid .tile svg{aspect-ratio:320/150}
+.grid h3{font-size:clamp(22px,2.4vw,28px)}
+.grid .hook{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card.open .hook{display:none}
+.card .full{display:none}
+.card.open .full{display:block}
+.card .txt{padding-bottom:40px}
+.more{position:absolute;right:8px;bottom:8px;appearance:none;border:0;background:transparent;color:var(--fg);opacity:.7;font:600 13px/1 var(--font);padding:8px 8px;border-radius:8px;cursor:pointer}
+.more:hover{opacity:1}
+.empty{padding:40px 0;color:var(--muted);text-align:center}
+
 footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
 
-@media (max-width:860px){
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .grid li,.grid li:first-child,.grid li:nth-child(2){grid-column:span 1;grid-row:auto}
-  .grid li:first-child{grid-column:span 2}
+@media (min-width:861px){
+  .feature .tile{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr)}
+  .feature svg{height:100%;min-height:380px}
+  .feature .txt{align-content:end;padding:24px 26px 26px}
 }
 @media (max-width:560px){
   .page{padding-top:calc(env(safe-area-inset-top,0px) + 32px)}
-  header{grid-template-columns:1fr}
+  header{grid-template-columns:1fr;padding-bottom:22px;margin-bottom:22px}
   .tally{grid-column:1;grid-row:auto;text-align:left}
   .tally b{display:inline;font-size:inherit;font-weight:700}
-  .grid{grid-template-columns:1fr}
-  .grid li:first-child{grid-column:span 1}
-  .tile{min-height:260px}
+  .feature{margin-bottom:30px}
+  .feature .tile{min-height:0}
+  .feature svg{flex:none;aspect-ratio:320/180;min-height:0}
+  .feature p{font-size:14px}
+  .chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px 2px}
+  .chips::-webkit-scrollbar{display:none}
+  .search{width:100%}
+  .actions{width:100%}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .grid .tile{border-radius:12px}
+  .grid .txt{padding:10px 11px 36px;gap:4px}
+  .grid h3{font-size:19px}
+  .grid .kind{font-size:11.5px}
+  .grid p{font-size:13px;line-height:1.4}
+  .more{right:4px;bottom:4px;font-size:12px}
 }
-@media (prefers-reduced-motion:reduce){.tile{transition:none!important}}
+@media (prefers-reduced-motion:reduce){.tile,.dip svg{transition:none!important}}
 </style>
 </head>
 <body>
@@ -71,6 +119,20 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
     <div class="tally" id="tally"></div>
   </header>
 
+  <section class="feature" id="feature" aria-label="Newest build"></section>
+
+  <section class="browse" aria-label="Browse builds">
+    <div class="bar">
+      <h2 id="heading">All builds</h2>
+      <div class="actions">
+        <input class="search" id="search" type="search" placeholder="Search builds" aria-label="Search builds" hidden>
+        <button class="dip" id="dip" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="8.5" r="1.6" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.6" fill="currentColor"/><circle cx="8.5" cy="15.5" r="1.6" fill="currentColor"/></svg><span id="dipLabel">Lucky dip</span></button>
+      </div>
+    </div>
+    <div class="chips" id="families" role="group" aria-label="Filter by kind"></div>
+    <div class="chips subs" id="subs" role="group" aria-label="Filter by category"></div>
+  </section>
+
   <ul class="grid" id="grid"></ul>
 
   <footer>
@@ -79,7 +141,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-03"></script>
+<script src="builds.js?v=2026-11-04"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -517,17 +579,100 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   const fmtDate = iso => new Date(iso+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
   const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
+  // Each category belongs to one family; the family chips are the top-level filter.
+  // A new category needs adding to one of these lists (unlisted ones fall under "Other").
+  const FAMILIES = [
+    {id:'play',    label:'Play',             kinds:['Game','Two-player or party game','Two-player game','Word and language','Quiz and trivia','Puzzle hunt','Toy']},
+    {id:'art',     label:'Art & sound',      kinds:['Instrument and sound','Instrument','Generative art','Animation and motion','Type and lettering','Writing machine']},
+    {id:'learn',   label:'Learn',            kinds:['Explorable explainer','How it works','Simulation','Data story']},
+    {id:'explore', label:'Explore',          kinds:['Map and place','Field guide and reference','Museum and archive']},
+    {id:'stories', label:'Stories & worlds', kinds:['Interactive fiction','Speculative world','Editorial and zine']},
+    {id:'useful',  label:'Useful',           kinds:['Tool','Food','Time and ritual']}
+  ];
+  const famOf = k => (FAMILIES.find(f=>f.kinds.includes(k))||{id:'other'}).id;
+  if (B.some(b=>famOf(b.kind)==='other')) FAMILIES.push({id:'other',label:'Other',kinds:[]});
+  const hookOf = b => b.hook || ((b.blurb.match(/^.*?[.!?](?=\s|$)/)||[b.blurb])[0]);
+  const titleStyle = b => `font-family:${b.font};font-style:${b.fontStyle||'normal'};font-weight:${b.fontWeight||400};letter-spacing:${b.letterSpacing||'normal'};font-stretch:${b.fontStretch||'normal'}`;
+  const art = (b, aspect) => MOTIFS[b.motif] ? `<svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid ${b.motif==='dial'?'meet':'slice'}" aria-hidden="true">${MOTIFS[b.motif](b,rng(seed(b.slug)))}</svg>` : '';
+  const href = b => 'play.html?b='+encodeURIComponent(b.slug);
+  const paint = (el,b) => { el.style.setProperty('--bg',b.panel||b.bg); el.style.setProperty('--fg',b.fg); el.style.setProperty('--accent',b.accent); };
+
+  // newest build, full size
+  const feature = document.getElementById('feature');
+  if (B[0]) {
+    const b=B[0], a=document.createElement('a');
+    a.className='tile'; a.href=href(b); paint(a,b);
+    a.innerHTML=`${art(b)}<div class="txt"><span class="kind">Newest · ${esc(b.kind)} · ${fmtDate(b.date)}</span><h2 style="${titleStyle(b)}">${esc(b.title)}</h2><p>${esc(b.blurb)}</p></div>`;
+    feature.appendChild(a);
+  }
+
+  // compact cards
   const grid = document.getElementById('grid');
-  B.forEach(b=>{
-    const li=document.createElement('li');
-    const a=document.createElement('a');
-    a.className='tile'; a.href='play.html?b='+encodeURIComponent(b.slug);
-    a.style.setProperty('--bg',b.panel||b.bg); a.style.setProperty('--fg',b.fg); a.style.setProperty('--accent',b.accent);
-    const art = MOTIFS[b.motif] ? `<svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid ${b.motif==='dial'?'meet':'slice'}" aria-hidden="true">${MOTIFS[b.motif](b,rng(seed(b.slug)))}</svg>` : '';
-    const ts=`font-family:${b.font};font-style:${b.fontStyle||'normal'};font-weight:${b.fontWeight||400};letter-spacing:${b.letterSpacing||'normal'};font-stretch:${b.fontStretch||'normal'}`;
-    a.innerHTML=`${art}<div class="txt"><span class="kind">${esc(b.kind)}</span><h2 style="${ts}">${esc(b.title)}</h2><p>${esc(b.blurb)}</p></div>`;
-    li.appendChild(a); grid.appendChild(li);
+  const cards = B.map(b=>{
+    const li=document.createElement('li'); li.className='card'; li.dataset.slug=b.slug;
+    const a=document.createElement('a'); a.className='tile'; a.href=href(b); paint(a,b); paint(li,b);
+    a.innerHTML=`${art(b)}<div class="txt"><span class="kind">${esc(b.kind)}</span><h3 style="${titleStyle(b)}">${esc(b.title)}</h3><p class="hook">${esc(hookOf(b))}</p><p class="full">${esc(b.blurb)}</p></div>`;
+    const m=document.createElement('button'); m.type='button'; m.className='more'; m.textContent='More'; m.setAttribute('aria-expanded','false');
+    m.setAttribute('aria-label','More about '+b.title);
+    m.addEventListener('click',()=>{const o=li.classList.toggle('open'); m.setAttribute('aria-expanded',o); m.textContent=o?'Less':'More';});
+    li.append(a,m); return {b,li,text:(b.title+' '+b.kind+' '+b.blurb).toLowerCase()};
   });
+
+  // filter state lives in the hash: #play, #play/Toy
+  const famEl=document.getElementById('families'), subEl=document.getElementById('subs');
+  const search=document.getElementById('search'), heading=document.getElementById('heading'), dipLabel=document.getElementById('dipLabel');
+  if (B.length >= 50) search.hidden = false;
+  let state = {fam:'all', kind:null, q:''};
+  function readHash(){
+    const [f,k] = decodeURIComponent(location.hash.slice(1)).split('/');
+    state.fam = FAMILIES.some(x=>x.id===f) ? f : 'all';
+    state.kind = state.fam!=='all' && k && B.some(b=>b.kind===k && famOf(b.kind)===state.fam) ? k : null;
+  }
+  function setHash(){
+    const h = state.fam==='all' ? '' : state.fam + (state.kind ? '/'+state.kind : '');
+    history.replaceState(null,'',h ? '#'+encodeURIComponent(h).replace(/%2F/,'/') : location.pathname+location.search);
+  }
+  function chip(label,n,on,fn){
+    const c=document.createElement('button'); c.type='button'; c.className='chip'; c.setAttribute('aria-pressed',on);
+    c.innerHTML=`${esc(label)}<span class="n">${n}</span>`; c.addEventListener('click',fn); return c;
+  }
+  const matches = () => cards.filter(c =>
+    (state.fam==='all' || famOf(c.b.kind)===state.fam) && (!state.kind || c.b.kind===state.kind) &&
+    (!state.q || state.q.split(/\s+/).every(w=>c.text.includes(w))));
+  function render(){
+    famEl.replaceChildren(chip('All',B.length,state.fam==='all',()=>{state.fam='all';state.kind=null;update();}));
+    FAMILIES.forEach(f=>{const n=B.filter(b=>famOf(b.kind)===f.id).length; if(n) famEl.appendChild(chip(f.label,n,state.fam===f.id,()=>{state.fam=state.fam===f.id?'all':f.id;state.kind=null;update();}));});
+    subEl.replaceChildren();
+    if (state.fam!=='all'){
+      const kinds=[...new Set(B.filter(b=>famOf(b.kind)===state.fam).map(b=>b.kind))];
+      if (kinds.length>1) kinds.forEach(k=>subEl.appendChild(chip(k,B.filter(b=>b.kind===k).length,state.kind===k,()=>{state.kind=state.kind===k?null:k;update();})));
+    }
+    const browsing = state.fam==='all' && !state.q;
+    feature.hidden = !browsing || !B.length;
+    const list = matches().filter(c => !(browsing && c.b===B[0]));
+    grid.replaceChildren(...list.map(c=>c.li));
+    if (!list.length){const e=document.createElement('li'); e.className='empty'; e.textContent='Nothing matches that yet.'; grid.appendChild(e);}
+    const fam=FAMILIES.find(f=>f.id===state.fam);
+    const name = state.kind || (fam ? fam.label : (state.q ? 'Results' : 'Every build so far'));
+    const count = browsing ? B.length : list.length;
+    heading.innerHTML = `${esc(name)} <span>${count}</span>`;
+    dipLabel.textContent = fam || state.kind ? 'Lucky dip: '+(state.kind||fam.label) : 'Lucky dip';
+  }
+  function update(){ setHash(); render(); }
+  readHash(); render();
+  window.addEventListener('hashchange',()=>{readHash();render();});
+  search.addEventListener('input',()=>{state.q=search.value.trim().toLowerCase();render();});
+
+  // lucky dip: a random build from whatever is showing, not the one you just had
+  document.getElementById('dip').addEventListener('click',()=>{
+    let pool = matches().map(c=>c.b); if(!pool.length) pool=B.slice();
+    let last=null; try{last=sessionStorage.getItem('fr-last-dip')}catch(e){}
+    if (pool.length>1) pool = pool.filter(b=>b.slug!==last);
+    const pick = pool[Math.floor(Math.random()*pool.length)]; if(!pick) return;
+    try{sessionStorage.setItem('fr-last-dip',pick.slug)}catch(e){}
+    location.href = href(pick);
+  });
+  window.__hub = { get state(){ return {...state, shown: grid.querySelectorAll('.card').length}; } };
 
   document.getElementById('tally').innerHTML = `<b>${B.length}</b> builds so far`;
   if(B.length) document.getElementById('updated').textContent = 'Latest: ' + fmtDate(B.map(b=>b.date).sort().pop());
