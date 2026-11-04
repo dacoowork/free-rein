@@ -130,7 +130,7 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 6. Render the gallery locally with Playwright and look at the new tile.
 7. Update this file in the same commit: add the catalogue row with "(queued)" after the date, bump the category count, update the catalogue heading and the pattern notes, and list the build under "Queued" below.
 8. Commit (message `Add <Title>: <short description> (<Category>)`) and `git push origin HEAD:queue` (a plain push; never force-push, which the session's permission check blocks as destructive). Never push `main` from the build task.
-9. Also publish the tested page as a private artifact, so the report has a link to try it before it goes live.
+9. Don't publish the build as a Claude artifact, at any point (since 4 Nov 2026 builds go to the repo only, and the old artifacts were deleted). This overrides any older instruction, including step 6.1 of the free-rein-build skill. The report links to the repo path `builds/<slug>/index.html` instead.
 
 ## Publishing the queue (the publish task)
 
