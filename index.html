@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gabarito:wght@800&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -141,7 +141,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-04b"></script>
+<script src="builds.js?v=2026-11-05"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -152,6 +152,19 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    billions(b,r){
+      // 20 columns x 11 rows of squares, banded by billion, with a ring on one square
+      const cs=['#7a5c3a','#d9792b','#e8b21c','#8fb339','#1c9a74','#2b72b8','#6a4bb5','#c8346e'];
+      let s=`<rect width="320" height="180" fill="${b.bg}"/>`;
+      const cols=26,rows=12,x0=(320-cols*11)/2+0.5,y0=(180-rows*11)/2+0.5;
+      for(let k=0;k<cols*rows;k++){const c=k%cols,rw=Math.floor(k/cols),band=Math.min(7,Math.floor(k/39));
+        const fut=k>=cols*rows-30; const x=x0+c*11,y=y0+rw*11;
+        if(fut) s+=`<rect x="${x}" y="${y}" width="9" height="9" rx="2" fill="none" stroke="${b.fg}" stroke-width="1" stroke-dasharray="2 1.5" opacity=".6"/>`;
+        else s+=`<rect x="${x}" y="${y}" width="9" height="9" rx="2" fill="${cs[band]}" opacity="${k<150?.35:1}"/>`;}
+      const k=149,x=x0+(k%cols)*11,y=y0+Math.floor(k/cols)*11;
+      s+=`<rect x="${x-1.5}" y="${y-1.5}" width="12" height="12" rx="3" fill="none" stroke="${b.fg}" stroke-width="2.2"/>`;
+      return s;
+    },
     sit(b,r){
       // a stick figure seated on a stool beside the chapter numeral, on a cardboard ground
       let s=`<rect width="320" height="180" fill="${b.bg}"/><rect x="26" y="14" width="150" height="152" rx="6" fill="${b.panel}" stroke="${b.fg}" stroke-width="3"/>`;

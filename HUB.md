@@ -29,7 +29,7 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Interactive fiction | Stories you move through: branching tales, mysteries, letters | 1 |
 | Writing machine | Generates text: poems, headlines, horoscopes, recipes | 1 |
 | Explorable explainer | Teaches one idea by letting you play with it | 1 |
-| Data story | Real data drawn and narrated | 0 |
+| Data story | Real data drawn and narrated | 1 |
 | Map and place | Maps, atlases, journeys, imagined geography | 1 |
 | Field guide and reference | Curated knowledge: almanacs, guides, glossaries, specimen books | 1 |
 | Editorial and zine | A designed long-form read: essay, zine, magazine spread | 1 |
@@ -42,12 +42,13 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Puzzle hunt | Linked puzzles with a hidden answer, meant to be solved over time | 1 |
 | How it works | Cutaways, blueprints and diagrams of machines and processes | 1 |
 
-## Catalogue (29 builds, all on the hub)
+## Catalogue (30 builds, 29 on the hub, 1 queued)
 
 A date marked "(queued)" means the build is on the `queue` branch and not live yet.
 
 | Build | Date | Category | What it does | Subject world | Core mechanic | Look |
 |---|---|---|---|---|---|---|
+| The Billions | 5 Nov (queued) | Data story | Drag across a 1,000-square grid (10 million people each, coloured by billion) or a birth-year slider; shows people alive that year, which billion you were in and how many arrived since, plus a bar chart of years per billion (1804 to 2022 milestones, UN projections for the 9th and 10th) and a Play button that sweeps the years | World population history | Drag across a coloured unit grid to pick a year, with live readouts and a bar-to-grid highlight | Gabarito 800 + Hanken Grotesk; saturated teal ground, cream cards, rainbow billion bands, coral marker; deep teal in dark mode |
 | Sit | 4 Nov | Editorial and zine | A scrolling zine in seven chapters on how people have sat: deep squat, Egyptian stool, throne, Thonet bentwood chair (1859), office swivel, Balans kneeling chair (1979), standing desk. A sticky side-view figure re-poses itself (IK-solved legs and arms, eased tween) and swaps its drawn chair for each chapter, with hip height, knee bend and hip angle read live off the drawing; chapter chips jump around, and a Shuffle button cycles all seven. | Chairs, furniture history, ergonomics | Scroll-driven pose morph of a drawn figure with measured readouts | Shrikhand (fat display italic) + Karla; kraft cardboard-brown ground, cream sheet, deep teal chairs, black ink; dark brown in dark mode |
 | Antipode | 3 Nov | Map and place | Drag a pin across a simplified world map (or pick one of 11 cities) and a second map shows the exact antipode, with land or sea and its name at both ends, a verdict (land to land, sea to sea...), an Earth cross-section with the tilted tunnel, and a Jump in button that drops a ball through it on the no-air gravity-train timing (42 min, up to 7.9 km/s). Toggle highlights land cells whose opposite is land; the page states its own simplified-map percentage beside the real figure of about 4% | Geography, the shape of the Earth | Drag a pin; the opposite point is computed and point-in-polygon tested against hand-built continent outlines | Familjen Grotesk 700 + Inter; bone ground, ink land, magenta and ultramarine pins |
 | Found Phone | 2 Nov | Puzzle hunt | A lost phone on the 8:15 bus; four apps each hold a word puzzle: Notes (initials of uncrossed shopping items, SALAD), Alarms (times read as A1Z26 letter pairs, SHORTS), Photos (tap for timestamps, order by time, initials give SKETCH), Maps (walk directions on a 5x5 letter grid, GOLDEN). Puzzle n gives its nth letter; S-H-E-D unlocks the phone and says the spare key is in the shed. Two-step hints per puzzle, progress saved locally | Everyday phone apps, a locked-out commuter | Four short extraction puzzles feeding a meta answer | Dela Gothic One + Figtree; oxblood ground, cream phone, dark mode near-black maroon |
@@ -119,6 +120,8 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 
 - **Chairs, posture and scroll-driven figure morphs (4 Nov):** Sit is a zine with a sticky drawn figure. Kraft/cardboard-brown ground, Shrikhand and teal are taken. Editorial and zine is now used once (Data story is still 0). Leave furniture, ergonomics and stick-figure posture drawings alone for a while; the sticky-figure-beside-scrolling-chapters layout is used once.
 
+- **Population, demography and unit-grid charts (5 Nov):** The Billions is a 1,000-square waffle grid on a saturated teal ground (teal/green-blue and Gabarito now taken). Data story is now used once. Leave world population, birth years and waffle/unit grids alone for a while; the next Data story should use a different subject and chart form (a line, a scatter, a ribbon, a timeline).
+
 ## Rejected because they repeated an earlier build
 
 - Treadle (23 Oct): four-shaft weaving draft studio. Same as Drawdown.
@@ -165,7 +168,7 @@ Process tip (23–28 Oct): scheduled runs with no repo attached had no add_repo 
 
 ## Queued
 
-Nothing queued.
+- The Billions (5 Nov, Data story): `builds/billions/index.html`, queued with ?v=2026-11-05.
 
 ## Left out on purpose
 

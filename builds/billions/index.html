@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Billions</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@600;800&family=Hanken+Grotesk:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f8284;--ink:#06292b;--card:#fbf6ea;--cardink:#102a2b;--mute:#4d6667;--line:#cfd9d3;--hi:#ff5a36;
+--b1:#7a5c3a;--b2:#d9792b;--b3:#e8b21c;--b4:#8fb339;--b5:#1c9a74;--b6:#2b72b8;--b7:#6a4bb5;--b8:#c8346e;--b9:#0b5e66}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#062c2e;--ink:#e3f4ee;--card:#0d3f41;--cardink:#e8f6f1;--mute:#9cc2bd;--line:#1e5b5c;--hi:#ff8a6b;
+--b1:#b08a5c;--b2:#f0944a;--b3:#f4c93f;--b4:#a9cf55;--b5:#38c79c;--b6:#5b9ee0;--b7:#9b82e0;--b8:#ee6a9a;--b9:#7fd6dc}}
+:root[data-theme=dark]{--bg:#062c2e;--ink:#e3f4ee;--card:#0d3f41;--cardink:#e8f6f1;--mute:#9cc2bd;--line:#1e5b5c;--hi:#ff8a6b;
+--b1:#b08a5c;--b2:#f0944a;--b3:#f4c93f;--b4:#a9cf55;--b5:#38c79c;--b6:#5b9ee0;--b7:#9b82e0;--b8:#ee6a9a;--b9:#7fd6dc}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.5 'Hanken Grotesk',system-ui,sans-serif;padding:0 16px 56px;overflow-x:hidden}
+.wrap{max-width:880px;margin:0 auto}
+header{padding:44px 0 22px}
+.kick{font:800 12px 'Hanken Grotesk';letter-spacing:.16em;text-transform:uppercase;opacity:.8;margin:0 0 8px}
+h1{font:800 clamp(52px,12vw,104px)/.9 'Gabarito',system-ui,sans-serif;letter-spacing:-.03em;margin:0 0 14px}
+.lead{font-size:clamp(17px,2.4vw,21px);max-width:34em;margin:0}
+.card{background:var(--card);color:var(--cardink);border-radius:20px;padding:20px;margin:18px 0;box-shadow:0 6px 0 rgba(0,0,0,.18)}
+h2{font:800 clamp(22px,4vw,30px)/1.1 'Gabarito',system-ui,sans-serif;margin:0 0 6px;letter-spacing:-.01em}
+.sub{color:var(--mute);margin:0 0 14px;font-size:15px}
+svg{display:block;width:100%;height:auto}
+#grid{touch-action:none;cursor:ew-resize;border-radius:10px}
+.ctl{display:flex;gap:12px;align-items:center;margin:14px 0 4px}
+.ctl label{font:800 13px 'Hanken Grotesk';letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.yr{font:800 30px/1 'Gabarito';min-width:2.6em;text-align:right;font-variant-numeric:tabular-nums}
+input[type=range]{flex:1;min-width:0;accent-color:var(--hi);height:34px}
+button{font:800 14px 'Hanken Grotesk';border:0;border-radius:999px;padding:10px 16px;background:var(--cardink);color:var(--card);cursor:pointer;min-height:40px}
+button:focus-visible,input:focus-visible{outline:3px solid var(--hi);outline-offset:2px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.stat{border:2px solid var(--line);border-radius:14px;padding:12px}
+.stat b{display:block;font:800 clamp(26px,5vw,36px)/1 'Gabarito';font-variant-numeric:tabular-nums}
+.stat span{font-size:14px;color:var(--mute);display:block;margin-top:4px}
+.say{font-size:clamp(17px,2.4vw,19px);margin:14px 0 0}
+.say em{font-style:normal;font-weight:800;background:color-mix(in srgb,var(--hi) 28%,transparent);padding:0 .2em;border-radius:4px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mute);margin-top:10px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:76px 1fr;gap:10px;align-items:center;background:none;color:inherit;border-radius:10px;padding:4px;min-height:44px;text-align:left;font-weight:600;border:2px solid transparent}
+.bar[aria-pressed=true]{border-color:var(--cardink)}
+.bar .n{font:800 14px 'Hanken Grotesk'}
+.bar .tr{position:relative;height:28px;display:block}
+.bar .fill{display:block;height:100%;border-radius:7px;min-width:3px}
+.bar .v{position:absolute;top:50%;transform:translateY(-50%);font:800 14px 'Hanken Grotesk';padding-left:8px;white-space:nowrap;color:var(--cardink)}
+.bar.proj .fill{background-image:repeating-linear-gradient(135deg,transparent 0 5px,rgba(255,255,255,.55) 5px 8px)!important;opacity:.85}
+.note{font-size:14px;color:var(--mute);margin:12px 0 0}
+footer{font-size:14px;opacity:.85;margin-top:20px}
+@media(max-width:560px){body{font-size:16px}.card{padding:16px;border-radius:16px}.stats{grid-template-columns:1fr}.stat{display:flex;align-items:baseline;gap:12px}.stat b{min-width:3.4em}.stat span{margin:0}.bar{grid-template-columns:62px 1fr}.yr{font-size:26px}.ctl label{display:none}}
+</style></head><body>
+<div class="wrap">
+<header>
+<p class="kick">Data story</p>
+<h1>The Billions</h1>
+<p class="lead">It took all of human history until 1804 to reach the first billion people. The most recent billion took eleven years. Drag a birth year and see where you landed in the crowd.</p>
+</header>
+
+<section class="card" aria-labelledby="h-grid">
+<h2 id="h-grid">1,000 squares, 10 million people each</h2>
+<p class="sub">Drag across the squares, or use the slider. Faded squares were already here when you were born; bright ones arrived after.</p>
+<svg id="grid" viewBox="0 0 400 250" role="img" aria-label="Grid of 1,000 squares, each ten million people, coloured by billion"></svg>
+<div class="ctl"><label for="yr">Born in</label><input id="yr" type="range" min="1804" max="2025" step="1" value="1990"><span class="yr" id="yrOut">1990</span></div>
+<div class="ctl" style="margin-top:2px"><button id="play" type="button">▶ Play 1804 to 2025</button><button id="clear" type="button" hidden>Show all billions</button></div>
+<div class="stats" aria-live="polite">
+<div class="stat"><b id="s1">5.3 bn</b><span id="s1l">people alive that year</span></div>
+<div class="stat"><b id="s2">6th</b><span>billion you were counted in</span></div>
+<div class="stat"><b id="s3">+2.9 bn</b><span>arrived since, up to 2025</span></div>
+</div>
+<p class="say" id="say"></p>
+<div class="legend" id="legend"></div>
+</section>
+
+<section class="card" aria-labelledby="h-bars">
+<h2 id="h-bars">Years it took to add each billion</h2>
+<p class="sub">Tap a bar to light up that billion in the grid. Hatched bars are United Nations projections.</p>
+<div class="bars" id="bars"></div>
+<p class="note">Growth is slowing: the UN expects the population to peak at about 10.3 billion in the 2080s, after which it begins to fall.</p>
+</section>
+
+<footer>Milestone years are the commonly cited UN and US Census Bureau dates (1804, 1927, 1960, 1974, 1987, 1999, 2011, 2022). Years in between are interpolated, so treat single-year figures as estimates, good to a few tenths of a billion. The 2025 figure of 8.2 billion is approximate.</footer>
+</div>
+<script>
+(()=>{
+const MY=[1804,1927,1960,1974,1987,1999,2011,2022,2025], MP=[1,2,3,4,5,6,7,8,8.2];
+const NOW=2025, NOWP=8.2;
+const pop=y=>{ if(y<=MY[0])return 1; for(let i=1;i<MY.length;i++) if(y<=MY[i]){const t=(y-MY[i-1])/(MY[i]-MY[i-1]);return Math.exp(Math.log(MP[i-1])*(1-t)+Math.log(MP[i])*t);} return NOWP; };
+const yearAt=p=>{ if(p<=1)return null; for(let i=1;i<MP.length;i++) if(p<=MP[i]){const t=(Math.log(p)-Math.log(MP[i-1]))/(Math.log(MP[i])-Math.log(MP[i-1]));return MY[i-1]+t*(MY[i]-MY[i-1]);} return NOW; };
+const ord=n=>{const s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);};
+const COL=i=>`var(--b${i})`;
+const NS='http://www.w3.org/2000/svg';
+const grid=document.getElementById('grid'), yr=document.getElementById('yr');
+const COLS=40, CELLS=1000;
+const cells=[];
+for(let k=0;k<CELLS;k++){
+  const r=document.createElementNS(NS,'rect'), c=k%COLS, row=Math.floor(k/COLS);
+  r.setAttribute('x',c*10+.75); r.setAttribute('y',row*10+.75); r.setAttribute('width',8.5); r.setAttribute('height',8.5); r.setAttribute('rx',1.8);
+  const band=Math.floor(k/100)+1; r.dataset.band=band;
+  if(k>=820){ r.style.fill='none'; r.style.strokeWidth='.8'; r.style.strokeDasharray='2 1.6'; r.dataset.future=1; r.style.stroke='var(--mute)';}
+  else r.style.fill=COL(band);
+  grid.appendChild(r); cells.push(r);
+}
+const ring=document.createElementNS(NS,'rect'); ring.setAttribute('width',12); ring.setAttribute('height',12); ring.setAttribute('rx',3);
+ring.style.fill='none'; ring.style.stroke='var(--cardink)'; ring.style.strokeWidth='2.2'; ring.style.pointerEvents='none'; grid.appendChild(ring);
+let focus=null;
+function paint(y){
+  const p=pop(y), n=Math.round(p*100); // squares up to you
+  cells.forEach((r,k)=>{
+    const band=+r.dataset.band; let o=1;
+    if(!r.dataset.future){ o = k<n ? .28 : 1; }
+    else o = .9;
+    if(focus && band!==focus) o*=.25;
+    r.style.opacity=o;
+  });
+  const k=Math.max(0,n-1), cx=(k%COLS)*10+.75-1.75, cy=Math.floor(k/COLS)*10+.75-1.75;
+  ring.setAttribute('x',cx); ring.setAttribute('y',cy);
+  const since=NOWP-p, band=Math.min(8,Math.ceil(p-1e-9));
+  document.getElementById('yrOut').textContent=y;
+  document.getElementById('s1').textContent=p.toFixed(1)+' bn';
+  document.getElementById('s1l').textContent=y===NOW?'people alive today':'people alive in '+y;
+  document.getElementById('s2').textContent=ord(band);
+  document.getElementById('s3').textContent='+'+since.toFixed(1)+' bn';
+  const eq=yearAt(since);
+  let cmp;
+  if(y>=NOW) cmp='You are among the newest arrivals, so nobody has been added after you yet.';
+  else if(eq===null) cmp=`Everyone who has arrived since is fewer than the whole world held in 1804.`;
+  else cmp=`That is more people than the entire planet held around <em>${Math.round(eq/1)}</em>, and they arrived in your lifetime.`;
+  const last=y>=NOW?'':` Since ${y}, the world has added ${since.toFixed(1)} billion.`;
+  document.getElementById('say').innerHTML=`In <em>${y}</em> there were about <em>${p.toFixed(1)} billion</em> of us, and you were in the ${ord(band)} billion.${last} ${y<NOW?cmp:cmp}`;
+}
+const pl=document.getElementById('legend');
+pl.innerHTML=[1,2,3,4,5,6,7,8,9].map(i=>`<span><i style="background:${COL(i)}"></i>${ord(i)}</span>`).join('')+`<span><i style="border:1.5px dashed var(--mute);background:none"></i>not yet</span>`;
+// bars
+const rows=[[2,1804,1927,'123',false],[3,1927,1960,'33',false],[4,1960,1974,'14',false],[5,1974,1987,'13',false],[6,1987,1999,'12',false],[7,1999,2011,'12',false],[8,2011,2022,'11',false],[9,2022,2037,'15',true],[10,2037,2058,'21',true]];
+const bars=document.getElementById('bars');
+rows.forEach(([b,a,z,yrs,proj])=>{
+  const el=document.createElement('button'); el.type='button'; el.className='bar'+(proj?' proj':''); el.setAttribute('aria-pressed','false');
+  el.setAttribute('aria-label',`${ord(b)} billion: ${yrs} years, ${a} to ${z}`);
+  const w=Math.max(2,(+yrs)/123*100);
+  el.innerHTML=`<span class="n">${ord(b)} bn</span><span class="tr"><span class="fill" style="width:${w*0.45}%;background:${COL(Math.min(b,9))}"></span><span class="v" style="left:${w*0.45}%">${yrs} yrs <span style="font-weight:600;color:var(--mute)">${a}–${z}</span></span></span>`;
+  el.addEventListener('click',()=>{
+    if(b>8){return;}
+    focus = focus===b ? null : b;
+    bars.querySelectorAll('.bar').forEach(x=>x.setAttribute('aria-pressed','false'));
+    if(focus) el.setAttribute('aria-pressed','true');
+    document.getElementById('clear').hidden=!focus;
+    paint(+yr.value);
+  });
+  bars.appendChild(el);
+});
+document.getElementById('clear').addEventListener('click',()=>{focus=null;bars.querySelectorAll('.bar').forEach(x=>x.setAttribute('aria-pressed','false'));document.getElementById('clear').hidden=true;paint(+yr.value);});
+// the 123-year first-to-second bar label means "2nd billion took 123 years"
+yr.addEventListener('input',()=>{stop();paint(+yr.value)});
+// drag on grid
+function fromPointer(e){
+  const r=grid.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width*400, y=(e.clientY-r.top)/r.height*250;
+  const k=Math.max(0,Math.min(819,Math.floor(y/10)*COLS+Math.floor(x/10)));
+  const yy=yearAt((k+1)/100); const v=yy===null?1804:Math.round(yy);
+  yr.value=Math.max(1804,Math.min(2025,v)); paint(+yr.value);
+}
+let drag=false;
+grid.addEventListener('pointerdown',e=>{stop();drag=true;grid.setPointerCapture(e.pointerId);fromPointer(e)});
+grid.addEventListener('pointermove',e=>{if(drag)fromPointer(e)});
+grid.addEventListener('pointerup',()=>drag=false);grid.addEventListener('pointercancel',()=>drag=false);
+// play
+let raf=0; const pb=document.getElementById('play');
+function stop(){ if(raf){cancelAnimationFrame(raf);raf=0;pb.textContent='▶ Play 1804 to 2025';} }
+pb.addEventListener('click',()=>{
+  if(raf){stop();return;}
+  pb.textContent='❚❚ Pause'; let t0=performance.now(); const start=+yr.value>=2024?1804:+yr.value, span=2025-start, dur=span/221*9000;
+  const step=t=>{ const f=Math.min(1,(t-t0)/dur); yr.value=Math.round(start+span*f); paint(+yr.value); if(f<1)raf=requestAnimationFrame(step); else {raf=0;pb.textContent='▶ Play 1804 to 2025';} };
+  raf=requestAnimationFrame(step);
+});
+paint(+yr.value);
+window.__billions={pop,yearAt};
+})();
+</script>
+</body></html>

@@ -6,6 +6,16 @@
 */
 window.BUILDS = [
   {
+    slug: "billions",
+    title: "The Billions",
+    date: "2026-11-05",
+    kind: "Data story",
+    blurb: "It took all of history until 1804 to reach one billion people, and the latest billion took eleven years. A grid of 1,000 squares, each ten million people, is coloured billion by billion; drag across it or pick a birth year to see how many people were alive then, which billion you were counted in, and how many have arrived since. A bar chart shows the years each billion took, including the UN's projections for the ninth and tenth.",
+    font: "'Gabarito', 'Arial Black', sans-serif", fontWeight: 800, letterSpacing: "-0.03em",
+    bg: "#0f8284", fg: "#06292b", accent: "#ff5a36", accent2: "#e8b21c", panel: "#fbf6ea",
+    motif: "billions"
+  },
+  {
     slug: "sit",
     title: "Sit",
     date: "2026-11-04",
