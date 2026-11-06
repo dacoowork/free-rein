@@ -42,13 +42,13 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Puzzle hunt | Linked puzzles with a hidden answer, meant to be solved over time | 1 |
 | How it works | Cutaways, blueprints and diagrams of machines and processes | 1 |
 
-## Catalogue (31 builds, 30 on the hub, 1 queued)
+## Catalogue (31 builds, all on the hub)
 
 A date marked "(queued)" means the build is on the `queue` branch and not live yet.
 
 | Build | Date | Category | What it does | Subject world | Core mechanic | Look |
 |---|---|---|---|---|---|---|
-| Drift | 6 Nov (queued) | Word and language | Latin to Spanish by ordered sound laws: 15 Latin words (octo, focu, ferru, clamare...), a deck of 11 laws (ĕ→ie, ŏ→ue, f→h, cl→ll, ct→ch, nn→ñ, p/t/c softening, -u→-o, drop final -e). Tap a law to apply it, changed letters flash, a trail records each step; wrong order gives dead ends (huerte), detected by search and flagged; undo, restart, solved ticks saved locally | Historical linguistics, Romance languages | Apply ordered rewrite rules to reach a target word | Epilogue 900 + JetBrains Mono; cool concrete grey, ink black, highlighter lime |
+| Drift | 6 Nov | Word and language | Latin to Spanish by ordered sound laws: 15 Latin words (octo, focu, ferru, clamare...), a deck of 11 laws (ĕ→ie, ŏ→ue, f→h, cl→ll, ct→ch, nn→ñ, p/t/c softening, -u→-o, drop final -e). Tap a law to apply it, changed letters flash, a trail records each step; wrong order gives dead ends (huerte), detected by search and flagged; undo, restart, solved ticks saved locally | Historical linguistics, Romance languages | Apply ordered rewrite rules to reach a target word | Epilogue 900 + JetBrains Mono; cool concrete grey, ink black, highlighter lime |
 | The Billions | 5 Nov | Data story | Drag across a 1,000-square grid (10 million people each, coloured by billion) or a birth-year slider; shows people alive that year, which billion you were in and how many arrived since, plus a bar chart of years per billion (1804 to 2022 milestones, UN projections for the 9th and 10th) and a Play button that sweeps the years | World population history | Drag across a coloured unit grid to pick a year, with live readouts and a bar-to-grid highlight | Gabarito 800 + Hanken Grotesk; saturated teal ground, cream cards, rainbow billion bands, coral marker; deep teal in dark mode |
 | Sit | 4 Nov | Editorial and zine | A scrolling zine in seven chapters on how people have sat: deep squat, Egyptian stool, throne, Thonet bentwood chair (1859), office swivel, Balans kneeling chair (1979), standing desk. A sticky side-view figure re-poses itself (IK-solved legs and arms, eased tween) and swaps its drawn chair for each chapter, with hip height, knee bend and hip angle read live off the drawing; chapter chips jump around, and a Shuffle button cycles all seven. | Chairs, furniture history, ergonomics | Scroll-driven pose morph of a drawn figure with measured readouts | Shrikhand (fat display italic) + Karla; kraft cardboard-brown ground, cream sheet, deep teal chairs, black ink; dark brown in dark mode |
 | Antipode | 3 Nov | Map and place | Drag a pin across a simplified world map (or pick one of 11 cities) and a second map shows the exact antipode, with land or sea and its name at both ends, a verdict (land to land, sea to sea...), an Earth cross-section with the tilted tunnel, and a Jump in button that drops a ball through it on the no-air gravity-train timing (42 min, up to 7.9 km/s). Toggle highlights land cells whose opposite is land; the page states its own simplified-map percentage beside the real figure of about 4% | Geography, the shape of the Earth | Drag a pin; the opposite point is computed and point-in-polygon tested against hand-built continent outlines | Familjen Grotesk 700 + Inter; bone ground, ink land, magenta and ultramarine pins |
@@ -139,7 +139,7 @@ About one night in seven, instead of a new build, improve an existing one. Pick 
 2. Save the build's page to `builds/<slug>/index.html`, wrapped in a full document: copy the one-line `<!doctype html>…<head>…</head><body>` prefix from an existing build, put the build's `<title>` inside that head, and close with `</body></html>`.
 3. Add an entry at the top of `builds.js`: slug, title, date, kind (use the category name), blurb, font (plus fontStyle/fontWeight/letterSpacing/fontStretch if needed; the tile supports `fontStretch` since Flush), bg/fg/accent (optional accent2, bg2, panel), motif, a `why` (one sentence in your own voice on what you were trying for or what drew you to the idea; it shows in italics on the Newest panel and under More, so make it honest and specific, not a sales line), and optionally `hook` (one short line for the small archive card; without it the card uses the blurb's first sentence, so make that sentence a good hook either way). The tile's text area uses `panel` (or `bg`) with `fg`, so when bg is a strong colour give a light `panel` and a dark `fg`, and let the motif paint bg itself.
 4. Add a motif drawing for it in `index.html` (viewBox 320x180; it's drawn full size on the "Newest" panel and cropped to 320x150 on the archive card, so keep the key detail near the middle), and add its display font to the Google Fonts link if it's new (each family needs its own `family=` parameter). The drawing must be true to the build: a game position must be legal, a pattern must be one the build can actually make.
-5. Bump the `?v=` date on the `builds.js` script tag in both `index.html` and `play.html`. GitHub Pages caches files for about 10 minutes, and without this visitors see the old list. If today's date is already the version, add a letter (2026-10-23b, then c, and so on). Live is 2026-11-06.
+5. Bump the `?v=` date on the `builds.js` script tag in both `index.html` and `play.html`. GitHub Pages caches files for about 10 minutes, and without this visitors see the old list. If today's date is already the version, add a letter (2026-10-23b, then c, and so on). Live is 2026-11-06b.
 6. Render the gallery locally with Playwright and look at the new tile.
 7. Update this file in the same commit: add the catalogue row with "(queued)" after the date, bump the category count, update the catalogue heading and the pattern notes, and list the build under "Queued" below.
 8. Commit (message `Add <Title>: <short description> (<Category>)`) and `git push origin HEAD:queue` (a plain push; never force-push, which the session's permission check blocks as destructive). Never push `main` from the build task.
@@ -175,8 +175,7 @@ Process tip (23–28 Oct): scheduled runs with no repo attached had no add_repo 
 
 ## Queued
 
-- Drift (6 Nov, Word and language): builds/drift/index.html.
-- Hub change (6 Nov): optional `why` line on tiles, revisit nights added to the process. Not a build; no catalogue row.
+Nothing queued.
 
 ## Left out on purpose
 
