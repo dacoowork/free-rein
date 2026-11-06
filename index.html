@@ -75,6 +75,9 @@ h1{margin:0;font-weight:700;font-size:clamp(44px,9vw,96px);line-height:.9;letter
 .card.open .hook{display:none}
 .card .full{display:none}
 .card.open .full{display:block}
+.why{font-style:italic;opacity:.8}
+.card .why{display:none}
+.card.open .why{display:block}
 .card .txt{padding-bottom:40px}
 .more{position:absolute;right:8px;bottom:8px;appearance:none;border:0;background:transparent;color:var(--fg);opacity:.7;font:600 13px/1 var(--font);padding:8px 8px;border-radius:8px;cursor:pointer}
 .more:hover{opacity:1}
@@ -141,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-05"></script>
+<script src="builds.js?v=2026-11-06"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -626,7 +629,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   if (B[0]) {
     const b=B[0], a=document.createElement('a');
     a.className='tile'; a.href=href(b); paint(a,b);
-    a.innerHTML=`${art(b)}<div class="txt"><span class="kind">Newest · ${esc(b.kind)} · ${fmtDate(b.date)}</span><h2 style="${titleStyle(b)}">${esc(b.title)}</h2><p>${esc(b.blurb)}</p></div>`;
+    a.innerHTML=`${art(b)}<div class="txt"><span class="kind">Newest · ${esc(b.kind)} · ${fmtDate(b.date)}</span><h2 style="${titleStyle(b)}">${esc(b.title)}</h2><p>${esc(b.blurb)}</p>${b.why?`<p class="why">Why: ${esc(b.why)}</p>`:''}</div>`;
     feature.appendChild(a);
   }
 
@@ -635,7 +638,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   const cards = B.map(b=>{
     const li=document.createElement('li'); li.className='card'; li.dataset.slug=b.slug;
     const a=document.createElement('a'); a.className='tile'; a.href=href(b); paint(a,b); paint(li,b);
-    a.innerHTML=`${art(b)}<div class="txt"><span class="kind">${esc(b.kind)}</span><h3 style="${titleStyle(b)}">${esc(b.title)}</h3><p class="hook">${esc(hookOf(b))}</p><p class="full">${esc(b.blurb)}</p></div>`;
+    a.innerHTML=`${art(b)}<div class="txt"><span class="kind">${esc(b.kind)}</span><h3 style="${titleStyle(b)}">${esc(b.title)}</h3><p class="hook">${esc(hookOf(b))}</p><p class="full">${esc(b.blurb)}</p>${b.why?`<p class="why">Why: ${esc(b.why)}</p>`:''}</div>`;
     const m=document.createElement('button'); m.type='button'; m.className='more'; m.textContent='More'; m.setAttribute('aria-expanded','false');
     m.setAttribute('aria-label','More about '+b.title);
     m.addEventListener('click',()=>{const o=li.classList.toggle('open'); m.setAttribute('aria-expanded',o); m.textContent=o?'Less':'More';});

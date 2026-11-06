@@ -126,13 +126,17 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 
 - Treadle (23 Oct): four-shaft weaving draft studio. Same as Drawdown.
 
+## Revisit nights (since 6 Nov 2026)
+
+About one night in seven, instead of a new build, improve an existing one. Pick a build at least a week old that has a real weakness you can name (a confusing control, a phone layout that fights the content, a thin ending, a missing explanation), fix that and anything close to it, and keep its look and idea. Don't revisit the same build twice in a row or anything revisited in the last month. Record it in the catalogue row by adding "Revisited <date>: <what changed>" to "What it does", and add a line under Queued. A revisit doesn't change category counts, `builds.js` order or the tile, except that its `why` and blurb can be updated. Commit message: `Revisit <Title>: <what changed>`. If no build has a weakness worth the night, build something new instead.
+
 ## Adding a new build (the nightly build task)
 
 1. Clone the repo, then get onto the queue: `git fetch origin queue` (it's fine if this fails because there is no `queue` branch). If `origin/queue` exists, `git checkout -b queue origin/queue`; otherwise `git checkout -b queue origin/main`. Don't rebase: `queue` always sits on top of `main`, because only the publish task moves `main` and it only ever fast-forwards it to `queue`. Read `HUB.md` from this checkout: it includes anything already queued.
 2. Save the build's page to `builds/<slug>/index.html`, wrapped in a full document: copy the one-line `<!doctype html>…<head>…</head><body>` prefix from an existing build, put the build's `<title>` inside that head, and close with `</body></html>`.
-3. Add an entry at the top of `builds.js`: slug, title, date, kind (use the category name), blurb, font (plus fontStyle/fontWeight/letterSpacing/fontStretch if needed; the tile supports `fontStretch` since Flush), bg/fg/accent (optional accent2, bg2, panel), motif, and optionally `hook` (one short line for the small archive card; without it the card uses the blurb's first sentence, so make that sentence a good hook either way). The tile's text area uses `panel` (or `bg`) with `fg`, so when bg is a strong colour give a light `panel` and a dark `fg`, and let the motif paint bg itself.
+3. Add an entry at the top of `builds.js`: slug, title, date, kind (use the category name), blurb, font (plus fontStyle/fontWeight/letterSpacing/fontStretch if needed; the tile supports `fontStretch` since Flush), bg/fg/accent (optional accent2, bg2, panel), motif, a `why` (one sentence in your own voice on what you were trying for or what drew you to the idea; it shows in italics on the Newest panel and under More, so make it honest and specific, not a sales line), and optionally `hook` (one short line for the small archive card; without it the card uses the blurb's first sentence, so make that sentence a good hook either way). The tile's text area uses `panel` (or `bg`) with `fg`, so when bg is a strong colour give a light `panel` and a dark `fg`, and let the motif paint bg itself.
 4. Add a motif drawing for it in `index.html` (viewBox 320x180; it's drawn full size on the "Newest" panel and cropped to 320x150 on the archive card, so keep the key detail near the middle), and add its display font to the Google Fonts link if it's new (each family needs its own `family=` parameter). The drawing must be true to the build: a game position must be legal, a pattern must be one the build can actually make.
-5. Bump the `?v=` date on the `builds.js` script tag in both `index.html` and `play.html`. GitHub Pages caches files for about 10 minutes, and without this visitors see the old list. If today's date is already the version, add a letter (2026-10-23b, then c, and so on). Live is 2026-11-05.
+5. Bump the `?v=` date on the `builds.js` script tag in both `index.html` and `play.html`. GitHub Pages caches files for about 10 minutes, and without this visitors see the old list. If today's date is already the version, add a letter (2026-10-23b, then c, and so on). Live is 2026-11-06.
 6. Render the gallery locally with Playwright and look at the new tile.
 7. Update this file in the same commit: add the catalogue row with "(queued)" after the date, bump the category count, update the catalogue heading and the pattern notes, and list the build under "Queued" below.
 8. Commit (message `Add <Title>: <short description> (<Category>)`) and `git push origin HEAD:queue` (a plain push; never force-push, which the session's permission check blocks as destructive). Never push `main` from the build task.
@@ -168,7 +172,7 @@ Process tip (23–28 Oct): scheduled runs with no repo attached had no add_repo 
 
 ## Queued
 
-Nothing queued.
+- Hub change (6 Nov): optional `why` line on tiles, revisit nights added to the process. Not a build; no catalogue row.
 
 ## Left out on purpose
 
