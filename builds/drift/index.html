@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Drift</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@500;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#cfd3d4;--bg2:#bfc4c6;--ink:#14181a;--mute:#4d5558;--card:#f3f5f5;--line:#14181a;--hi:#c6ff00;--hif:#14181a;--bad:#b3261e;--ok:#14181a;
+--disp:'Epilogue','Arial Black',sans-serif;--mono:'JetBrains Mono',ui-monospace,Menlo,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#16191b;--bg2:#0f1213;--ink:#eef1f1;--mute:#a2abae;--card:#1f2326;--line:#eef1f1;--bad:#ff8a80;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#16191b;--bg2:#0f1213;--ink:#eef1f1;--mute:#a2abae;--card:#1f2326;--line:#eef1f1;--bad:#ff8a80;color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--mono);font-size:15px;line-height:1.5;padding:20px max(16px,env(safe-area-inset-right)) 40px max(16px,env(safe-area-inset-left))}
+main{max-width:980px;margin:0 auto}
+h1{font-family:var(--disp);font-weight:900;font-size:clamp(40px,9vw,76px);line-height:.95;letter-spacing:-.04em;margin:0}
+.sub{margin:10px 0 18px;max-width:60ch;color:var(--mute)}
+.words{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px;padding:0;list-style:none}
+.words button{font:600 13px var(--mono);background:var(--card);color:var(--ink);border:2px solid var(--line);border-radius:999px;padding:6px 12px;min-height:36px;cursor:pointer}
+.words button[aria-current=true]{background:var(--ink);color:var(--bg)}
+.words button.done::after{content:" ✓"}
+.stage{background:var(--card);border:3px solid var(--line);border-radius:18px;padding:18px clamp(14px,3vw,28px) 20px}
+.row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.word{font-family:var(--disp);font-weight:900;font-size:clamp(54px,15vw,132px);line-height:1.05;letter-spacing:-.03em;margin:22px 0 8px;min-height:1.1em;word-break:break-all}
+.word span{display:inline-block;border-radius:.12em;line-height:1}
+.word span.new{background:var(--hi);color:var(--hif);animation:pop .5s ease-out}
+@keyframes pop{0%{transform:translateY(-.25em) scale(1.15)}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){.word span.new{animation:none}}
+.target{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:2px 0 10px}
+.target b{font-family:var(--disp);font-weight:900;font-size:clamp(26px,6vw,40px);letter-spacing:-.02em}
+.target i{font-style:normal;color:var(--mute);font-size:13px}
+.trail{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:13px;color:var(--mute);min-height:30px;margin:6px 0 12px}
+.trail .step{display:inline-flex;gap:6px;align-items:center}
+.trail .step em{font-style:normal;border:1.5px solid var(--line);border-radius:6px;padding:0 6px;color:var(--ink);font-size:12px}
+.trail .step b{color:var(--ink);font-weight:700}
+.msg{min-height:3.2em;margin:0 0 10px;font-size:14px}
+.msg.bad{color:var(--bad);font-weight:600}
+.win{display:none;border:3px solid var(--line);background:var(--hi);color:#14181a;border-radius:12px;padding:12px 14px;margin:0 0 12px}
+.win.on{display:block}
+.win strong{font-family:var(--disp);font-weight:900;font-size:22px;display:block;margin-bottom:2px}
+.ctl{display:flex;gap:8px;flex-wrap:wrap}
+button.b{font:700 14px var(--mono);border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);padding:8px 14px;min-height:44px;cursor:pointer}
+button.b.pri{background:var(--ink);color:var(--bg)}
+button.b:disabled{opacity:.4;cursor:default}
+h2{font-family:var(--disp);font-weight:900;font-size:22px;letter-spacing:-.02em;margin:26px 0 4px}
+.legend{margin:0 0 12px;color:var(--mute);font-size:13px;max-width:70ch}
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin:0;padding:0;list-style:none}
+.card{width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:12px;padding:10px 12px 11px;min-height:92px;cursor:pointer;display:block;transition:transform .12s}
+.card:hover{transform:translateY(-2px)}
+.card:active{transform:translateY(1px)}
+.card .law{font-family:var(--disp);font-weight:900;font-size:21px;letter-spacing:-.02em;display:block}
+.card .what{font-size:12.5px;color:var(--mute);display:block;margin-top:2px}
+.card .ex{font-size:12px;display:block;margin-top:5px;font-weight:600}
+.card.nope{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-5px)}50%{transform:translateX(5px)}80%{transform:translateX(-3px)}}
+@media (prefers-reduced-motion:reduce){.card.nope{animation:none;outline:3px dashed var(--bad)}}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.card:focus-visible,.words button:focus-visible{outline-color:var(--ink);box-shadow:0 0 0 3px var(--hi)}
+.foot{margin-top:26px;color:var(--mute);font-size:12.5px;max-width:75ch}
+@media (max-width:520px){body{font-size:14px}.deck{grid-template-columns:1fr 1fr;gap:8px}.card{padding:9px 10px;min-height:96px}.card .law{font-size:18px}.card .ex{font-size:11.5px}}
+</style></head><body>
+<main>
+<h1>Drift</h1>
+<p class="sub">Latin turned into Spanish by a handful of sound changes, applied in some order over a thousand years. Take each Latin word and push it through the laws until it comes out as the Spanish one. The order matters.</p>
+<ul class="words" id="words" aria-label="Words"></ul>
+<section class="stage" aria-live="polite">
+  <div class="row"><span>Latin, about 100 BC</span><span id="count">0 laws applied</span></div>
+  <div class="word" id="word" aria-label="Current form"></div>
+  <div class="target"><i>Aim for Spanish</i><b id="target"></b><i id="gloss"></i></div>
+  <div class="trail" id="trail"></div>
+  <p class="msg" id="msg">Pick a law below to apply it to the word.</p>
+  <div class="win" id="win" role="status"></div>
+  <div class="ctl"><button class="b" id="undo">Undo</button><button class="b" id="reset">Start over</button><button class="b pri" id="next" hidden>Next word</button></div>
+</section>
+<h2>The laws</h2>
+<p class="legend">ĕ and ŏ are short stressed vowels, the ones that broke into two sounds in Spanish. A law that finds nothing to change leaves the word alone.</p>
+<ul class="deck" id="deck"></ul>
+<p class="foot">Simplified: real sound change happened gradually and in a particular order, and these are the main laws only. The Spanish forms are the standard ones; the step-by-step paths are a teaching model, not a reconstruction of any one word's history.</p>
+</main>
+<script>
+(function(){
+const V='aeiouĕŏ';
+const LAWS=[
+ {id:'e',name:'ĕ → ie',what:'Short stressed e splits into a diphthong.',ex:'tĕrra → tierra',re:/ĕ/g,to:'ie'},
+ {id:'o',name:'ŏ → ue',what:'Short stressed o splits too.',ex:'pŏrta → puerta',re:/ŏ/g,to:'ue'},
+ {id:'f',name:'f → h',what:'F before a vowel goes silent (written h).',ex:'filiu → hijo',re:/f(?=[aeioĕŏ])/g,to:'h'},
+ {id:'cl',name:'cl-, pl- → ll',what:'A word-first cluster melts into ll.',ex:'plorare → llorar',re:/^(cl|pl)/,to:'ll'},
+ {id:'ct',name:'ct → ch',what:'c and t fuse into ch.',ex:'pectu → pecho',re:/ct/g,to:'ch'},
+ {id:'nn',name:'nn → ñ',what:'Double n softens into ñ.',ex:'canna → caña',re:/nn/g,to:'ñ'},
+ {id:'p',name:'p → b',what:'p between vowels goes soft.',ex:'ripa → riba',re:new RegExp('(?<=['+V+'])p(?=['+V+'])','g'),to:'b'},
+ {id:'t',name:'t → d',what:'t between vowels goes soft.',ex:'rota → rueda',re:new RegExp('(?<=['+V+'])t(?=['+V+'])','g'),to:'d'},
+ {id:'c',name:'c → g',what:'c between vowels goes soft.',ex:'pacare → pagar',re:new RegExp('(?<=['+V+'])c(?=['+V+'])','g'),to:'g'},
+ {id:'u',name:'-u → -o',what:'A final u opens up to o.',ex:'caballu → caballo',re:/u$/,to:'o'},
+ {id:'d',name:'drop final -e',what:'After r, n or l the last e falls away.',ex:'cantare → cantar',re:/(?<=[rnl])e$/,to:''}
+];
+const WORDS=[
+ {la:'octo',es:'ocho',gloss:'eight',note:'Only one law is needed, but it is a big one: the c and the t fuse into the ch of "ocho".'},
+ {la:'annu',es:'año',gloss:'year',note:'Latin annus gave Spanish año, and English annual, anniversary and annals.'},
+ {la:'vita',es:'vida',gloss:'life',note:'A t between two vowels softened to d. The same shift turned Latin rota into rueda.'},
+ {la:'sale',es:'sal',gloss:'salt',note:'The final e fell off after l. English salary comes from the same word: Roman soldiers were paid in salt, or so the story goes.'},
+ {la:'nocte',es:'noche',gloss:'night',note:'Same ct → ch as eight. The final e stays because it follows a ch, not r, n or l.'},
+ {la:'clave',es:'llave',gloss:'key',note:'Initial cl- melted into ll. The cousin clavo (nail) kept its cl, and so did English clavicle.'},
+ {la:'tĕrra',es:'tierra',gloss:'earth',note:'The short stressed e broke into ie. English has terrain and terrestrial from the same root.'},
+ {la:'amicu',es:'amigo',gloss:'friend',note:'The c between vowels softened to g, and the final u opened to o.'},
+ {la:'sapere',es:'saber',gloss:'to know',note:'Literally "to taste" in Latin, which is why sabor (flavour) and saber (to know) are the same family.'},
+ {la:'clamare',es:'llamar',gloss:'to call',note:'Cl- melted to ll and the last e dropped. Latin clamare also gave English claim and clamour.'},
+ {la:'pŏrta',es:'puerta',gloss:'door',note:'The short stressed o broke into ue. The p stays because it starts the word.'},
+ {la:'plenu',es:'lleno',gloss:'full',note:'Pl- became ll, the same law as cl-, and the final u opened to o.'},
+ {la:'fŏcu',es:'fuego',gloss:'fire',note:'Latin focus meant hearth, and it is also the English word focus. Spanish has fuego, not huego: the ue arrived first and f survives before u.'},
+ {la:'fŏrte',es:'fuerte',gloss:'strong',note:'If f → h runs first, you get huerte. Break the o first and f is protected by the u.'},
+ {la:'fĕrru',es:'hierro',gloss:'iron',note:'Both f → h and ĕ → ie are needed, plus the final u. Either order lands in the same place.'}
+];
+const norm=s=>s.replace(/ĕ/g,'e').replace(/ŏ/g,'o');
+// returns {word, marks[]}
+function applyMarked(law,w){
+  const raw=w.replace(law.re,m=>law.to===''?'\u0003':'\u0001'+law.to+'\u0002');
+  let word='',marks=[],on=false;
+  for(const ch of raw){ if(ch==='\u0001'){on=true;continue} if(ch==='\u0002'){on=false;continue} if(ch==='\u0003')continue; word+=ch; marks.push(on); }
+  return {word,marks,dropped:raw.includes('\u0003')};
+}
+function plain(law,w){return applyMarked(law,w).word}
+// reachability by search
+function reachable(from,target){
+  const seen=new Set([from]),q=[from];
+  while(q.length){const w=q.shift(); if(norm(w)===target)return true; for(const l of LAWS){const x=plain(l,w); if(!seen.has(x)){seen.add(x);q.push(x)}}}
+  return false;
+}
+function shortest(from,target){
+  const seen=new Set([from]);let q=[[from,0]];
+  while(q.length){const [w,d]=q.shift(); if(norm(w)===target)return d; for(const l of LAWS){const x=plain(l,w); if(!seen.has(x)){seen.add(x);q.push([x,d+1])}}}
+  return -1;
+}
+const $=id=>document.getElementById(id);
+let idx=0,hist=[],cur='',marks=[];
+let solved={};
+try{solved=JSON.parse(localStorage.getItem('drift-solved')||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem('drift-solved',JSON.stringify(solved))}catch(e){}};
+
+function buildChips(){
+  const ul=$('words');ul.innerHTML='';
+  WORDS.forEach((w,i)=>{const li=document.createElement('li');const b=document.createElement('button');
+    b.type='button';b.textContent=norm(w.la);b.className=solved[w.es]?'done':'';b.setAttribute('aria-current',i===idx);
+    b.setAttribute('aria-label',norm(w.la)+(solved[w.es]?', solved':''));
+    b.onclick=()=>load(i);li.appendChild(b);ul.appendChild(li)});
+}
+function buildDeck(){
+  const ul=$('deck');ul.innerHTML='';
+  LAWS.forEach(l=>{const li=document.createElement('li');const b=document.createElement('button');b.type='button';b.className='card';b.dataset.law=l.id;
+    b.innerHTML='<span class="law"></span><span class="what"></span><span class="ex"></span>';
+    b.querySelector('.law').textContent=l.name;b.querySelector('.what').textContent=l.what;b.querySelector('.ex').textContent=l.ex;
+    b.onclick=()=>use(l,b);li.appendChild(b);ul.appendChild(li)});
+}
+function render(){
+  const w=WORDS[idx],won=norm(cur)===w.es;
+  const el=$('word');el.innerHTML='';
+  [...cur].forEach((ch,i)=>{const s=document.createElement('span');s.textContent=won?norm(ch):ch;if(marks[i])s.className='new';el.appendChild(s)});
+  el.setAttribute('aria-label','Current form: '+norm(cur));
+  $('target').textContent=w.es;$('gloss').textContent='“'+w.gloss+'”';
+  $('count').textContent=hist.length+(hist.length===1?' law applied':' laws applied');
+  const tr=$('trail');tr.innerHTML='';
+  const start=document.createElement('span');start.className='step';start.innerHTML='<b></b>';start.firstChild.textContent=w.la;tr.appendChild(start);
+  hist.forEach(h=>{const s=document.createElement('span');s.className='step';s.innerHTML='<em></em><span>→</span><b></b>';s.querySelector('em').textContent=h.law.name;s.querySelector('b').textContent=h.word;tr.appendChild(s)});
+  $('undo').disabled=!hist.length;$('next').hidden=!won;
+  const win=$('win'),msg=$('msg');
+  win.classList.toggle('on',won);
+  document.querySelectorAll('.card').forEach(c=>c.disabled=won);
+  if(won){
+    const best=shortest(w.la,w.es);
+    win.innerHTML='<strong></strong><span></span>';win.firstChild.textContent=w.la+' → '+w.es+', in '+hist.length+(hist.length===1?' law':' laws');
+    win.lastChild.textContent=w.note+(hist.length>best?' (There is a route in '+best+'.)':'');
+    msg.textContent='';msg.className='msg';
+  }else if(!reachable(cur,w.es)){
+    msg.className='msg bad';msg.textContent='Dead end: no run of laws can turn this into '+w.es+'. Undo a step or two.';
+  }else{
+    msg.className='msg';msg.textContent=hist.length?'Keep going, or undo if it feels wrong.':'Pick a law below to apply it to the word.';
+  }
+  buildChips();
+}
+function use(law,btn){
+  if(norm(cur)===WORDS[idx].es)return;
+  const r=applyMarked(law,cur);
+  if(r.word===cur){
+    btn.classList.remove('nope');void btn.offsetWidth;btn.classList.add('nope');
+    $('msg').className='msg';$('msg').textContent='“'+law.name+'” finds nothing to change in '+cur+'.';return;
+  }
+  hist.push({law,word:r.word,prev:cur});cur=r.word;marks=r.marks;
+  render();
+  if(r.dropped&&norm(cur)!==WORDS[idx].es)$('msg').textContent='The final e fell away.';
+  if(norm(cur)===WORDS[idx].es){solved[WORDS[idx].es]=1;save();buildChips()}
+}
+function load(i){idx=i;cur=WORDS[i].la;hist=[];marks=[];render()}
+$('undo').onclick=()=>{const h=hist.pop();if(!h)return;cur=h.prev;marks=[];render()};
+$('reset').onclick=()=>load(idx);
+$('next').onclick=()=>{let n=(idx+1)%WORDS.length;for(let k=0;k<WORDS.length;k++){const j=(idx+1+k)%WORDS.length;if(!solved[WORDS[j].es]){n=j;break}}load(n)};
+buildDeck();load(0);
+window.__drift={LAWS,WORDS,reachable,shortest,norm,plain};
+})();
+</script>
+</body></html>

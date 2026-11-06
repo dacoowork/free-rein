@@ -6,6 +6,17 @@
 */
 window.BUILDS = [
   {
+    slug: "drift",
+    title: "Drift",
+    date: "2026-11-06",
+    kind: "Word and language",
+    blurb: "Latin turned into Spanish through a few dozen regular sound changes, and the order they happen in matters. Take a Latin word like focu or ferru, apply laws from a deck (short o breaks into ue, f goes silent before a vowel, cl melts into ll, a t between vowels softens to d) and watch the letters change until it comes out as the Spanish word. Get the order wrong and fuerte becomes huerte, a dead end the game points out.",
+    font: "'Epilogue', 'Arial Black', sans-serif", fontWeight: 900, letterSpacing: "-0.04em",
+    bg: "#cfd3d4", fg: "#14181a", accent: "#c6ff00", panel: "#f3f5f5",
+    why: "Sound change looks like chaos until you see it as rules that have to run in the right order, so I made the order the puzzle.",
+    motif: "drift"
+  },
+  {
     slug: "billions",
     title: "The Billions",
     date: "2026-11-05",

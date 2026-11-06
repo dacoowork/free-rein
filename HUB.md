@@ -19,7 +19,7 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 |---|---|---|
 | Game | Solo play with a goal and a win or lose: puzzles, arcade, daily challenges | 1 |
 | Two-player or party game | Pass-and-play, hot-seat, games for a room | 1 |
-| Word and language | Word games, etymology, invented languages, ciphers, typing as play | 1 |
+| Word and language | Word games, etymology, invented languages, ciphers, typing as play | 2 |
 | Toy | Open-ended play with no goal | 3 |
 | Simulation | A real system modelled so you can poke it | 3 |
 | Tool | Something useful you'd come back to: calculators, planners, editors | 3 |
@@ -42,12 +42,13 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Puzzle hunt | Linked puzzles with a hidden answer, meant to be solved over time | 1 |
 | How it works | Cutaways, blueprints and diagrams of machines and processes | 1 |
 
-## Catalogue (30 builds, all on the hub)
+## Catalogue (31 builds, 30 on the hub, 1 queued)
 
 A date marked "(queued)" means the build is on the `queue` branch and not live yet.
 
 | Build | Date | Category | What it does | Subject world | Core mechanic | Look |
 |---|---|---|---|---|---|---|
+| Drift | 6 Nov (queued) | Word and language | Latin to Spanish by ordered sound laws: 15 Latin words (octo, focu, ferru, clamare...), a deck of 11 laws (ĕ→ie, ŏ→ue, f→h, cl→ll, ct→ch, nn→ñ, p/t/c softening, -u→-o, drop final -e). Tap a law to apply it, changed letters flash, a trail records each step; wrong order gives dead ends (huerte), detected by search and flagged; undo, restart, solved ticks saved locally | Historical linguistics, Romance languages | Apply ordered rewrite rules to reach a target word | Epilogue 900 + JetBrains Mono; cool concrete grey, ink black, highlighter lime |
 | The Billions | 5 Nov | Data story | Drag across a 1,000-square grid (10 million people each, coloured by billion) or a birth-year slider; shows people alive that year, which billion you were in and how many arrived since, plus a bar chart of years per billion (1804 to 2022 milestones, UN projections for the 9th and 10th) and a Play button that sweeps the years | World population history | Drag across a coloured unit grid to pick a year, with live readouts and a bar-to-grid highlight | Gabarito 800 + Hanken Grotesk; saturated teal ground, cream cards, rainbow billion bands, coral marker; deep teal in dark mode |
 | Sit | 4 Nov | Editorial and zine | A scrolling zine in seven chapters on how people have sat: deep squat, Egyptian stool, throne, Thonet bentwood chair (1859), office swivel, Balans kneeling chair (1979), standing desk. A sticky side-view figure re-poses itself (IK-solved legs and arms, eased tween) and swaps its drawn chair for each chapter, with hip height, knee bend and hip angle read live off the drawing; chapter chips jump around, and a Shuffle button cycles all seven. | Chairs, furniture history, ergonomics | Scroll-driven pose morph of a drawn figure with measured readouts | Shrikhand (fat display italic) + Karla; kraft cardboard-brown ground, cream sheet, deep teal chairs, black ink; dark brown in dark mode |
 | Antipode | 3 Nov | Map and place | Drag a pin across a simplified world map (or pick one of 11 cities) and a second map shows the exact antipode, with land or sea and its name at both ends, a verdict (land to land, sea to sea...), an Earth cross-section with the tilted tunnel, and a Jump in button that drops a ball through it on the no-air gravity-train timing (42 min, up to 7.9 km/s). Toggle highlights land cells whose opposite is land; the page states its own simplified-map percentage beside the real figure of about 4% | Geography, the shape of the Earth | Drag a pin; the opposite point is computed and point-in-polygon tested against hand-built continent outlines | Familjen Grotesk 700 + Inter; bone ground, ink land, magenta and ultramarine pins |
@@ -122,6 +123,8 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 
 - **Population, demography and unit-grid charts (5 Nov):** The Billions is a 1,000-square waffle grid on a saturated teal ground (teal/green-blue and Gabarito now taken). Data story is now used once. Leave world population, birth years and waffle/unit grids alone for a while; the next Data story should use a different subject and chart form (a line, a scatter, a ribbon, a timeline).
 
+- **Historical linguistics and sound laws (6 Nov):** Drift is Latin to Spanish as a rule-ordering puzzle on concrete grey with a lime highlighter (grey/concrete, lime and Epilogue now taken). Word and language is now used twice. Leave etymology, Romance languages and rewrite-rule puzzles alone for a while; the deck-of-rule-cards-applied-to-a-word form is used once.
+
 ## Rejected because they repeated an earlier build
 
 - Treadle (23 Oct): four-shaft weaving draft studio. Same as Drawdown.
@@ -172,6 +175,7 @@ Process tip (23–28 Oct): scheduled runs with no repo attached had no add_repo 
 
 ## Queued
 
+- Drift (6 Nov, Word and language): builds/drift/index.html.
 - Hub change (6 Nov): optional `why` line on tiles, revisit nights added to the process. Not a build; no catalogue row.
 
 ## Left out on purpose

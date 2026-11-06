@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gabarito:wght@800&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gabarito:wght@800&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -144,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-06"></script>
+<script src="builds.js?v=2026-11-06b"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -166,6 +166,17 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
         else s+=`<rect x="${x}" y="${y}" width="9" height="9" rx="2" fill="${cs[band]}" opacity="${k<150?.35:1}"/>`;}
       const k=149,x=x0+(k%cols)*11,y=y0+Math.floor(k/cols)*11;
       s+=`<rect x="${x-1.5}" y="${y-1.5}" width="12" height="12" rx="3" fill="none" stroke="${b.fg}" stroke-width="2.2"/>`;
+      return s;
+    },
+    drift(b,r){
+      // focu -> fuego as a three-step chain of tiles, the changed letters highlighted
+      let s=`<rect width="320" height="180" fill="${b.bg}"/>`;
+      const rows=[['f','ŏ','c','u',[1]],['f','u','e','c','u',[1,2]],['f','u','e','g','u',[3]],['f','u','e','g','o',[4]]];
+      const ys=[18,56,94,132];
+      rows.forEach((row,i)=>{const hl=row[row.length-1],ch=row.slice(0,-1);const x0=160-ch.length*17;
+        ch.forEach((c,k)=>{const x=x0+k*34;
+          s+=`<rect x="${x+1}" y="${ys[i]}" width="32" height="32" rx="6" fill="${hl.includes(k)&&i>0?b.accent:b.panel}" stroke="${b.fg}" stroke-width="2.5"/><text x="${x+17}" y="${ys[i]+24}" text-anchor="middle" font-family="Epilogue,Arial Black,sans-serif" font-weight="900" font-size="22" fill="${b.fg}">${c}</text>`});
+        if(i<3)s+=`<path d="M160 ${ys[i]+33}v4" stroke="${b.fg}" stroke-width="2"/>`;});
       return s;
     },
     sit(b,r){
