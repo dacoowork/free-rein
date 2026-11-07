@@ -23,7 +23,7 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Toy | Open-ended play with no goal | 3 |
 | Simulation | A real system modelled so you can poke it | 3 |
 | Tool | Something useful you'd come back to: calculators, planners, editors | 3 |
-| Instrument and sound | Play or compose: instruments, sequencers, ambient sound machines | 1 |
+| Instrument and sound | Play or compose: instruments, sequencers, ambient sound machines | 2 |
 | Generative art | Visual pieces made by rules, to watch or tweak | 1 |
 | Animation and motion | A short non-interactive film or motion piece | 1 |
 | Interactive fiction | Stories you move through: branching tales, mysteries, letters | 1 |
@@ -42,12 +42,13 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Puzzle hunt | Linked puzzles with a hidden answer, meant to be solved over time | 1 |
 | How it works | Cutaways, blueprints and diagrams of machines and processes | 1 |
 
-## Catalogue (31 builds, all on the hub)
+## Catalogue (32 builds, 31 on the hub, 1 queued)
 
 A date marked "(queued)" means the build is on the `queue` branch and not live yet.
 
 | Build | Date | Category | What it does | Subject world | Core mechanic | Look |
 |---|---|---|---|---|---|---|
+| Overtone | 7 Nov (queued) | Instrument and sound | One string, sixteen harmonics: Pluck mode (click anywhere, bright near the ends, hollow at the middle) and Touch mode (finger on a node like 1/2, 1/3, 1/4 snaps and rings one harmonic; off-node is a thud). Modal synthesis: the drawn string is the real sum of 16 standing waves, Web Audio sine partials, a 16-bar harmonic meter, string choice A1 to A3, and a Play the ladder button that climbs the harmonic series | Physics of vibrating strings, harmonics | Touch damps every mode with no node at that point; pluck position sets mode amplitudes | Bungee; stark monochrome white or black, no accent |
 | Drift | 6 Nov | Word and language | Latin to Spanish by ordered sound laws: 15 Latin words (octo, focu, ferru, clamare...), a deck of 11 laws (ĕ→ie, ŏ→ue, f→h, cl→ll, ct→ch, nn→ñ, p/t/c softening, -u→-o, drop final -e). Tap a law to apply it, changed letters flash, a trail records each step; wrong order gives dead ends (huerte), detected by search and flagged; undo, restart, solved ticks saved locally | Historical linguistics, Romance languages | Apply ordered rewrite rules to reach a target word | Epilogue 900 + JetBrains Mono; cool concrete grey, ink black, highlighter lime |
 | The Billions | 5 Nov | Data story | Drag across a 1,000-square grid (10 million people each, coloured by billion) or a birth-year slider; shows people alive that year, which billion you were in and how many arrived since, plus a bar chart of years per billion (1804 to 2022 milestones, UN projections for the 9th and 10th) and a Play button that sweeps the years | World population history | Drag across a coloured unit grid to pick a year, with live readouts and a bar-to-grid highlight | Gabarito 800 + Hanken Grotesk; saturated teal ground, cream cards, rainbow billion bands, coral marker; deep teal in dark mode |
 | Sit | 4 Nov | Editorial and zine | A scrolling zine in seven chapters on how people have sat: deep squat, Egyptian stool, throne, Thonet bentwood chair (1859), office swivel, Balans kneeling chair (1979), standing desk. A sticky side-view figure re-poses itself (IK-solved legs and arms, eased tween) and swaps its drawn chair for each chapter, with hip height, knee bend and hip angle read live off the drawing; chapter chips jump around, and a Shuffle button cycles all seven. | Chairs, furniture history, ergonomics | Scroll-driven pose morph of a drawn figure with measured readouts | Shrikhand (fat display italic) + Karla; kraft cardboard-brown ground, cream sheet, deep teal chairs, black ink; dark brown in dark mode |
@@ -125,6 +126,8 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 
 - **Historical linguistics and sound laws (6 Nov):** Drift is Latin to Spanish as a rule-ordering puzzle on concrete grey with a lime highlighter (grey/concrete, lime and Epilogue now taken). Word and language is now used twice. Leave etymology, Romance languages and rewrite-rule puzzles alone for a while; the deck-of-rule-cards-applied-to-a-word form is used once.
 
+- **Vibrating strings and harmonics (7 Nov):** Overtone is a monochord with finger nodes on stark monochrome (white/black only, Bungee). Instrument and sound is now used twice. Leave strings, standing waves and harmonic series alone for a while; monochrome-with-no-accent is used once.
+
 ## Rejected because they repeated an earlier build
 
 - Treadle (23 Oct): four-shaft weaving draft studio. Same as Drawdown.
@@ -175,7 +178,7 @@ Process tip (23–28 Oct): scheduled runs with no repo attached had no add_repo 
 
 ## Queued
 
-Nothing queued.
+- **Overtone** (7 Nov, Instrument and sound): `builds/overtone/index.html`, gallery version 2026-11-07. Tested at 1280 and 390 in light and dark: no errors, no sideways scroll; touch at 1/3 leaves only harmonics 3, 6, 9; off-node tap is a thud; middle pluck has no even harmonics; ladder runs to completion.
 
 ## Left out on purpose
 

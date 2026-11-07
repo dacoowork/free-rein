@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gabarito:wght@800&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -144,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-06b"></script>
+<script src="builds.js?v=2026-11-07"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -166,6 +166,18 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
         else s+=`<rect x="${x}" y="${y}" width="9" height="9" rx="2" fill="${cs[band]}" opacity="${k<150?.35:1}"/>`;}
       const k=149,x=x0+(k%cols)*11,y=y0+Math.floor(k/cols)*11;
       s+=`<rect x="${x-1.5}" y="${y-1.5}" width="12" height="12" rx="3" fill="none" stroke="${b.fg}" stroke-width="2.2"/>`;
+      return s;
+    },
+    overtone(b,r){
+      // a string vibrating as its 3rd harmonic, finger on the 1/3 node
+      const x0=30,x1=290,cy=88,A=44;let d='';
+      for(let i=0;i<=120;i++){const t=i/120;d+=(i?'L':'M')+(x0+t*(x1-x0)).toFixed(1)+' '+(cy-A*Math.sin(3*Math.PI*t)).toFixed(1);}
+      let s=`<line x1="${x0}" y1="${cy}" x2="${x1}" y2="${cy}" stroke="${b.fg}" stroke-width="1.5" opacity=".25"/>`;
+      s+=`<path d="${d}" fill="none" stroke="${b.fg}" stroke-width="4" stroke-linejoin="round"/>`;
+      s+=`<rect x="${x0-8}" y="${cy-30}" width="8" height="60" fill="${b.fg}"/><rect x="${x1}" y="${cy-30}" width="8" height="60" fill="${b.fg}"/>`;
+      s+=`<circle cx="${x0+(x1-x0)/3}" cy="${cy}" r="10" fill="${b.fg}"/>`;
+      for(let n=2;n<=6;n++)for(let k=1;k<n;k++){if(n===4&&k===2||n===6&&k%2===0||n===6&&k===3)continue;const x=x0+k/n*(x1-x0);s+=`<line x1="${x}" y1="152" x2="${x}" y2="${n<=4?136:144}" stroke="${b.fg}" stroke-width="${n===3&&k===1?3:1.5}"/>`;}
+      s+=`<line x1="${x0}" y1="152" x2="${x1}" y2="152" stroke="${b.fg}" stroke-width="1"/>`;
       return s;
     },
     drift(b,r){

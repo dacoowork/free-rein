@@ -6,6 +6,17 @@
 */
 window.BUILDS = [
   {
+    slug: "overtone",
+    title: "Overtone",
+    date: "2026-11-07",
+    kind: "Instrument and sound",
+    blurb: "One plucked string hides sixteen voices. Pluck it and they all sound at once; rest a finger lightly on a tick mark like 1/2, 1/3 or 1/4 and every voice except one is held still, so a single harmonic rings out. The string is drawn from the real sum of its standing waves, a bar chart shows each harmonic's loudness, and a ladder button climbs the natural harmonic series. Tap anywhere that isn't a node and you get a dull thud.",
+    font: "'Bungee', Impact, sans-serif", fontWeight: 400, letterSpacing: "0",
+    bg: "#fafafa", fg: "#0b0b0b", accent: "#0b0b0b", panel: "#e4e4e4",
+    why: "A guitar string never plays just one note, and a light touch in the right place lets you hear the others one at a time.",
+    motif: "overtone"
+  },
+  {
     slug: "drift",
     title: "Drift",
     date: "2026-11-06",
