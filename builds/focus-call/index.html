@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Focus Call</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@500;900&family=Red+Hat+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#d9654a;--card:#fff3e6;--ink:#2a1410;--mute:#6b4339;--line:#2a1410;--accent:#2a1410;--stage:#15101c;--grid:#2c2438;--ok:#1f7a4d}
+@media (prefers-color-scheme:dark){:root{--bg:#2a1a17;--card:#3a2622;--ink:#ffeadd;--mute:#cfa89b;--line:#ffeadd;--accent:#ffeadd;--ok:#6fe3a6}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Red Hat Display',system-ui,sans-serif}
+body{min-height:100vh;padding:20px 16px 48px}
+main{max-width:920px;margin:0 auto}
+h1{font-weight:900;font-size:clamp(44px,10vw,92px);line-height:.92;margin:0;letter-spacing:-.03em}
+.sub{margin:12px 0 18px;max-width:58ch;font-size:16px;line-height:1.5;font-weight:500}
+.card{background:var(--card);border:3px solid var(--line);border-radius:18px;box-shadow:6px 6px 0 var(--line);padding:14px}
+.levels{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.levels button{font:900 16px 'Red Hat Mono',monospace;width:44px;height:44px;border-radius:12px;border:3px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;position:relative}
+.levels button[aria-current=true]{background:var(--ink);color:var(--card)}
+.levels button.done::after{content:"";position:absolute;right:4px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:16px;align-items:start}
+@media(max-width:760px){.layout{grid-template-columns:1fr}}
+.board{background:var(--stage);border-radius:12px;padding:8px}
+svg.stage{display:block;width:100%;height:auto;touch-action:manipulation}
+.slot{cursor:pointer}
+.slot:focus{outline:none}
+.slot:focus-visible .ring{stroke:#fff;stroke-width:3}
+.side h2{font:900 20px 'Red Hat Display';margin:0 0 6px}
+.side p{margin:0 0 10px;font-size:14px;line-height:1.45;color:var(--mute);font-weight:500}
+.cues{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:6px}
+.cues li{display:flex;align-items:center;gap:10px;font:700 14px 'Red Hat Mono',monospace}
+.chip{width:26px;height:26px;border-radius:50%;border:3px solid var(--line);flex:none}
+.cues li .st{margin-left:auto}
+.cues li.ok .st{color:var(--ok)}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{font:900 15px 'Red Hat Display';padding:10px 16px;min-height:44px;border-radius:999px;border:3px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.btn.main{background:var(--ink);color:var(--card)}
+.btn[disabled]{opacity:.4;cursor:default}
+.status{margin:12px 0 0;font:700 15px 'Red Hat Mono',monospace;min-height:24px}
+.status.win{color:var(--ok)}
+.legend{margin-top:14px;font-size:13px;line-height:1.5;color:var(--mute);font-weight:500}
+</style></head><body>
+<main>
+<h1>Focus<br>Call</h1>
+<p class="sub">The rig is hung but nothing is pointed at anyone. Tap the empty mounts to place mirrors and bend each lamp's beam onto the marks. Overlapping red, green and blue beams add up to yellow, cyan, magenta and white, and every mark wants exactly its colour, no more.</p>
+<div class="levels" id="levels" role="group" aria-label="Cues"></div>
+<div class="card"><div class="layout">
+<div class="board"><svg class="stage" id="stage" role="group" aria-label="Stage"></svg></div>
+<div class="side">
+<h2 id="lvTitle">Cue 1</h2>
+<p id="lvNote"></p>
+<ul class="cues" id="cues"></ul>
+<div class="btns"><button class="btn" id="reset">Clear mirrors</button><button class="btn" id="hint">Hint</button><button class="btn main" id="next" disabled>Next cue</button></div>
+<div class="status" id="status" aria-live="polite"></div>
+<div class="legend">Tap a mount: empty, then a / mirror, then a \ mirror, then empty again. Beams pass through marks and cross each other freely; walls and lamps stop them.</div>
+</div></div></div>
+</main>
+<script>
+const LEVELS=[{"w":5,"h":5,"lamps":[{"x":2,"y":4,"d":"N","c":1}],"walls":[[3,2]],"slots":[[1,2],[2,2]],"targets":[{"x":1,"y":3,"need":1},{"x":1,"y":4,"need":1}],"sol":[1,2]},{"w":5,"h":5,"lamps":[{"x":3,"y":4,"d":"N","c":2}],"walls":[[2,2]],"slots":[[3,1],[1,1],[1,3]],"targets":[{"x":3,"y":3,"need":2},{"x":2,"y":3,"need":2}],"sol":[2,1,2]},{"w":6,"h":5,"lamps":[{"x":1,"y":0,"d":"S","c":1},{"x":5,"y":2,"d":"W","c":4}],"walls":[[5,4],[1,2]],"slots":[[4,1],[4,2],[2,3]],"targets":[{"x":3,"y":1,"need":4},{"x":1,"y":1,"need":5},{"x":0,"y":1,"need":4}],"sol":[2,2,0]},{"w":6,"h":6,"lamps":[{"x":5,"y":4,"d":"W","c":1},{"x":5,"y":0,"d":"S","c":2}],"walls":[[1,1]],"slots":[[4,4],[2,1],[4,2],[2,2]],"targets":[{"x":5,"y":3,"need":2},{"x":5,"y":1,"need":3},{"x":3,"y":2,"need":1}],"sol":[2,1,2,2]},{"w":6,"h":6,"lamps":[{"x":5,"y":3,"d":"W","c":1},{"x":1,"y":5,"d":"N","c":2},{"x":4,"y":5,"d":"N","c":4}],"walls":[[0,2],[1,3]],"slots":[[3,2],[4,2],[3,4],[3,3]],"targets":[{"x":4,"y":4,"need":5},{"x":3,"y":0,"need":4},{"x":4,"y":3,"need":5}],"sol":[2,2,2,1]},{"w":7,"h":6,"lamps":[{"x":0,"y":1,"d":"E","c":1},{"x":4,"y":0,"d":"S","c":2},{"x":0,"y":0,"d":"E","c":4}],"walls":[[5,2],[4,5],[3,5]],"slots":[[3,4],[3,2],[1,2],[4,4],[1,1]],"targets":[{"x":2,"y":0,"need":4},{"x":3,"y":1,"need":2},{"x":6,"y":1,"need":2},{"x":1,"y":0,"need":5}],"sol":[2,2,2,1,1]},{"w":7,"h":6,"lamps":[{"x":0,"y":1,"d":"E","c":1},{"x":0,"y":4,"d":"E","c":2},{"x":0,"y":0,"d":"E","c":4}],"walls":[[3,4],[3,2],[5,0]],"slots":[[5,3],[1,4],[1,1],[5,4],[1,3],[4,4]],"targets":[{"x":2,"y":3,"need":2},{"x":4,"y":1,"need":2},{"x":2,"y":0,"need":4},{"x":4,"y":0,"need":6}],"sol":[2,1,1,1,1,2]},{"w":7,"h":7,"lamps":[{"x":6,"y":6,"d":"W","c":1},{"x":0,"y":2,"d":"E","c":2},{"x":6,"y":4,"d":"W","c":4},{"x":6,"y":5,"d":"W","c":2}],"walls":[[5,0],[6,3]],"slots":[[1,3],[4,4],[5,3],[4,2],[1,5],[4,3],[5,5]],"targets":[{"x":5,"y":6,"need":3},{"x":1,"y":2,"need":6},{"x":3,"y":5,"need":6},{"x":2,"y":6,"need":1},{"x":2,"y":3,"need":6}],"sol":[1,2,2,2,2,1,1]}];
+const NOTES=["Light both marks. Beams pass through marks.","One green lamp, three mounts, two marks that want green.","Red and blue lamps: where both beams land you get magenta.","Red plus green makes yellow. Keep stray beams off the other marks.","Three primaries, three marks: two magenta, one blue.","Four marks, three lamps. A mark gets only what you send it.","Green and blue together make cyan.","The big rig: four lamps, five marks, three cyan."];
+const NAMES={1:'red',2:'green',3:'yellow',4:'blue',5:'magenta',6:'cyan',7:'white'};
+const HEX={1:'#ff3b4e',2:'#2bff7a',4:'#3a6bff'};
+const mix=n=>{const r=n&1?255:0,g=n&2?255:0,b=n&4?255:0;return `rgb(${r},${g},${b})`};
+const CS=60,NS='http://www.w3.org/2000/svg';
+const SL={E:'N',N:'E',W:'S',S:'W'},BS={E:'S',S:'E',W:'N',N:'W'};
+const D={N:[0,-1],E:[1,0],S:[0,1],W:[-1,0]};
+let cur=0,state=[],hintSlot=-1,won=false;
+let done={};try{done=JSON.parse(localStorage.getItem('focuscall')||'{}')}catch(e){}
+const $=id=>document.getElementById(id);
+function el(n,a,p){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function trace(L,st){const W=L.w,H=L.h,k=(x,y)=>x+','+y;
+ const slot={};L.slots.forEach((s,i)=>slot[k(s[0],s[1])]=i);
+ const wall=new Set(L.walls.map(s=>k(s[0],s[1])));const tg={};L.targets.forEach((t,i)=>tg[k(t.x,t.y)]=i);
+ const lamp=new Set(L.lamps.map(l=>k(l.x,l.y)));const got=L.targets.map(()=>0),segs=[];
+ for(const l of L.lamps){let x=l.x,y=l.y,d=l.d,sx=x,sy=y;
+  for(let n=0;n<200;n++){x+=D[d][0];y+=D[d][1];
+   if(x<0||y<0||x>=W||y>=H){segs.push([sx,sy,x,y,l.c]);break}
+   const q=k(x,y);if(wall.has(q)||lamp.has(q)){segs.push([sx,sy,x,y,l.c]);break}
+   if(q in tg)got[tg[q]]|=l.c;
+   if(q in slot){const s=st[slot[q]];if(s){segs.push([sx,sy,x,y,l.c]);sx=x;sy=y;d=(s==1?SL:BS)[d]}}}}
+ return{got,segs}}
+function load(i){cur=i;const L=LEVELS[i];state=L.slots.map(()=>0);hintSlot=-1;won=false;draw()}
+function draw(){const L=LEVELS[cur];const svg=$('stage');svg.innerHTML='';
+ const pad=CS/2,w=L.w*CS,h=L.h*CS;svg.setAttribute('viewBox',`${-6} ${-6} ${w+12} ${h+12}`);
+ for(let y=0;y<L.h;y++)for(let x=0;x<L.w;x++)el('rect',{x:x*CS+1,y:y*CS+1,width:CS-2,height:CS-2,rx:6,fill:'#1c1527'},svg);
+ L.walls.forEach(([x,y])=>{const g=el('g',{},svg);el('rect',{x:x*CS+2,y:y*CS+2,width:CS-4,height:CS-4,rx:3,fill:'#9a90ae'},g);
+  for(let k=1;k<4;k++)el('line',{x1:x*CS+2+k*14,y1:y*CS+2,x2:x*CS+2+k*14,y2:y*CS+CS-2,stroke:'#6f6585','stroke-width':2},g);
+  el('rect',{x:x*CS+2,y:y*CS+2,width:CS-4,height:CS-4,rx:3,fill:'none',stroke:'#cfc7de','stroke-width':2},g)});
+ const {got,segs}=trace(L,state);
+ const bg=el('g',{style:'mix-blend-mode:screen;isolation:isolate'},svg);
+ // beams: glow + core, blended additively
+ const beams=el('g',{style:'isolation:isolate'},svg);
+ [[14,.18],[7,.4],[3,1]].forEach(([sw,op])=>{segs.forEach(s=>{let [x0,y0,x1,y1,c]=s;
+  const cl=Math.max(-0.5,Math.min(L.w-.5,x1)),cy=Math.max(-0.5,Math.min(L.h-.5,y1));
+  const ex=x1<0?-0.5:x1>=L.w?L.w-0.5:x1,ey=y1<0?-0.5:y1>=L.h?L.h-0.5:y1;
+  el('line',{x1:(x0+.5)*CS,y1:(y0+.5)*CS,x2:(ex+.5)*CS,y2:(ey+.5)*CS,stroke:HEX[c],'stroke-width':sw,'stroke-linecap':'round',opacity:op,style:'mix-blend-mode:screen'},beams)})});
+ // slots
+ L.slots.forEach(([x,y],i)=>{const g=el('g',{class:'slot',tabindex:0,role:'button','aria-label':`Mirror mount ${i+1}: ${['empty','slash mirror','backslash mirror'][state[i]]}`},svg);
+  const cx=(x+.5)*CS,cy=(y+.5)*CS;
+  el('rect',{class:'ring',x:x*CS+6,y:y*CS+6,width:CS-12,height:CS-12,rx:8,fill:'rgba(255,255,255,.04)',stroke:hintSlot===i?'#fff':'#8b7fa6','stroke-width':hintSlot===i?3:2,'stroke-dasharray':state[i]?'0':'5 4'},g);
+  if(state[i]){const a=state[i]==1?[cx-19,cy+19,cx+19,cy-19]:[cx-19,cy-19,cx+19,cy+19];
+   el('line',{x1:a[0],y1:a[1],x2:a[2],y2:a[3],stroke:'#fff3e6','stroke-width':7,'stroke-linecap':'round'},g);
+   el('line',{x1:a[0],y1:a[1],x2:a[2],y2:a[3],stroke:'#a99ec4','stroke-width':2.5,'stroke-linecap':'round'},g)}
+  else if(hintSlot===i){el('text',{x:cx,y:cy+6,'text-anchor':'middle',fill:'#fff','font-size':18,'font-family':'Red Hat Mono'},g).textContent='?'}
+  g.addEventListener('click',()=>cycle(i));
+  g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();cycle(i)}})});
+ // lamps
+ L.lamps.forEach(l=>{const cx=(l.x+.5)*CS,cy=(l.y+.5)*CS,rot={N:-90,E:0,S:90,W:180}[l.d];
+  const g=el('g',{transform:`translate(${cx} ${cy}) rotate(${rot})`},svg);
+  el('rect',{x:-20,y:-16,width:30,height:32,rx:6,fill:'#2f2842',stroke:'#a99ec4','stroke-width':2.5},g);
+  el('path',{d:'M10,-16L24,-22L24,22L10,16Z',fill:HEX[l.c],stroke:'#fff3e6','stroke-width':2.5,'stroke-linejoin':'round'},g)});
+ // targets
+ L.targets.forEach(t=>{const cx=(t.x+.5)*CS,cy=(t.y+.5)*CS,i=L.targets.indexOf(t),ok=got[i]===t.need;
+  const g=el('g',{style:'pointer-events:none'},svg);
+  el('circle',{cx,cy,r:19,fill:got[i]?mix(got[i]):'rgba(0,0,0,.35)',opacity:got[i]?.9:1,stroke:mix(t.need),'stroke-width':6},g);
+  el('circle',{cx,cy,r:22.5,fill:'none',stroke:ok?'#fff':'rgba(0,0,0,.5)','stroke-width':ok?2:1.5},g);
+  if(ok){el('path',{d:`M${cx-8},${cy}l6,7l11,-14`,fill:'none',stroke:'#15101c','stroke-width':4.5,'stroke-linecap':'round','stroke-linejoin':'round'},g)}
+  else{el('path',{d:`M${cx-6},${cy-6}l12,12M${cx+6},${cy-6}l-12,12`,stroke:'rgba(255,255,255,.55)','stroke-width':3,'stroke-linecap':'round'},g)}});
+ // sidebar
+ $('lvTitle').textContent='Cue '+(cur+1)+' of '+LEVELS.length;$('lvNote').textContent=NOTES[cur];
+ const ul=$('cues');ul.innerHTML='';
+ L.targets.forEach((t,i)=>{const li=document.createElement('li');const ok=got[i]===t.need;li.className=ok?'ok':'';
+  li.innerHTML=`<span class="chip" style="background:${mix(t.need)}"></span><span>${NAMES[t.need]}</span><span class="st">${ok?'lit':got[i]?'is '+NAMES[got[i]]:'dark'}</span>`;ul.appendChild(li)});
+ const all=got.every((g,i)=>g===L.targets[i].need);
+ if(all&&!won){won=true;done[cur]=1;try{localStorage.setItem('focuscall',JSON.stringify(done))}catch(e){}}
+ if(!all)won=false;
+ $('status').className='status'+(all?' win':'');
+ $('status').textContent=all?(cur===LEVELS.length-1?'House lights up. Show’s a go.':'Cue complete. Hold for next.'):state.some(s=>s)?'':'Rig is dark. Tap a mount.';
+ $('next').disabled=!(all&&cur<LEVELS.length-1);
+ const lv=$('levels');lv.innerHTML='';
+ LEVELS.forEach((_,j)=>{const b=document.createElement('button');b.textContent=j+1;b.setAttribute('aria-label','Cue '+(j+1)+(done[j]?' (done)':''));if(j===cur)b.setAttribute('aria-current','true');if(done[j])b.className='done';b.onclick=()=>load(j);lv.appendChild(b)})}
+function cycle(i){state[i]=(state[i]+1)%3;if(hintSlot===i)hintSlot=-1;draw();const f=document.querySelectorAll('.slot')[i];if(f)f.focus({preventScroll:true})}
+$('reset').onclick=()=>{state=state.map(()=>0);hintSlot=-1;draw()};
+$('next').onclick=()=>load(cur+1);
+$('hint').onclick=()=>{const L=LEVELS[cur];const w=L.sol.map((v,i)=>v!==state[i]?i:-1).filter(i=>i>=0);if(!w.length)return;hintSlot=w[0];draw();
+ $('status').textContent=`Mount ${hintSlot+1} should be ${['empty','a / mirror','a \\ mirror'][L.sol[hintSlot]]}.`};
+load(0);
+
+</script>
+</body></html>

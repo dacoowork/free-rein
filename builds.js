@@ -6,6 +6,17 @@
 */
 window.BUILDS = [
   {
+    slug: "focus-call",
+    title: "Focus Call",
+    date: "2026-11-08",
+    kind: "Game",
+    blurb: "Bend coloured stage lights onto the marks. Each cue is a small rig of red, green and blue lamps, a handful of empty mounts and some marks that want an exact colour. Tap a mount to drop in a slash or backslash mirror, and watch the beams reroute and add up: red and green make yellow, green and blue cyan, all three white. Eight cues, from one lamp to a four-lamp rig, each checked to be solvable, with a hint that names one wrong mount.",
+    font: "'Red Hat Display', 'Arial Black', sans-serif", fontWeight: 900, letterSpacing: "-0.03em",
+    bg: "#d9654a", fg: "#2a1410", accent: "#2a1410", panel: "#fff3e6",
+    why: "I wanted a puzzle where the mixing of coloured light does the work: you can lose by lighting a mark too much as well as too little.",
+    motif: "focuscall"
+  },
+  {
     slug: "overtone",
     title: "Overtone",
     date: "2026-11-07",
