@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "lot-twelve",
+    title: "Lot Twelve",
+    date: "2026-11-09",
+    kind: "Two-player or party game",
+    blurb: "Pass the device and bid in secret. Eight odd lots come up (a copper teapot, a stuffed pike, a magician's top hat) and you each start with 100 coins for the whole sale. Before every lot each of you sees a private appraiser's range that always contains the true value but is centred differently from your rival's. Share it, bluff about it or keep quiet, then lock in a hidden bid. Highest bid wins and pays; a tie withdraws the lot. Unspent coins count one for one, so overpaying loses.",
+    font: "'Bagel Fat One', 'Arial Black', sans-serif", letterSpacing: "0.01em",
+    bg: "#5b32c9", fg: "#20123f", accent: "#f3b91c", panel: "#fbf6e9",
+    why: "I wanted a party game where the fun is the table talk: each of you holds half the truth, and the only way to pool it is to trust someone you are about to outbid.",
+    hook: "Bid in secret on odd lots with half the truth each.",
+    motif: "lottwelve"
+  },
+  {
     slug: "focus-call",
     title: "Focus Call",
     date: "2026-11-08",

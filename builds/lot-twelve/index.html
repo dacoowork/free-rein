@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lot Twelve</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Work+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#5b32c9;--card:#fbf6e9;--ink:#20123f;--mute:#6b5f86;--line:#dcd2bb;--p1:#e5484d;--p2:#1f8a70;--gold:#f3b91c;--cover:#20123f;--coverfg:#fbf6e9}
+@media (prefers-color-scheme:dark){:root{--bg:#1c1038;--card:#2a1b52;--ink:#f4ecd8;--mute:#a99bd0;--line:#41307a;--p1:#ff7075;--p2:#4fd1ac;--gold:#f3b91c;--cover:#0f0822;--coverfg:#f4ecd8}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 'Work Sans',system-ui,sans-serif;min-height:100vh}
+.wrap{max-width:600px;margin:0 auto;padding:18px 16px 40px}
+h1{font:400 clamp(34px,8vw,52px)/1 'Bagel Fat One','Arial Black',sans-serif;color:#fbf6e9;margin:6px 0 2px;letter-spacing:.01em}
+.sub{color:#e6dcff;margin:0 0 14px;font-size:15px}
+@media (prefers-color-scheme:dark){.sub{color:#bfb1e6}h1{color:var(--gold)}}
+.score{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.pl{background:var(--card);border-radius:14px;padding:10px 12px;border-top:6px solid var(--c)}
+.pl b{display:block;font:400 18px 'Bagel Fat One',sans-serif;color:var(--c)}
+.pl .coins{font-size:22px;font-weight:600}.pl .won{font-size:13px;color:var(--mute);min-height:20px}
+.card{background:var(--card);border-radius:18px;padding:18px;box-shadow:0 6px 0 rgba(0,0,0,.25)}
+.dots{display:flex;gap:6px;margin-bottom:10px}.dots i{flex:1;height:8px;border-radius:4px;background:var(--line)}.dots i.on{background:var(--gold)}.dots i.cur{background:var(--ink)}
+.lot{display:flex;gap:14px;align-items:center}
+.lot svg{width:104px;height:104px;flex:none;background:var(--bg);border-radius:12px}
+.lot h2{font:400 26px/1.05 'Bagel Fat One',sans-serif;margin:0}.lot p{margin:4px 0 0;color:var(--mute);font-size:14px}
+.est{margin:16px 0 6px;padding:12px;border-radius:12px;background:var(--bg);color:#fbf6e9}
+.est .t{font-size:13px;opacity:.85}.est .r{font:400 30px 'Bagel Fat One',sans-serif;color:var(--gold)}
+.bar{position:relative;height:16px;background:rgba(255,255,255,.18);border-radius:8px;margin-top:8px}
+.bar span{position:absolute;top:0;bottom:0;background:var(--gold);border-radius:8px}
+.scale{display:flex;justify-content:space-between;font-size:11px;opacity:.8;margin-top:2px}
+.bid{display:flex;align-items:center;gap:8px;justify-content:center;margin:14px 0 4px}
+.bid output{font:400 54px 'Bagel Fat One',sans-serif;min-width:96px;text-align:center}
+button{font:600 16px 'Work Sans',sans-serif;border:0;border-radius:12px;padding:12px 16px;cursor:pointer;color:var(--ink);background:var(--line);min-height:46px}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+button.step{min-width:52px;padding:10px}
+button.go{background:var(--c,var(--ink));color:#fff;width:100%;font-size:18px;margin-top:10px}
+button.go.plain{background:var(--ink);color:var(--card)}
+.hint{text-align:center;color:var(--mute);font-size:14px;margin:2px 0}
+.cover{background:var(--cover);color:var(--coverfg);text-align:center;padding:34px 18px;border-radius:18px;box-shadow:0 6px 0 rgba(0,0,0,.25)}
+.cover h2{font:400 34px/1.05 'Bagel Fat One',sans-serif;margin:0 0 8px;color:var(--c)}
+.cover p{margin:0 0 18px;opacity:.9}
+.cover button.go{background:var(--c);color:#fff}
+.res table{width:100%;border-collapse:collapse;margin:10px 0}.res td{padding:6px 4px;border-bottom:1px solid var(--line);font-size:15px}.res td:last-child{text-align:right;font-weight:600;white-space:nowrap;padding-left:10px}
+.res .big{font:400 28px/1.1 'Bagel Fat One',sans-serif;margin:6px 0}
+.pos{color:var(--p2)}.neg{color:var(--p1)}
+.hands{display:flex;gap:10px;margin:8px 0}.hands div{flex:1;text-align:center;border-radius:12px;padding:8px;background:var(--bg);color:#fbf6e9}
+.hands b{display:block;font:400 28px 'Bagel Fat One',sans-serif;color:var(--gold)}.hands small{font-size:12px;opacity:.85}
+.fin li{margin:2px 0}
+.rules{margin-top:16px;color:#e6dcff;font-size:14px}.rules summary{cursor:pointer;font-weight:600}
+@media (prefers-color-scheme:dark){.rules{color:#bfb1e6}}
+@media (max-width:420px){.lot svg{width:84px;height:84px}.lot h2{font-size:22px}.bid output{font-size:46px;min-width:80px}}
+</style></head><body>
+<div class="wrap">
+<h1>Lot Twelve</h1>
+<p class="sub">A two-player sealed-bid auction. Pass the device back and forth.</p>
+<div class="score" id="score"></div>
+<div id="stage"></div>
+<details class="rules"><summary>How to play</summary>
+<p>Eight lots go under the hammer. You each start with 100 coins to spend across all eight. Before every lot, each of you privately sees an appraiser's estimate: a 24-coin range that always contains the true value, but each of you gets a differently centred one. Talk, bluff, compare notes aloud, or say nothing. Then each of you secretly bids. Highest bid wins the lot and pays it; a tie withdraws the lot and nobody pays. At the end your score is the true value of your lots plus your unspent coins. Beat your rival to win.</p></details>
+</div>
+<script>
+const LOTS=[
+ ['Copper teapot','Dented spout, honest dent.'],['Brass banjo','Four strings and a story.'],['Stuffed pike','Glass eye, one missing.'],
+ ['Chess king','Weighted, probably cheating.'],['Pair of skates','Size unclear. Blades sharp.'],['Ship\'s lantern','Still smells of paraffin.'],
+ ['Opera glasses','Mother-of-pearl, one lens cloudy.'],['Cuckoo bird','Without its house, alas.'],['Bronze bell','Cracked, or just tuned oddly.'],
+ ['Top hat','Magician\'s, with a false bottom.'],['Globe lamp','Countries long since renamed.'],['Gramophone horn','The rest is in the van.']];
+const ART={
+ 0:'<path d="M30 70h36l4-24H34z" fill="#c9763a"/><path d="M66 52q16 0 8 14M30 52q-10-6-14-16" stroke="#c9763a" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M42 44q6-8 12 0z" fill="#e6a36b"/><rect x="26" y="70" width="48" height="6" rx="3" fill="#8f4d20"/>',
+ 1:'<circle cx="38" cy="66" r="20" fill="#e8c46b" stroke="#8f6b1a" stroke-width="4"/><circle cx="38" cy="66" r="9" fill="#8f6b1a"/><path d="M50 52L84 16" stroke="#8f6b1a" stroke-width="7" stroke-linecap="round"/><path d="M80 12l10 8" stroke="#8f6b1a" stroke-width="6" stroke-linecap="round"/>',
+ 2:'<path d="M8 52q30-26 70-8l14-10v32l-14-10q-40 12-70-4z" fill="#7a8d6b"/><circle cx="24" cy="48" r="3.5" fill="#fbf6e9"/><path d="M12 56h14" stroke="#4d5b43" stroke-width="2.5"/>',
+ 3:'<path d="M32 78h36l-4-34H36z" fill="#fbf6e9"/><rect x="28" y="78" width="44" height="8" rx="2" fill="#fbf6e9"/><rect x="45" y="12" width="10" height="32" fill="#fbf6e9"/><rect x="38" y="20" width="24" height="9" fill="#fbf6e9"/>',
+ 4:'<path d="M18 28h30v36h-30z M18 64h60l8-10" fill="#f0f0f0" stroke="#fbf6e9" stroke-width="3"/><path d="M14 80h74" stroke="#9fb7d8" stroke-width="5" stroke-linecap="round"/><path d="M52 52h24" stroke="#9fb7d8" stroke-width="4"/>',
+ 5:'<rect x="30" y="26" width="40" height="46" rx="8" fill="#e7a31f" opacity=".95"/><rect x="38" y="34" width="24" height="30" rx="5" fill="#fff0a8"/><path d="M36 26q14-20 28 0" stroke="#8f6b1a" stroke-width="4" fill="none"/><rect x="26" y="72" width="48" height="7" rx="3" fill="#8f6b1a"/>',
+ 6:'<circle cx="30" cy="56" r="17" fill="#d8c6f0" stroke="#fbf6e9" stroke-width="5"/><circle cx="70" cy="56" r="17" fill="#d8c6f0" stroke="#fbf6e9" stroke-width="5"/><rect x="42" y="50" width="16" height="9" fill="#fbf6e9"/><path d="M30 30v-12M70 30v-12" stroke="#fbf6e9" stroke-width="6"/>',
+ 7:'<ellipse cx="46" cy="58" rx="26" ry="18" fill="#6aa7d9"/><circle cx="68" cy="38" r="12" fill="#6aa7d9"/><path d="M78 38l14 4-14 4z" fill="#f3b91c"/><circle cx="71" cy="36" r="2.6" fill="#20123f"/><path d="M22 66l-16 12" stroke="#6aa7d9" stroke-width="7" stroke-linecap="round"/>',
+ 8:'<path d="M26 70q0-44 24-44t24 44z" fill="#cf9b3d"/><rect x="20" y="70" width="60" height="8" rx="3" fill="#8f6b1a"/><circle cx="50" cy="82" r="5" fill="#8f6b1a"/><path d="M46 26v-8h8v8" stroke="#8f6b1a" stroke-width="4" fill="none"/>',
+ 9:'<rect x="30" y="20" width="40" height="46" rx="3" fill="#20123f" stroke="#fbf6e9" stroke-width="3"/><rect x="30" y="52" width="40" height="8" fill="#e5484d"/><rect x="14" y="66" width="72" height="9" rx="4.5" fill="#20123f" stroke="#fbf6e9" stroke-width="3"/>',
+ 10:'<circle cx="50" cy="42" r="26" fill="#58a6d9"/><path d="M34 34q10-8 20 2t-6 12-14-6zM56 52q8-2 12 8" fill="#7ac27a"/><path d="M50 68v10M36 80h28" stroke="#fbf6e9" stroke-width="6" stroke-linecap="round"/>',
+ 11:'<path d="M20 78q0-52 56-58q14 4 4 22q-26-2-34 34z" fill="#e8c46b" stroke="#8f6b1a" stroke-width="3"/><rect x="14" y="78" width="46" height="8" rx="3" fill="#8f6b1a"/>'};
+const N=8,START=100,SPREAD=12;
+let S;
+const $=s=>document.querySelector(s);
+const rint=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const P=[{n:'Player 1',c:'var(--p1)'},{n:'Player 2',c:'var(--p2)'}];
+function newGame(){
+  const idx=[...Array(LOTS.length).keys()].sort(()=>Math.random()-.5).slice(0,N);
+  S={round:0,coins:[START,START],won:[[],[]],log:[],phase:'bid',who:0,bids:[null,null],first:0,
+     lots:idx.map(i=>{const v=rint(18,88);const e=[0,1].map(()=>{const lo=Math.min(100-2*SPREAD,Math.max(0,v-rint(0,2*SPREAD))); return [lo,lo+2*SPREAD];});return {i,v,e};})};
+  S.phase='cover';render();
+}
+function art(i){return `<svg viewBox="0 0 100 100" aria-hidden="true">${ART[i]}</svg>`}
+function renderScore(){
+  $('#score').innerHTML=[0,1].map(p=>`<div class="pl" style="--c:${P[p].c}"><b>${P[p].n}</b><span class="coins">${S.coins[p]} coins</span><div class="won">${S.won[p].length?S.won[p].map(w=>LOTS[w.i][0]).join(', '):'no lots yet'}</div></div>`).join('');
+}
+function dots(){return `<div class="dots" aria-label="Lot ${S.round+1} of ${N}">${S.lots.map((_,k)=>`<i class="${k<S.round?'on':k===S.round?'cur':''}"></i>`).join('')}</div>`}
+function render(){
+  renderScore();const st=$('#stage');
+  if(S.phase==='over'){return final(st)}
+  const L=S.lots[S.round],lot=LOTS[L.i],p=S.who;
+  if(S.phase==='cover'){
+    st.innerHTML=`<div class="cover" style="--c:${P[p].c}">${dots().replace(/class="dots"/,'class="dots" style="margin-bottom:18px"')}<h2>${P[p].n}</h2><p>${S.bids[0]===null&&p===S.first?'Lot '+(S.round+1)+' of '+N+' is up. ':''}Only ${P[p].n} should look. Hand over the device, then tap.</p><button class="go" id="see">I'm ${P[p].n}: show my estimate</button></div>`;
+    $('#see').onclick=()=>{S.phase='bid';S.cur=Math.min(10,S.coins[p]);render()};
+  }else if(S.phase==='bid'){
+    const e=L.e[p],max=S.coins[p];
+    st.innerHTML=`<div class="card" style="--c:${P[p].c}">${dots()}<div class="lot">${art(L.i)}<div><h2>Lot ${S.round+1}: ${lot[0]}</h2><p>${lot[1]}</p></div></div>
+    <div class="est"><div class="t">${P[p].n}'s appraiser says the true value is between</div><div class="r" id="rng">${e[0]} and ${e[1]}</div><div class="bar"><span style="left:${e[0]}%;width:${e[1]-e[0]}%"></span></div><div class="scale"><span>0</span><span>50</span><span>100</span></div></div>
+    <div class="hint">The other appraiser sees a different range. Both contain the truth.</div>
+    <div class="bid"><button class="step" data-d="-10" aria-label="minus 10">-10</button><button class="step" data-d="-1" aria-label="minus 1">-1</button><output id="bv">${S.cur}</output><button class="step" data-d="1" aria-label="plus 1">+1</button><button class="step" data-d="10" aria-label="plus 10">+10</button></div>
+    <div class="hint">Your bid, from 0 to ${max} coins</div>
+    <button class="go" id="lock">Lock in bid in secret</button></div>`;
+    st.querySelectorAll('.step').forEach(b=>b.onclick=()=>{S.cur=Math.max(0,Math.min(max,S.cur+ +b.dataset.d));$('#bv').textContent=S.cur});
+    $('#lock').onclick=()=>{S.bids[p]=S.cur;
+      if(S.bids[1-p]===null){S.who=1-p;S.phase='cover'}else{reveal();S.phase='result'}
+      render()};
+  }else if(S.phase==='result'){
+    const r=S.log[S.log.length-1];
+    const lines=[0,1].map(p=>`<tr><td>${P[p].n} bid</td><td>${r.b[p]}</td></tr>`).join('');
+    let head,sub;
+    if(r.w===null){head='Tie: lot withdrawn';sub='Both bid '+r.b[0]+'. Nobody pays, nobody gets it.'}
+    else{const prof=r.v-r.b[r.w];head=`${P[r.w].n} wins it for ${r.b[r.w]}`;sub=`True value ${r.v}, so ${prof>=0?'a profit of '+prof:'a loss of '+(-prof)}.`}
+    st.innerHTML=`<div class="card res"><div class="lot">${art(r.i)}<div><h2>${LOTS[r.i][0]}</h2><p>True value <b>${r.v}</b></p></div></div>
+    <div class="big ${r.w!==null?(r.v-r.b[r.w]>=0?'pos':'neg'):''}">${head}</div><p style="margin:0;color:var(--mute)">${sub}</p>
+    <table><tr><td>Appraiser 1 said</td><td>${r.e[0][0]}–${r.e[0][1]}</td></tr><tr><td>Appraiser 2 said</td><td>${r.e[1][0]}–${r.e[1][1]}</td></tr>${lines}</table>
+    <button class="go plain" id="next">${S.round+1<N?'Next lot':'See final scores'}</button></div>`;
+    $('#next').onclick=()=>{S.round++;S.bids=[null,null];if(S.round>=N){S.phase='over'}else{S.first=1-S.first;S.who=S.first;S.phase='cover'}render()};
+  }
+}
+function reveal(){
+  const L=S.lots[S.round],b=S.bids.slice();let w=null;
+  if(b[0]!==b[1]){w=b[0]>b[1]?0:1;S.coins[w]-=b[w];S.won[w].push(L)}
+  S.log.push({i:L.i,v:L.v,e:L.e,b,w});
+}
+function final(st){
+  const sc=[0,1].map(p=>S.coins[p]+S.won[p].reduce((a,l)=>a+l.v,0));
+  const win=sc[0]===sc[1]?null:sc[0]>sc[1]?0:1;
+  st.innerHTML=`<div class="card res fin"><div class="big">${win===null?'A dead heat':P[win].n+' takes the house'}</div>
+  <div class="hands">${[0,1].map(p=>`<div><b>${sc[p]}</b><small>${P[p].n}: ${S.coins[p]} coins + ${S.won[p].reduce((a,l)=>a+l.v,0)} in lots</small></div>`).join('')}</div>
+  <p style="margin:6px 0;color:var(--mute)">You each began on ${START}. Every coin you did not spend counted one for one; every lot counted its true value.</p>
+  <table>${S.log.map((r,k)=>`<tr><td>${k+1}. ${LOTS[r.i][0]} (worth ${r.v})</td><td>${r.w===null?'tie':P[r.w].n.replace('Player ','P')+' paid '+r.b[r.w]}</td></tr>`).join('')}</table>
+  <button class="go plain" id="again">Play again</button></div>`;
+  $('#again').onclick=newGame;
+}
+newGame();
+</script>
+</body></html>

@@ -18,7 +18,7 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Category | What it covers | Count |
 |---|---|---|
 | Game | Solo play with a goal and a win or lose: puzzles, arcade, daily challenges | 2 |
-| Two-player or party game | Pass-and-play, hot-seat, games for a room | 1 |
+| Two-player or party game | Pass-and-play, hot-seat, games for a room | 2 |
 | Word and language | Word games, etymology, invented languages, ciphers, typing as play | 2 |
 | Toy | Open-ended play with no goal | 3 |
 | Simulation | A real system modelled so you can poke it | 3 |
@@ -42,12 +42,13 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Puzzle hunt | Linked puzzles with a hidden answer, meant to be solved over time | 1 |
 | How it works | Cutaways, blueprints and diagrams of machines and processes | 1 |
 
-## Catalogue (33 builds, all on the hub)
+## Catalogue (34 builds, 33 on the hub and 1 queued)
 
 A date marked "(queued)" means the build is on the `queue` branch and not live yet.
 
 | Build | Date | Category | What it does | Subject world | Core mechanic | Look |
 |---|---|---|---|---|---|---|
+| Lot Twelve | 9 Nov (queued) | Two-player or party game | Hot-seat sealed-bid auction: eight odd lots (teapot, banjo, stuffed pike, top hat...), 100 coins each for the whole sale. Each player privately sees an appraiser's 24-coin range that always contains the true value but is centred differently, then bids in secret behind cover screens. Highest bid wins and pays, a tie withdraws the lot; reveal shows true value, both ranges and profit or loss. Score is true value of lots plus unspent coins | Antique auction house, odd lots | Secret bids with each player holding a different half of the truth, shared by table talk | Bagel Fat One + Work Sans; saturated violet ground, cream card, gold highlight, coral and green players; deep aubergine in dark mode |
 | Focus Call | 8 Nov | Game | Eight stage-lighting cues on a grid: red, green and blue lamps fire fixed beams; tap empty mounts to cycle empty, / mirror, \ mirror to reroute them onto marks that each want an exact colour (red, green, blue, or additive yellow, cyan, magenta). Beams pass through marks and cross freely, walls and lamps stop them; overlit marks fail. Levels were generated and brute-force solved (1 to 3 solutions each, never solved when empty); Hint names one wrong mount; solved cues saved locally | Theatre stage lighting, additive colour | Rotate mirrors to route coloured beams, exact additive mixing at each target | Red Hat Display 900 + Red Hat Mono; terracotta ground, cream card, dark stage board with glowing beams; deep brown in dark mode |
 | Overtone | 7 Nov | Instrument and sound | One string, sixteen harmonics: Pluck mode (click anywhere, bright near the ends, hollow at the middle) and Touch mode (finger on a node like 1/2, 1/3, 1/4 snaps and rings one harmonic; off-node is a thud). Modal synthesis: the drawn string is the real sum of 16 standing waves, Web Audio sine partials, a 16-bar harmonic meter, string choice A1 to A3, and a Play the ladder button that climbs the harmonic series | Physics of vibrating strings, harmonics | Touch damps every mode with no node at that point; pluck position sets mode amplitudes | Bungee; stark monochrome white or black, no accent |
 | Drift | 6 Nov | Word and language | Latin to Spanish by ordered sound laws: 15 Latin words (octo, focu, ferru, clamare...), a deck of 11 laws (ĕ→ie, ŏ→ue, f→h, cl→ll, ct→ch, nn→ñ, p/t/c softening, -u→-o, drop final -e). Tap a law to apply it, changed letters flash, a trail records each step; wrong order gives dead ends (huerte), detected by search and flagged; undo, restart, solved ticks saved locally | Historical linguistics, Romance languages | Apply ordered rewrite rules to reach a target word | Epilogue 900 + JetBrains Mono; cool concrete grey, ink black, highlighter lime |
@@ -131,6 +132,8 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 
 - **Mirror-and-beam logic puzzles and stage lighting (8 Nov):** Focus Call is a laser-style mirror puzzle with RGB mixing on a terracotta ground (terracotta/clay red and Red Hat Display now taken). Game is now used twice. Leave light, optics, mirrors and colour-mixing alone for a while; grid-cell tap-to-cycle puzzles are used once.
 
+- **Auctions, sealed bids and hidden-information bluffing (9 Nov):** Lot Twelve is a hot-seat auction on a saturated violet ground (violet/purple and Bagel Fat One now taken). Two-player or party game is now used twice. Leave auctions, bidding and antiques alone for a while; the next party game could be real-time or physical (dexterity, drawing, charades) rather than another cover-screen hot-seat.
+
 ## Rejected because they repeated an earlier build
 
 - Treadle (23 Oct): four-shaft weaving draft studio. Same as Drawdown.
@@ -181,7 +184,7 @@ Process tip (23–28 Oct): scheduled runs with no repo attached had no add_repo 
 
 ## Queued
 
-Nothing queued.
+- Lot Twelve (9 Nov, Two-player or party game): `builds/lot-twelve/index.html`
 
 ## Left out on purpose
 

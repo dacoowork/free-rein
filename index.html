@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -144,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-08"></script>
+<script src="builds.js?v=2026-11-09"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -167,6 +167,15 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
       const k=149,x=x0+(k%cols)*11,y=y0+Math.floor(k/cols)*11;
       s+=`<rect x="${x-1.5}" y="${y-1.5}" width="12" height="12" rx="3" fill="none" stroke="${b.fg}" stroke-width="2.2"/>`;
       return s;
+    },
+    lottwelve(b,r){
+      // two bidding paddles either side of a plinth holding a copper teapot, lot tag on the front
+      let o=`<rect width="320" height="180" fill="${b.bg}"/><rect x="0" y="150" width="320" height="30" fill="#20123f" opacity=".35"/>`;
+      o+=`<rect x="124" y="108" width="72" height="50" rx="3" fill="#fbf6e9"/><rect x="118" y="100" width="84" height="12" rx="3" fill="#fbf6e9"/>`;
+      o+=`<g transform="translate(110 28) scale(1)"><path d="M30 70h36l4-24H34z" fill="#c9763a"/><path d="M70 52q16 0 8 14M30 52q-10-6-14-16" stroke="#c9763a" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M42 44q6-8 12 0z" fill="#e6a36b"/></g>`;
+      o+=`<text x="160" y="140" text-anchor="middle" font-family="${b.font}" font-size="22" fill="#20123f">12</text>`;
+      const pad=(x,c,t,rot)=>`<g transform="rotate(${rot} ${x} 150)"><rect x="${x-3}" y="92" width="6" height="64" rx="3" fill="#fbf6e9"/><circle cx="${x}" cy="66" r="34" fill="${c}"/><text x="${x}" y="78" text-anchor="middle" font-family="${b.font}" font-size="34" fill="#fff">${t}</text></g>`;
+      return o+pad(58,'#e5484d','20',-8)+pad(262,'#1f8a70','13',8);
     },
     focuscall(b,r){
       // dark stage grid; a red beam crosses a green one on a yellow mark, then bounces off a mirror to a red mark
