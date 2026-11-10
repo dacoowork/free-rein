@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Handles</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Geist+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#d81f45;--bg2:#b8163a;--ink:#17090d;--mute:#5d4148;--card:#fff8f4;--board:#ffffff;--dot:#ecdcd8;--line:#17090d;
+--h:#1f47ff;--l1:#1f47ff;--l2:#ff8a00;--l3:#0f9e74;--ghost:#e9b9c3;--ok:#0f9e74;--on:#fff;
+--disp:'Sora','Arial Black',sans-serif;--body:'Sora',system-ui,sans-serif;--mono:'Geist Mono',ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#3a0a16;--bg2:#2c0711;--ink:#f8ece8;--mute:#c8a8ae;--card:#1d0f12;--board:#140a0c;--dot:#3a2328;--line:#f8ece8;--h:#6f8bff;--l1:#6f8bff;--l2:#ffa23d;--l3:#2fd3a1;--ghost:#6b2a39;--ok:#2fd3a1}}
+:root[data-theme="dark"]{--bg:#3a0a16;--bg2:#2c0711;--ink:#f8ece8;--mute:#c8a8ae;--card:#1d0f12;--board:#140a0c;--dot:#3a2328;--line:#f8ece8;--h:#6f8bff;--l1:#6f8bff;--l2:#ffa23d;--l3:#2fd3a1;--ghost:#6b2a39;--ok:#2fd3a1}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body)}
+body{min-height:100vh;padding:28px 16px 48px}
+.wrap{max-width:860px;margin:0 auto}
+header{color:#fff;margin-bottom:18px}
+h1{font-family:var(--disp);font-weight:800;font-size:clamp(44px,9vw,84px);letter-spacing:-.05em;line-height:.9;margin:0}
+h1 svg{width:.82em;height:.82em;vertical-align:-.06em;margin-left:.06em}
+.tag{font-size:clamp(15px,2.2vw,18px);max-width:40em;margin:10px 0 0;line-height:1.45;opacity:.95}
+nav.steps{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 14px}
+nav.steps button{font:600 13px var(--body);border:2px solid #fff;background:transparent;color:#fff;border-radius:999px;padding:6px 12px;cursor:pointer}
+nav.steps button[aria-current="true"]{background:#fff;color:#b8163a}
+nav.steps button .ok{color:inherit}
+.card{background:var(--card);border-radius:18px;padding:22px;box-shadow:0 10px 0 var(--bg2)}
+.kicker{font:600 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:0}
+h2{font:800 clamp(24px,4vw,34px)/1.05 var(--disp);letter-spacing:-.035em;margin:4px 0 8px}
+.text{line-height:1.55;font-size:16px;max-width:44em;margin:0 0 14px}
+.text b{font-weight:600}
+.board{position:relative;background:var(--board);border:2px solid var(--line);border-radius:12px;overflow:hidden;touch-action:none}
+.board svg{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none}
+.hand{cursor:grab}
+.dragging .hand{cursor:grabbing}
+.read{font:400 14px/1.5 var(--mono);margin:12px 0 0;min-height:3em;overflow-wrap:anywhere}
+.read b{font-weight:600}
+.read .good{color:var(--ok);font-weight:600}
+.ctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.ctl label{font:600 13px var(--mono)}
+input[type=range]{flex:1;min-width:160px;accent-color:var(--h)}
+.btn{font:600 14px var(--body);border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 14px;cursor:pointer}
+.btn.primary{background:var(--ink);color:var(--card)}
+.btn[aria-pressed="true"]{background:var(--h);border-color:var(--h);color:#fff}
+.btn:disabled{opacity:.35;cursor:default}
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:20px;border-top:1px dashed var(--mute);padding-top:16px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font:400 12px var(--mono);color:var(--mute);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+footer{color:#fff;opacity:.85;font-size:13px;margin-top:22px;line-height:1.5}
+.sr{position:absolute;left:-9999px}
+@media (max-width:560px){.card{padding:16px}.text{font-size:15px}}
+</style></head><body>
+<div class="wrap">
+<header>
+  <h1>Handles<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 34C8 6 32 6 36 34" stroke="#fff" stroke-width="4" fill="none"/><circle cx="4" cy="34" r="3.5" fill="#fff"/><circle cx="36" cy="34" r="3.5" fill="#fff"/></svg></h1>
+  <p class="tag">Every curve in every font, logo and vector drawing you see on a screen is built from a few points and one idea: mixing. Six short steps, all draggable.</p>
+</header>
+<nav class="steps" id="steps" aria-label="Steps"></nav>
+<main class="card" id="card">
+  <p class="kicker" id="kicker"></p>
+  <h2 id="title"></h2>
+  <p class="text" id="text"></p>
+  <div class="board" id="board"><svg id="svg" viewBox="0 0 640 420" role="img" aria-label="Drawing board"></svg></div>
+  <div class="legend" id="legend"></div>
+  <div class="ctl" id="ctl"></div>
+  <p class="read" id="read" aria-live="polite"></p>
+  <div class="pager"><button class="btn" id="prev">← Back</button><button class="btn primary" id="next">Next →</button></div>
+</main>
+<footer>Drag the blue points. On a phone, the points have generous grab areas; drag from anywhere near them.</footer>
+</div>
+<script>
+(()=>{
+const W=640,H=420;
+const $=id=>document.getElementById(id);
+const svg=$('svg');
+const lerp=(a,b,t)=>({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t});
+const P=(x,y)=>({x,y});
+const f=n=>Math.round(n);
+const levels=(pts,t)=>{const L=[pts];while(L[L.length-1].length>1){const p=L[L.length-1],n=[];for(let i=0;i<p.length-1;i++)n.push(lerp(p[i],p[i+1],t));L.push(n);}return L;};
+const at=(pts,t)=>{const L=levels(pts,t);return L[L.length-1][0];};
+const pathOf=pts=>pts.length===2?`M${pts[0].x} ${pts[0].y}L${pts[1].x} ${pts[1].y}`:pts.length===3?`M${pts[0].x} ${pts[0].y}Q${pts[1].x} ${pts[1].y} ${pts[2].x} ${pts[2].y}`:`M${pts[0].x} ${pts[0].y}C${pts[1].x} ${pts[1].y} ${pts[2].x} ${pts[2].y} ${pts[3].x} ${pts[3].y}`;
+const leftPart=(pts,t)=>levels(pts,t).map(l=>l[0]);
+const sample=(pts,n)=>{const a=[];for(let i=0;i<=n;i++)a.push(at(pts,i/n));return a;};
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+const hausdorff=(A,B)=>{const d=(X,Y)=>Math.max(...X.map(p=>Math.min(...Y.map(q=>dist(p,q)))));return Math.max(d(A,B),d(B,A));};
+const store={get(k){try{return JSON.parse(localStorage.getItem('handles:'+k))}catch(e){return null}},set(k,v){try{localStorage.setItem('handles:'+k,JSON.stringify(v))}catch(e){}}};
+
+const TARGETS=[
+ {name:'Hump',pts:[P(110,330),P(200,70),P(440,70),P(530,330)]},
+ {name:'S-bend',pts:[P(100,330),P(600,340),P(40,80),P(540,90)]},
+ {name:'Loop',pts:[P(160,340),P(610,40),P(30,40),P(480,340)]}
+];
+const startLine=()=>[P(120,380),P(250,380),P(390,380),P(520,380)];
+
+const S={step:0,t:.4,playing:false,trail:true,smooth:true,target:0,k:.3,matched:store.get('matched')||[false,false,false],showHint:false,
+ pts:{
+  0:[P(110,320),P(530,120)],
+  1:[P(100,350),P(300,60),P(540,340)],
+  2:[P(90,350),P(170,70),P(470,60),P(560,340)],
+  3:[P(40,330),P(80,120),P(240,90),P(320,220),P(400,350),P(560,320),P(600,110)],
+  4:startLine()
+ }};
+let drag=null;
+
+const STEPS=[
+{k:'Step 1 of 6',title:'A line is a mix of two points',
+ text:'Pick a number <b>t</b> between 0 and 1. The point that is t of the way from <b>A</b> to <b>B</b> is a <b>mix</b>: take (1 − t) of A and t of B. At t = 0 you are on A, at 1 you are on B. Sweep t and the mix point slides along the line. That one operation, done over and over, is all a Bézier curve is.'},
+{k:'Step 2 of 6',title:'Mix the mixes, and the line bends',
+ text:'Add a middle point, the <b>handle</b>. Now there are two lines to mix along. Mix each one at the same t (the blue dots), join those two dots, and mix along that new line too (the black dot). As t sweeps, the black dot draws a smooth curve that leans towards the handle but never touches it. This is a <b>quadratic</b> Bézier, the kind TrueType fonts are made of.'},
+{k:'Step 3 of 6',title:'Two handles, three rounds of mixing',
+ text:'With four points you mix three times: four points give three blue dots, those give two orange ones, those give the one black dot on the curve. This is a <b>cubic</b> Bézier, the curve in SVG, PDF, PostScript fonts and the pen tool of every drawing program. The curve leaves the first point heading straight at the first handle and arrives at the last point coming from the second handle.'},
+{k:'Step 4 of 6',title:'Joining pieces without a kink',
+ text:'One cubic can only do so much, so outlines chain them end to end. Where two pieces meet, the curve is smooth only if the handle coming in and the handle going out sit on one straight line through the join. With <b>Keep it smooth</b> on, dragging one handle swings the other round to stay opposite. Turn it off and drag a handle to make a corner.'},
+{k:'Step 5 of 6',title:'Match the outline',
+ text:'Drag the four points until your curve sits on the pale outline. The gap is the farthest any part of one curve is from the other; get it under 10 to match. The loop is the surprise: a single cubic can cross itself, and it does it when the two handles swap sides.'},
+{k:'Step 6 of 6',title:'The circle that isn\'t',
+ text:'No Bézier curve can draw a true circle, yet every round letter o on this screen is one. Fonts fake each quarter with a cubic whose handles reach out a fraction <b>k</b> of the radius. Drag the handle up and down. The coloured line shows the curve\'s distance from the true circle, <b>magnified 50 times</b>. Find the k where it hugs the dashed circle.'}
+];
+
+function stepsNav(){
+ const n=$('steps');n.innerHTML='';
+ STEPS.forEach((s,i)=>{const b=document.createElement('button');b.textContent=(i+1)+(i===4&&S.matched.every(Boolean)?' ✓':'');b.setAttribute('aria-label','Step '+(i+1)+': '+s.title);b.setAttribute('aria-current',String(i===S.step));b.onclick=()=>go(i);n.appendChild(b);});
+}
+function go(i){S.step=Math.max(0,Math.min(5,i));S.playing=false;S.showHint=false;stepsNav();setup();render();}
+
+function setup(){
+ const s=STEPS[S.step];$('kicker').textContent=s.k;$('title').textContent=s.title;$('text').innerHTML=s.text;
+ $('prev').disabled=S.step===0;$('next').disabled=S.step===5;
+ const c=$('ctl');c.innerHTML='';const lg=$('legend');lg.innerHTML='';
+ const leg=(col,txt)=>{lg.insertAdjacentHTML('beforeend',`<span><i style="background:${col}"></i>${txt}</span>`)};
+ if(S.step<=2){
+  c.insertAdjacentHTML('beforeend',`<label for="t">t</label><input type="range" id="t" min="0" max="1" step="0.001" value="${S.t}" aria-label="t"><button class="btn" id="play">Play</button>`+(S.step>0?`<button class="btn" id="trail" aria-pressed="${S.trail}">Trail</button>`:''));
+  $('t').oninput=e=>{S.t=+e.target.value;S.playing=false;$('play').textContent='Play';render();};
+  $('play').onclick=()=>{S.playing=!S.playing;if(S.playing&&S.t>=1)S.t=0;$('play').textContent=S.playing?'Pause':'Play';if(S.playing)tick.last=performance.now();};
+  if(S.step>0)$('trail').onclick=e=>{S.trail=!S.trail;e.target.setAttribute('aria-pressed',S.trail);render();};
+  leg('var(--h)','points you drag');if(S.step>=1)leg('var(--l1)','first mix');if(S.step>=2)leg('var(--l2)','second mix');leg('var(--ink)','point on the curve');
+ } else if(S.step===3){
+  c.insertAdjacentHTML('beforeend',`<button class="btn" id="smooth" aria-pressed="${S.smooth}">Keep it smooth</button><button class="btn" id="reset3">Reset</button>`);
+  $('smooth').onclick=e=>{S.smooth=!S.smooth;e.target.setAttribute('aria-pressed',S.smooth);if(S.smooth)alignJoin(2);render();};
+  $('reset3').onclick=()=>{S.pts[3]=[P(40,330),P(80,120),P(240,90),P(320,220),P(400,350),P(560,320),P(600,110)];render();};
+  leg('var(--h)','handles');leg('var(--l2)','join point');
+ } else if(S.step===4){
+  TARGETS.forEach((t,i)=>c.insertAdjacentHTML('beforeend',`<button class="btn" data-tg="${i}" aria-pressed="${S.target===i}">${t.name}${S.matched[i]?' ✓':''}</button>`));
+  c.insertAdjacentHTML('beforeend',`<button class="btn" id="hint" aria-pressed="${S.showHint}">Show its handles</button><button class="btn" id="reset5">Start again</button>`);
+  c.querySelectorAll('[data-tg]').forEach(b=>b.onclick=()=>{S.target=+b.dataset.tg;S.pts[4]=startLine();S.showHint=false;setup();render();});
+  $('hint').onclick=e=>{S.showHint=!S.showHint;e.target.setAttribute('aria-pressed',S.showHint);render();};
+  $('reset5').onclick=()=>{S.pts[4]=startLine();render();};
+  leg('var(--ghost)','outline to match');leg('var(--h)','your points');
+ } else {
+  c.insertAdjacentHTML('beforeend',`<button class="btn" id="snap">Show the answer</button><button class="btn" id="kreset">Reset</button>`);
+  $('snap').onclick=()=>{S.k=4/3*(Math.SQRT2-1);render();};
+  $('kreset').onclick=()=>{S.k=.3;render();};
+  leg('var(--ghost)','true circle');leg('var(--l3)','error ×50');leg('var(--h)','handle');
+ }
+}
+
+// geometry for step 6
+const C6={cx:150,cy:390,R:300};
+function arcPts(k){const {cx,cy,R}=C6;return[P(cx+R,cy),P(cx+R,cy-k*R),P(cx+k*R,cy-R),P(cx,cy-R)];}
+function circErr(k){const pts=arcPts(k);let mx=0,mn=0;for(let i=0;i<=200;i++){const p=at(pts,i/200);const e=(dist(p,P(C6.cx,C6.cy))-C6.R)/C6.R;mx=Math.max(mx,e);mn=Math.min(mn,e);}return Math.abs(mx)>Math.abs(mn)?mx:mn;}
+
+function alignJoin(moved){ // keep pts[2],pts[3],pts[4] collinear in step 4 (indices 2,3,4)
+ const p=S.pts[3];const j=p[3];
+ const src=moved===4?p[4]:p[2],dst=moved===4?2:4;
+ const len=dist(p[dst],j),dl=dist(src,j)||1;
+ p[dst]=P(j.x-(src.x-j.x)/dl*len,j.y-(src.y-j.y)/dl*len);
+}
+function joinAngle(){const p=S.pts[3];const a=Math.atan2(p[3].y-p[2].y,p[3].x-p[2].x),b=Math.atan2(p[4].y-p[3].y,p[4].x-p[3].x);let d=Math.abs(a-b)*180/Math.PI;if(d>180)d=360-d;return d;}
+
+const handle=(p,i,col='var(--h)',r=10)=>`<g class="hand" data-i="${i}"><circle cx="${p.x}" cy="${p.y}" r="30" fill="transparent"/><circle cx="${p.x}" cy="${p.y}" r="${r}" style="fill:var(--board);stroke:${col}" stroke-width="4"/></g>`;
+const dot=(p,col,r=7)=>`<circle cx="${p.x}" cy="${p.y}" r="${r}" style="fill:${col}" pointer-events="none"/>`;
+const seg=(a,b,col,w=2,dash='')=>`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" style="stroke:${col}" stroke-width="${w}" ${dash?`stroke-dasharray="${dash}"`:''} pointer-events="none"/>`;
+const poly=(pts,col,w=2,dash='')=>pts.slice(1).map((p,i)=>seg(pts[i],p,col,w,dash)).join('');
+const label=(p,txt,dx=14,dy=-14,col='var(--ink)')=>`<text x="${p.x+dx}" y="${p.y+dy}" style="fill:${col};font:600 20px var(--mono)" pointer-events="none">${txt}</text>`;
+
+let stateCache={};
+function render(){
+ let o=`<defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1.3" style="fill:var(--dot)"/></pattern></defs><rect width="${W}" height="${H}" fill="url(#dots)"/>`;
+ let read='';const st=S.step;
+ if(st<=2){
+  const pts=S.pts[st],L=levels(pts,S.t),B=L[L.length-1][0];
+  if(st===0){
+   o+=seg(pts[0],pts[1],'var(--mute)',3);
+   o+=seg(pts[0],B,'var(--ink)',6);
+   o+=handle(pts[0],0)+handle(pts[1],1)+dot(B,'var(--ink)',9);
+   o+=label(pts[0],'A',-34,8)+label(pts[1],'B',16,6)+label(B,'mix',14,26);
+   read=`t = <b>${S.t.toFixed(2)}</b> → mix = ${(1-S.t).toFixed(2)}·A + ${S.t.toFixed(2)}·B = (<b>${f(B.x)}, ${f(B.y)}</b>)<br>${Math.round(S.t*100)}% of the way from A (${f(pts[0].x)}, ${f(pts[0].y)}) to B (${f(pts[1].x)}, ${f(pts[1].y)})`;
+  } else {
+   o+=poly(pts,'var(--mute)',2,'5 5');
+   o+=`<path d="${pathOf(pts)}" fill="none" style="stroke:var(--ink)" stroke-width="${S.trail?2:5}" opacity="${S.trail?.18:1}" pointer-events="none"/>`;
+   if(S.trail)o+=`<path d="${pathOf(leftPart(pts,S.t))}" fill="none" style="stroke:var(--ink)" stroke-width="6" stroke-linecap="round" pointer-events="none"/>`;
+   const cols=['var(--l1)','var(--l2)'];
+   for(let l=1;l<L.length-1;l++){o+=poly(L[l],cols[l-1],3);L[l].forEach(p=>o+=dot(p,cols[l-1],7));}
+   pts.forEach((p,i)=>o+=handle(p,i));
+   o+=dot(B,'var(--ink)',10);
+   if(st===1)o+=label(pts[1],'handle',16,-14,'var(--h)');
+   else{o+=label(pts[1],'handle 1',16,-14,'var(--h)');o+=label(pts[2],'handle 2',16,-14,'var(--h)');}
+   read=`t = <b>${S.t.toFixed(2)}</b> · ${st===1?'2 mixes':'3 rounds of mixing (3 → 2 → 1 dots)'} · curve point (<b>${f(B.x)}, ${f(B.y)}</b>)<br>${st===1?'Quadratic: (1−t)²·P0 + 2t(1−t)·H + t²·P2':'Cubic: (1−t)³·P0 + 3t(1−t)²·H1 + 3t²(1−t)·H2 + t³·P3'}`;
+  }
+  stateCache={points:pts.map(p=>({...p})),t:S.t,curvePoint:{x:B.x,y:B.y}};
+ } else if(st===3){
+  const p=S.pts[3],a=p.slice(0,4),b=p.slice(3);
+  o+=seg(p[0],p[1],'var(--mute)',2,'5 5')+seg(p[5],p[6],'var(--mute)',2,'5 5');
+  o+=seg(p[2],p[3],'var(--h)',3)+seg(p[3],p[4],'var(--h)',3);
+  o+=`<path d="${pathOf(a)}C${b[1].x} ${b[1].y} ${b[2].x} ${b[2].y} ${b[3].x} ${b[3].y}" fill="none" style="stroke:var(--ink)" stroke-width="6" stroke-linecap="round" stroke-linejoin="miter" pointer-events="none"/>`;
+  p.forEach((q,i)=>o+=i===3?`<g class="hand" data-i="3"><circle cx="${q.x}" cy="${q.y}" r="30" fill="transparent"/><rect x="${q.x-10}" y="${q.y-10}" width="20" height="20" style="fill:var(--l2);stroke:var(--ink)" stroke-width="2"/></g>`:(i===0||i===6)?`<g class="hand" data-i="${i}"><circle cx="${q.x}" cy="${q.y}" r="30" fill="transparent"/><rect x="${q.x-8}" y="${q.y-8}" width="16" height="16" style="fill:var(--ink)"/></g>`:handle(q,i));
+  const ang=joinAngle();const sm=ang<1.5;
+  read=sm?`Bend at the join: <b>${ang.toFixed(0)}°</b> · <span class="good">smooth</span> (the handles line up through the join)`:`Bend at the join: <b>${ang.toFixed(0)}°</b> · a corner. ${S.smooth?'':'Turn <b>Keep it smooth</b> back on to straighten it.'}`;
+  stateCache={points:p.map(q=>({...q})),joinAngle:ang,smooth:S.smooth};
+ } else if(st===4){
+  const tg=TARGETS[S.target].pts,me=S.pts[4];
+  o+=`<path d="${pathOf(tg)}" fill="none" style="stroke:var(--ghost)" stroke-width="22" stroke-linecap="round" pointer-events="none"/>`;
+  if(S.showHint){o+=poly(tg,'var(--ghost)',2,'6 5');[1,2].forEach(i=>o+=`<circle cx="${tg[i].x}" cy="${tg[i].y}" r="9" fill="none" style="stroke:var(--mute)" stroke-width="2" stroke-dasharray="4 3" pointer-events="none"/>`);}
+  o+=poly(me,'var(--h)',2,'5 5');
+  o+=`<path d="${pathOf(me)}" fill="none" style="stroke:var(--ink)" stroke-width="5" stroke-linecap="round" pointer-events="none"/>`;
+  me.forEach((p,i)=>o+=handle(p,i));
+  const gap=hausdorff(sample(tg,64),sample(me,64));
+  if(gap<10&&!S.matched[S.target]){S.matched[S.target]=true;store.set('matched',S.matched);setTimeout(()=>{setup();stepsNav();},0);}
+  const done=S.matched.filter(Boolean).length;
+  read=`${TARGETS[S.target].name} · gap <b>${gap.toFixed(1)}</b> ${gap<10?'<span class="good">· matched ✓</span>':'· under 10 to match'}<br>Matched ${done} of 3${done===3?' · all three, nicely done':''}`;
+  stateCache={points:me.map(p=>({...p})),target:S.target,gap,matched:[...S.matched]};
+ } else {
+  const {cx,cy,R}=C6,pts=arcPts(S.k),c=P(cx,cy);
+  // full dashed circle (visible quarter)
+  o+=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" style="stroke:var(--ghost)" stroke-width="3" stroke-dasharray="8 6" pointer-events="none"/>`;
+  o+=seg(c,P(cx+R,cy),'var(--mute)',1.5,'3 4')+seg(c,P(cx,cy-R),'var(--mute)',1.5,'3 4');
+  o+=`<path d="${pathOf(pts)}" fill="none" style="stroke:var(--ink)" stroke-width="3" pointer-events="none"/>`;
+  // magnified error
+  let d='',off=false;for(let i=0;i<=120;i++){const p=at(pts,i/120);const r=dist(p,c),ang=Math.atan2(p.y-cy,p.x-cx);let rr=R+(r-R)*50;if(rr<R*.3||rr>R*1.5){off=true;rr=Math.max(R*.3,Math.min(R*1.5,rr));}d+=(i?'L':'M')+(cx+rr*Math.cos(ang)).toFixed(1)+' '+(cy+rr*Math.sin(ang)).toFixed(1);}
+  o+=`<path d="${d}" fill="none" style="stroke:var(--l3)" stroke-width="4" stroke-linejoin="round" pointer-events="none"/>`;
+  o+=seg(pts[0],pts[1],'var(--h)',2.5)+seg(pts[3],pts[2],'var(--h)',2.5);
+  o+=dot(pts[0],'var(--ink)',6)+dot(pts[3],'var(--ink)',6)+`<circle cx="${pts[2].x}" cy="${pts[2].y}" r="8" style="fill:var(--board);stroke:var(--h)" stroke-width="3" pointer-events="none"/>`;
+  o+=handle(pts[1],1);
+  o+=label(pts[1],'k = '+S.k.toFixed(3),16,6,'var(--h)');
+  // mini o
+  const ox=545,oy=110,orr=62,q=[];for(let a=0;a<4;a++){const ca=Math.cos(a*Math.PI/2),sa=Math.sin(a*Math.PI/2),rot=v=>P(ox+(v.x*ca-v.y*sa)*orr,oy+(v.x*sa+v.y*ca)*orr);q.push([P(1,0),P(1,S.k),P(S.k,1),P(0,1)].map(rot));}
+  o+=`<path d="${q.map((s,i)=>(i?'':'M'+s[0].x.toFixed(1)+' '+s[0].y.toFixed(1))+'C'+[s[1],s[2],s[3]].map(v=>v.x.toFixed(1)+' '+v.y.toFixed(1)).join(' ')).join('')}Z" style="fill:var(--ink)" pointer-events="none"/><circle cx="${ox}" cy="${oy}" r="${orr*.55}" style="fill:var(--board)" pointer-events="none"/>`;
+  o+=`<text x="${ox}" y="${oy+orr+28}" text-anchor="middle" style="fill:var(--mute);font:400 18px var(--mono)" pointer-events="none">4 quarters, same k</text>`;
+  const e=circErr(S.k),pc=Math.abs(e*100);
+  const best=Math.abs(S.k-0.5523)<0.004;
+  read=`k = <b>${S.k.toFixed(3)}</b> · worst gap from the circle <b>${pc<0.1?pc.toFixed(3):pc.toFixed(1)}%</b> of the radius, ${e<0?'inside':'outside'}${off?' (so far off that the ×50 line runs off the scale)':''}${best?'<br><span class="good">That\'s it: k ≈ 0.5523, or 4/3·(√2 − 1). The worst error is under 0.03%, far below a pixel even on a poster.</span>':'<br>'+(S.k<0.5523?'Too pinched: the quarter sags inside the circle. Drag the handle up.':'Too full: the quarter bulges out past the circle. Drag the handle down.')}`;
+  stateCache={k:S.k,errorPct:e*100};
+ }
+ svg.innerHTML=o;$('read').innerHTML=read;
+ if(S.step<=2&&$('t'))$('t').value=S.t;
+}
+
+function toSvg(e){const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const m=svg.getScreenCTM().inverse();const r=pt.matrixTransform(m);return P(Math.max(6,Math.min(W-6,r.x)),Math.max(6,Math.min(H-6,r.y)));}
+svg.addEventListener('pointerdown',e=>{
+ const g=e.target.closest('.hand');if(!g)return;
+ e.preventDefault();drag={i:+g.dataset.i,id:e.pointerId};svg.setPointerCapture(e.pointerId);$('board').classList.add('dragging');
+});
+svg.addEventListener('pointermove',e=>{
+ if(!drag||e.pointerId!==drag.id)return;const q=toSvg(e);const st=S.step;
+ if(st<=2||st===4){S.pts[st][drag.i]=q;}
+ else if(st===3){const p=S.pts[3];
+  if(drag.i===3){const dx=q.x-p[3].x,dy=q.y-p[3].y;[2,3,4].forEach(i=>p[i]=P(p[i].x+dx,p[i].y+dy));}
+  else{p[drag.i]=q;if(S.smooth&&(drag.i===2||drag.i===4))alignJoin(drag.i);}
+ } else if(st===5){S.k=Math.max(0,Math.min(1,(C6.cy-q.y)/C6.R));}
+ render();
+});
+const end=e=>{if(drag){drag=null;$('board').classList.remove('dragging');}};
+svg.addEventListener('pointerup',end);svg.addEventListener('pointercancel',end);
+
+function tick(now){
+ if(S.playing&&S.step<=2){const dt=Math.min(.05,(now-(tick.last||now))/1000);S.t+=dt/3;if(S.t>=1){S.t=1;S.playing=false;const b=$('play');if(b)b.textContent='Play';}render();}
+ tick.last=now;requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+$('prev').onclick=()=>go(S.step-1);$('next').onclick=()=>go(S.step+1);
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowRight')go(S.step+1);if(e.key==='ArrowLeft')go(S.step-1);});
+window.__handles={get state(){return{step:S.step,...JSON.parse(JSON.stringify(stateCache))}},go,
+ toScreen(x,y){const r=svg.getBoundingClientRect();return{x:r.left+x/W*r.width,y:r.top+y/H*r.height};}};
+stepsNav();setup();render();
+})();
+</script>
+</body></html>

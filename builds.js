@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "handles",
+    title: "Handles",
+    date: "2026-11-10",
+    kind: "Explorable explainer",
+    blurb: "Every curve in every font and logo on your screen is a Bézier curve, and a Bézier curve is just mixing points, again and again. Six draggable steps: a mix along a line, a quadratic built from mixes of mixes, a cubic with its three rounds of construction animated, two pieces joined smoothly or with a kink, three outlines to match (one of them a loop a single cubic draws by crossing its handles), and the magic number 0.5523 that lets four cubics fake a circle.",
+    font: "'Sora', 'Arial Black', sans-serif", fontWeight: 800, letterSpacing: "-0.05em",
+    bg: "#d81f45", fg: "#17090d", accent: "#1f47ff", panel: "#fff8f4",
+    why: "Pen-tool handles feel like magic until you see that the curve is one small operation repeated, and that construction is something you should get to watch happen rather than read as a formula.",
+    hook: "Drag the handles and watch a curve built from mixing.",
+    motif: "handles"
+  },
+  {
     slug: "lot-twelve",
     title: "Lot Twelve",
     date: "2026-11-09",
