@@ -40,14 +40,15 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Time and ritual | Clocks, calendars, timers, daily practices | 1 |
 | Quiz and trivia | Test what you know | 1 |
 | Puzzle hunt | Linked puzzles with a hidden answer, meant to be solved over time | 1 |
-| How it works | Cutaways, blueprints and diagrams of machines and processes | 1 |
+| How it works | Cutaways, blueprints and diagrams of machines and processes | 2 |
 
-## Catalogue (35 builds, all on the hub)
+## Catalogue (36 builds, 35 on the hub, 1 queued)
 
 A date marked "(queued)" means the build is on the `queue` branch and not live yet.
 
 | Build | Date | Category | What it does | Subject world | Core mechanic | Look |
 |---|---|---|---|---|---|---|
+| Interlock | 11 Nov (queued) | How it works | A working top-down jacket zip on canvas: tap the pin to seat it in the box (without it only the bottom row runs through the slider and nothing meshes), then drag the slider (or Zip up / Unzip, arrow keys) and the rows funnel together at the throat, each tooth meshing as it passes, and split on the diamond going down. See inside the slider shows the Y-channel walls and diamond; Wear out the slider spreads the throat so the teeth come out a hair apart and the zip opens in an eye behind the slider; Pinch it with pliers fixes it, and the split stays until you unzip past it and zip up again. Live pairs-meshed count and narrated caption; below, an edge-on drawing of bump-in-hollow teeth with one tipping out, a parts list and three dates (1893, 1913, 1923) | Zips and fasteners | Drag a slider along a mechanism whose per-tooth state changes as it passes | Schibsted Grotesk 900 + Chivo Mono; near-white ground, safety-orange tape, silver teeth, charcoal slider |
 | Handles | 10 Nov | Explorable explainer | Six step-through chapters on Bézier curves, all draggable: (1) a mix point on a line with a t slider and Play, (2) a quadratic drawn by mixing mixes, (3) a cubic with its three rounds of de Casteljau construction animated and a trail, (4) two cubics joined at a point with Keep it smooth (mirrors the opposite handle) and a live bend-angle readout, (5) match three outlines (hump, S-bend, a self-crossing loop) by dragging four points, gap measured as Hausdorff distance, under 10 matches, ticks saved locally, Show its handles hint, (6) the circle that isn't: drag k and see the quarter-arc's radial error magnified 50 times beside a letter o built from four copies, finding 0.5523 = 4/3(√2−1) | Vector graphics, font outlines, Bézier curves | Drag control points while the recursive-lerp construction redraws live, in numbered steps | Sora 800 + Geist Mono; cherry-crimson ground, warm white card on a dotted board, ink black curves, cobalt handles with orange and green construction levels; deep wine in dark mode |
 | Lot Twelve | 9 Nov | Two-player or party game | Hot-seat sealed-bid auction: eight odd lots (teapot, banjo, stuffed pike, top hat...), 100 coins each for the whole sale. Each player privately sees an appraiser's 24-coin range that always contains the true value but is centred differently, then bids in secret behind cover screens. Highest bid wins and pays, a tie withdraws the lot; reveal shows true value, both ranges and profit or loss. Score is true value of lots plus unspent coins | Antique auction house, odd lots | Secret bids with each player holding a different half of the truth, shared by table talk | Bagel Fat One + Work Sans; saturated violet ground, cream card, gold highlight, coral and green players; deep aubergine in dark mode |
 | Focus Call | 8 Nov | Game | Eight stage-lighting cues on a grid: red, green and blue lamps fire fixed beams; tap empty mounts to cycle empty, / mirror, \ mirror to reroute them onto marks that each want an exact colour (red, green, blue, or additive yellow, cyan, magenta). Beams pass through marks and cross freely, walls and lamps stop them; overlit marks fail. Levels were generated and brute-force solved (1 to 3 solutions each, never solved when empty); Hint names one wrong mount; solved cues saved locally | Theatre stage lighting, additive colour | Rotate mirrors to route coloured beams, exact additive mixing at each target | Red Hat Display 900 + Red Hat Mono; terracotta ground, cream card, dark stage board with glowing beams; deep brown in dark mode |
@@ -137,6 +138,8 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 
 - **Bézier curves, vector drawing and step-through explainers (10 Nov):** Handles is a six-chapter Back/Next explainer of de Casteljau construction on a cherry-crimson ground (crimson/cherry red, Sora and Geist Mono now taken). Explorable explainer is now used twice. Leave curves, splines, font outlines and computer-graphics maths alone for a while; the numbered-step-chips-plus-one-board format is used once.
 
+- **Zips, fasteners and slider-along-a-mechanism drags (11 Nov):** Interlock is a top-down zip on a near-white ground with safety-orange tape (orange-on-white and Schibsted Grotesk now taken). How it works is now used twice. Leave clothing, fasteners and sewing alone for a while; the one-long-horizontal-mechanism-with-a-draggable-part form is used once, so the next How it works could be a cross-section, an exploded view or a scroll-through sequence.
+
 ## Rejected because they repeated an earlier build
 
 - Treadle (23 Oct): four-shaft weaving draft studio. Same as Drawdown.
@@ -187,7 +190,7 @@ Process tip (23–28 Oct): scheduled runs with no repo attached had no add_repo 
 
 ## Queued
 
-Nothing queued.
+- Interlock (11 Nov, How it works): `builds/interlock/index.html`, builds.js entry, `interlock` motif, Schibsted Grotesk added to the gallery font link, `?v=2026-11-11`.
 
 ## Left out on purpose
 

@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Interlock</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;600;800;900&family=Chivo+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbfbf9;--ink:#141414;--mute:#5c5c58;--line:#d9d9d3;--card:#ffffff;--tape:#ff6414;--tape2:#d94c06;--tapeEdge:#b83f04;--metal1:#f3f4f6;--metal2:#a7acb4;--metal3:#5f646c;--slider:#2b2e33;--sliderHi:#62676f;--ok:#0a7d52;--warn:#c4380b;--chip:#f0f0ec;--glass:rgba(43,46,51,.18);
+--disp:'Schibsted Grotesk','Arial Black',system-ui,sans-serif;--body:'Schibsted Grotesk',system-ui,sans-serif;--mono:'Chivo Mono',ui-monospace,Menlo,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121212;--ink:#f2f2ee;--mute:#a6a6a0;--line:#34342f;--card:#1b1b1a;--tape:#ff6a1c;--tape2:#d65008;--tapeEdge:#ff8e4f;--metal1:#e6e8ec;--metal2:#99a0aa;--metal3:#4d525a;--slider:#3b3f45;--sliderHi:#7a8089;--ok:#3fd39a;--warn:#ff7a45;--chip:#262624;--glass:rgba(200,205,212,.16)}}
+:root[data-theme="dark"]{--bg:#121212;--ink:#f2f2ee;--mute:#a6a6a0;--line:#34342f;--card:#1b1b1a;--tape:#ff6a1c;--tape2:#d65008;--tapeEdge:#ff8e4f;--metal1:#e6e8ec;--metal2:#99a0aa;--metal3:#4d525a;--slider:#3b3f45;--sliderHi:#7a8089;--ok:#3fd39a;--warn:#ff7a45;--chip:#262624;--glass:rgba(200,205,212,.16)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);-webkit-text-size-adjust:100%}
+body{overflow-x:hidden}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 56px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 32px;margin-bottom:18px}
+h1{font-family:var(--disp);font-weight:900;font-size:clamp(44px,8vw,92px);letter-spacing:-.055em;line-height:.86;margin:0}
+h1 span{color:var(--tape)}
+.dek{max-width:520px;margin:0;font-size:17px;line-height:1.45;color:var(--mute)}
+.dek b{color:var(--ink);font-weight:600}
+.stage{position:relative;background:var(--card);border:1.5px solid var(--ink);border-radius:18px;overflow:hidden}
+canvas{display:block;width:100%;touch-action:pan-y;cursor:grab;outline:none}
+canvas.dragging{cursor:grabbing}
+canvas:focus-visible{box-shadow:inset 0 0 0 3px var(--tape)}
+.status{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:start;padding:14px 18px;border-top:1.5px solid var(--ink)}
+.meter{font-family:var(--mono);font-size:13px;line-height:1.5;white-space:nowrap}
+.meter b{font-size:22px;font-weight:600;display:block;line-height:1.1}
+.caption{font-size:16px;line-height:1.45;margin:0;min-height:3em}
+.caption .tag{font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.08em;padding:2px 7px;border-radius:999px;background:var(--chip);margin-right:6px;white-space:nowrap}
+.caption .tag.ok{background:var(--ok);color:var(--bg)}
+.caption .tag.warn{background:var(--warn);color:var(--bg)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+button{font-family:var(--body);font-size:15px;font-weight:600;padding:10px 16px;border-radius:999px;border:1.5px solid var(--ink);background:var(--card);color:var(--ink);cursor:pointer;min-height:44px}
+button:hover{background:var(--chip)}
+button:focus-visible{outline:3px solid var(--tape);outline-offset:2px}
+button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+button.hot{background:var(--tape);border-color:var(--tape);color:#1a0a02}
+button:disabled{opacity:.4;cursor:not-allowed}
+.hint{font-family:var(--mono);font-size:12.5px;color:var(--mute);margin:10px 2px 0}
+.lower{display:grid;grid-template-columns:1.15fr 1fr;gap:24px;margin-top:34px}
+.panel{border-top:1.5px solid var(--ink);padding-top:14px}
+h2{font-family:var(--disp);font-weight:800;font-size:26px;letter-spacing:-.03em;margin:0 0 8px;line-height:1.05}
+.panel p{font-size:16px;line-height:1.5;margin:0 0 12px;max-width:62ch}
+.closeup{width:100%;height:auto;display:block;margin:8px 0 4px}
+.closeup text{font-family:var(--mono);font-size:12px;fill:var(--ink)}
+.parts{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.parts li{display:grid;grid-template-columns:110px 1fr;gap:12px;font-size:15px;line-height:1.45}
+.parts li b{font-family:var(--mono);font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding-top:2px}
+.dates{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px;border-top:1.5px solid var(--ink);padding-top:14px}
+.dates div{font-size:15px;line-height:1.45}
+.dates b{display:block;font-family:var(--disp);font-weight:900;font-size:34px;letter-spacing:-.04em;color:var(--tape);line-height:1}
+@keyframes swing{0%,18%{transform:rotate(0)}45%,72%{transform:rotate(22deg)}100%{transform:rotate(0)}}
+.swinger{transform-box:view-box;transform-origin:var(--ox) var(--oy);animation:swing 4.2s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.swinger{animation:none}}
+@media (max-width:760px){
+ .wrap{padding:18px 16px 44px}
+ .dek{font-size:15.5px}
+ .status{grid-template-columns:1fr;padding:12px 14px}
+ .meter{display:flex;gap:18px;align-items:baseline}
+ .meter b{display:inline;font-size:19px;margin-right:4px}
+ .lower{grid-template-columns:1fr;gap:28px;margin-top:26px}
+ .parts li{grid-template-columns:92px 1fr}
+ .dates{grid-template-columns:1fr;gap:14px}
+ .closeup text{font-size:17px}
+ button{font-size:14px;padding:9px 13px}
+}
+</style></head><body>
+
+<div class="wrap">
+<header>
+ <h1>Inter<span>lock</span></h1>
+ <p class="dek">A zip is two rows of teeth that cannot be pushed together or pulled apart by hand, and one small part that does both. <b>Drag the slider</b> and watch what happens inside it.</p>
+</header>
+
+<div class="stage">
+ <canvas id="zip" tabindex="0" aria-label="A jacket zip seen from above. Drag the slider left or right, or use the arrow keys when focused." role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></canvas>
+ <div class="status">
+  <div class="meter"><span><b id="mCount">0</b>pairs meshed</span><span><b id="mPos">0%</b>closed</span></div>
+  <p class="caption" id="caption"></p>
+ </div>
+</div>
+
+<div class="controls">
+ <button id="bPin" class="hot">Seat the pin in the box</button>
+ <button id="bUp">Zip up</button>
+ <button id="bDown">Unzip</button>
+ <button id="bSee" aria-pressed="false">See inside the slider</button>
+ <button id="bWear">Wear out the slider</button>
+</div>
+<p class="hint" id="hint">Tip: tap the pin on the left to seat it, then drag the slider by its body or its pull tab.</p>
+
+<div class="lower">
+ <section class="panel">
+  <h2>Why the teeth hold</h2>
+  <p>Every tooth is a little scoop: a <b>bump</b> on one face and a <b>hollow</b> on the other. Closed, the teeth from the two tapes alternate in one row and each bump sits in the hollow of its neighbour, so the row becomes a chain. Pull the tapes sideways and the bumps only press harder into the hollows.</p>
+  <svg class="closeup" viewBox="0 0 520 210" role="img" aria-label="Edge-on drawing of six teeth in a row, each bump nested in the next tooth's hollow, with one tooth swinging out to show it has to tip to come free.">
+   <defs>
+    <linearGradient id="gm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--metal1)"/><stop offset="1" style="stop-color:var(--metal2)"/></linearGradient>
+    <linearGradient id="gm2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--metal2)"/><stop offset="1" style="stop-color:var(--metal3)"/></linearGradient>
+    <path id="tooth" d="M0 0 h46 v20 a10 10 0 0 1 0 20 v20 h-46 v-20 a10 10 0 0 0 0 -20 z"/>
+   </defs>
+   <rect x="20" y="150" width="480" height="12" rx="4" style="fill:var(--tape)"/>
+   <text x="24" y="182">tape cord</text>
+   <g id="row"></g>
+   <text x="40" y="28">each bump sits in the next hollow</text><path d="M118 34 L116 100" style="stroke:var(--ink);fill:none;stroke-width:1.2"/>
+   <text x="510" y="50" text-anchor="end">to come free, a tooth</text><text x="510" y="68" text-anchor="end">must tip out of it</text><path d="M368 76 L352 100" style="stroke:var(--ink);fill:none;stroke-width:1.2"/>
+   <text x="510" y="184" text-anchor="end">light = top tape, dark = bottom tape</text>
+  </svg>
+ </section>
+ <section class="panel">
+  <h2>The parts</h2>
+  <ul class="parts">
+   <li><b>Slider</b><span>A hollow metal Y. Its two arms take in the two rows apart; its walls narrow until the rows meet at the throat.</span></li>
+   <li><b>Diamond</b><span>The wedge between the arms. Going down, it pushes between the rows and tips each tooth out of the next one's hollow.</span></li>
+   <li><b>Pin and box</b><span>On a jacket the bottom comes apart. The pin on one tape has to sit in the box on the other, or only one row goes through the slider.</span></li>
+   <li><b>Stops</b><span>Little clamps at each end that keep the slider on the teeth.</span></li>
+   <li><b>Throat</b><span>Where the teeth come out joined. When it spreads with wear, they come out a hair apart and the zip splits behind the slider. Pinching the slider closed with pliers is the old fix.</span></li>
+  </ul>
+ </section>
+</div>
+
+<div class="dates">
+ <div><b>1893</b>Whitcomb Judson patents a clasp locker: a row of hooks and eyes closed by a slider. It jams and springs open.</div>
+ <div><b>1913</b>Gideon Sundback's Hookless Fastener swaps the hooks for nesting teeth, the design still in use.</div>
+ <div><b>1923</b>B.F. Goodrich sells rubber boots that close with one and names them Zippers, for the sound.</div>
+</div>
+</div>
+
+<script>
+(()=>{
+const cv=document.getElementById('zip'),ctx=cv.getContext('2d');
+const $=id=>document.getElementById(id);
+const S={sx:0,minX:0,maxX:0,pin:false,pinT:0,worn:false,see:false,meshed:[],dir:0,lastEvent:'start',anim:null,dragging:false,splitSeen:false};
+let G={}; // geometry
+let C={}; // colours
+function readColours(){const cs=getComputedStyle(document.documentElement);
+ for(const k of ['bg','ink','mute','line','card','tape','tape2','tapeEdge','metal1','metal2','metal3','slider','sliderHi','ok','warn','glass'])C[k]=cs.getPropertyValue('--'+k).trim();}
+function smooth(a,b,x){const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);}
+
+function layout(){
+ const w=cv.parentElement.clientWidth, phone=w<600;
+ const H=phone?250:300;
+ const dpr=Math.min(2,window.devicePixelRatio||1);
+ cv.width=Math.round(w*dpr);cv.height=Math.round(H*dpr);cv.style.height=H+'px';
+ ctx.setTransform(dpr,0,0,dpr,0,0);
+ const P=phone?12:17,s=P/17;
+ const old=G.N?{frac:(S.sx-G.minX)/Math.max(1,G.maxX-G.minX),meshed:S.meshed.slice(),N:G.N}:null;
+ G={W:w,H,P,s,phone,y0:H/2+(phone?6:8),T:15*s,e:4.5*s,tw:P*.47,tapeW:(phone?44:54)*s,L:7*P,
+   gEnd:0,gMax:40*s,gFree:58*s,gWorn:7.5*s};
+ G.gEnd=G.e+9*s;
+ G.boxX=(phone?22:34);
+ G.boxW=16*s+6;
+ G.x0=G.boxX+G.boxW+G.L*0.55; // first tooth
+ G.N=Math.floor((w-G.x0-(phone?44:70))/G.P);
+ G.xLast=G.x0+(G.N-1)*G.P;
+ // mesh point inside slider (good slider): solve gEnd*smooth(.25,1,u)=e
+ let u=0.25;while(G.gEnd*smooth(.25,1,u)<G.e&&u<1)u+=0.002;G.um=u;
+ G.minX=G.boxX+G.boxW;
+ G.maxX=G.xLast+G.P*0.75+G.P/2-G.um*G.L;
+ if(!S.meshed.length||!old||old.N!==G.N){
+   const f=old?old.frac:0;S.meshed=new Array(G.N).fill(false);
+   S.sx=G.minX+f*(G.maxX-G.minX);
+   if(old){for(let i=0;i<G.N;i++)S.meshed[i]=old.meshed[Math.min(i,old.N-1)]&&toothX(i,1)<meshX();}
+ } else S.sx=G.minX+old.frac*(G.maxX-G.minX);
+}
+const toothX=(i,side)=>G.x0+i*G.P+(side>0?G.P/2:0); // side -1 top, +1 bottom
+const meshX=()=>S.sx+G.um*G.L;
+const canMesh=()=>S.pin&&!S.worn;
+
+// gap (vertical offset from the closed position) for a tooth at x on a side
+function gapAt(x,side,i){
+ const u=(x-S.sx)/G.L;
+ let g;
+ const throat=S.worn?G.gWorn:0;
+ if(u>1){g=Math.min(G.gMax,G.gEnd+(x-S.sx-G.L)*0.3);}
+ else if(u>=0){g=throat+(G.gEnd-throat)*smooth(.25,1,u);}
+ else{ // behind slider
+  if(i==null){i=Math.max(0,Math.min(G.N-1,Math.round((x-G.x0)/G.P)));if(x<G.x0-G.P*.5)i=-1;}
+  if(i<0||S.meshed[i])g=0;
+  else if(!S.pin) g=0;
+  else{ // split: eye between last meshed tooth (or box) and slider exit
+   let left=G.minX;
+   for(let j=i-1;j>=0;j--){if(S.meshed[j]){left=toothX(j,1)+G.P*.5;break;}}
+   const dL=Math.max(0,x-left),dR=Math.max(0,S.sx-x);
+   g=Math.min(G.gMax*0.75, Math.min(dL*0.32, throat+dR*0.32));
+  }
+ }
+ if(side<0){ // top tape: free when the pin is out
+  const free=G.gFree+Math.max(0,(x-G.x0))*0.012;
+  g=g+(free-g)*(1-S.pinT);
+ }
+ return g;
+}
+
+function setSlider(nx){
+ nx=Math.max(G.minX,Math.min(G.maxX,nx));
+ const oldM=meshX();S.sx=nx;const newM=meshX();
+ if(newM>oldM+0.01){S.dir=1;for(let i=0;i<G.N;i++){const x=toothX(i,1);if(x>oldM&&x<=newM)S.meshed[i]=canMesh();}}
+ else if(newM<oldM-0.01){S.dir=-1;for(let i=0;i<G.N;i++){const x=toothX(i,1);if(x<oldM+G.P&&x>newM)S.meshed[i]=false;}}
+ if(S.dir===1&&S.pin&&S.worn&&newM>oldM)S.splitSeen=true;
+ if(S.sx>G.minX+1&&!S.pin)S.lastEvent='nopin';
+ update();
+}
+function meshedCount(){return S.meshed.reduce((a,b)=>a+(b?1:0),0);}
+function frac(){return (S.sx-G.minX)/(G.maxX-G.minX);}
+
+/* ---------- drawing ---------- */
+function roundRect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function tapeEdgeY(x,side){return G.y0+side*(G.T*0.62+gapAt(x,side,null));}
+function drawTape(side){
+ const step=4,y0=G.y0;
+ ctx.beginPath();
+ const far=side*(G.T*0.62+G.tapeW);
+ ctx.moveTo(G.boxX-2, y0+side*(G.T*.62+gapAt(G.boxX,side,null))+far-side*G.T*.62);
+ for(let x=G.boxX-2;x<=G.W+4;x+=step){ctx.lineTo(x,y0+side*(gapAt(x,side,null))+far);}
+ for(let x=G.W+4;x>=G.boxX-2;x-=step){ctx.lineTo(x,tapeEdgeY(x,side));}
+ ctx.closePath();
+ ctx.fillStyle=C.tape;ctx.fill();
+ // weave lines
+ ctx.save();ctx.clip();
+ ctx.strokeStyle=C.tape2;ctx.globalAlpha=.35;ctx.lineWidth=1;
+ for(let k=1;k<6;k++){ctx.beginPath();
+  for(let x=G.boxX-2;x<=G.W+4;x+=step){const y=y0+side*(gapAt(x,side,null)+G.T*.62+k*G.tapeW/6);x===G.boxX-2?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+  ctx.stroke();}
+ ctx.restore();
+ // bead (cord) along the edge
+ ctx.beginPath();for(let x=G.boxX-2;x<=G.W+4;x+=step){const y=tapeEdgeY(x,side)+side*2*G.s;x===G.boxX-2?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+ ctx.strokeStyle=C.tapeEdge;ctx.lineWidth=3*G.s;ctx.stroke();
+}
+function drawTooth(i,side){
+ const x=toothX(i,side),g=gapAt(x,side,i);
+ const dx=1.5,gp=gapAt(x+dx,side,i),gm=gapAt(x-dx,side,i);
+ const ang=Math.atan2(side*(gp-gm),2*dx)*0.9;
+ const yc=G.y0+side*g;
+ ctx.save();ctx.translate(x,yc);ctx.rotate(ang);
+ const tw=G.tw,T=G.T,e=G.e,s=G.s;
+ // tooth occupies from y=side*T (tape side) to y=-side*e (head across centre)
+ const yA=side*T*1.0, yB=-side*e;
+ const top=Math.min(yA,yB),h=Math.abs(yA-yB);
+ const grd=ctx.createLinearGradient(-tw/2,0,tw/2,0);
+ grd.addColorStop(0,C.metal3);grd.addColorStop(.35,C.metal1);grd.addColorStop(1,C.metal2);
+ ctx.fillStyle=grd;
+ // legs (narrower near tape), head wider
+ ctx.beginPath();
+ const legW=tw*0.78;
+ if(side<0){ // head at bottom (yB>0)
+  ctx.moveTo(-legW/2,top);ctx.lineTo(legW/2,top);ctx.lineTo(tw/2,top+h*.55);
+  ctx.lineTo(tw/2,top+h-3*s);ctx.quadraticCurveTo(tw/2,top+h,tw/2-3*s,top+h);ctx.lineTo(-tw/2+3*s,top+h);ctx.quadraticCurveTo(-tw/2,top+h,-tw/2,top+h-3*s);ctx.lineTo(-tw/2,top+h*.55);
+ } else {
+  ctx.moveTo(-legW/2,top+h);ctx.lineTo(legW/2,top+h);ctx.lineTo(tw/2,top+h*.45);
+  ctx.lineTo(tw/2,top+3*s);ctx.quadraticCurveTo(tw/2,top,tw/2-3*s,top);ctx.lineTo(-tw/2+3*s,top);ctx.quadraticCurveTo(-tw/2,top,-tw/2,top+3*s);ctx.lineTo(-tw/2,top+h*.45);
+ }
+ ctx.closePath();ctx.fill();
+ ctx.strokeStyle=C.metal3;ctx.lineWidth=.8;ctx.stroke();
+ // bump on the head
+ ctx.beginPath();ctx.ellipse(0,yB+side*2.2*s*-1+side*1*s,tw*.2,2.2*s,0,0,Math.PI*2);
+ ctx.fillStyle=C.metal1;ctx.fill();
+ ctx.restore();
+}
+function drawBoxPin(){
+ const s=G.s,y0=G.y0,bx=G.boxX,bw=G.boxW;
+ // box on bottom tape (sits across the centre line)
+ ctx.fillStyle=C.metal2;roundRect(bx,y0-G.e-2*s,bw,G.T+G.e+6*s,3*s);ctx.fill();
+ ctx.strokeStyle=C.metal3;ctx.lineWidth=1;ctx.stroke();
+ ctx.fillStyle=C.metal1;roundRect(bx+3*s,y0-G.e,bw-6*s,4*s,2*s);ctx.fill();
+ // pin on top tape: long bar along the tape's end
+ const g=gapAt(bx,-1,null);
+ const py=y0-g-G.T;
+ const pinX=bx+ (1-S.pinT)*0;
+ ctx.fillStyle=C.metal2;roundRect(pinX-2,py,G.x0-pinX-G.tw*.5+2,G.T+G.e-1*s,3*s);ctx.fill();ctx.strokeStyle=C.metal3;ctx.stroke();
+ ctx.fillStyle=C.metal1;roundRect(pinX+2,py+3*s,G.x0-pinX-G.tw*.5-6,3*s,1.5*s);ctx.fill();
+ G.pinHit={x:pinX-8,y:py-10,w:G.x0-pinX+10,h:G.T+G.e+20};
+ if(!S.pin&&S.sx<=G.minX+1){ // pulse ring around pin
+  const t=(performance.now()/900)%1;
+  ctx.strokeStyle=C.ink;ctx.globalAlpha=.55*(1-t);ctx.lineWidth=2;
+  roundRect(G.pinHit.x-t*8,G.pinHit.y-t*8,G.pinHit.w+t*16,G.pinHit.h+t*16,8);ctx.stroke();ctx.globalAlpha=1;
+ }
+}
+function drawStops(){
+ const s=G.s;
+ for(const side of [-1,1]){
+  const x=toothX(G.N-1,side)+G.P*0.85;
+  const g=gapAt(x,side,null);const yc=G.y0+side*(g+G.T*.45);
+  ctx.fillStyle=C.metal2;roundRect(x-4*s,yc-6*s,8*s+4,12*s,2.5*s);ctx.fill();ctx.strokeStyle=C.metal3;ctx.lineWidth=1;ctx.stroke();
+ }
+}
+function sliderOutline(){ // returns path points of slider body (top view)
+ const x=S.sx,L=G.L,y0=G.y0,s=G.s;
+ const wThroat=G.T+5*s+(S.worn?G.gWorn:0), wMouth=G.T+G.gEnd+7*s;
+ return {x,L,y0,wThroat,wMouth};
+}
+function drawSlider(){
+ const o=sliderOutline(),{x,L,y0,wThroat,wMouth}=o,s=G.s;
+ // body
+ ctx.beginPath();
+ ctx.moveTo(x,y0-wThroat);
+ ctx.bezierCurveTo(x+L*.45,y0-wThroat,x+L*.55,y0-wMouth,x+L,y0-wMouth);
+ ctx.lineTo(x+L,y0+wMouth);
+ ctx.bezierCurveTo(x+L*.55,y0+wMouth,x+L*.45,y0+wThroat,x,y0+wThroat);
+ ctx.closePath();
+ if(S.see){ctx.fillStyle=C.glass;ctx.fill();ctx.strokeStyle=C.ink;ctx.lineWidth=1.6;ctx.setLineDash([5,4]);ctx.stroke();ctx.setLineDash([]);
+  // channel walls following the teeth outer edge
+  ctx.strokeStyle=C.ink;ctx.lineWidth=2;
+  for(const side of [-1,1]){ctx.beginPath();
+   for(let k=0;k<=40;k++){const xx=x+L*k/40;const yy=y0+side*(G.T+gapAt(xx,side,null)+1.5*s);k?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);}ctx.stroke();}
+  // diamond
+  const dx0=x+L*.5,dx1=x+L+2;const gL=gapAt(dx1,1,null);
+  const half=Math.max(2,(gL-G.e)*.8);
+  ctx.beginPath();ctx.moveTo(dx0,y0);ctx.lineTo(x+L*.86,y0-half*.85);ctx.lineTo(dx1,y0-half);ctx.lineTo(dx1,y0+half);ctx.lineTo(x+L*.86,y0+half*.85);ctx.closePath();
+  ctx.fillStyle=C.slider;ctx.globalAlpha=.85;ctx.fill();ctx.globalAlpha=1;
+ } else {
+  const grd=ctx.createLinearGradient(0,y0-wMouth,0,y0+wMouth);
+  grd.addColorStop(0,C.sliderHi);grd.addColorStop(.5,C.slider);grd.addColorStop(1,C.sliderHi);
+  ctx.fillStyle=grd;ctx.fill();ctx.strokeStyle=C.ink;ctx.lineWidth=1.2;ctx.stroke();
+ }
+ // pull tab: hinged on the slider, lying back over the closed side
+ const tx=x+L*.62, tl=G.phone?50:72, th=(G.phone?17:22);
+ ctx.save();
+ ctx.globalAlpha=S.see?.55:1;
+ const grd2=ctx.createLinearGradient(0,y0-th/2,0,y0+th/2);
+ grd2.addColorStop(0,C.metal1);grd2.addColorStop(1,C.metal2);
+ ctx.fillStyle=grd2;roundRect(tx-tl,y0-th/2,tl,th,th/2);ctx.fill();ctx.strokeStyle=C.metal3;ctx.lineWidth=1.2;ctx.stroke();
+ ctx.fillStyle=S.see?'transparent':C.card;roundRect(tx-tl+7,y0-th/2+6,tl*.38,th-12,(th-12)/2);ctx.fill();ctx.stroke();
+ // hinge bridge
+ ctx.fillStyle=C.slider;roundRect(tx-4,y0-th/2-2,12,th+4,4);ctx.fill();
+ ctx.restore();
+ G.sliderHit={x:tx-tl-6,x2:x+L+6,y:y0-wMouth-8,y2:y0+wMouth+8};
+}
+function label(x,y,txt,tx,ty,placed){
+ ctx.font=`${G.phone?10.5:12}px ${getComputedStyle(document.documentElement).getPropertyValue('--mono')}`;
+ const w=ctx.measureText(txt).width;let lx=Math.max(4,Math.min(G.W-w-4,x-w/2));
+ for(const p of placed){if(p.row===y&&lx<p.x2+10&&lx+w>p.x-10)return;}
+ placed.push({x:lx,x2:lx+w,row:y});
+ ctx.fillStyle=C.mute;ctx.fillText(txt,lx,y);
+ ctx.strokeStyle=C.mute;ctx.lineWidth=1;ctx.beginPath();
+ const from=y<G.y0?y+5:y-13;ctx.moveTo(x,from);ctx.lineTo(tx,ty);ctx.stroke();
+}
+function drawLabels(){
+ const placed=[],topY=16,botY=G.H-8;
+ const pinY=G.y0-gapAt(G.boxX,-1,null)-G.T-4;
+ // priority order
+ label(G.sliderHit.x2-G.L*.5,botY,S.see?'slider (see-through)':'slider',S.sx+G.L*.5,G.y0+sliderOutline().wMouth+3,placed);
+ label(G.boxX+G.boxW/2+6,topY,S.pin?'pin in box':'pin',G.boxX+G.boxW*.6,pinY,placed);
+ // meshed region
+ let a=-1,b=-1;for(let i=0;i<G.N;i++)if(S.meshed[i]){if(a<0)a=i;b=i;}
+ if(a>=0&&(b-a)>=3){const mx=(toothX(a,1)+toothX(b,1))/2;label(mx,topY,'meshed',mx,G.y0-G.T-G.tapeW*.2,placed);}
+ // split region
+ const behind=[];for(let i=0;i<G.N;i++){if(toothX(i,1)<S.sx&&!S.meshed[i]&&S.pin&&gapAt(toothX(i,1),1,i)>G.e)behind.push(i);}
+ if(behind.length>2){const mx=toothX(behind[Math.floor(behind.length/2)],1);label(mx,botY,'split',mx,G.y0+G.T+gapAt(mx,1,null),placed);}
+ const ox=Math.min(G.W-30,(S.sx+G.L+G.W)/2);
+ if(G.W-(S.sx+G.L)>70)label(ox,topY,'apart',ox,G.y0-G.T-gapAt(ox,-1,null)-6,placed);
+ const sx=toothX(G.N-1,1)+G.P*.85;label(sx,botY,'stops',sx,G.y0+G.T+gapAt(sx,1,null)+4,placed);
+ if(S.see){label(S.sx+G.L*.82,topY,'diamond',S.sx+G.L*.86,G.y0-4,placed);}
+}
+function draw(){
+ ctx.clearRect(0,0,G.W,G.H);
+ ctx.fillStyle=C.card;ctx.fillRect(0,0,G.W,G.H);
+ drawTape(-1);drawTape(1);
+ // teeth: draw the ones outside the slider first, then inside on top only if see-through
+ for(let i=0;i<G.N;i++){drawTooth(i,-1);drawTooth(i,1);}
+ drawBoxPin();drawStops();drawSlider();drawLabels();
+}
+
+/* ---------- captions ---------- */
+function caption(){
+ const n=meshedCount(),f=frac();
+ let tag='',cls='',txt='';
+ if(!S.pin&&S.sx<=G.minX+1){tag='Start';txt='The pin on the top tape is out of the box. Tap the pin (or the orange button) to slide it home before zipping.';}
+ else if(!S.pin){tag='No pin';cls='warn';txt='Without the pin seated, only the bottom row runs through the slider. The top row never enters its arm, so nothing can mesh. Slide back down and seat the pin.';}
+ else if(S.worn&&S.dir===1&&S.splitSeen){tag='Worn';cls='warn';txt='The throat has spread. The rows leave the slider a hair apart, the bumps never drop into the hollows, and the zip opens up again behind the slider. Try pinching it with pliers.';}
+ else if(S.worn){tag='Worn';cls='warn';txt='This slider\'s throat has spread with wear (watch the outline with See inside). Zip up and see what it does to the teeth behind it.';}
+ else if(f>0.995&&n===G.N){tag='Closed';cls='ok';txt=`All ${G.N} pairs meshed. The stops at the top keep the slider on, and the only way open is back down through the diamond.`;}
+ else if(S.lastEvent==='pinched'&&S.dir!==-1){tag='Fixed';cls='ok';txt='Pinched: the throat is back to its width, so the rows come out pressed together again. A split already behind it stays open until you unzip past it and zip up again.';}
+ else if(S.dir===1){tag='Closing';txt='The slider\'s walls narrow like a funnel and squeeze the two rows together at the throat. Each tooth drops in between two on the other side, bump into hollow.';}
+ else if(S.dir===-1){tag='Opening';txt='The diamond wedges between the rows and the arms bend them apart, tipping each tooth up out of its neighbour\'s hollow, one at a time.';}
+ else if(S.pin&&S.sx<=G.minX+1){tag='Ready';cls='ok';txt='Pin seated, slider resting on the box. Now drag the slider to the right. You can pull the pin out again only while the slider is down here.';}
+ else {tag='Holding';txt='Wherever the slider stops, the teeth behind it hold. Pull on the tapes and the bumps only press harder into the hollows.';}
+ $('caption').innerHTML=`<span class="tag ${cls}">${tag}</span>${txt}`;
+}
+function update(){
+ const n=meshedCount(),f=frac();
+ $('mCount').textContent=n+(G.phone?'':'')+'/'+G.N;
+ $('mPos').textContent=Math.round(f*100)+'%';
+ cv.setAttribute('aria-valuenow',Math.round(f*100));
+ cv.setAttribute('aria-valuetext',`${Math.round(f*100)}% along, ${n} of ${G.N} pairs meshed`);
+ const atBox=S.sx<=G.minX+1;
+ const bp=$('bPin');bp.textContent=S.pin?'Pull the pin out':'Seat the pin in the box';
+ bp.disabled=!atBox;bp.classList.toggle('hot',!S.pin&&atBox);
+ $('bWear').textContent=S.worn?'Pinch it with pliers':'Wear out the slider';
+ $('bWear').classList.toggle('hot',S.worn&&S.splitSeen);
+ $('hint').textContent=atBox?(S.pin?'Drag the slider (or its pull tab) to the right. Arrow keys work when the zip has focus.':'Tip: tap the pin on the left to seat it, then drag the slider by its body or its pull tab.'):(S.pin?'Drag back and forth, or use Zip up and Unzip.':'Pin buttons only work with the slider down at the box. Unzip first.');
+ caption();
+ needDraw=true;
+}
+
+/* ---------- interaction ---------- */
+let needDraw=true,grab=0;
+function local(e){const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+function hitSlider(p){const h=G.sliderHit;return h&&p.x>=h.x&&p.x<=h.x2&&p.y>=h.y&&p.y<=h.y2;}
+function hitPin(p){const h=G.pinHit;return h&&p.x>=h.x&&p.x<=h.x+h.w&&p.y>=h.y&&p.y<=h.y+h.h;}
+cv.addEventListener('pointerdown',e=>{
+ const p=local(e);
+ if(hitPin(p)&&!hitSlider(p)){togglePin();return;}
+ if(hitSlider(p)){stopAnim();S.dragging=true;grab=p.x-S.sx;cv.setPointerCapture(e.pointerId);cv.classList.add('dragging');e.preventDefault();}
+});
+cv.addEventListener('pointermove',e=>{
+ const p=local(e);
+ if(S.dragging){setSlider(p.x-grab);return;}
+ cv.style.cursor=hitSlider(p)?'grab':(hitPin(p)?'pointer':'default');
+});
+const end=e=>{if(S.dragging){S.dragging=false;cv.classList.remove('dragging');update();}};
+cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+cv.addEventListener('keydown',e=>{
+ if(e.key==='ArrowRight'||e.key==='ArrowUp'){stopAnim();setSlider(S.sx+G.P);e.preventDefault();}
+ else if(e.key==='ArrowLeft'||e.key==='ArrowDown'){stopAnim();setSlider(S.sx-G.P);e.preventDefault();}
+ else if(e.key==='Home'){animateTo(G.minX);e.preventDefault();}
+ else if(e.key==='End'){animateTo(G.maxX);e.preventDefault();}
+});
+function togglePin(){
+ if(S.sx>G.minX+1){S.lastEvent='nopin-move';update();return false;}
+ S.pin=!S.pin;S.lastEvent=S.pin?'pin':'unpin';S.dir=0;S.splitSeen=false;
+ if(!S.pin)S.meshed.fill(false);
+ const from=S.pinT,to=S.pin?1:0,t0=performance.now();
+ const step=now=>{const k=Math.min(1,(now-t0)/450);S.pinT=from+(to-from)*(1-Math.pow(1-k,3));needDraw=true;if(k<1)requestAnimationFrame(step);};
+ requestAnimationFrame(step);
+ update();return true;
+}
+function stopAnim(){if(S.anim){cancelAnimationFrame(S.anim);S.anim=null;}}
+function animateTo(target){
+ stopAnim();const from=S.sx,dist=Math.abs(target-from);if(dist<1)return;
+ const dur=Math.min(2200,300+dist*3.2),t0=performance.now();
+ const step=now=>{const k=Math.min(1,(now-t0)/dur);const ease=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;setSlider(from+(target-from)*ease);
+  if(k<1)S.anim=requestAnimationFrame(step);else{S.anim=null;update();}};
+ S.anim=requestAnimationFrame(step);
+}
+$('bPin').onclick=togglePin;
+$('bUp').onclick=()=>animateTo(G.maxX);
+$('bDown').onclick=()=>animateTo(G.minX);
+$('bSee').onclick=()=>{S.see=!S.see;$('bSee').setAttribute('aria-pressed',S.see);update();};
+$('bWear').onclick=()=>{S.worn=!S.worn;S.lastEvent=S.worn?'worn':'pinched';S.splitSeen=false;S.dir=0;update();};
+
+/* ---------- close-up row ---------- */
+(function(){
+ const row=document.getElementById('row');
+ const ns='http://www.w3.org/2000/svg';
+ for(let i=0;i<6;i++){
+  const g=document.createElementNS(ns,'g');
+  const x=70+i*46,y=78;
+  if(i===5){g.setAttribute('class','swinger');g.style.setProperty('--ox',(x+46)+'px');g.style.setProperty('--oy',(y+78)+'px');}
+  const leg=document.createElementNS(ns,'rect');leg.setAttribute('x',x+10);leg.setAttribute('y',y+60);leg.setAttribute('width',30);leg.setAttribute('height',18);leg.setAttribute('rx',3);
+  leg.setAttribute('style',`fill:url(#${i%2?'gm2':'gm'});stroke:var(--metal3)`);
+  const u=document.createElementNS(ns,'use');u.setAttribute('href','#tooth');u.setAttribute('transform',`translate(${x} ${y})`);
+  u.setAttribute('style',`fill:url(#${i%2?'gm2':'gm'});stroke:var(--metal3);stroke-width:1.2`);
+  g.appendChild(leg);g.appendChild(u);row.appendChild(g);
+ }
+ // tooth path: left face has hollow (concave), right face has bump (convex) -> bump of i nests into hollow of i+1 when spacing = width
+})();
+
+/* ---------- loop ---------- */
+function frame(){
+ if(needDraw||(!S.pin&&S.sx<=G.minX+1)){draw();needDraw=false;}
+ requestAnimationFrame(frame);
+}
+function init(){readColours();layout();update();}
+window.addEventListener('resize',()=>{layout();update();});
+const mq=matchMedia('(prefers-color-scheme: dark)');(mq.addEventListener?mq.addEventListener('change',()=>{readColours();needDraw=true;}):0);
+new MutationObserver(()=>{readColours();needDraw=true;}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+init();requestAnimationFrame(frame);
+if(document.fonts)document.fonts.ready.then(()=>{needDraw=true;});
+
+window.__interlock={
+ get state(){return{sx:S.sx,minX:G.minX,maxX:G.maxX,frac:frac(),pin:S.pin,worn:S.worn,see:S.see,meshed:meshedCount(),N:G.N,
+   split:S.meshed.filter((m,i)=>!m&&toothX(i,1)<S.sx).length,caption:$('caption').textContent};},
+ sliderCentre(){const r=cv.getBoundingClientRect();return{x:r.left+S.sx+G.L*.5,y:r.top+G.y0};},
+ pinCentre(){const r=cv.getBoundingClientRect(),h=G.pinHit;return{x:r.left+h.x+h.w/2,y:r.top+h.y+h.h/2};},
+ maxScreenX(){const r=cv.getBoundingClientRect();return r.left+G.maxX+G.L*.5+40;}
+};
+})();
+</script>
+</body></html>

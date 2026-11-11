@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -144,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-10"></script>
+<script src="builds.js?v=2026-11-11"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -194,6 +194,18 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
       const T=(x,y,c)=>`<circle cx="${x}" cy="${y}" r="15" fill="${c}" stroke="${c}" stroke-width="5"/><circle cx="${x}" cy="${y}" r="18" fill="none" stroke="#fff" stroke-width="2"/><path d="M${x-6},${y}l5,6l9,-11" fill="none" stroke="#15101c" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
       o+=T(gx,cy,'#ffff00')+T(mx,cy+80,'#ff0000');
       return o;
+    },
+    interlock(b,r){
+      // a jacket zip two-thirds closed: pin in box at left, meshed teeth, the slider, the rows splaying apart ahead of it
+      const cy=92,P=10,sx=170,Ls=56,g=x=>{const u=(x-sx)/Ls;if(u<0)return 0;if(u<=1){const t=Math.max(0,Math.min(1,(u-.25)/.75));return 12*t*t*(3-2*t);}return Math.min(40,12+(x-sx-Ls)*.32);};
+      let s=`<rect width="320" height="180" fill="${b.bg}"/>`;
+      for(const sd of [-1,1]){let d=`M14 ${cy+sd*60}`;for(let x=14;x<=320;x+=4)d+=`L${x} ${(cy+sd*(g(x)+60)).toFixed(1)}`;for(let x=320;x>=14;x-=4)d+=`L${x} ${(cy+sd*(g(x)+9)).toFixed(1)}`;s+=`<path d="${d}Z" fill="${b.accent}"/>`;}
+      for(let i=0;i<26;i++)for(const sd of [-1,1]){const x=44+i*P+(sd>0?P/2:0);if(x>300)continue;const y=cy+sd*g(x);
+        s+=`<rect x="${x-2.4}" y="${(sd<0?y-14:y-3).toFixed(1)}" width="4.8" height="17" rx="1.6" fill="#c9cdd3" stroke="#5f646c" stroke-width=".8"/>`;}
+      s+=`<rect x="16" y="${cy-14}" width="24" height="10" rx="3" fill="#c9cdd3" stroke="#5f646c"/><rect x="18" y="${cy-3}" width="14" height="17" rx="3" fill="#a7acb4" stroke="#5f646c"/>`;
+      s+=`<path d="M${sx} ${cy-20}C${sx+25} ${cy-20} ${sx+30} ${cy-30} ${sx+Ls} ${cy-30}L${sx+Ls} ${cy+30}C${sx+30} ${cy+30} ${sx+25} ${cy+20} ${sx} ${cy+20}Z" fill="#2b2e33" stroke="${b.fg}" stroke-width="1.5"/>`;
+      s+=`<rect x="${sx-30}" y="${cy-10}" width="66" height="20" rx="10" fill="#e6e8ec" stroke="#5f646c" stroke-width="1.5"/><rect x="${sx-23}" y="${cy-4}" width="22" height="8" rx="4" fill="${b.bg}" stroke="#5f646c"/>`;
+      return s;
     },
     handles(b,r){
       // a cubic Bézier mid-construction at t = 0.4: control polygon, two rounds of mixes, the point on the curve

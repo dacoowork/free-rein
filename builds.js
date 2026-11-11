@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "interlock",
+    title: "Interlock",
+    date: "2026-11-11",
+    kind: "How it works",
+    blurb: "A working jacket zip seen from above. Seat the pin in the box, then drag the slider and watch the two rows of teeth funnel together at its throat and come apart on its diamond wedge. See inside the slider, wear its throat out so the zip splits open behind it, then pinch it with pliers and zip over the split again. Underneath: why the teeth hold (each bump nests in the next tooth's hollow), the parts, and three dates from hooks and eyes to rubber boots.",
+    font: "'Schibsted Grotesk', 'Arial Black', sans-serif", fontWeight: 900, letterSpacing: "-0.05em",
+    bg: "#fbfbf9", fg: "#141414", accent: "#ff6414", panel: "#ffffff",
+    why: "Everyone uses a zip a dozen times a day without knowing what the slider actually does, and the split-behind-the-slider failure everyone has suffered turns out to be the clearest way to show it.",
+    hook: "Drag the slider and watch the teeth meet inside it.",
+    motif: "interlock"
+  },
+  {
     slug: "handles",
     title: "Handles",
     date: "2026-11-10",
