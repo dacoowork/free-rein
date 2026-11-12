@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Iron Wire</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;700;900&family=Public+Sans:wght@400;600;700&family=Martian+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: one column. Name and thesis, then the tile itself as the hero, a four-step firing strip under it, readouts, then the notes on why glaze cracks. */
+:root{
+  --bg:#3b2318;      /* tenmoku: iron-saturated brown glaze */
+  --bg2:#4a2d1f;
+  --onbg:#f3e6d2;    /* text that sits on the brown ground */
+  --onbg-mute:#cdb59a;
+  --card:#f6eee2;    /* rice-paper card */
+  --ink:#24150e;
+  --mute:#6b5646;
+  --line:#dccdb8;
+  --gold:#b98422;    /* golden thread */
+  --iron:#24150e;    /* iron wire */
+  --rim:#5a3a3a;     /* purple mouth */
+  --focus:#e7b44a;
+  --disp:'Darker Grotesque','Arial Narrow',system-ui,sans-serif;
+  --body:'Public Sans',system-ui,-apple-system,sans-serif;
+  --mono:'Martian Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#150d09;--bg2:#21140e;--onbg:#f0e2cc;--onbg-mute:#b89f84;--card:#24180f;--ink:#f1e5d3;--mute:#bba58c;--line:#3d2c20;--gold:#d9a640;--iron:#f1e5d3;--focus:#e7b44a;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#150d09;--bg2:#21140e;--onbg:#f0e2cc;--onbg-mute:#b89f84;--card:#24180f;--ink:#f1e5d3;--mute:#bba58c;--line:#3d2c20;--gold:#d9a640;--iron:#f1e5d3;--focus:#e7b44a;color-scheme:dark}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--onbg);font:16px/1.55 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.wrap{max-width:980px;margin:0 auto;display:grid;gap:28px}
+header{display:grid;gap:6px;max-width:720px}
+.eyebrow{font:600 11px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--onbg-mute)}
+h1{font:900 clamp(64px,13vw,148px)/.78 var(--disp);letter-spacing:-.02em;margin:6px 0 4px;text-wrap:balance}
+h1 .g{color:var(--gold)}
+.lede{font-size:17px;max-width:62ch;margin:0;color:var(--onbg)}
+.lede em{font-style:normal;color:var(--gold);font-weight:600}
+.stage{display:grid;grid-template-columns:minmax(0,600px) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:860px){.stage{grid-template-columns:minmax(0,1fr)}}
+.tilebox{width:100%;max-width:600px;display:grid;gap:8px}
+canvas#tile{display:block;width:100%;height:auto;aspect-ratio:1/1;max-width:100%;cursor:crosshair;touch-action:manipulation;border-radius:10px}
+canvas#tile:focus-visible{outline:3px solid var(--focus);outline-offset:4px}
+.tileno{padding-left:12px;font:600 10px var(--mono);letter-spacing:.12em;color:var(--onbg-mute);pointer-events:none}
+.side{display:grid;gap:18px;min-width:0}
+.caption{font:700 26px/1.08 var(--disp);margin:0;min-height:2.2em;text-wrap:balance}
+.sub{margin:0;color:var(--onbg-mute);font-size:14.5px;max-width:46ch}
+ol.firing{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+ol.firing li{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center}
+.num{font:600 12px var(--mono);width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--onbg-mute);color:var(--onbg-mute)}
+li.done .num{background:var(--gold);border-color:var(--gold);color:#24150e}
+li.now .num{border-color:var(--onbg);color:var(--onbg)}
+button{font:700 15px/1.2 var(--body);border-radius:999px;padding:11px 18px;border:1.5px solid var(--onbg-mute);background:transparent;color:var(--onbg);cursor:pointer;text-align:left;min-height:44px}
+button:hover:not(:disabled){border-color:var(--onbg)}
+button:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+button:disabled{opacity:.38;cursor:default}
+li.now button{background:var(--onbg);color:var(--bg);border-color:var(--onbg)}
+.opts{display:grid;gap:12px}
+.opt{display:grid;gap:6px}
+.opt .lbl{font:600 11px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--onbg-mute)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{padding:7px 13px;font-size:13.5px;min-height:36px;font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--onbg);color:var(--bg);border-color:var(--onbg)}
+.sw{width:16px;height:16px;border-radius:50%;display:inline-block;vertical-align:-3px;margin-right:6px;border:1px solid rgba(0,0,0,.25)}
+.new{justify-self:start;font-size:13.5px;padding:8px 14px;min-height:38px}
+.readouts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border-top:1.5px solid var(--onbg-mute);border-bottom:1.5px solid var(--onbg-mute)}
+.ro{padding:12px 12px 12px 0;display:grid;gap:2px;min-width:0}
+.ro+.ro{padding-left:12px;border-left:1px solid color-mix(in srgb,var(--onbg-mute) 45%,transparent)}
+.ro b{font:600 clamp(17px,2.4vw,24px)/1.1 var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ro span{font:600 10.5px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--onbg-mute)}
+.ro.gold b{color:var(--gold)}
+@media (max-width:620px){.readouts{grid-template-columns:repeat(2,minmax(0,1fr))}.ro{padding:10px 8px!important;border-left:0!important;border-bottom:1px solid color-mix(in srgb,var(--onbg-mute) 45%,transparent)}.ro:last-child{grid-column:1/-1;border-bottom:0}}
+.notes{background:var(--card);color:var(--ink);border-radius:14px;padding:28px clamp(18px,4vw,40px);display:grid;gap:26px}
+.notes h2{font:900 40px/.95 var(--disp);margin:0 0 8px;letter-spacing:-.01em;text-wrap:balance}
+.notes h3{font:700 22px/1.05 var(--disp);margin:0 0 4px}
+.notes p{margin:0 0 10px;max-width:64ch}
+.notes .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px 36px}
+.notes .cols>div{min-width:0}
+.notes .zh{font-weight:700}
+.diagram{width:100%;max-width:640px;height:auto;display:block}
+.diagram text{font:600 15px var(--mono);fill:var(--mute)}
+@media (max-width:620px){.diagram text{font-size:24px}}
+dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:8px 18px}
+dt{font:700 15px var(--body)}
+dd{margin:0;color:var(--mute);max-width:60ch}
+@media (max-width:520px){dl{grid-template-columns:1fr}dd{margin-bottom:8px}}
+.foot{font:400 12px var(--mono);color:var(--onbg-mute)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head><body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">Generative art · Glaze crazing</div>
+  <h1>Iron <span class="g">Wire</span></h1>
+  <p class="lede">Song-dynasty Ge ware was prized for its cracks: a bold dark net called <em>iron wire</em> with a fine golden net, <em>golden thread</em>, running between. Fire a tile, let it cool, and watch a glaze tear itself into cells by one rule: every new crack meets an old one at a right angle.</p>
+</header>
+
+<section class="stage" aria-label="The tile">
+  <div class="tilebox">
+    <canvas id="tile" width="720" height="720" tabindex="0" aria-label="Glazed tile. Tap or press Enter to strike the glaze and start a crack."></canvas>
+    <div class="tileno" id="tileno">TILE 0000</div>
+  </div>
+  <div class="side">
+    <div>
+      <p class="caption" id="caption" aria-live="polite">Fresh from the kiln.</p>
+      <p class="sub" id="sub">Tap the glaze to strike it. A struck spot splits both ways and the crack runs until it meets another.</p>
+    </div>
+    <ol class="firing" id="firing">
+      <li data-s="0"><span class="num">1</span><button id="b-cool">Cool the kiln</button></li>
+      <li data-s="2"><span class="num">2</span><button id="b-iron">Rub in iron stain</button></li>
+      <li data-s="3"><span class="num">3</span><button id="b-age">Wait a century</button></li>
+    </ol>
+    <div class="opts">
+      <div class="opt"><span class="lbl" id="l-fit">Glaze shrinks more than the clay by</span>
+        <div class="seg" role="group" aria-labelledby="l-fit" id="fit">
+          <button data-v="0" aria-pressed="false">A little</button>
+          <button data-v="1" aria-pressed="true">A lot</button>
+          <button data-v="2" aria-pressed="false">Far too much</button>
+        </div></div>
+      <div class="opt"><span class="lbl" id="l-gl">Glaze</span>
+        <div class="seg" role="group" aria-labelledby="l-gl" id="glaze">
+          <button data-v="0" aria-pressed="true"><span class="sw" style="background:#c9c1ad"></span>Ge grey</button>
+          <button data-v="1" aria-pressed="false"><span class="sw" style="background:#dcc898"></span>Rice yellow</button>
+          <button data-v="2" aria-pressed="false"><span class="sw" style="background:#bfcac8"></span>Moon white</button>
+        </div></div>
+    </div>
+    <button class="new" id="b-new">Fire a new tile</button>
+  </div>
+</section>
+
+<section class="readouts" aria-label="Measurements of this tile (12 cm square)">
+  <div class="ro"><b id="r-iron">0</b><span>Iron cracks</span></div>
+  <div class="ro gold"><b id="r-gold">0</b><span>Golden cracks</span></div>
+  <div class="ro"><b id="r-len">0.0 cm</b><span>Crack length</span></div>
+  <div class="ro"><b id="r-cells">1</b><span>Cells</span></div>
+  <div class="ro"><b id="r-mean">–</b><span>Mean cell</span></div>
+</section>
+
+<section class="notes">
+  <div>
+    <h2>Why a glaze cracks</h2>
+    <p>A glaze is a thin coat of glass fused to clay. In the kiln both are hot and relaxed. As they cool, each shrinks, and if the glass shrinks more than the clay underneath it, the glass ends up stretched like a drumskin. Glass is strong when squeezed and weak when pulled, so a stretched glaze eventually lets go. Potters call it crazing. On most pots it is a fault. Ge ware made it the point.</p>
+    <svg class="diagram" viewBox="0 0 640 170" role="img" aria-label="Cross-section: glaze on clay, glaze wants to shrink more, so it is pulled taut and cracks open">
+      <rect x="20" y="96" width="600" height="56" rx="4" style="fill:#b89574"/>
+      <rect x="20" y="78" width="600" height="18" style="fill:#cfc8b6"/>
+      <path d="M200 78 l4 18 M350 78 l-3 18 M480 78 l2 18" style="stroke:#24150e;stroke-width:3;fill:none"/>
+      <path d="M110 64 h-90 m0 0 l10 -6 m-10 6 l10 6 M530 64 h90 m0 0 l-10 -6 m10 6 l-10 6" style="stroke:var(--gold);stroke-width:2.5;fill:none"/>
+      <text x="320" y="22" text-anchor="middle">glaze shrinks more</text>
+      <text x="320" y="50" text-anchor="middle">held stretched, it cracks</text>
+      <text x="30" y="136" style="fill:#2a1a10">clay body</text>
+      <text x="610" y="91" text-anchor="end" style="fill:#2a1a10">glaze</text>
+    </svg>
+  </div>
+  <div class="cols">
+    <div><h3>The right-angle rule</h3><p>Once a crack has run, the glaze beside it can no longer be pulled along the crack's length, only across it. So the next crack to start nearby runs straight away from the first and stops dead when it reaches another crack, making a T. That is the only rule this page follows. Every crack ends on another crack or on the edge, which is why the cells close up.</p></div>
+    <div><h3>Two nets</h3><p><span class="zh">金丝铁线</span>, <i>jīnsī tiěxiàn</i>, golden thread and iron wire. The first, bolder cracks on Ge ware read black, and a finer network between them reads honey-gold. How the two colours got there is still argued over: rubbed-in stains, iron from the clay, tea and years of handling. Here you stain the first net by hand, then let the second form slowly and take its colour from use.</p></div>
+  </div>
+  <div>
+    <h3>Words</h3>
+    <dl>
+      <dt>Crazing</dt><dd>A net of fine cracks in a glaze that runs through the glass but not into the clay.</dd>
+      <dt>Glaze fit</dt><dd>How well a glaze's shrinkage matches its clay. A good fit leaves the glass slightly squeezed and it never crazes. The fit buttons above set how far off it is.</dd>
+      <dt>Delayed crazing</dt><dd>Cracks that appear months or years after firing, as the clay slowly takes up moisture and swells, stretching the glaze a little more.</dd>
+      <dt>Purple mouth, iron foot</dt><dd>紫口铁足. On Ge ware the glaze runs thin at the rim, letting the dark iron-rich clay show purple-brown, and the unglazed foot fires near black. The darker band round this tile's edge is that thin rim.</dd>
+    </dl>
+  </div>
+</section>
+<p class="foot">The tile is drawn at 12 cm square. Cell sizes are measured by filling each closed region between cracks.</p>
+</div>
+
+<script>
+(()=>{
+const cv=document.getElementById('tile'),ctx=cv.getContext('2d');
+const S=720,T0=36,T1=684,TR=48,W=T1-T0,PXCM=W/12; // tile 648px = 12 cm
+const GLAZES=[
+  {base:[201,193,173],name:'Ge grey'},
+  {base:[220,200,152],name:'Rice yellow'},
+  {base:[191,202,200],name:'Moon white'}];
+const FIT=[{n:34,seeds:3},{n:72,seeds:5},{n:140,seeds:8}];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let rng,seedNo,grid,cracks,stage,fit=1,glaze=0,target1=0,spawned1=0,target2=0,spawned2=0,ironStain=0,ironAnim=0,glazeLayer=null,cellInfo={cells:1,mean:null},running=false,nextId=1,fails=0;
+const $=id=>document.getElementById(id);
+function mulberry(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function inside(x,y){
+  if(x<T0+2||x>T1-2||y<T0+2||y>T1-2)return false;
+  const r=TR,cx=x<T0+r?T0+r:x>T1-r?T1-r:x,cy=y<T0+r?T0+r:y>T1-r?T1-r:y;
+  return (x-cx)**2+(y-cy)**2<=(r-2)**2;
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+
+function buildGlaze(){
+  const g=document.createElement('canvas');g.width=S;g.height=S;const c=g.getContext('2d');
+  const [r,gg,b]=GLAZES[glaze].base,R=mulberry(seedNo*7+glaze);
+  // iron foot / body showing under the slab
+  c.fillStyle='#2b1a14';rrect(c,T0-8,T0-4,T1-T0+16,T1-T0+18,TR+6);c.fill();
+  // purple mouth: thin glaze at the edge
+  c.fillStyle='#5b3a3c';rrect(c,T0,T0,T1-T0,T1-T0,TR);c.fill();
+  c.save();rrect(c,T0+5,T0+5,T1-T0-10,T1-T0-10,TR-4);c.clip();
+  c.fillStyle=`rgb(${r},${gg},${b})`;c.fillRect(0,0,S,S);
+  for(let i=0;i<260;i++){const x=T0+R()*W,y=T0+R()*W,rad=20+R()*90,d=R()<.5?-1:1,a=.02+R()*.035;
+    const gr=c.createRadialGradient(x,y,0,x,y,rad);const k=d>0?255:40;gr.addColorStop(0,`rgba(${k},${d>0?k:30},${d>0?k-20:10},${a})`);gr.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=gr;c.fillRect(x-rad,y-rad,rad*2,rad*2);}
+  // pinholes and tiny bubbles
+  for(let i=0;i<70;i++){const x=T0+20+R()*(W-40),y=T0+20+R()*(W-40);c.fillStyle=`rgba(60,40,30,${.12+R()*.15})`;c.beginPath();c.arc(x,y,.6+R()*1.2,0,7);c.fill();}
+  // thinning toward the rim
+  const sh=c.createRadialGradient(S/2,S/2,230,S/2,S/2,440);sh.addColorStop(0,'rgba(90,58,60,0)');sh.addColorStop(1,'rgba(90,58,60,.42)');c.fillStyle=sh;c.fillRect(0,0,S,S);
+  // gloss
+  const gl=c.createLinearGradient(T0,T0,T1,T1);gl.addColorStop(0,'rgba(255,255,255,.28)');gl.addColorStop(.35,'rgba(255,255,255,.04)');gl.addColorStop(.7,'rgba(255,255,255,0)');gl.addColorStop(1,'rgba(0,0,0,.07)');c.fillStyle=gl;c.fillRect(0,0,S,S);
+  c.restore();
+  glazeLayer=g;
+}
+function reset(){
+  seedNo=1000+Math.floor(Math.random()*9000);rng=mulberry(seedNo);
+  grid=new Int32Array(S*S);
+  for(let y=0;y<S;y++)for(let x=0;x<S;x++)if(!inside(x+.5,y+.5))grid[y*S+x]=-1;
+  cracks=[];stage=0;spawned1=0;spawned2=0;target1=0;target2=0;ironStain=0;ironAnim=0;nextId=1;fails=0;cellInfo={cells:1,mean:W*W/(PXCM*PXCM)*100};
+  $('tileno').textContent='TILE '+seedNo;
+  buildGlaze();ui();draw();
+}
+function addCrack(x,y,a,gen,parent){
+  const c={id:nextId++,x,y,a,gen,parent,pts:[[x,y]],len:0,alive:true,drift:(rng()-.5)*(gen===1?.0025:.01),t:0};
+  cracks.push(c);return c;
+}
+function stepCrack(c,n){
+  const wob=c.gen===1?.024:.06;
+  for(let i=0;i<n&&c.alive;i++){
+    c.a+=c.drift+(rng()-.5)*wob;
+    const nx=c.x+Math.cos(c.a)*.7,ny=c.y+Math.sin(c.a)*.7,ix=nx|0,iy=ny|0;
+    if(ix<1||iy<1||ix>=S-1||iy>=S-1){c.alive=false;break;}
+    const v=grid[iy*S+ix];
+    if(v===-1||(v>0&&v!==c.id&&!(v===c.parent&&c.len<5)&&!(v===c.twin&&c.len<5))){c.x=nx;c.y=ny;c.pts.push([nx,ny]);c.alive=false;break;}
+    for(const [dx,dy] of [[0,0],[1,0],[0,1]]){const k=(iy+dy)*S+ix+dx;if(grid[k]===0)grid[k]=c.id;}
+    c.x=nx;c.y=ny;c.len+=.7;c.t++;
+    if(c.t%4===0)c.pts.push([nx,ny]);
+    if(c.len>2400)c.alive=false;
+  }
+  if(!c.alive){const l=c.pts[c.pts.length-1];if(l[0]!==c.x||l[1]!==c.y)c.pts.push([c.x,c.y]);}
+}
+function freeRun(x,y,a,own,max){
+  const dx=Math.cos(a),dy=Math.sin(a);let d=0;
+  while(d<max){d+=2;const v=grid[((y+dy*d)|0)*S+((x+dx*d)|0)];if(v===-1||(v>0&&v!==own))break;}
+  return d;
+}
+function spawnFrom(gen){
+  // try a handful of right-angle starts and keep the one that cuts its cell most evenly:
+  // measured halfway along the would-be crack, the room on both sides of it should be as large as possible
+  const pool=cracks.filter(c=>(gen===1?c.gen===1:true)&&c.pts.length>=4);
+  if(!pool.length)return false;
+  const K=gen===1?10:6,minRun=gen===1?30:12;let best=null,found=0;
+  for(let tries=0;tries<50;tries++){
+    const p=pool[Math.floor(rng()*pool.length)],i=1+Math.floor(rng()*(p.pts.length-2));
+    const A=p.pts[i-1],B=p.pts[i+1],dir=Math.atan2(B[1]-A[1],B[0]-A[0]);
+    const a=dir+(rng()<.5?1:-1)*Math.PI/2+(rng()-.5)*.22,P=p.pts[i];
+    const sx=P[0]+Math.cos(a)*1.8,sy=P[1]+Math.sin(a)*1.8,v=grid[(sy|0)*S+(sx|0)];
+    if(v===-1||(v>0&&v!==p.id))continue;
+    const run=freeRun(sx,sy,a,p.id,700);
+    if(run<minRun)continue;
+    const mx=sx+Math.cos(a)*run/2,my=sy+Math.sin(a)*run/2;
+    const side=Math.min(freeRun(mx,my,a+Math.PI/2,-9,700),freeRun(mx,my,a-Math.PI/2,-9,700));
+    const score=Math.min(side,run*1.2);
+    if(!best||score>best.score)best={sx,sy,a,id:p.id,score};
+    if(++found>=K)break;
+  }
+  if(!best)return false;
+  addCrack(best.sx,best.sy,best.a,gen,best.id);return true;
+}
+function rimSeed(){
+  for(let tries=0;tries<40;tries++){
+    const side=Math.floor(rng()*4),u=T0+TR+rng()*(W-2*TR),inset=4;
+    let x,y,a;
+    if(side===0){x=u;y=T0+inset;a=Math.PI/2;}else if(side===1){x=T1-inset;y=u;a=Math.PI;}else if(side===2){x=u;y=T1-inset;a=-Math.PI/2;}else{x=T0+inset;y=u;a=0;}
+    a+=(rng()-.5)*.6;
+    if(grid[(y|0)*S+(x|0)]===0){addCrack(x,y,a,1,0);return;}
+  }
+}
+function strike(x,y){
+  if(!inside(x,y))return false;
+  const v=grid[(y|0)*S+(x|0)];if(v!==0)return false;
+  const gen=stage>=3?2:1,a=rng()*Math.PI*2;
+  const c1=addCrack(x,y,a,gen,0),c2=addCrack(x,y,a+Math.PI,gen,0);c1.twin=c2.id;c2.twin=c1.id;
+  if(stage===0||stage===2||stage===4){cellInfo=null;}
+  if(stage===2&&ironStain>=1){/* new iron crack after staining: stays unstained */}
+  kick();return true;
+}
+const active=()=>cracks.some(c=>c.alive);
+function tick(){
+  const per=reduce?60:(stage===3?5:4);
+  for(let rep=0;rep<(reduce?6:1);rep++){
+    if(stage===1){let room=8-cracks.filter(c=>c.alive).length;while(room-->0&&spawned1<target1){if(spawnFrom(1))spawned1++;else if(++fails>400)spawned1=target1;}}
+    if(stage===3){let room=12-cracks.filter(c=>c.alive).length;while(room-->0&&spawned2<target2){if(spawnFrom(2))spawned2++;else if(++fails>400)spawned2=target2;}}
+    for(const c of cracks)if(c.alive)stepCrack(c,per);
+  }
+  if(ironAnim){ironStain=Math.min(1,ironStain+(reduce?1:.022));if(ironStain>=1){ironAnim=0;stage=3;measure();}}
+  if(stage===1&&!active()&&spawned1>=target1){stage=2;measure();}
+  if(stage===3&&target2>0&&!active()&&spawned2>=target2){stage=4;measure();}
+  if((stage===0||stage===2||stage===4)&&!active()&&cellInfo===null)measure();
+  draw();ui();
+  if(active()||ironAnim||(stage===1)||(stage===3&&target2>0&&spawned2<target2)){requestAnimationFrame(tick);}else running=false;
+}
+function kick(){if(!running){running=true;requestAnimationFrame(tick);}}
+function paths(gen,stainedOnly){
+  const p=new Path2D();
+  for(const c of cracks){if(c.gen!==gen)continue;if(stainedOnly!==undefined&&!!c.stained!==stainedOnly)continue;const q=c.pts;if(q.length<2)continue;p.moveTo(q[0][0],q[0][1]);for(let i=1;i<q.length;i++)p.lineTo(q[i][0],q[i][1]);if(c.alive)p.lineTo(c.x,c.y);}
+  return p;
+}
+function draw(){
+  ctx.clearRect(0,0,S,S);
+  ctx.drawImage(glazeLayer,0,0);
+  ctx.save();rrect(ctx,T0+3,T0+3,T1-T0-6,T1-T0-6,TR-2);ctx.clip();
+  ctx.lineCap='round';ctx.lineJoin='round';
+  // unstained hairlines: a bright refraction edge with a soft shadow
+  const raw1=paths(1,false),st1=paths(1,true),g2=paths(2);
+  const hair=(p,w)=>{ctx.strokeStyle='rgba(70,45,30,.22)';ctx.lineWidth=w+1.2;ctx.stroke(p);ctx.strokeStyle='rgba(255,252,240,.55)';ctx.lineWidth=w;ctx.stroke(p);};
+  hair(raw1,1.1);
+  if(ironStain>0){
+    hair(st1,1.1);
+    ctx.globalAlpha=ironStain;
+    ctx.strokeStyle='rgba(40,20,12,.16)';ctx.lineWidth=5;ctx.stroke(st1);
+    ctx.strokeStyle='rgba(36,18,10,.32)';ctx.lineWidth=2.8;ctx.stroke(st1);
+    ctx.strokeStyle='#23130b';ctx.lineWidth=1.5;ctx.stroke(st1);
+    ctx.globalAlpha=1;
+  }else hair(st1,1.1);
+  // golden thread: stains as it forms
+  ctx.strokeStyle='rgba(176,118,32,.2)';ctx.lineWidth=3;ctx.stroke(g2);
+  ctx.strokeStyle='rgba(160,104,26,.85)';ctx.lineWidth=.95;ctx.stroke(g2);
+  ctx.restore();
+}
+function measure(){
+  // flood-fill the regions between cracks at half resolution
+  const H=S>>1,blk=new Uint8Array(H*H);
+  for(let y=0;y<H;y++)for(let x=0;x<H;x++){const k=(2*y)*S+2*x;if(grid[k]||grid[k+1]||grid[k+S]||grid[k+S+1])blk[y*H+x]=1;}
+  const seen=new Uint8Array(H*H),st=new Int32Array(H*H);let cells=0,tot=0;
+  for(let i=0;i<H*H;i++){if(blk[i]||seen[i])continue;let sp=0,n=0;st[sp++]=i;seen[i]=1;
+    while(sp){const j=st[--sp];n++;const x=j%H;
+      if(x>0&&!blk[j-1]&&!seen[j-1]){seen[j-1]=1;st[sp++]=j-1;}
+      if(x<H-1&&!blk[j+1]&&!seen[j+1]){seen[j+1]=1;st[sp++]=j+1;}
+      if(j>=H&&!blk[j-H]&&!seen[j-H]){seen[j-H]=1;st[sp++]=j-H;}
+      if(j<H*H-H&&!blk[j+H]&&!seen[j+H]){seen[j+H]=1;st[sp++]=j+H;}}
+    if(n>=6){cells++;tot+=n;}}
+  // each half-res block is 2x2 px, i.e. 4/PXCM² cm² = 400/PXCM² mm²
+  cellInfo={cells,mean:cells?tot*(400/(PXCM*PXCM))/cells:null};
+}
+const fmtArea=a=>a==null?'–':a>=100?(a/100).toFixed(a>=1000?0:1)+' cm²':Math.round(a)+' mm²';
+const CAP=[
+ ['Fresh from the kiln.','Tap the glaze to strike it: a struck spot splits both ways and runs until it meets another crack. Or cool the kiln and let the glaze tear on its own.'],
+ ['Cooling. The glaze is pulling itself apart.','Each new crack starts from an old one at a right angle and stops dead when it reaches the next.'],
+ ['Crazed, but you can barely see it.','The cracks are hairlines in clear glass, catching the light. Rub iron stain into them and wipe the surface to make the net show.'],
+ ['Iron wire.','The first net is black now. Fine cracks can keep opening for years as the clay takes up moisture and swells. Wait a century and see.'],
+ ['Golden thread and iron wire.','The later, finer net split the big cells and picked up a honey colour from tea and handling. Strike the glaze for more, or fire another tile.']];
+function ui(){
+  const n1=cracks.filter(c=>c.gen===1).length,n2=cracks.filter(c=>c.gen===2).length;
+  const len=cracks.reduce((s,c)=>s+c.len,0)/PXCM;
+  $('r-iron').textContent=n1;$('r-gold').textContent=n2;$('r-len').textContent=len.toFixed(1)+' cm';
+  $('r-cells').textContent=cellInfo?cellInfo.cells:'…';$('r-mean').textContent=cellInfo?fmtArea(cellInfo.mean):'…';
+  const s=stage;
+  $('caption').textContent=CAP[ironAnim?2:s][0];$('sub').textContent=CAP[ironAnim?2:s][1];
+  if(ironAnim){$('caption').textContent='Rubbing in iron stain…';}
+  $('b-cool').disabled=stage!==0;$('b-iron').disabled=stage!==2||!!ironAnim||active();$('b-age').disabled=stage!==3||target2>0;
+  document.querySelectorAll('#firing li').forEach(li=>{const k=+li.dataset.s;const done=k===0?stage>=2:k===2?stage>=3:stage>=4;const now=(k===0&&stage===0)||(k===2&&stage===2&&!ironAnim)||(k===3&&stage===3&&target2===0);li.classList.toggle('done',done);li.classList.toggle('now',now);});
+  document.querySelectorAll('#fit button').forEach(b=>{b.setAttribute('aria-pressed',+b.dataset.v===fit);b.disabled=stage>=1;});
+  document.querySelectorAll('#glaze button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===glaze));
+}
+$('b-cool').onclick=()=>{if(stage!==0)return;stage=1;fails=0;target1=FIT[fit].n;for(let i=0;i<FIT[fit].seeds;i++)rimSeed();cellInfo=null;kick();ui();};
+$('b-iron').onclick=()=>{if(stage!==2||active())return;for(const c of cracks)if(c.gen===1)c.stained=true;ironAnim=1;ironStain=0;kick();ui();};
+$('b-age').onclick=()=>{if(stage!==3)return;target2=Math.round(FIT[fit].n*2.6);spawned2=0;fails=0;cellInfo=null;kick();ui();};
+$('b-new').onclick=()=>{reset();};
+$('fit').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||stage>=1)return;fit=+b.dataset.v;ui();});
+$('glaze').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;glaze=+b.dataset.v;buildGlaze();draw();ui();});
+function toTile(e){const r=cv.getBoundingClientRect();return[(e.clientX-r.left)/r.width*S,(e.clientY-r.top)/r.height*S];}
+cv.addEventListener('pointerdown',e=>{const [x,y]=toTile(e);strike(x,y);});
+cv.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();for(let i=0;i<40;i++){if(strike(T0+40+rng()*(W-80),T0+40+rng()*(W-80)))break;}}});
+window.__ironwire={get state(){return{stage,tile:seedNo,fit,glaze,iron:cracks.filter(c=>c.gen===1).length,gold:cracks.filter(c=>c.gen===2).length,active:cracks.filter(c=>c.alive).length,stained:cracks.filter(c=>c.stained).length,ironStain,lengthCm:+(cracks.reduce((s,c)=>s+c.len,0)/PXCM).toFixed(1),cells:cellInfo&&cellInfo.cells,meanMm2:cellInfo&&cellInfo.mean,openEnds:cracks.filter(c=>!c.alive&&c.len>0&&c.len<1).length};},toScreen(x,y){const r=cv.getBoundingClientRect();return{x:r.left+x/S*r.width,y:r.top+y/S*r.height};}};
+reset();
+})();
+</script>
+</body></html>

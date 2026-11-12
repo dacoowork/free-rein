@@ -24,7 +24,7 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Simulation | A real system modelled so you can poke it | 3 |
 | Tool | Something useful you'd come back to: calculators, planners, editors | 3 |
 | Instrument and sound | Play or compose: instruments, sequencers, ambient sound machines | 2 |
-| Generative art | Visual pieces made by rules, to watch or tweak | 1 |
+| Generative art | Visual pieces made by rules, to watch or tweak | 2 |
 | Animation and motion | A short non-interactive film or motion piece | 1 |
 | Interactive fiction | Stories you move through: branching tales, mysteries, letters | 1 |
 | Writing machine | Generates text: poems, headlines, horoscopes, recipes | 1 |
@@ -42,12 +42,13 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Puzzle hunt | Linked puzzles with a hidden answer, meant to be solved over time | 1 |
 | How it works | Cutaways, blueprints and diagrams of machines and processes | 2 |
 
-## Catalogue (36 builds, all on the hub)
+## Catalogue (37 builds, 36 on the hub, 1 queued)
 
 A date marked "(queued)" means the build is on the `queue` branch and not live yet.
 
 | Build | Date | Category | What it does | Subject world | Core mechanic | Look |
 |---|---|---|---|---|---|---|
+| Iron Wire | 12 Nov (queued) | Generative art | Glaze crazing after Song-dynasty Ge ware's "golden thread and iron wire". A 12 cm glazed slab on canvas: Cool the kiln and cracks grow live from the rim, each new one starting at a right angle off an older crack (the start that cuts its cell most evenly wins) and stopping dead on the next, so every crack ends in a T or on the edge; Rub in iron stain darkens that first net from faint refraction hairlines to black; Wait a century grows a finer second net that splits the cells and stains honey-gold. Tap the glaze (or Enter) to strike a flaw that splits both ways. Glaze fit (a little / a lot / far too much, 34/72/140 cracks) and three glazes (Ge grey, rice yellow, moon white); purple-brown thin rim. Readouts: iron and golden crack counts, crack length in cm, cell count and mean cell size from a flood fill. Below: why glaze crazes (with a cross-section), the right-angle rule, the two nets, a short glossary | Ceramics, glaze crazing, Chinese Song-dynasty ware | Sequential crack growth on a raster: perpendicular spawning off existing cracks, stop on contact, flood-fill cell measurement | Darker Grotesque 900 + Public Sans + Martian Mono; tenmoku dark-brown ground, rice-paper card, grey-beige glaze, black iron and gold cracks; near-black brown in dark mode |
 | Interlock | 11 Nov | How it works | A working top-down jacket zip on canvas: tap the pin to seat it in the box (without it only the bottom row runs through the slider and nothing meshes), then drag the slider (or Zip up / Unzip, arrow keys) and the rows funnel together at the throat, each tooth meshing as it passes, and split on the diamond going down. See inside the slider shows the Y-channel walls and diamond; Wear out the slider spreads the throat so the teeth come out a hair apart and the zip opens in an eye behind the slider; Pinch it with pliers fixes it, and the split stays until you unzip past it and zip up again. Live pairs-meshed count and narrated caption; below, an edge-on drawing of bump-in-hollow teeth with one tipping out, a parts list and three dates (1893, 1913, 1923) | Zips and fasteners | Drag a slider along a mechanism whose per-tooth state changes as it passes | Schibsted Grotesk 900 + Chivo Mono; near-white ground, safety-orange tape, silver teeth, charcoal slider |
 | Handles | 10 Nov | Explorable explainer | Six step-through chapters on Bézier curves, all draggable: (1) a mix point on a line with a t slider and Play, (2) a quadratic drawn by mixing mixes, (3) a cubic with its three rounds of de Casteljau construction animated and a trail, (4) two cubics joined at a point with Keep it smooth (mirrors the opposite handle) and a live bend-angle readout, (5) match three outlines (hump, S-bend, a self-crossing loop) by dragging four points, gap measured as Hausdorff distance, under 10 matches, ticks saved locally, Show its handles hint, (6) the circle that isn't: drag k and see the quarter-arc's radial error magnified 50 times beside a letter o built from four copies, finding 0.5523 = 4/3(√2−1) | Vector graphics, font outlines, Bézier curves | Drag control points while the recursive-lerp construction redraws live, in numbered steps | Sora 800 + Geist Mono; cherry-crimson ground, warm white card on a dotted board, ink black curves, cobalt handles with orange and green construction levels; deep wine in dark mode |
 | Lot Twelve | 9 Nov | Two-player or party game | Hot-seat sealed-bid auction: eight odd lots (teapot, banjo, stuffed pike, top hat...), 100 coins each for the whole sale. Each player privately sees an appraiser's 24-coin range that always contains the true value but is centred differently, then bids in secret behind cover screens. Highest bid wins and pays, a tie withdraws the lot; reveal shows true value, both ranges and profit or loss. Score is true value of lots plus unspent coins | Antique auction house, odd lots | Secret bids with each player holding a different half of the truth, shared by table talk | Bagel Fat One + Work Sans; saturated violet ground, cream card, gold highlight, coral and green players; deep aubergine in dark mode |
@@ -140,6 +141,8 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 
 - **Zips, fasteners and slider-along-a-mechanism drags (11 Nov):** Interlock is a top-down zip on a near-white ground with safety-orange tape (orange-on-white and Schibsted Grotesk now taken). How it works is now used twice. Leave clothing, fasteners and sewing alone for a while; the one-long-horizontal-mechanism-with-a-draggable-part form is used once, so the next How it works could be a cross-section, an exploded view or a scroll-through sequence.
 
+- **Ceramics, glazes and crack networks (12 Nov):** Iron Wire is a crazed glaze tile on a tenmoku dark-brown ground (dark brown grounds, gold-on-brown and Darker Grotesque now taken). Generative art is now used twice. Leave pottery, cracks, fracture and Chinese porcelain alone for a while; the stage-button strip (1, 2, 3) beside a square canvas is used once.
+
 ## Rejected because they repeated an earlier build
 
 - Treadle (23 Oct): four-shaft weaving draft studio. Same as Drawdown.
@@ -190,7 +193,7 @@ Process tip (23–28 Oct): scheduled runs with no repo attached had no add_repo 
 
 ## Queued
 
-Nothing queued.
+- Iron Wire (12 Nov, Generative art): `builds/iron-wire/index.html`, builds.js entry, `ironwire` motif, Darker Grotesque added to the gallery font link, `?v=2026-11-12`.
 
 ## Left out on purpose
 

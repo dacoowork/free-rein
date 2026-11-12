@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -144,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-11"></script>
+<script src="builds.js?v=2026-11-12"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -155,6 +155,26 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    ironwire(b,r){
+      // a glazed slab crazed by the build's rule: cracks start at right angles off older cracks and stop on the next one; iron net first, golden net after
+      const X0=36,Y0=14,X1=284,Y1=166,G=2,Wd=(X1-X0)/G|0,Hd=(Y1-Y0)/G|0,grid=new Int16Array(Wd*Hd),cr=[];
+      const at=(x,y)=>{const i=((x-X0)/G)|0,j=((y-Y0)/G)|0;return i<1||j<1||i>=Wd-1||j>=Hd-1?-1:grid[j*Wd+i];};
+      const grow=(x,y,a,gen,par)=>{const id=cr.length+1,c={gen,pts:[[x,y]]};cr.push(c);let len=0;
+        for(;;){a+=(r()-.5)*.05;x+=Math.cos(a)*.8;y+=Math.sin(a)*.8;len+=.8;const v=at(x,y);
+          if(v===-1||(v>0&&v!==id&&!(v===par&&len<4))){c.pts.push([x,y]);break;}
+          grid[(((y-Y0)/G)|0)*Wd+(((x-X0)/G)|0)]=id;if(len%4<.8)c.pts.push([x,y]);}};
+      const spawn=gen=>{let best=null;for(let k=0;k<30;k++){const p=cr[(r()*cr.length)|0];if(p.pts.length<4)continue;const i=1+((r()*(p.pts.length-2))|0),A=p.pts[i-1],B=p.pts[i+1];
+          const a=Math.atan2(B[1]-A[1],B[0]-A[0])+(r()<.5?1:-1)*Math.PI/2,P=p.pts[i],sx=P[0]+Math.cos(a)*2,sy=P[1]+Math.sin(a)*2;
+          const run=d=>{let t=0;while(t<300){t+=2;const v=at(d[0]+Math.cos(d[2])*t,d[1]+Math.sin(d[2])*t);if(v!==0&&v!==cr.indexOf(p)+1)break;}return t;};
+          const L=run([sx,sy,a]);if(L<(gen===1?14:6))continue;const m=[sx+Math.cos(a)*L/2,sy+Math.sin(a)*L/2];
+          const sc=Math.min(run([m[0],m[1],a+Math.PI/2]),run([m[0],m[1],a-Math.PI/2]),L*1.2);if(!best||sc>best.sc)best={sx,sy,a,sc,par:cr.indexOf(p)+1};}
+        if(best)grow(best.sx,best.sy,best.a,gen,best.par);};
+      grow(X0+3,Y0+40,.38,1,0);grow(X0+170,Y1-3,-2.0,1,0);
+      for(let k=0;k<26;k++)spawn(1);for(let k=0;k<50;k++)spawn(2);
+      const d=g=>cr.filter(c=>c.gen===g).map(c=>'M'+c.pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join('L')).join('');
+      return `<rect width="320" height="180" fill="${b.bg}"/><rect x="${X0-6}" y="${Y0-4}" width="${X1-X0+12}" height="${Y1-Y0+12}" rx="16" fill="#24130c"/><rect x="${X0-2}" y="${Y0-2}" width="${X1-X0+4}" height="${Y1-Y0+4}" rx="13" fill="#5b3a3c"/><rect x="${X0}" y="${Y0}" width="${X1-X0}" height="${Y1-Y0}" rx="11" fill="#cbc3ae"/>`+
+        `<path d="${d(2)}" fill="none" stroke="#b07a26" stroke-width=".9" stroke-linecap="round"/><path d="${d(1)}" fill="none" stroke="#23130b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`;
+    },
     billions(b,r){
       // 20 columns x 11 rows of squares, banded by billion, with a ring on one square
       const cs=['#7a5c3a','#d9792b','#e8b21c','#8fb339','#1c9a74','#2b72b8','#6a4bb5','#c8346e'];

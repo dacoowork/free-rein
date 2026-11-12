@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "iron-wire",
+    title: "Iron Wire",
+    date: "2026-11-12",
+    kind: "Generative art",
+    blurb: "Craze a glaze the way Song-dynasty Ge ware did. Fire a tile, cool the kiln, and watch the glass tear itself into cells by one rule: every new crack starts at a right angle off an older one and stops dead when it meets the next. Rub iron stain into the first net to make it show, then wait a century for a finer golden net to split the cells between. Tap the glaze to strike your own cracks, choose how badly the glaze fits its clay and one of three glazes, and read off the crack length, cell count and mean cell size on a 12 cm tile.",
+    font: "'Darker Grotesque', 'Arial Narrow', sans-serif", fontWeight: 900, letterSpacing: "-0.02em",
+    bg: "#3b2318", fg: "#24150e", accent: "#b98422", panel: "#f6eee2",
+    why: "Crackle is one of the few patterns that potters prize precisely because nobody draws it, and the physics behind it fits in a single sentence, so I wanted the page to run on that sentence and nothing else.",
+    hook: "Cool a glazed tile and watch it craze into iron and gold.",
+    motif: "ironwire"
+  },
+  {
     slug: "interlock",
     title: "Interlock",
     date: "2026-11-11",
