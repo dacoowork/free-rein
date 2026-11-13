@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "ties",
+    title: "Ties",
+    date: "2026-11-13",
+    kind: "Type and lettering",
+    blurb: "Cut any word out of a stencil sheet and the middles of its O, A, B and 8 simply drop out. Type a word and this cuts the stencil, finds every island the knife sets free, and places the little ties that hold each one in: the shortest straight run across the stroke, one or two per island. Drag across the wall to spray through it, lift the stencil to see the gaps the ties leave, or cut with no ties and watch the counters fall away and the letters spray as blobs. Two faces, four cans, and an alphabet strip showing which letters lose their middles.",
+    font: "'Saira Stencil One', 'Arial Black', sans-serif",
+    bg: "#efece6", fg: "#17171a", accent: "#c8006a", panel: "#ffffff",
+    why: "Stencil letters always have those little gaps and I wanted to find out whether the gaps could be worked out rather than drawn, and it turns out a flood fill and a short search across each stroke gets you most of the way a sign writer would.",
+    hook: "Type a word, cut a stencil, and see where the ties must go.",
+    motif: "ties"
+  },
+  {
     slug: "iron-wire",
     title: "Iron Wire",
     date: "2026-11-12",

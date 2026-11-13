@@ -33,7 +33,7 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Map and place | Maps, atlases, journeys, imagined geography | 1 |
 | Field guide and reference | Curated knowledge: almanacs, guides, glossaries, specimen books | 1 |
 | Editorial and zine | A designed long-form read: essay, zine, magazine spread | 1 |
-| Type and lettering | Type specimens, lettering toys, layout play | 1 |
+| Type and lettering | Type specimens, lettering toys, layout play | 2 |
 | Museum and archive | A collection of objects, real or invented, to browse | 1 |
 | Speculative world | Fiction as design: an invented city, sport, product line, holiday | 1 |
 | Food | Recipes, menus, flavour pairings, kitchen maths | 1 |
@@ -42,12 +42,13 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Puzzle hunt | Linked puzzles with a hidden answer, meant to be solved over time | 1 |
 | How it works | Cutaways, blueprints and diagrams of machines and processes | 2 |
 
-## Catalogue (37 builds, all on the hub)
+## Catalogue (38 builds, 1 queued)
 
 A date marked "(queued)" means the build is on the `queue` branch and not live yet.
 
 | Build | Date | Category | What it does | Subject world | Core mechanic | Look |
 |---|---|---|---|---|---|---|
+| Ties | 13 Nov (queued) | Type and lettering | Stencil lettering worked out by rule. Type a word (up to 14 letters, figures and & ! ? - . /; anything else is left out with a note, an empty word is refused) and it is rendered in Block (Archivo Black) or Fat serif (Abril Fatface) onto a mylar film over a block wall. A flood fill from the sheet's edge finds every island the knife would cut free (named by letter, e.g. O, P, A, R); each is tied back by the shortest straight run across its stroke (vertical preferred, about a third of a stroke wide), with Two (a second tie on the opposite side), One or None per island; islands that only reach another island are tied to it and the pair tied out. Ties show pink until you spray. Drag across the wall to spray (four cans, soft dabs with speckle) or Spray it all; Lift the stencil slides the film off to show the letters with gaps where the ties were; with None the islands drop off the film at cut time and the letters spray as solid blobs. Paint stays on the wall between cuts until Wash the wall. Readouts: islands, ties and their width in mm at 15 cm letters, letters covered %. Below: an alphabet strip counting the islands in every letter and figure in the current face (tap to add), how the ties go in, a short glossary | Stencils, sign writing, spray paint | Raster flood fill to find enclosed counters, then a shortest-straight-bridge search with union-find; drag to spray through a mask and lift it | Saira Stencil One + Onest + Sometype Mono; primer off-white ground, white card, ink black, magenta accent; physical scene of pale blocks under blue-grey mylar; near-black in dark mode |
 | Iron Wire | 12 Nov | Generative art | Glaze crazing after Song-dynasty Ge ware's "golden thread and iron wire". A 12 cm glazed slab on canvas: Cool the kiln and cracks grow live from the rim, each new one starting at a right angle off an older crack (the start that cuts its cell most evenly wins) and stopping dead on the next, so every crack ends in a T or on the edge; Rub in iron stain darkens that first net from faint refraction hairlines to black; Wait a century grows a finer second net that splits the cells and stains honey-gold. Tap the glaze (or Enter) to strike a flaw that splits both ways. Glaze fit (a little / a lot / far too much, 34/72/140 cracks) and three glazes (Ge grey, rice yellow, moon white); purple-brown thin rim. Readouts: iron and golden crack counts, crack length in cm, cell count and mean cell size from a flood fill. Below: why glaze crazes (with a cross-section), the right-angle rule, the two nets, a short glossary | Ceramics, glaze crazing, Chinese Song-dynasty ware | Sequential crack growth on a raster: perpendicular spawning off existing cracks, stop on contact, flood-fill cell measurement | Darker Grotesque 900 + Public Sans + Martian Mono; tenmoku dark-brown ground, rice-paper card, grey-beige glaze, black iron and gold cracks; near-black brown in dark mode |
 | Interlock | 11 Nov | How it works | A working top-down jacket zip on canvas: tap the pin to seat it in the box (without it only the bottom row runs through the slider and nothing meshes), then drag the slider (or Zip up / Unzip, arrow keys) and the rows funnel together at the throat, each tooth meshing as it passes, and split on the diamond going down. See inside the slider shows the Y-channel walls and diamond; Wear out the slider spreads the throat so the teeth come out a hair apart and the zip opens in an eye behind the slider; Pinch it with pliers fixes it, and the split stays until you unzip past it and zip up again. Live pairs-meshed count and narrated caption; below, an edge-on drawing of bump-in-hollow teeth with one tipping out, a parts list and three dates (1893, 1913, 1923) | Zips and fasteners | Drag a slider along a mechanism whose per-tooth state changes as it passes | Schibsted Grotesk 900 + Chivo Mono; near-white ground, safety-orange tape, silver teeth, charcoal slider |
 | Handles | 10 Nov | Explorable explainer | Six step-through chapters on Bézier curves, all draggable: (1) a mix point on a line with a t slider and Play, (2) a quadratic drawn by mixing mixes, (3) a cubic with its three rounds of de Casteljau construction animated and a trail, (4) two cubics joined at a point with Keep it smooth (mirrors the opposite handle) and a live bend-angle readout, (5) match three outlines (hump, S-bend, a self-crossing loop) by dragging four points, gap measured as Hausdorff distance, under 10 matches, ticks saved locally, Show its handles hint, (6) the circle that isn't: drag k and see the quarter-arc's radial error magnified 50 times beside a letter o built from four copies, finding 0.5523 = 4/3(√2−1) | Vector graphics, font outlines, Bézier curves | Drag control points while the recursive-lerp construction redraws live, in numbered steps | Sora 800 + Geist Mono; cherry-crimson ground, warm white card on a dotted board, ink black curves, cobalt handles with orange and green construction levels; deep wine in dark mode |
@@ -143,6 +144,8 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 
 - **Ceramics, glazes and crack networks (12 Nov):** Iron Wire is a crazed glaze tile on a tenmoku dark-brown ground (dark brown grounds, gold-on-brown and Darker Grotesque now taken). Generative art is now used twice. Leave pottery, cracks, fracture and Chinese porcelain alone for a while; the stage-button strip (1, 2, 3) beside a square canvas is used once.
 
+- **Stencils, spray paint and counter-finding (13 Nov):** Ties is a stencil cutter on a primer off-white ground with a magenta accent (Saira Stencil One and Onest now taken; stencil display faces are now used twice, with Vault's Big Shoulders Stencil). Type and lettering is now used twice. Leave stencils, graffiti, spray paint and walls alone for a while; the type-a-word-and-it-renders-to-a-raster-then-analyses form is used once.
+
 ## Rejected because they repeated an earlier build
 
 - Treadle (23 Oct): four-shaft weaving draft studio. Same as Drawdown.
@@ -193,7 +196,7 @@ Process tip (23–28 Oct): scheduled runs with no repo attached had no add_repo 
 
 ## Queued
 
-Nothing queued.
+- Ties (13 Nov, Type and lettering): `builds/ties/index.html`, builds.js entry, `ties` motif, Saira Stencil One added to the fonts link, `?v=2026-11-13`.
 
 ## Left out on purpose
 

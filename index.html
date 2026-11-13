@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -144,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-12"></script>
+<script src="builds.js?v=2026-11-13"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -155,6 +155,21 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    ties(b,r){
+      // a cut stencil (D and O with pink ties holding their islands) laid on a block wall, and beside it the print it sprays, gaps where the ties were
+      const D=(x,y)=>`M${x} ${y}h28a28 40 0 0 1 0 80h-28zM${x+16} ${y+17}h12a12 23 0 0 1 0 46h-12z`;
+      const O=(x,y)=>`M${x+26} ${y}h4a26 26 0 0 1 26 26v28a26 26 0 0 1-26 26h-4a26 26 0 0 1-26-26v-28a26 26 0 0 1 26-26zM${x+28} ${y+17}a11 11 0 0 0-11 11v24a11 11 0 0 0 11 11a11 11 0 0 0 11-11v-24a11 11 0 0 0-11-11z`;
+      const tiesAt=(x,y,cx,col)=>`<rect x="${x+cx-3}" y="${y}" width="6" height="17" fill="${col}"/><rect x="${x+cx-3}" y="${y+63}" width="6" height="17" fill="${col}"/>`;
+      let s=`<rect width="320" height="180" fill="#ddd7cc"/>`;
+      for(let row=0;row<6;row++){const off=row%2?32:0;for(let x=-off;x<320;x+=64)s+=`<rect x="${x+1.5}" y="${row*30+1.5}" width="61" height="27" fill="#e8e3da"/>`;}
+      s+=`<g transform="translate(160 90) scale(.78) translate(-152 -90)">`;
+      s+=`<rect x="12" y="26" width="142" height="128" rx="3" fill="#b0c6d1" stroke="#6d8794" stroke-width="1"/>`;
+      s+=`<path d="${D(28,50)}${O(88,50)}" fill="#e8e3da" fill-rule="evenodd" stroke="#6d8794" stroke-width="1"/>`;
+      s+=tiesAt(28,50,22,'#d6288a')+tiesAt(88,50,28,'#d6288a');
+      s+=`<path d="${D(174,50)}${O(236,50)}" fill="${b.fg}" fill-rule="evenodd" opacity=".9"/>`;
+      s+=tiesAt(174,50,22,'#e8e3da')+tiesAt(236,50,28,'#e8e3da')+'</g>';
+      return s;
+    },
     ironwire(b,r){
       // a glazed slab crazed by the build's rule: cracks start at right angles off older cracks and stop on the next one; iron net first, golden net after
       const X0=36,Y0=14,X1=284,Y1=166,G=2,Wd=(X1-X0)/G|0,Hd=(Y1-Y0)/G|0,grid=new Int16Array(Wd*Hd),cr=[];

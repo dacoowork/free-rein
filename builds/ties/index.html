@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ties</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Saira+Stencil+One&family=Onest:wght@400;500;700&family=Sometype+Mono:wght@400;600&family=Archivo+Black&family=Abril+Fatface&display=swap" rel="stylesheet">
+<style>
+/* Layout: one column. Name and thesis, the word box and two small choices, the wall as the hero with the
+   stencil laid on it, the cans and three actions under it, a live readout, then the alphabet strip
+   (which letters lose their middles in this face) and a short glossary. */
+:root{
+  --ground:#efece6; --card:#ffffff; --ink:#17171a; --muted:#5f5b55; --rule:#d9d4cb;
+  --accent:#c8006a; --accent-ink:#ffffff; --chip:#f6f3ee; --focus:#c8006a;
+  --display:"Saira Stencil One","Arial Black",Impact,sans-serif;
+  --body:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Sometype Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--ground:#151417;--card:#1f1e22;--ink:#eeeae3;--muted:#a9a49c;--rule:#36343a;--accent:#ff4fa6;--accent-ink:#1a0610;--chip:#28262c;--focus:#ff4fa6}
+}
+:root[data-theme="dark"]{--ground:#151417;--card:#1f1e22;--ink:#eeeae3;--muted:#a9a49c;--rule:#36343a;--accent:#ff4fa6;--accent-ink:#1a0610;--chip:#28262c;--focus:#ff4fa6}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ground);color:var(--ink)}
+body{font:16px/1.55 var(--body);-webkit-text-size-adjust:100%}
+.wrap{max-width:1040px;margin:0 auto;padding:28px 20px 56px}
+.kicker{font:600 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+h1{font:400 clamp(64px,13vw,132px)/.86 var(--display);margin:0 0 14px;letter-spacing:.01em}
+h1 span{color:var(--accent)}
+.lede{max-width:62ch;margin:0 0 22px;font-size:17px}
+.panel{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:16px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.word{display:flex;gap:8px;flex:1 1 320px;min-width:0}
+.word input{flex:1;min-width:0;font:700 22px/1 var(--body);letter-spacing:.04em;text-transform:uppercase;padding:10px 12px;border:2px solid var(--ink);border-radius:10px;background:var(--ground);color:var(--ink)}
+.word input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+button{font:600 15px/1 var(--body);color:var(--ink);background:var(--chip);border:1.5px solid var(--rule);border-radius:10px;padding:11px 14px;cursor:pointer;min-height:44px}
+button:hover{border-color:var(--ink)}
+button:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+button.primary{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.seg{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+.seg .lbl{font:600 12px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-right:2px}
+.seg button{padding:9px 12px;min-height:40px}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.choices{margin-top:12px;gap:18px}
+.stage{position:relative;margin:16px 0 0;border-radius:12px;overflow:hidden;background:#d8d2c8;touch-action:none;cursor:crosshair;box-shadow:0 1px 0 var(--rule)}
+.stage canvas{display:block;width:100%;height:auto}
+.hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);font:600 13px/1.2 var(--mono);background:rgba(23,23,26,.82);color:#f3efe8;padding:7px 11px;border-radius:999px;pointer-events:none;white-space:nowrap;transition:opacity .4s}
+.hint.off{opacity:0}
+.tools{margin-top:12px;justify-content:space-between}
+.cans{display:flex;gap:8px;align-items:center}
+.can{width:44px;height:44px;padding:0;border-radius:50%;border:3px solid var(--card);box-shadow:0 0 0 1.5px var(--rule);position:relative}
+.can[aria-pressed="true"]{box-shadow:0 0 0 3px var(--ink)}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.readout{margin:14px 0 0;font:15px/1.5 var(--body);min-height:3em}
+.readout b{font-weight:700}
+.stats{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:8px;font:13px/1.3 var(--mono);color:var(--muted)}
+.stats strong{color:var(--ink);font-weight:600}
+.note{color:var(--accent);font-weight:600}
+h2{font:400 34px/1 var(--display);margin:44px 0 8px}
+.sub{color:var(--muted);margin:0 0 14px;max-width:64ch}
+.alpha{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:8px}
+.alpha button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 4px 7px;min-height:0;background:var(--card)}
+.alpha .gl{font-size:30px;line-height:1}
+.alpha .dots{display:flex;gap:3px;height:8px}
+.alpha .dots i{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.alpha button.none .gl{opacity:.38}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
+.cols p{margin:0 0 10px}
+dl{margin:0}
+dt{font:600 13px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.06em;margin-top:12px}
+dt:first-child{margin-top:0}
+dd{margin:3px 0 0}
+.foot{margin-top:40px;color:var(--muted);font-size:13px}
+@media (max-width:640px){
+  .wrap{padding:20px 16px 44px}
+  .lede{font-size:16px}
+  .cols{grid-template-columns:1fr}
+  .tools{flex-direction:column;align-items:stretch}
+  .acts button{flex:1 1 auto}
+  .word input{font-size:20px}
+  .hint{bottom:auto;top:8px;font-size:12px}
+}
+</style>
+</head><body><div class="wrap">
+  <p class="kicker">Type and lettering · Free Rein</p>
+  <h1>T<span>i</span>es</h1>
+  <p class="lede">Cut a word out of a sheet and every enclosed middle, the hole in an O or the eye of an e, simply drops out. Sign writers leave little strips called ties to hold those islands in place. Type a word and this cuts the stencil, works out where the ties have to go, and lets you spray it onto the wall.</p>
+
+  <div class="panel">
+    <form class="row" id="form" autocomplete="off">
+      <div class="word">
+        <label for="txt" class="kicker" style="position:absolute;left:-9999px">Word to cut</label>
+        <input id="txt" maxlength="14" value="NO PARKING" spellcheck="false" aria-describedby="status">
+        <button class="primary" id="cut" type="submit">Cut it</button>
+      </div>
+    </form>
+    <div class="row choices">
+      <div class="seg" role="group" aria-label="Letter face"><span class="lbl">Face</span>
+        <button type="button" data-face="block" aria-pressed="true">Block</button>
+        <button type="button" data-face="serif" aria-pressed="false">Fat serif</button>
+      </div>
+      <div class="seg" role="group" aria-label="Ties per island"><span class="lbl">Ties per island</span>
+        <button type="button" data-ties="2" aria-pressed="true">Two</button>
+        <button type="button" data-ties="1" aria-pressed="false">One</button>
+        <button type="button" data-ties="0" aria-pressed="false">None</button>
+      </div>
+    </div>
+
+    <div class="stage" id="stage">
+      <canvas id="cv" aria-label="A block wall with the cut stencil laid on it. Drag across it to spray paint."></canvas>
+      <div class="hint" id="hint">Drag across the stencil to spray</div>
+    </div>
+
+    <div class="row tools">
+      <div class="cans" role="group" aria-label="Paint colour">
+        <button class="can" type="button" data-can="0" aria-pressed="true" aria-label="Black paint" style="background:#141414"></button>
+        <button class="can" type="button" data-can="1" aria-pressed="false" aria-label="Signal red paint" style="background:#d4241c"></button>
+        <button class="can" type="button" data-can="2" aria-pressed="false" aria-label="Magenta paint" style="background:#d1007a"></button>
+        <button class="can" type="button" data-can="3" aria-pressed="false" aria-label="Cobalt paint" style="background:#1f4fc4"></button>
+      </div>
+      <div class="acts">
+        <button type="button" id="auto">Spray it all</button>
+        <button type="button" id="lift">Lift the stencil</button>
+        <button type="button" id="wash">Wash the wall</button>
+      </div>
+    </div>
+    <div class="readout" id="status" aria-live="polite"></div>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <h2>Which letters lose their middles</h2>
+  <p class="sub">Every letter and figure in the current face, cut on its own. A dot is one island that would fall out without a tie. Change the face above and the count changes with it. Tap a letter to add it to your word.</p>
+  <div class="alpha" id="alpha"></div>
+
+  <h2>How the ties go in</h2>
+  <div class="cols">
+    <div>
+      <p>The page renders your word, then floods the sheet from its outside edge. Any part of the sheet the flood can't reach is an island: it sits inside a letter, so the knife cuts all the way round it.</p>
+      <p>For each island it looks straight up, down, left and right across the letter's stroke for the shortest way back to sheet that is already held. A tie is that strip, about a third of a typical stroke wide. Vertical ties win a close call, because that is where a reader's eye expects them.</p>
+      <p>With two ties per island it adds a second on the opposite side, which keeps a big counter from flapping when you spray. An island that can only reach another island (the two in a B, say) is tied to it, and the pair is then tied out.</p>
+    </div>
+    <dl>
+      <dt>Counter</dt><dd>The enclosed or part-enclosed space inside a letter. Only the fully enclosed ones become islands.</dd>
+      <dt>Tie (or bridge)</dt><dd>A narrow strip of sheet left uncut across a stroke, so the island stays attached. It shows as a gap in the painted letter.</dd>
+      <dt>Island</dt><dd>A piece of sheet the knife has cut free. Without a tie it falls away, and the spray fills the whole letter shape as a blob.</dd>
+      <dt>Overspray</dt><dd>The soft haze paint leaves where the film lifts a little off the wall. Short passes from a steady distance keep it down.</dd>
+    </dl>
+  </div>
+  <p class="foot">Letters are measured as if cut 15 cm tall. Nothing you type leaves this page.</p>
+</div>
+
+<script>
+(()=>{
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const cv=$('#cv'), ctx=cv.getContext('2d'), stage=$('#stage'), hint=$('#hint');
+const FACES={block:'"Archivo Black","Arial Black","Helvetica Neue",Arial,sans-serif',serif:'"Abril Fatface","Bodoni 72",Didot,Georgia,serif'};
+const FACE_W={block:'400',serif:'400'}, FACE_FB={block:'900',serif:'700'};
+const CANS=['#141414','#d4241c','#d1007a','#1f4fc4'];
+const ALLOWED=/[A-Za-z0-9 &!?\-./]/;
+const FILM=[176,198,209], FILM_EDGE=[96,124,138], TIE=[214,40,130];
+
+let MW=1200, MH=450, layout='wide';
+let face='block', tieMode=2, can=0;
+let text='NO PARKING';
+let letter, cut, tieMap, label;          // per-cell arrays
+let islands=[], ties=[], fallen=[], boxes=[], fontPx=100, capPx=72, tieW=4;
+let phase='laid';                         // laid | lifting | lifted
+let liftT=0, sprayed=false, coverage=0, painting=false, autoRun=null, falling=[];
+const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;};
+let wallC, wallPaint, sprayFilm, filmC, holeMask, sheetMask, tmp;
+
+function makeLayers(){
+  wallC=mk(MW,MH); wallPaint=mk(MW,MH); sprayFilm=mk(MW,MH); filmC=mk(MW,MH); holeMask=mk(MW,MH); sheetMask=mk(MW,MH); tmp=mk(MW,MH);
+  drawWall();
+}
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function drawWall(){
+  const g=wallC.getContext('2d'), r=rng(7);
+  g.fillStyle='#cfc8bc'; g.fillRect(0,0,MW,MH);
+  const bh=MH/ (layout==='wide'?5:6), bw=bh*2.1;
+  for(let row=0, y=0; y<MH; row++, y+=bh){
+    const off=(row%2)*bw/2;
+    for(let x=-off; x<MW; x+=bw){
+      const l=226-r()*10; g.fillStyle=`rgb(${l},${l-4},${l-11})`;
+      g.fillRect(x+2,y+2,bw-4,bh-4);
+    }
+  }
+  const id=g.getImageData(0,0,MW,MH), d=id.data;
+  for(let i=0;i<d.length;i+=4){const n=(r()-.5)*14; d[i]+=n; d[i+1]+=n; d[i+2]+=n;}
+  g.putImageData(id,0,0);
+}
+
+/* ---------- analysis: render, find islands, place ties ---------- */
+function fontStr(px,f){return `${FACE_W[f]} ${px}px ${FACES[f]}`;}
+function splitLines(t){
+  if(layout==='wide'||t.length<8||t.indexOf(' ')<0) return [t];
+  let best=null; for(let i=0;i<t.length;i++) if(t[i]===' '){const s=Math.abs(i-t.length/2); if(!best||s<best.s) best={i,s};}
+  return [t.slice(0,best.i).trim(), t.slice(best.i+1).trim()].filter(Boolean);
+}
+function renderText(t,f,W,H,g,lines){
+  g.clearRect(0,0,W,H); g.fillStyle='#000'; g.textBaseline='alphabetic';
+  g.font=fontStr(100,f);
+  const widths=lines.map(l=>g.measureText(l).width||1);
+  const m=g.measureText('HOXg'), asc=m.actualBoundingBoxAscent||72, cap=(g.measureText('H').actualBoundingBoxAscent||72);
+  const lh=asc*1.18, totH=lh*(lines.length-1)+asc;
+  const s=Math.min(W*0.88/Math.max(...widths), H*(lines.length>1?0.74:0.6)/totH);
+  const px=100*s; g.font=fontStr(px,f);
+  const bx=[]; let y0=(H-totH*s)/2+asc*s;
+  lines.forEach((l,li)=>{
+    const w=g.measureText(l).width, x0=(W-w)/2, y=y0+li*lh*s;
+    g.fillText(l,x0,y);
+    for(let k=0;k<l.length;k++){const a=g.measureText(l.slice(0,k)).width, b=g.measureText(l.slice(0,k+1)).width; bx.push({line:li,ch:l[k],x0:x0+a,x1:x0+b,y0:y-asc*s,y1:y+asc*s*.3});}
+  });
+  return {px, cap:cap*s, boxes:bx};
+}
+function findIslands(alpha,W,H,keepPixels){
+  const N=W*H, let_=new Uint8Array(N), lab=new Int32Array(N).fill(-1), comps=[];
+  for(let i=0;i<N;i++) let_[i]=alpha[i*4+3]>110?1:0;
+  const q=new Int32Array(N);
+  for(let s=0;s<N;s++){
+    if(let_[s]||lab[s]>=0) continue;
+    const id=comps.length; let h=0,t=0; q[t++]=s; lab[s]=id; let border=false, sx=0, sy=0, cnt=0;
+    while(h<t){const p=q[h++], x=p%W, y=(p/W)|0; cnt++; sx+=x; sy+=y;
+      if(x===0||y===0||x===W-1||y===H-1) border=true;
+      if(x>0&&!let_[p-1]&&lab[p-1]<0){lab[p-1]=id;q[t++]=p-1;}
+      if(x<W-1&&!let_[p+1]&&lab[p+1]<0){lab[p+1]=id;q[t++]=p+1;}
+      if(y>0&&!let_[p-W]&&lab[p-W]<0){lab[p-W]=id;q[t++]=p-W;}
+      if(y<H-1&&!let_[p+W]&&lab[p+W]<0){lab[p+W]=id;q[t++]=p+W;}}
+    comps.push({id,border,cnt,cx:sx/cnt,cy:sy/cnt,pix:(!border&&keepPixels)?q.slice(0,t):null});
+  }
+  return {let_,lab,comps};
+}
+
+function analyse(){
+  const lines=splitLines(text||' ');
+  const oc=mk(MW,MH), g=oc.getContext('2d',{willReadFrequently:true});
+  const R=renderText(text,face,MW,MH,g,lines);
+  fontPx=R.px; capPx=R.cap; boxes=R.boxes;
+  const alpha=g.getImageData(0,0,MW,MH).data;
+  const {let_,lab,comps}=findIslands(alpha,MW,MH,true);
+  letter=let_; label=lab;
+  const N=MW*MH; cut=new Uint8Array(N); tieMap=new Uint8Array(N);
+  for(let i=0;i<N;i++) cut[i]=letter[i];
+  islands=[]; ties=[]; fallen=[];
+  const minA=Math.max(6,(fontPx*fontPx)*0.0006);
+  for(const c of comps){
+    if(c.border) continue;
+    if(c.cnt<minA){ for(const p of c.pix) cut[p]=1; continue; }   // a speck: just cut it away
+    const dist=b=>Math.max(0,b.x0-c.cx,c.cx-b.x1)*3+Math.abs((b.y0+b.y1)/2-c.cy);
+    const bx=boxes.reduce((a,b)=>dist(b)<dist(a)?b:a,boxes[0]);
+    islands.push({comp:c.id,cnt:c.cnt,cx:c.cx,cy:c.cy,pix:c.pix,ch:bx?bx.ch:'?',line:bx?bx.line:0,ties:0});
+  }
+  islands.sort((a,b)=>a.line-b.line||a.cx-b.cx||a.cy-b.cy);
+  tieW=Math.max(3,Math.round(fontPx*0.045));
+  if(tieMode===0){ for(const is of islands){ for(const p of is.pix) cut[p]=1; fallen.push(is);} }
+  else placeTies(comps);
+  buildFilm();
+  startFalling();
+}
+
+function placeTies(comps){
+  const parent=comps.map((_,i)=>i);
+  const find=i=>{while(parent[i]!==i){parent[i]=parent[parent[i]];i=parent[i];}return i;};
+  const outer=comps.findIndex(c=>c.border); // any border comp
+  comps.forEach((c,i)=>{if(c.border) parent[find(i)]=find(outer);});
+  const W=MW,H=MH;
+  const sheetComp=p=>{ if(cut[p]) return -2; return label[p]; }; // tie cells carry the label of their island
+  // runs for one island in one direction: per scanline, the run of letter cells from the island edge to sheet
+  function runs(is,dir){
+    const vert=dir==='up'||dir==='down', edge=new Map();
+    for(const p of is.pix){const x=p%W,y=(p/W)|0, k=vert?x:y, v=vert?y:x, e=edge.get(k);
+      if(e===undefined) edge.set(k,v); else if((dir==='up'||dir==='left')?v<e:v>e) edge.set(k,v);}
+    const out=new Map(), step=dir==='up'?-W:dir==='down'?W:dir==='left'?-1:1;
+    for(const [k,v] of edge){
+      let x=vert?k:v, y=vert?v:k, len=0, p=y*W+x, tgt=-1;
+      for(;;){ if(dir==='up')y--; else if(dir==='down')y++; else if(dir==='left')x--; else x++;
+        if(x<0||y<0||x>=W||y>=H){tgt=outer;break;}
+        p=y*W+x; const sc=sheetComp(p);
+        if(sc>=0){tgt=sc;break;} len++; if(len>fontPx*.9) break; }
+      if(tgt>=0&&tgt!==is.comp) out.set(k,{len,tgt,start:v});
+    }
+    return out;
+  }
+  function best(is,dir,needRoot){
+    const r=runs(is,dir), keys=[...r.keys()].sort((a,b)=>a-b);
+    if(!keys.length) return null;
+    const T=Math.min(tieW,keys.length), vert=dir==='up'||dir==='down', centre=vert?is.cx:is.cy;
+    let b=null;
+    for(let i=0;i+T<=keys.length;i++){
+      if(keys[i+T-1]-keys[i]!==T-1) continue;
+      let mx=0, ok=true, tg=null;
+      for(let j=i;j<i+T;j++){const o=r.get(keys[j]); const rt=find(o.tgt);
+        if(needRoot!==undefined&&rt===needRoot){ok=false;break;}
+        mx=Math.max(mx,o.len); tg=o.tgt;}
+      if(!ok) continue;
+      const mid=(keys[i]+keys[i+T-1])/2, cost=mx*(vert?1:1.25)+Math.abs(mid-centre)*0.06+(find(tg)===find(outer)?0:mx*0.3);
+      if(!b||cost<b.cost) b={cost,len:mx,dir,keys:keys.slice(i,i+T),r,tgt:tg};
+    }
+    return b;
+  }
+  function apply(is,b){
+    const vert=b.dir==='up'||b.dir==='down', W_=MW;
+    const rect={x0:1e9,y0:1e9,x1:-1,y1:-1};
+    for(const k of b.keys){const o=b.r.get(k); let v=o.start;
+      for(let n=0;n<o.len;n++){ v+= (b.dir==='up'||b.dir==='left')?-1:1;
+        const x=vert?k:v, y=vert?v:k, p=y*W_+x; cut[p]=0; tieMap[p]=1; label[p]=is.comp;
+        rect.x0=Math.min(rect.x0,x);rect.x1=Math.max(rect.x1,x);rect.y0=Math.min(rect.y0,y);rect.y1=Math.max(rect.y1,y);}}
+    ties.push({ch:is.ch,dir:b.dir,len:b.len,w:b.keys.length,...rect}); is.ties++;
+    parent[find(is.comp)]=find(b.tgt);
+  }
+  const OPP={up:'down',down:'up',left:'right',right:'left'};
+  for(let pass=0;pass<6;pass++){
+    let progress=false;
+    for(const is of islands){
+      if(find(is.comp)===find(outer)) continue;
+      const own=find(is.comp);
+      const cands=['up','down','left','right'].map(d=>best(is,d,own)).filter(Boolean).sort((a,b)=>a.cost-b.cost);
+      if(!cands.length) continue;
+      apply(is,cands[0]); progress=true;
+      if(tieMode===2){ const o=best(is,OPP[cands[0].dir]); if(o&&o.len<=cands[0].len*2.6+tieW) apply(is,o); }
+    }
+    if(!progress) break;
+  }
+  // anything still loose falls out (rare: a counter walled in by very long strokes)
+  for(const is of islands) if(find(is.comp)!==find(outer)&&is.ties===0){ for(const p of is.pix) cut[p]=1; fallen.push(is); }
+}
+
+function buildFilm(){
+  const W=MW,H=MH,N=W*H;
+  const fg=filmC.getContext('2d'), id=fg.createImageData(W,H), d=id.data;
+  const hm=holeMask.getContext('2d'), hid=hm.createImageData(W,H), hd=hid.data;
+  const sm=sheetMask.getContext('2d'), sid=sm.createImageData(W,H), sd=sid.data;
+  for(let i=0;i<N;i++){
+    const o=i*4;
+    if(cut[i]){ hd[o+3]=255; continue; }
+    sd[o+3]=255;
+    const x=i%W, y=(i/W)|0;
+    const edge=(x>0&&cut[i-1])||(x<W-1&&cut[i+1])||(y>0&&cut[i-W])||(y<H-1&&cut[i+W]);
+    let c=FILM;
+    if(tieMap[i]) c=TIE; else if(edge) c=FILM_EDGE;
+    const sh=((x*7+y*13)%23)/23*6-3;
+    d[o]=c[0]+sh; d[o+1]=c[1]+sh; d[o+2]=c[2]+sh; d[o+3]=edge&&!tieMap[i]?250:236;
+  }
+  fg.putImageData(id,0,0); sm.putImageData(sid,0,0);
+  // soften the paint edge a touch: paint creeps a hair under the film
+  const t2=mk(W,H); t2.getContext('2d').putImageData(hid,0,0);
+  hm.clearRect(0,0,W,H); hm.filter='blur(0.8px)'; hm.drawImage(t2,0,0); hm.filter='none'; hm.drawImage(t2,0,0);
+}
+
+function startFalling(){
+  falling=[];
+  if(!fallen.length) return;
+  const W=MW;
+  for(const is of fallen){
+    let x0=1e9,y0=1e9,x1=0,y1=0; for(const p of is.pix){const x=p%W,y=(p/W)|0; if(x<x0)x0=x; if(x>x1)x1=x; if(y<y0)y0=y; if(y>y1)y1=y;}
+    const c=mk(x1-x0+1,y1-y0+1), g=c.getContext('2d'), id=g.createImageData(c.width,c.height);
+    for(const p of is.pix){const x=p%W-x0,y=((p/W)|0)-y0,o=(y*c.width+x)*4; id.data[o]=FILM[0];id.data[o+1]=FILM[1];id.data[o+2]=FILM[2];id.data[o+3]=240;}
+    g.putImageData(id,0,0);
+    falling.push({c,x:x0,y:y0,vy:-1-Math.random()*2,vx:(Math.random()-.5)*3,rot:0,vr:(Math.random()-.5)*0.12,delay:Math.random()*250});
+  }
+  fallStart=performance.now(); kick();
+}
+let fallStart=0;
+
+/* ---------- drawing ---------- */
+let raf=0;
+function kick(){ if(!raf) raf=requestAnimationFrame(frame); }
+function frame(now){
+  raf=0; let again=false;
+  const W=cv.width,H=cv.height; ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,W,H);
+  const s=W/MW; ctx.setTransform(s,0,0,s,0,0); ctx.imageSmoothingEnabled=true;
+  ctx.drawImage(wallC,0,0); ctx.drawImage(wallPaint,0,0);
+  if(phase!=='lifted'){
+    // paint that has reached the wall through the holes
+    const tg=tmp.getContext('2d'); tg.globalCompositeOperation='source-over'; tg.clearRect(0,0,MW,MH);
+    if(phase==='laid'&&sprayed){ tg.drawImage(sprayFilm,0,0); tg.globalCompositeOperation='destination-in'; tg.drawImage(holeMask,0,0); tg.globalCompositeOperation='source-over'; ctx.drawImage(tmp,0,0); }
+    let oy=0, rot=0;
+    if(phase==='lifting'){ const k=Math.min(1,(now-liftT)/750), e=k*k*(3-2*k); oy=-e*MH*1.15; rot=-e*0.06; if(k<1) again=true; else { phase='lifted'; clearCtx(sprayFilm); updateUI(); } }
+    ctx.save(); ctx.translate(MW/2,MH/2+oy); ctx.rotate(rot); ctx.translate(-MW/2,-MH/2);
+    if(phase==='lifting'){ ctx.shadowColor='rgba(0,0,0,.25)'; ctx.shadowBlur=18; ctx.shadowOffsetY=10; }
+    ctx.drawImage(filmC,0,0); ctx.shadowColor='transparent';
+    if(sprayed){ tg.clearRect(0,0,MW,MH); tg.drawImage(sprayFilm,0,0); tg.globalCompositeOperation='destination-in'; tg.drawImage(sheetMask,0,0); tg.globalCompositeOperation='source-over'; ctx.drawImage(tmp,0,0); }
+    ctx.restore();
+  }
+  // islands that were cut free with no tie, dropping away
+  if(falling.length){
+    const t=now-fallStart; let any=false;
+    for(const f of falling){
+      const tt=Math.max(0,t-f.delay)/16.7;
+      const y=f.y+f.vy*tt+0.35*tt*tt, x=f.x+f.vx*tt;
+      if(y<MH+40){ any=true;
+        ctx.save(); ctx.translate(x+f.c.width/2,y+f.c.height/2); ctx.rotate(f.vr*tt); ctx.drawImage(f.c,-f.c.width/2,-f.c.height/2); ctx.restore(); }
+    }
+    if(any) again=true; else falling=[];
+  }
+  if(autoRun){ again=stepAuto(now)||again; }
+  if(again) kick();
+}
+function clearCtx(c){c.getContext('2d').clearRect(0,0,c.width,c.height);}
+
+/* ---------- spraying ---------- */
+function dab(x,y){
+  const g=sprayFilm.getContext('2d'), R=MH*0.075, col=CANS[can];
+  const gr=g.createRadialGradient(x,y,0,x,y,R);
+  gr.addColorStop(0,hexA(col,.30)); gr.addColorStop(.45,hexA(col,.16)); gr.addColorStop(1,hexA(col,0));
+  g.fillStyle=gr; g.beginPath(); g.arc(x,y,R,0,Math.PI*2); g.fill();
+  g.fillStyle=hexA(col,.55);
+  for(let k=0;k<5;k++){const a=Math.random()*Math.PI*2, d=R*(.6+Math.random()*.9); g.fillRect(x+Math.cos(a)*d,y+Math.sin(a)*d,1.4,1.4);}
+  sprayed=true;
+}
+function hexA(h,a){const n=parseInt(h.slice(1),16);return `rgba(${n>>16},${n>>8&255},${n&255},${a})`;}
+let last=null;
+function strokeTo(x,y){
+  if(!last){dab(x,y); last=[x,y]; return;}
+  const dx=x-last[0], dy=y-last[1], d=Math.hypot(dx,dy), step=MH*0.02, n=Math.max(1,Math.ceil(d/step));
+  for(let i=1;i<=n;i++) dab(last[0]+dx*i/n,last[1]+dy*i/n);
+  last=[x,y];
+}
+function toMask(e){const r=cv.getBoundingClientRect();return [(e.clientX-r.left)/r.width*MW,(e.clientY-r.top)/r.height*MH];}
+stage.addEventListener('pointerdown',e=>{
+  if(phase!=='laid'){ say('The stencil is off the wall. Press <b>Lay it again</b> to spray through it.'); return; }
+  if(autoRun) return;
+  painting=true; last=null; stage.setPointerCapture(e.pointerId); strokeTo(...toMask(e)); hint.classList.add('off'); kick();
+});
+stage.addEventListener('pointermove',e=>{ if(!painting) return; strokeTo(...toMask(e)); kick(); throttleCov(); });
+const endPaint=()=>{ if(!painting) return; painting=false; last=null; measure(); updateUI(); };
+stage.addEventListener('pointerup',endPaint); stage.addEventListener('pointercancel',endPaint);
+
+let covTimer=0; function throttleCov(){ if(covTimer) return; covTimer=setTimeout(()=>{covTimer=0;measure();updateStats();},250); }
+function measure(){
+  if(phase!=='laid'||!sprayed){ return; }
+  const d=sprayFilm.getContext('2d',{willReadFrequently:true}).getImageData(0,0,MW,MH).data;
+  let open=0, hit=0;
+  for(let i=0;i<MW*MH;i+=3){ if(!cut[i]) continue; open++; if(d[i*4+3]>150) hit++; }
+  coverage=open?hit/open:0;
+}
+
+function bbox(){ let x0=MW,y0=MH,x1=0,y1=0; for(let i=0;i<MW*MH;i+=2){ if(!cut[i]) continue; const x=i%MW,y=(i/MW)|0; if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;} return {x0,y0,x1,y1}; }
+function startAuto(){
+  if(phase!=='laid'||autoRun) return;
+  const b=bbox(); if(b.x1<b.x0) return;
+  const gap=MH*0.05, rows=[]; for(let y=b.y0+gap*.4;y<=b.y1+gap*.5;y+=gap) rows.push(y);
+  autoRun={b,rows,t0:performance.now(),dur:Math.min(3200,900+rows.length*170)}; last=null; hint.classList.add('off'); updateUI(); kick();
+}
+function stepAuto(now){
+  const a=autoRun, k=Math.min(1,(now-a.t0)/a.dur), total=a.rows.length, pos=k*total, ri=Math.min(total-1,Math.floor(pos)), f=pos-ri;
+  const pad=MH*0.04, xL=a.b.x0-pad, xR=a.b.x1+pad, x=(ri%2?xR-(xR-xL)*f:xL+(xR-xL)*f);
+  if(a.ri!==ri){ last=null; a.ri=ri; }
+  strokeTo(x,a.rows[ri]);
+  if(k>=1){ autoRun=null; last=null; measure(); updateUI(); return false; }
+  throttleCov(); return true;
+}
+
+/* ---------- UI ---------- */
+function say(h){ $('#status').innerHTML=h; }
+function islandSummary(){
+  const by=new Map(); for(const is of islands){ by.set(is.ch,(by.get(is.ch)||0)+1); }
+  return [...by].map(([c,n])=>n>1?`${c}×${n}`:c).join(', ');
+}
+function mm(px){ return Math.max(1,Math.round(px*150/capPx)); }
+function describe(){
+  const n=islands.length;
+  if(!n) return `<b>No islands.</b> Nothing in “${esc(text)}” encloses a counter in this face, so the stencil holds together with no ties at all.`;
+  const list=islandSummary();
+  if(tieMode===0) return `<b class="note">${fallen.length} island${fallen.length>1?'s':''} fell out</b> (${list}). With no ties those letters will spray as solid blobs.`;
+  const loose=fallen.length?` <span class="note">${fallen.length} could not be tied and fell out.</span>`:'';
+  return `<b>${n} island${n>1?'s':''}</b> would have fallen out (${list}). ${ties.length} tie${ties.length>1?'s':''} hold${ties.length===1?'s':''} ${n>1?'them':'it'} in, shown in pink until you spray.${loose}`;
+}
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function updateStats(){
+  const t=ties.length?`${mm(Math.min(...ties.map(t=>t.w)))} mm wide`:'none';
+  $('#stats').innerHTML=`<span>letters <strong>15 cm</strong></span><span>islands <strong>${islands.length}</strong></span><span>ties <strong>${ties.length}</strong> (${t})</span><span>letters covered <strong>${phase==='laid'?Math.round(coverage*100)+'%':'—'}</strong></span>`;
+}
+function updateUI(){
+  $('#lift').textContent=phase==='laid'?'Lift the stencil':'Lay it again';
+  $('#lift').disabled=phase==='lifting'||!!autoRun;
+  $('#auto').disabled=phase!=='laid'||!!autoRun;
+  if(phase==='lifted'){
+    say(fallen.length&&tieMode===0?`Off it comes. Where the islands fell out the letters are solid blobs: ${islandSummary()}.`:
+      islands.length?`Off it comes. Each tie has left a gap in its letter, which is how you can tell a sprayed sign from a painted one.`:`Off it comes. No ties needed for this one.`);
+    hint.textContent='Lay the stencil again, or cut a new word'; hint.classList.remove('off');
+  } else if(phase==='laid'&&!painting&&!autoRun){
+    if(sprayed&&coverage>0.02) say(describe().replace(/shown in pink until you spray\./,'')+` Lift the stencil to see the letters.`); else say(describe());
+    hint.textContent='Drag across the stencil to spray'; if(sprayed) hint.classList.add('off'); else hint.classList.remove('off');
+  }
+  updateStats();
+}
+function recut(){
+  autoRun=null; painting=false; phase='laid'; sprayed=false; coverage=0; clearCtx(sprayFilm);
+  analyse(); updateUI(); kick();
+}
+function clean(v){ let o='', bad=false; for(const c of v){ if(ALLOWED.test(c)) o+=c.toUpperCase(); else bad=true; } return {o:o.replace(/\s+/g,' ').slice(0,14),bad}; }
+$('#form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const {o,bad}=clean($('#txt').value);
+  if(!o.trim()){ say('<b class="note">Type something to cut first.</b> Letters, figures and &amp; ! ? - . / all work.'); return; }
+  text=o.trim(); $('#txt').value=text; recut();
+  if(bad) say(describe()+' <span class="note">Some characters were left out: only letters, figures and &amp; ! ? - . / can be cut.</span>');
+});
+$$('[data-face]').forEach(b=>b.addEventListener('click',()=>{ face=b.dataset.face; $$('[data-face]').forEach(x=>x.setAttribute('aria-pressed',x===b)); recut(); buildAlpha(); }));
+$$('[data-ties]').forEach(b=>b.addEventListener('click',()=>{ tieMode=+b.dataset.ties; $$('[data-ties]').forEach(x=>x.setAttribute('aria-pressed',x===b)); recut(); }));
+$$('[data-can]').forEach(b=>b.addEventListener('click',()=>{ can=+b.dataset.can; $$('[data-can]').forEach(x=>x.setAttribute('aria-pressed',x===b)); }));
+$('#auto').addEventListener('click',startAuto);
+$('#lift').addEventListener('click',()=>{
+  if(phase==='laid'){
+    if(sprayed){ const tg=tmp.getContext('2d'); tg.clearRect(0,0,MW,MH); tg.drawImage(sprayFilm,0,0); tg.globalCompositeOperation='destination-in'; tg.drawImage(holeMask,0,0); tg.globalCompositeOperation='source-over'; wallPaint.getContext('2d').drawImage(tmp,0,0); }
+    phase='lifting'; liftT=performance.now(); updateUI(); kick();
+  } else if(phase==='lifted'){ phase='laid'; sprayed=false; coverage=0; clearCtx(sprayFilm); updateUI(); kick(); }
+});
+$('#wash').addEventListener('click',()=>{ clearCtx(wallPaint); if(phase==='laid'){ clearCtx(sprayFilm); sprayed=false; coverage=0; } updateUI(); kick(); say('Wall washed down. '+describe()); });
+
+/* ---------- alphabet strip ---------- */
+const ALPHA='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&';
+function countIslands(ch,f){
+  const W=110,H=130, c=mk(W,H), g=c.getContext('2d',{willReadFrequently:true});
+  g.font=fontStr(96,f); g.textBaseline='alphabetic'; g.fillStyle='#000';
+  const w=g.measureText(ch).width; g.fillText(ch,(W-w)/2,100);
+  const {comps}=findIslands(g.getImageData(0,0,W,H).data,W,H,false);
+  return comps.filter(k=>!k.border&&k.cnt>=8).length;
+}
+function buildAlpha(){
+  const el=$('#alpha'); el.innerHTML='';
+  for(const ch of ALPHA){
+    const n=countIslands(ch,face), b=document.createElement('button');
+    b.type='button'; b.className=n?'':'none';
+    b.setAttribute('aria-label',`${ch}: ${n} island${n===1?'':'s'}. Add to word`);
+    b.innerHTML=`<span class="gl" style="font-family:${FACES[face].replace(/"/g,"'")}">${ch==='&'?'&amp;':ch}</span><span class="dots">${'<i></i>'.repeat(n)}</span>`;
+    b.addEventListener('click',()=>{ const inp=$('#txt'); const v=(inp.value+ch).slice(0,14); inp.value=v; $('#form').requestSubmit(); });
+    el.appendChild(b);
+  }
+}
+
+/* ---------- sizing ---------- */
+function size(){
+  const r=stage.getBoundingClientRect(), want=r.width<560?'tall':'wide';
+  if(want!==layout||!wallC){ layout=want; if(layout==='wide'){MW=1200;MH=450;} else {MW=720;MH=540;} makeLayers(); if(letter) recut(); }
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*MH/MW*dpr);
+  kick();
+}
+let rsT=0; window.addEventListener('resize',()=>{clearTimeout(rsT);rsT=setTimeout(size,120);});
+
+window.__ties={
+  get state(){ return {text,face,tieMode,phase,islands:islands.length,names:islandSummary(),ties:ties.length,fallen:fallen.length,sprayed,coverage:+coverage.toFixed(3),layout,
+    tieCells:tieMap?tieMap.reduce((a,b)=>a+b,0):0, wallPainted:(()=>{const d=wallPaint.getContext('2d').getImageData(0,0,MW,MH).data;let n=0;for(let i=3;i<d.length;i+=16)if(d[i]>100)n++;return n;})()}; },
+  toScreen(x,y){const r=cv.getBoundingClientRect();return{x:r.left+x/MW*r.width,y:r.top+y/MH*r.height};},
+  dims(){return {MW,MH};}
+};
+
+size(); analyse(); updateUI(); buildAlpha();
+// once the real faces arrive, cut again with them (only if nothing has been sprayed yet)
+const fl=[document.fonts.load(fontStr(80,'block')),document.fonts.load(fontStr(80,'serif'))];
+Promise.allSettled(fl).then(()=>document.fonts.ready).then(()=>{ if(!sprayed&&phase==='laid'){ analyse(); updateUI(); kick(); } buildAlpha(); });
+})();
+</script>
+
+</body></html>
