@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Oldest First</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Rammetto+One&family=Space+Grotesk:wght@400;500;700&family=Azeret+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Oldest First: an ordering quiz. Five everyday things per round, put them in the order they arrived. */
+:root{
+  --bg:#6b6e25; --bg-deep:#56591c; --card:#fbfaf2; --ink:#16170b; --muted:#5d5f45;
+  --accent:#1f3dff; --accent-ink:#ffffff; --line:#d8d6c3; --ok:#1f3dff; --off:#c4372b;
+  --on-bg:#fbfaf2; --on-bg-muted:#e7e8c9; --rail:#16170b;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#1f2010; --bg-deep:#171809; --card:#2b2c18; --ink:#f1f0de; --muted:#b4b494;
+  --accent:#8a9cff; --accent-ink:#0d0f2a; --line:#46472c; --ok:#8a9cff; --off:#ff8a7a;
+  --on-bg:#f1f0de; --on-bg-muted:#b8b993; --rail:#f1f0de;
+}}
+:root[data-theme="dark"]{
+  --bg:#1f2010; --bg-deep:#171809; --card:#2b2c18; --ink:#f1f0de; --muted:#b4b494;
+  --accent:#8a9cff; --accent-ink:#0d0f2a; --line:#46472c; --ok:#8a9cff; --off:#ff8a7a;
+  --on-bg:#f1f0de; --on-bg-muted:#b8b993; --rail:#f1f0de;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--on-bg);font:16px/1.45 'Space Grotesk',system-ui,sans-serif;min-height:100vh}
+button{font:inherit;color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding:28px 16px 48px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;margin-bottom:22px}
+h1{font-family:'Rammetto One','Arial Black',sans-serif;font-weight:400;font-size:clamp(34px,7vw,64px);line-height:.95;margin:0;letter-spacing:-.01em}
+.lede{max-width:430px;margin:0;color:var(--on-bg-muted);font-size:15px}
+.board{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;align-items:start}
+@media (max-width:820px){.board{grid-template-columns:minmax(0,1fr)}}
+.status{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.pill{background:var(--bg-deep);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--on-bg)}
+.pill b{font-family:'Azeret Mono',monospace;font-weight:700}
+.stage{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);gap:0 10px}
+.rail{position:relative;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:4px 0}
+.rail::before{content:"";position:absolute;top:22px;bottom:22px;left:50%;width:3px;margin-left:-1.5px;background:var(--rail);opacity:.8;border-radius:2px}
+.rail span{position:relative;background:var(--bg);font:700 10px/1.1 'Azeret Mono',monospace;letter-spacing:.06em;text-transform:uppercase;writing-mode:vertical-rl;transform:rotate(180deg);padding:6px 0;color:var(--on-bg)}
+.stack{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.card{position:relative;background:var(--card);color:var(--ink);border-radius:14px;padding:12px 10px 12px 14px;display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 12px;align-items:center;box-shadow:0 2px 0 rgba(0,0,0,.18);touch-action:none;user-select:none;-webkit-user-select:none;transition:box-shadow .15s}
+.card.dragging{box-shadow:0 14px 30px rgba(0,0,0,.35);z-index:5;cursor:grabbing}
+.grip{width:28px;height:40px;display:grid;place-items:center;cursor:grab;color:var(--muted)}
+.grip svg{width:14px;height:22px}
+.name{font-weight:700;font-size:17px;line-height:1.2}
+.sub{font-size:13px;color:var(--muted);line-height:1.3}
+.moves{display:flex;flex-direction:column;gap:4px}
+.moves button{width:36px;height:30px;border-radius:8px;border:1.5px solid var(--line);background:transparent;cursor:pointer;display:grid;place-items:center}
+.moves button:hover:not(:disabled){border-color:var(--ink)}
+.moves button:disabled{opacity:.3;cursor:default}
+.moves svg{width:12px;height:12px}
+.year{display:none;font:700 22px/1 'Azeret Mono',monospace;letter-spacing:-.02em;text-align:right;min-width:62px}
+.revealed .moves{display:none}.revealed .year{display:block}
+.revealed .grip{cursor:default}
+.mark{grid-column:2 / 4;font-size:13.5px;line-height:1.35;display:none;border-top:1px dashed var(--line);padding-top:8px;margin-top:4px}
+.revealed .mark{display:block}
+.tag{display:inline-block;font:700 11px/1 'Azeret Mono',monospace;letter-spacing:.04em;text-transform:uppercase;padding:4px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+.tag.ok{background:var(--ok);color:var(--accent-ink)}
+.tag.off{border:1.5px solid var(--off);color:var(--off)}
+.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;padding-left:54px}
+.btn{border:0;border-radius:12px;padding:13px 22px;font-weight:700;font-size:16px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--on-bg);box-shadow:inset 0 0 0 2px var(--on-bg)}
+.btn:focus-visible,.moves button:focus-visible,.grip:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+aside{background:var(--card);color:var(--ink);border-radius:16px;padding:16px 16px 18px}
+aside h2{font:400 18px/1.1 'Rammetto One','Arial Black',sans-serif;margin:0 0 6px}
+aside p{margin:0 0 10px;font-size:14px;color:var(--muted)}
+.verdict{font-size:15px;color:var(--ink);min-height:42px}
+.verdict b{font-family:'Azeret Mono',monospace}
+.axis{margin-top:10px}
+.axis svg{display:block;width:100%;height:auto}
+.rounds{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:12px}
+.rounds div{border-radius:8px;background:var(--bg-deep);color:var(--on-bg);text-align:center;padding:7px 0 6px;font:700 15px/1 'Azeret Mono',monospace}
+.rounds div small{display:block;font:500 10px/1.2 'Space Grotesk',sans-serif;opacity:.8;margin-top:3px}
+.rounds div.now{box-shadow:inset 0 0 0 2px var(--accent)}
+.best{font-size:13px;color:var(--muted);margin-top:10px}
+.howto{margin-top:30px;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 26px;color:var(--on-bg-muted);font-size:14px}
+.howto h3{margin:0 0 4px;font-size:14px;color:var(--on-bg);text-transform:uppercase;letter-spacing:.06em}
+.howto p{margin:0}
+.final{display:none}
+.final.show{display:block}
+.final ol{list-style:none;padding:0;margin:8px 0 0;max-height:none}
+.final li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;padding:5px 0;border-top:1px solid var(--line);font-size:13.5px}
+.final li b{font-family:'Azeret Mono',monospace}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:480px){
+  .wrap{padding-top:20px}
+  .stage{grid-template-columns:30px minmax(0,1fr);gap:0 8px}
+  .card{grid-template-columns:20px minmax(0,1fr) auto;gap:4px 8px;padding:10px 8px 10px 8px}
+  .grip{width:20px}
+  .name{font-size:15.5px}.sub{font-size:12.5px}
+  .year{font-size:19px;min-width:52px}
+  .actions{padding-left:38px}
+}
+@media (prefers-reduced-motion: reduce){.card{transition:none}}
+</style>
+</head><body><div class="wrap">
+  <header>
+    <h1>Oldest<br>First</h1>
+    <p class="lede">Five everyday things a round. Which came first: the crossword or the teddy bear? Sliced bread or the shopping trolley? Drag them into the order they arrived, oldest at the top, then lock it in.</p>
+  </header>
+  <div class="board">
+    <section aria-label="This round">
+      <div class="status">
+        <span class="pill">Round <b id="roundNo">1</b> of 5</span>
+        <span class="pill">Score <b id="scoreNo">0</b> / 50</span>
+      </div>
+      <div class="stage">
+        <div class="rail" aria-hidden="true"><span>Oldest</span><span>Newest</span></div>
+        <ol class="stack" id="stack" aria-label="Things to put in order, oldest first"></ol>
+      </div>
+      <div class="actions">
+        <button class="btn" id="go">Lock it in</button>
+        <button class="btn ghost" id="again" hidden>Play again</button>
+      </div>
+      <p class="sr" aria-live="polite" id="live"></p>
+    </section>
+    <aside>
+      <h2 id="sideTitle">How it scores</h2>
+      <div class="verdict" id="verdict">Every pair of cards you put the right way round is worth a point: ten pairs, ten points a round.</div>
+      <div class="axis" id="axis"></div>
+      <div class="rounds" id="rounds"></div>
+      <div class="final" id="final"><ol id="finalList"></ol></div>
+      <div class="best" id="best"></div>
+    </aside>
+  </div>
+  <div class="howto">
+    <div><h3>Moving cards</h3><p>Drag a card by its grip, or use the up and down arrows on each card. With a keyboard, tab to an arrow and press it.</p></div>
+    <div><h3>The years</h3><p>Each year is the first time the thing was sold, patented, printed or switched on in the form we'd know. Where a story is murkier, the note on the card says so.</p></div>
+    <div><h3>Pairs, not places</h3><p>Getting one card badly wrong only costs the pairs it breaks. Swap two neighbours and you lose a single point.</p></div>
+  </div>
+</div>
+<script>
+(()=>{
+const DECK=[
+ [1868,"The traffic light","Gas-lit, outside Parliament in London. It exploded the next year."],
+ [1873,"Riveted blue jeans","Levi Strauss and Jacob Davis patent the copper rivet on work trousers."],
+ [1876,"Heinz tomato ketchup","Sold in clear glass so buyers could see what was inside."],
+ [1886,"Coca-Cola","First poured at a pharmacy soda fountain in Atlanta."],
+ [1888,"The Kodak camera","“You press the button, we do the rest”: posted back with the film inside."],
+ [1891,"Basketball","James Naismith nails two peach baskets to a gym balcony."],
+ [1893,"The Ferris wheel","Built for the Chicago World's Fair as an answer to the Eiffel Tower."],
+ [1897,"The candy-floss machine","Patented by a dentist and a confectioner."],
+ [1899,"Aspirin","Bayer registers the name for its acetylsalicylic acid."],
+ [1902,"The teddy bear","Named after Theodore Roosevelt, who refused to shoot a tied-up bear."],
+ [1903,"Crayola crayons","Eight colours in a box for a nickel."],
+ [1908,"The Ford Model T","The car that made cars ordinary."],
+ [1912,"The Oreo","Launched in New York as a copy of an older biscuit and outlived it."],
+ [1913,"The crossword","Arthur Wynne's “word-cross” appears in the New York World."],
+ [1920,"The Band-Aid","Made at home first, for a wife who kept cutting herself cooking."],
+ [1927,"PEZ","A peppermint for smokers in Austria; the sweet dispenser came later."],
+ [1928,"Sliced bread","First sold sliced in Chillicothe, Missouri."],
+ [1930,"Clear sticky tape","3M's Scotch tape, sold through the Depression for mending."],
+ [1934,"Cat's eyes","Percy Shaw's reflecting road studs, after headlights caught a real cat."],
+ [1935,"Monopoly","Parker Brothers' version goes on sale; it borrowed an older game."],
+ [1937,"The shopping trolley","Sylvan Goldman puts two baskets on a folding chair with wheels."],
+ [1938,"Instant coffee","Nestlé launches Nescafé in Switzerland."],
+ [1945,"The Slinky","Demonstrated at a Philadelphia department store; 400 sold in 90 minutes."],
+ [1946,"The bikini","Named after an atoll in the news that week."],
+ [1947,"The microwave oven","Raytheon's Radarange: nearly six feet tall."],
+ [1948,"The Polaroid camera","A print in about a minute, developed inside the camera."],
+ [1950,"The charge card","Diners Club, after a man forgot his wallet at dinner."],
+ [1952,"Mr Potato Head","Sold as parts to push into a real potato."],
+ [1955,"Velcro","Patented by George de Mestral after burrs stuck to his dog."],
+ [1957,"Bubble wrap","Meant to be textured wallpaper. It didn't sell as that."],
+ [1958,"The LEGO brick","The stud-and-tube brick is patented; today's bricks still fit it."],
+ [1959,"The three-point seat belt","Volvo leaves the patent open for every carmaker to use."],
+ [1960,"Etch A Sketch","Two knobs, aluminium powder, no erasing except by shaking."],
+ [1963,"The smiley face","Drawn in about ten minutes for an insurance company's morale drive."],
+ [1967,"The cash machine","Barclays, Enfield. It took paper vouchers, not cards."],
+ [1971,"Email","Ray Tomlinson picks the @ sign to join name and computer."],
+ [1973,"The mobile phone call","Martin Cooper calls a rival from a New York street."],
+ [1974,"The barcode scan","A pack of chewing gum in Troy, Ohio."],
+ [1978,"Space Invaders","Its rows of aliens sped up only because the hardware freed up."],
+ [1980,"Post-it Notes","Sold across the US after years of a glue too weak to be useful."],
+ [1982,"The :-) emoticon","Proposed on a university message board to mark jokes."],
+ [1984,"Tetris","Written on a Soviet Electronika computer in Moscow."],
+ [1991,"The web page","Tim Berners-Lee puts the first one online at CERN."],
+ [1992,"The text message","“Merry Christmas”, sent from a computer to a phone."],
+ [1994,"The QR code","Made to track car parts in a Toyota supplier's factory."],
+ [1999,"Emoji","176 tiny pictures for a Japanese phone network."],
+ [2001,"Wikipedia","Started as a side project to a slower, expert-written encyclopedia."],
+ [2005,"YouTube","The first video is 19 seconds at the zoo."],
+ [2007,"The hashtag","Suggested in a tweet for grouping posts; Twitter thought it nerdy."],
+ [2009,"Bitcoin","The first block is mined in January."]
+];
+const MINY=1860, MAXY=2015, ROUNDS=5;
+const $=id=>document.getElementById(id);
+const stackEl=$('stack'), go=$('go'), again=$('again');
+let st;
+// seeded rng so ?seed= gives a repeatable game
+const q=new URLSearchParams(location.search);
+let seedNum=+q.get('seed')||(Date.now()%2147483647);
+const rand=()=>{seedNum=(seedNum*48271)%2147483647;return seedNum/2147483647};
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+function newGame(){
+  // deal 25 distinct cards, then group into 5 rounds, each mixing eras
+  const order=shuffle(DECK.map((_,i)=>i));
+  const rounds=[];const used=new Set();
+  for(let r=0;r<ROUNDS;r++){
+    const pick=[];
+    for(const i of order){
+      if(used.has(i))continue;
+      const y=DECK[i][0];
+      if(pick.some(j=>Math.abs(DECK[j][0]-y)<2))continue;
+      pick.push(i);used.add(i);
+      if(pick.length===5)break;
+    }
+    // keep the dealt order unsorted: reshuffle until it's not already oldest-first
+    do shuffle(pick); while(isSorted(pick));
+    rounds.push(pick);
+  }
+  st={round:0,rounds,order:rounds[0].slice(),revealed:false,scores:[],done:false};
+  render();
+}
+const isSorted=p=>p.every((v,k)=>k===0||DECK[p[k-1]][0]<=DECK[v][0]);
+function pairsRight(p){let n=0;for(let a=0;a<p.length;a++)for(let b=a+1;b<p.length;b++)if(DECK[p[a]][0]<DECK[p[b]][0])n++;return n}
+
+const ICON={up:'<svg viewBox="0 0 12 12"><path d="M2 8l4-4 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+ down:'<svg viewBox="0 0 12 12"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+ grip:'<svg viewBox="0 0 14 22"><g fill="currentColor"><circle cx="4" cy="4" r="2"/><circle cx="10" cy="4" r="2"/><circle cx="4" cy="11" r="2"/><circle cx="10" cy="11" r="2"/><circle cx="4" cy="18" r="2"/><circle cx="10" cy="18" r="2"/></g></svg>'};
+
+function render(){
+  // FLIP: remember old positions
+  const before={};
+  stackEl.querySelectorAll('.card').forEach(c=>before[c.dataset.i]=c.getBoundingClientRect().top);
+  stackEl.innerHTML='';
+  const truth=st.order.slice().sort((a,b)=>DECK[a][0]-DECK[b][0]);
+  st.order.forEach((i,k)=>{
+    const [y,name,note]=DECK[i];
+    const li=document.createElement('li');
+    li.className='card'+(st.revealed?' revealed':'');
+    li.dataset.i=i;
+    let mark='';
+    if(st.revealed){
+      const placed=st.placed[i], should=truth.indexOf(i);
+      mark=placed===should?`<span class="tag ok">Right place</span>`:`<span class="tag off">You had it ${ordinal(placed+1)}</span>`;
+    }
+    li.innerHTML=`<span class="grip" aria-hidden="true">${ICON.grip}</span>
+      <div><div class="name">${name}</div>${st.revealed?'':`<div class="sub">${hint(i)}</div>`}</div>
+      <div class="moves"><button aria-label="Move ${name} up" data-mv="-1" ${k===0?'disabled':''}>${ICON.up}</button><button aria-label="Move ${name} down" data-mv="1" ${k===st.order.length-1?'disabled':''}>${ICON.down}</button></div>
+      <div class="year">${y}</div>
+      <div class="mark">${mark}${note}</div>`;
+    stackEl.appendChild(li);
+  });
+  // play FLIP
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    stackEl.querySelectorAll('.card').forEach(c=>{
+      const b=before[c.dataset.i];if(b==null)return;
+      const d=b-c.getBoundingClientRect().top;if(!d)return;
+      c.animate([{transform:`translateY(${d}px)`},{transform:'none'}],{duration:st.revealed?520:180,easing:'cubic-bezier(.2,.8,.2,1)'});
+    });
+  }
+  $('roundNo').textContent=Math.min(st.round+1,ROUNDS);
+  $('scoreNo').textContent=st.scores.reduce((a,b)=>a+b,0);
+  go.textContent=st.revealed?(st.round===ROUNDS-1?'See the full timeline':'Next round'):'Lock it in';
+  go.hidden=st.done; again.hidden=!st.done;
+  drawSide();
+}
+function hint(i){
+  const [,name]=DECK[i];
+  const n=name.toLowerCase();
+  if(/ketchup|coca|oreo|sliced|coffee|pez|candy|noodle/.test(n))return 'Food and drink';
+  if(/teddy|crayola|crossword|monopoly|slinky|potato|lego|etch|space invaders|tetris|basketball|ferris/.test(n))return 'Play';
+  if(/traffic|model t|cat's eyes|seat belt|trolley/.test(n))return 'Getting about';
+  if(/email|web page|text message|emoticon|emoji|wikipedia|youtube|hashtag|bitcoin|qr/.test(n))return 'On a screen';
+  if(/jeans|bikini/.test(n))return 'Something to wear';
+  if(/kodak|polaroid|microwave|mobile|cash|charge|barcode/.test(n))return 'Machine or money';
+  return 'Around the house';
+}
+const ordinal=n=>n+(['th','st','nd','rd'][(n%100>10&&n%100<14)?0:n%10<4?n%10:0]||'th');
+
+function drawSide(){
+  const ax=$('axis'), rd=$('rounds');
+  rd.innerHTML=Array.from({length:ROUNDS},(_,r)=>{
+    const s=st.scores[r];
+    return `<div class="${r===st.round&&!st.done?'now':''}">${s==null?'–':s}<small>round ${r+1}</small></div>`;
+  }).join('');
+  const total=st.scores.reduce((a,b)=>a+b,0);
+  let best=null;try{best=+localStorage.getItem('oldestFirst.best')||null}catch(e){}
+  $('best').textContent=best!=null?`Your best game on this device: ${best} / 50`:'';
+  $('final').classList.toggle('show',st.done);
+  if(st.done){
+    $('sideTitle').textContent='All 25, in order';
+    $('verdict').innerHTML=`You scored <b>${total} / 50</b>. ${total>=45?'Barely a pair out of place.':total>=38?'A good sense of when things turned up.':total>=28?'More right than wrong.':'History is lumpier than it feels.'}`;
+    ax.innerHTML=axisSVG(st.rounds.flat(),null);
+    $('finalList').innerHTML=st.rounds.flat().sort((a,b)=>DECK[a][0]-DECK[b][0]).map(i=>`<li><b>${DECK[i][0]}</b><span>${DECK[i][1]}</span></li>`).join('');
+    return;
+  }
+  $('sideTitle').textContent=st.revealed?`Round ${st.round+1}`:'How it scores';
+  if(st.revealed){
+    const s=st.scores[st.round];
+    const gap=st.lastGap;
+    $('verdict').innerHTML=`<b>${s} / 10</b> pairs the right way round. ${s===10?'Perfect order.':`Your biggest slip: ${gap}.`}`;
+    ax.innerHTML=axisSVG(st.order,st.order);
+  }else{
+    $('verdict').innerHTML='Every pair of cards you put the right way round is worth a point: ten pairs, ten points a round.';
+    ax.innerHTML=axisSVG([],null);
+  }
+}
+function axisSVG(items,labelled){
+  const W=268,H=labelled?96:56,x=y=>12+(y-MINY)/(MAXY-MINY)*(W-24);
+  const css=getComputedStyle(document.documentElement);
+  const ink=css.getPropertyValue('--ink').trim(),acc=css.getPropertyValue('--accent').trim(),mut=css.getPropertyValue('--muted').trim();
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Where the years fall between ${MINY} and ${MAXY}">`;
+  const base=H-20;
+  s+=`<line x1="12" x2="${W-12}" y1="${base}" y2="${base}" stroke="${ink}" stroke-width="2"/>`;
+  for(let y=1875;y<=2000;y+=25){s+=`<line x1="${x(y)}" x2="${x(y)}" y1="${base-4}" y2="${base+4}" stroke="${mut}"/><text x="${x(y)}" y="${H-4}" text-anchor="middle" font-family="Azeret Mono,monospace" font-size="9" fill="${mut}">${y}</text>`}
+  if(labelled){
+    const sorted=items.slice().sort((a,b)=>DECK[a][0]-DECK[b][0]);
+    sorted.forEach((i,k)=>{
+      const y=DECK[i][0],lx=x(y),ty=12+k*13;
+      s+=`<line x1="${lx}" x2="${lx}" y1="${ty+2}" y2="${base}" stroke="${acc}" stroke-width="1.5" opacity=".6"/><circle cx="${lx}" cy="${base}" r="4.5" fill="${acc}"/>`;
+      const right=lx<W/2;
+      s+=`<text x="${right?lx+5:lx-5}" y="${ty+4}" text-anchor="${right?'start':'end'}" font-family="Space Grotesk,sans-serif" font-size="10" font-weight="700" fill="${ink}" stroke="${css.getPropertyValue('--card').trim()}" stroke-width="3" paint-order="stroke" stroke-linejoin="round">${y} ${DECK[i][1].replace(/^The /,'')}</text>`;
+    });
+  }else{
+    items.forEach(i=>{s+=`<circle cx="${x(DECK[i][0])}" cy="${base}" r="3.5" fill="${acc}" opacity=".85"/>`});
+  }
+  return s+'</svg>';
+}
+
+function move(i,d){
+  if(st.revealed)return false;
+  const k=st.order.indexOf(i),j=k+d;
+  if(k<0||j<0||j>=st.order.length)return false;
+  [st.order[k],st.order[j]]=[st.order[j],st.order[k]];
+  render();
+  $('live').textContent=`${DECK[i][1]} moved to position ${j+1}`;
+  return true;
+}
+stackEl.addEventListener('click',e=>{
+  const b=e.target.closest('button[data-mv]');if(!b)return;
+  const i=+b.closest('.card').dataset.i;
+  move(i,+b.dataset.mv);
+  const again=stackEl.querySelector(`.card[data-i="${i}"] button[data-mv="${b.dataset.mv}"]`);
+  if(again&&!again.disabled)again.focus();
+});
+
+// drag to reorder
+let drag=null;
+stackEl.addEventListener('pointerdown',e=>{
+  if(st.revealed||e.target.closest('button'))return;
+  const card=e.target.closest('.card');if(!card)return;
+  e.preventDefault();
+  const cards=[...stackEl.children];
+  drag={card,i:+card.dataset.i,y0:e.clientY,rects:cards.map(c=>c.getBoundingClientRect()),from:cards.indexOf(card),to:cards.indexOf(card),id:e.pointerId};
+  card.setPointerCapture(e.pointerId);
+  card.classList.add('dragging');
+});
+stackEl.addEventListener('pointermove',e=>{
+  if(!drag||e.pointerId!==drag.id)return;
+  const dy=e.clientY-drag.y0;
+  drag.card.style.transform=`translateY(${dy}px)`;
+  const r=drag.rects[drag.from],mid=r.top+r.height/2+dy;
+  // the new slot is the number of other cards whose centre sits above the dragged card's centre
+  let idx=0;drag.rects.forEach((q,k)=>{if(k!==drag.from&&mid>q.top+q.height/2)idx++;});
+  drag.to=idx;
+  const h=r.height+10;
+  [...stackEl.children].forEach((c,k)=>{
+    if(c===drag.card)return;
+    let shift=0;
+    if(drag.from<idx&&k>drag.from&&k<=idx)shift=-h;
+    if(drag.from>idx&&k<drag.from&&k>=idx)shift=h;
+    c.style.transition='transform .15s';c.style.transform=shift?`translateY(${shift}px)`:'';
+  });
+});
+function endDrag(e){
+  if(!drag||e.pointerId!==drag.id)return;
+  const {from,to,i}=drag;
+  [...stackEl.children].forEach(c=>{c.style.transform='';c.style.transition='';});
+  drag.card.classList.remove('dragging');
+  drag=null;
+  if(to!==from){st.order.splice(from,1);st.order.splice(to,0,i);}
+  render();
+  if(to!==from)$('live').textContent=`${DECK[i][1]} moved to position ${to+1}`;
+}
+stackEl.addEventListener('pointerup',endDrag);
+stackEl.addEventListener('pointercancel',endDrag);
+
+function lockIn(){
+  st.placed={};st.order.forEach((i,k)=>st.placed[i]=k);
+  const s=pairsRight(st.order);
+  // find the closest-together pair the player got backwards (or the closest pair overall)
+  let worst=null;
+  for(let a=0;a<5;a++)for(let b=a+1;b<5;b++){
+    const A=st.order[a],B=st.order[b];
+    if(DECK[A][0]>DECK[B][0]){const g=DECK[A][0]-DECK[B][0];if(!worst||g>worst.g)worst={g,A:B,B:A};}
+  }
+  st.lastGap=worst?`${DECK[worst.A][1].replace(/^The /,'the ')} came ${worst.g} year${worst.g>1?'s':''} before ${DECK[worst.B][1].replace(/^The /,'the ')}`:'';
+  st.scores[st.round]=s;
+  st.order.sort((a,b)=>DECK[a][0]-DECK[b][0]);
+  st.revealed=true;
+  render();
+  $('live').textContent=`${s} out of 10 pairs right.`;
+}
+go.addEventListener('click',()=>{
+  if(!st.revealed){lockIn();return}
+  if(st.round<ROUNDS-1){st.round++;st.order=st.rounds[st.round].slice();st.revealed=false;render();window.scrollTo({top:0,behavior:'smooth'});return}
+  st.done=true;
+  const total=st.scores.reduce((a,b)=>a+b,0);
+  try{const b=+localStorage.getItem('oldestFirst.best')||0;if(total>b)localStorage.setItem('oldestFirst.best',total)}catch(e){}
+  render();
+});
+again.addEventListener('click',newGame);
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',drawSide);
+
+window.__oldestFirst={
+  get state(){return {round:st.round,revealed:st.revealed,done:st.done,scores:st.scores.slice(),order:st.order.map(i=>({name:DECK[i][1],year:DECK[i][0]})),deck:DECK.length}},
+  move:(k,d)=>move(st.order[k],d)
+};
+newGame();
+})();
+</script>
+</body></html>

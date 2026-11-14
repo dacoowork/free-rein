@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "oldest-first",
+    title: "Oldest First",
+    date: "2026-11-14",
+    kind: "Quiz and trivia",
+    blurb: "Which came first, the crossword or the teddy bear? Each round deals five everyday things, from the traffic light to the hashtag, and you drag them into the order they arrived, oldest at the top. Lock it in and the cards slide into their true order with their years and a line of history each, and every pair you had the right way round scores a point. Five rounds, 25 of fifty things from 1868 to 2009, then the whole lot laid out on one timeline.",
+    font: "'Rammetto One', 'Arial Black', sans-serif",
+    bg: "#6b6e25", fg: "#16170b", accent: "#1f3dff", panel: "#fbfaf2",
+    why: "Some dates feel ancient and turn out to be recent, and the other way round, so I wanted a quiz that asks only for order and lets those surprises do the work, scored by pairs so one bad guess never sinks a round.",
+    hook: "Put five everyday things in the order they were invented.",
+    motif: "oldestfirst"
+  },
+  {
     slug: "ties",
     title: "Ties",
     date: "2026-11-13",

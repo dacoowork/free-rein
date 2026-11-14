@@ -38,16 +38,17 @@ Each day, pick the category first, then the idea. Favour categories with low cou
 | Speculative world | Fiction as design: an invented city, sport, product line, holiday | 1 |
 | Food | Recipes, menus, flavour pairings, kitchen maths | 1 |
 | Time and ritual | Clocks, calendars, timers, daily practices | 1 |
-| Quiz and trivia | Test what you know | 1 |
+| Quiz and trivia | Test what you know | 2 |
 | Puzzle hunt | Linked puzzles with a hidden answer, meant to be solved over time | 1 |
 | How it works | Cutaways, blueprints and diagrams of machines and processes | 2 |
 
-## Catalogue (38 builds, all on the hub)
+## Catalogue (39 builds, 1 queued)
 
 A date marked "(queued)" means the build is on the `queue` branch and not live yet.
 
 | Build | Date | Category | What it does | Subject world | Core mechanic | Look |
 |---|---|---|---|---|---|---|
+| Oldest First | 14 Nov (queued) | Quiz and trivia | Ordering quiz: five rounds of five everyday things dealt from a deck of 50 dated firsts (1868 gas traffic light to 2009 Bitcoin: sliced bread 1928, shopping trolley 1937, LEGO brick 1958, cash machine 1967, :-) 1982, emoji 1999...), no two within a year of each other in a round and never dealt already in order. Drag cards by the grip (or the up/down arrows) into order on an Oldest-to-Newest rail, Lock it in: cards slide (FLIP) into true order with years, a one-line note each and a Right place / You had it 3rd tag; score is pairs the right way round (0 to 10 a round, 50 a game), with your biggest slip named and the round's five years plotted on an 1860–2015 axis. End: all 25 in order on one axis and as a list, best game saved locally, Play again; ?seed= repeats a deal | Dates of everyday inventions and pop-culture firsts | Drag-to-sort a short list into chronological order, scored by correctly ordered pairs (Kendall) | Rammetto One + Space Grotesk + Azeret Mono; dark olive ground, cream cards, electric-blue accent and Lock button; near-black olive in dark mode |
 | Ties | 13 Nov | Type and lettering | Stencil lettering worked out by rule. Type a word (up to 14 letters, figures and & ! ? - . /; anything else is left out with a note, an empty word is refused) and it is rendered in Block (Archivo Black) or Fat serif (Abril Fatface) onto a mylar film over a block wall. A flood fill from the sheet's edge finds every island the knife would cut free (named by letter, e.g. O, P, A, R); each is tied back by the shortest straight run across its stroke (vertical preferred, about a third of a stroke wide), with Two (a second tie on the opposite side), One or None per island; islands that only reach another island are tied to it and the pair tied out. Ties show pink until you spray. Drag across the wall to spray (four cans, soft dabs with speckle) or Spray it all; Lift the stencil slides the film off to show the letters with gaps where the ties were; with None the islands drop off the film at cut time and the letters spray as solid blobs. Paint stays on the wall between cuts until Wash the wall. Readouts: islands, ties and their width in mm at 15 cm letters, letters covered %. Below: an alphabet strip counting the islands in every letter and figure in the current face (tap to add), how the ties go in, a short glossary | Stencils, sign writing, spray paint | Raster flood fill to find enclosed counters, then a shortest-straight-bridge search with union-find; drag to spray through a mask and lift it | Saira Stencil One + Onest + Sometype Mono; primer off-white ground, white card, ink black, magenta accent; physical scene of pale blocks under blue-grey mylar; near-black in dark mode |
 | Iron Wire | 12 Nov | Generative art | Glaze crazing after Song-dynasty Ge ware's "golden thread and iron wire". A 12 cm glazed slab on canvas: Cool the kiln and cracks grow live from the rim, each new one starting at a right angle off an older crack (the start that cuts its cell most evenly wins) and stopping dead on the next, so every crack ends in a T or on the edge; Rub in iron stain darkens that first net from faint refraction hairlines to black; Wait a century grows a finer second net that splits the cells and stains honey-gold. Tap the glaze (or Enter) to strike a flaw that splits both ways. Glaze fit (a little / a lot / far too much, 34/72/140 cracks) and three glazes (Ge grey, rice yellow, moon white); purple-brown thin rim. Readouts: iron and golden crack counts, crack length in cm, cell count and mean cell size from a flood fill. Below: why glaze crazes (with a cross-section), the right-angle rule, the two nets, a short glossary | Ceramics, glaze crazing, Chinese Song-dynasty ware | Sequential crack growth on a raster: perpendicular spawning off existing cracks, stop on contact, flood-fill cell measurement | Darker Grotesque 900 + Public Sans + Martian Mono; tenmoku dark-brown ground, rice-paper card, grey-beige glaze, black iron and gold cracks; near-black brown in dark mode |
 | Interlock | 11 Nov | How it works | A working top-down jacket zip on canvas: tap the pin to seat it in the box (without it only the bottom row runs through the slider and nothing meshes), then drag the slider (or Zip up / Unzip, arrow keys) and the rows funnel together at the throat, each tooth meshing as it passes, and split on the diamond going down. See inside the slider shows the Y-channel walls and diamond; Wear out the slider spreads the throat so the teeth come out a hair apart and the zip opens in an eye behind the slider; Pinch it with pliers fixes it, and the split stays until you unzip past it and zip up again. Live pairs-meshed count and narrated caption; below, an edge-on drawing of bump-in-hollow teeth with one tipping out, a parts list and three dates (1893, 1913, 1923) | Zips and fasteners | Drag a slider along a mechanism whose per-tooth state changes as it passes | Schibsted Grotesk 900 + Chivo Mono; near-white ground, safety-orange tape, silver teeth, charcoal slider |
@@ -146,6 +147,8 @@ A date marked "(queued)" means the build is on the `queue` branch and not live y
 
 - **Stencils, spray paint and counter-finding (13 Nov):** Ties is a stencil cutter on a primer off-white ground with a magenta accent (Saira Stencil One and Onest now taken; stencil display faces are now used twice, with Vault's Big Shoulders Stencil). Type and lettering is now used twice. Leave stencils, graffiti, spray paint and walls alone for a while; the type-a-word-and-it-renders-to-a-raster-then-analyses form is used once.
 
+- **Invention dates and drag-to-sort ordering quizzes (14 Nov):** Oldest First is a five-card chronology quiz on a dark olive ground with an electric-blue accent (olive/khaki, Rammetto One, Space Grotesk and Azeret Mono now taken). Quiz and trivia is now used twice (a numeric log-scale guess, then an ordering quiz); the next quiz should be a picture, map or audio round. Leave invention dates, "which came first" and timelines of firsts alone for a while; the vertical card-stack-on-a-rail with a reveal is used once.
+
 ## Rejected because they repeated an earlier build
 
 - Treadle (23 Oct): four-shaft weaving draft studio. Same as Drawdown.
@@ -196,7 +199,7 @@ Process tip (23–28 Oct): scheduled runs with no repo attached had no add_repo 
 
 ## Queued
 
-Nothing queued.
+- Oldest First (14 Nov, Quiz and trivia): `builds/oldest-first/index.html`, `builds.js` entry, `oldestfirst` motif, Rammetto One added to the Google Fonts link, `?v=2026-11-14`.
 
 ## Left out on purpose
 
