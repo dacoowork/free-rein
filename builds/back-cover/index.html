@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Back Cover</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Tilt+Warp&family=Libre+Franklin:ital,wght@0,400;0,600;0,800;1,400&family=Special+Elite&family=Playfair+Display:ital,wght@1,700&family=Orbitron:wght@800&family=Creepster&family=Uncial+Antiqua&family=Libre+Caslon+Text:ital@1&family=Chewy&display=swap" rel="stylesheet">
+<style>
+/* Back Cover: deal three story cards, hold the ones you like, and a paperback that never existed gets written front and back.
+   Layout: a row of three dealt cards, then the book's two faces side by side (flip on phones), then a shelf of spines. */
+:root{
+  --bg:#ec6a52; --bg-deep:#d9583f; --card:#fff6ef; --ink:#28130f; --muted:#7a5148;
+  --on-bg:#28130f; --on-bg-soft:#4a1f16; --line:#ecd4c8; --held:#28130f; --held-ink:#fff6ef;
+  --btn:#28130f; --btn-ink:#fff6ef; --stamp:#c3271a;
+  --display:'Tilt Warp','Arial Black',system-ui,sans-serif;
+  --body:'Libre Franklin',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#2b1612; --bg-deep:#22110e; --card:#3b231d; --ink:#fbe8e0; --muted:#d0a597;
+  --on-bg:#fbe8e0; --on-bg-soft:#f0a593; --line:#58362d; --held:#ff8a70; --held-ink:#2b1612;
+  --btn:#ff8a70; --btn-ink:#2b1612; --stamp:#ff8a70; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#2b1612; --bg-deep:#22110e; --card:#3b231d; --ink:#fbe8e0; --muted:#d0a597;
+  --on-bg:#fbe8e0; --on-bg-soft:#f0a593; --line:#58362d; --held:#ff8a70; --held-ink:#2b1612;
+  --btn:#ff8a70; --btn-ink:#2b1612; --stamp:#ff8a70; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--on-bg);font:16px/1.45 var(--body);min-height:100vh}
+button{font:inherit;color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding-block:calc(env(safe-area-inset-top,0px) + 28px) calc(env(safe-area-inset-bottom,0px) + 40px);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:flex;flex-wrap:wrap;align-items:end;gap:8px 28px;margin-bottom:22px}
+h1{margin:0;font:400 clamp(44px,8vw,78px)/.9 var(--display);letter-spacing:-.02em}
+.lede{margin:0;max-width:52ch;color:var(--on-bg-soft);font-size:16px;padding-bottom:4px}
+h2{font:400 15px/1.2 var(--display);letter-spacing:.06em;text-transform:uppercase;margin:0 0 10px}
+
+/* cards */
+.deal{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:14px;align-items:stretch;margin-bottom:28px}
+.card{position:relative;text-align:left;border:0;cursor:pointer;background:var(--card);color:var(--ink);border-radius:12px;padding:14px 16px 16px;
+  box-shadow:0 2px 0 var(--bg-deep),0 10px 24px -14px rgba(40,10,5,.5);display:flex;flex-direction:column;gap:6px;min-height:150px;
+  transition:transform .35s ease, box-shadow .2s;transform-style:preserve-3d;outline-offset:3px}
+.card:focus-visible{outline:3px solid var(--on-bg)}
+.card .kind{font:600 11px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.card .txt{font:400 clamp(17px,1.7vw,21px)/1.15 var(--display);text-wrap:balance}
+.card .who{font-size:13px;color:var(--muted)}
+.card .pips{margin-top:auto;display:flex;flex-wrap:wrap;gap:5px;padding-top:6px}
+.pip{font:600 10.5px/1 var(--body);letter-spacing:.06em;text-transform:uppercase;padding:4px 7px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.pip.lead{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.card .hold{font-weight:600;letter-spacing:.14em}
+.card[aria-pressed="true"]{box-shadow:0 0 0 3px var(--held),0 10px 24px -14px rgba(40,10,5,.5)}
+.card[aria-pressed="true"]::after{content:"Held";position:absolute;right:12px;top:9px;transform:rotate(-8deg);font:400 15px/1 var(--display);
+  letter-spacing:.12em;text-transform:uppercase;color:var(--stamp);border:2px solid var(--stamp);padding:4px 8px 3px;border-radius:4px;background:var(--card)}
+.card.flip{transform:rotateY(90deg)}
+@media (prefers-reduced-motion:reduce){.card{transition:none}.card.flip{transform:none}}
+.controls{display:flex;flex-direction:column;gap:10px;justify-content:center;min-width:150px}
+.btn{border:0;border-radius:999px;background:var(--btn);color:var(--btn-ink);padding:12px 20px;font:400 18px/1 var(--display);cursor:pointer;letter-spacing:.02em}
+.btn.ghost{background:transparent;color:var(--on-bg);box-shadow:inset 0 0 0 2px var(--on-bg);font-size:15px;padding:10px 16px}
+.btn:focus-visible{outline:3px solid var(--on-bg);outline-offset:3px}
+.hint{font-size:13px;color:var(--on-bg-soft);margin:0;max-width:22ch}
+
+/* book */
+.stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;justify-items:center;margin-bottom:10px}
+.facewrap{width:min(380px,100%);container-type:inline-size;display:flex;flex-direction:column;gap:8px;align-items:center}
+.facelabel{font:600 11px/1 var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--on-bg-soft)}
+.face{position:relative;width:100%;aspect-ratio:2/3;border-radius:3px 8px 8px 3px;overflow:hidden;
+  background:var(--cv-bg);color:var(--cv-ink);box-shadow:inset 6px 0 0 rgba(0,0,0,.18),inset 8px 0 6px -4px rgba(255,255,255,.12),0 24px 40px -22px rgba(30,5,0,.75),0 2px 0 rgba(0,0,0,.15)}
+.front{display:flex;flex-direction:column;align-items:center;text-align:center;padding:7cqw 8cqw 6cqw}
+.front .tag{font:italic 400 3.6cqw/1.3 var(--body);opacity:.85;max-width:80%}
+.front .quote{font:400 3.1cqw/1.35 var(--body);opacity:.85;margin-top:1.5cqw;max-width:86%}
+.front .quote b{font-weight:600;display:block;font-size:2.8cqw;letter-spacing:.06em;text-transform:uppercase;margin-top:1cqw;opacity:.85}
+.front .title{font-family:var(--cv-font);font-size:var(--tfs,13cqw);line-height:1.02;margin:4cqw 0 0;text-wrap:balance;color:var(--cv-title);word-break:normal;overflow-wrap:break-word}
+.front .title.up{text-transform:uppercase;letter-spacing:.04em}
+.front .emb{flex:1;width:100%;min-height:0;display:flex;align-items:center;justify-content:center;padding:3cqw 0}
+.front .emb svg{max-height:100%;width:62%;height:auto}
+.front .author{font:800 4.6cqw/1 var(--body);letter-spacing:.2em;text-transform:uppercase}
+.front .imp{position:absolute;left:4.5cqw;bottom:4.5cqw;width:7cqw;opacity:.8}
+.sticker{position:absolute;right:5cqw;bottom:16cqw;width:20cqw;height:20cqw;border-radius:50%;background:var(--cv-acc);color:var(--cv-bg);display:grid;place-items:center;
+  text-align:center;font:800 2.15cqw/1.15 var(--body);text-transform:uppercase;letter-spacing:.04em;padding:2.5cqw;transform:rotate(12deg);box-shadow:0 1cqw 0 rgba(0,0,0,.2)}
+.back{display:flex;flex-direction:column;padding:8cqw 8cqw 6cqw 9cqw;font-size:var(--bfs,3.55cqw)}
+.back .hook{font-family:var(--cv-font);font-size:1.75em;line-height:1.1;color:var(--cv-title);margin:0 0 .8em;text-wrap:balance}
+.back .hook.up{text-transform:uppercase;letter-spacing:.03em;font-size:1.45em}
+.back p{margin:0 0 .75em;line-height:1.42}
+.back .rev{margin:.4em 0 0;padding-top:.7em;border-top:1px solid color-mix(in srgb,var(--cv-ink) 30%,transparent);display:flex;flex-direction:column;gap:.55em}
+.back .rev div{font-style:italic;line-height:1.3}
+.back .rev b{font-style:normal;font-weight:600;font-size:.82em;letter-spacing:.05em;text-transform:uppercase;opacity:.8}
+.back .foot{margin-top:auto;padding-top:.8em;display:flex;align-items:end;justify-content:space-between;gap:3cqw}
+.back .foot .meta{font-size:.78em;line-height:1.4;opacity:.85}
+.back .foot .meta strong{display:block;font-size:1.15em;letter-spacing:.06em;text-transform:uppercase}
+.barcode{background:#fff;padding:1.4cqw 1.6cqw .6cqw;border-radius:1px;width:30cqw;flex:none}
+.barcode svg{display:block;width:100%;height:auto}
+.barcode span{display:block;text-align:center;color:#111;font:500 2.1cqw/1.2 'Courier New',monospace;letter-spacing:.06em}
+.flipbtn{display:none}
+.copyrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;margin:14px 0 30px}
+.status{font-size:14px;color:var(--on-bg-soft);min-height:1.4em}
+
+/* shelving explanation */
+.shelved{background:var(--card);color:var(--ink);border-radius:12px;padding:16px 18px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:18px 28px;margin-bottom:28px}
+.shelved h2{color:var(--ink)}
+.shelved p{margin:0;font-size:15px;color:var(--muted);max-width:60ch}
+.bars{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 10px;align-items:center;font-size:14px}
+.bars .bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.bars .bar i{display:block;height:100%;background:var(--ink);border-radius:5px;transition:width .4s}
+.bars .n{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px}
+.bars .win{font-weight:800}
+
+/* shelf */
+.shelf{background:var(--bg-deep);border-radius:12px;padding:14px 16px 0;margin-bottom:24px}
+.shelf h2{display:flex;justify-content:space-between;gap:12px}
+.shelf h2 span{font:400 13px/1.2 var(--body);letter-spacing:0;text-transform:none;color:var(--on-bg-soft)}
+.spines{display:flex;gap:4px;align-items:end;overflow-x:auto;padding-bottom:0;min-height:200px;border-bottom:8px solid var(--on-bg)}
+.spine{flex:none;width:36px;border:0;border-radius:2px 2px 0 0;cursor:pointer;background:var(--cv-bg);color:var(--cv-title);padding:8px 0;
+  writing-mode:vertical-rl;font-family:var(--cv-font);font-size:12.5px;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  box-shadow:inset -3px 0 0 rgba(0,0,0,.2);transition:transform .2s}
+.spine:hover,.spine:focus-visible{transform:translateY(-8px)}
+.spine.now{transform:translateY(-12px)}
+.spine:focus-visible{outline:3px solid var(--on-bg);outline-offset:2px}
+.empty{color:var(--on-bg-soft);font-size:14px;align-self:center;padding:0 4px 20px}
+footer{font-size:13px;color:var(--on-bg-soft);max-width:70ch}
+
+@media (max-width:900px){
+  .deal{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .controls{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;align-items:center}
+  .hint{max-width:none}
+}
+@media (max-width:720px){
+  .deal{grid-template-columns:minmax(0,1fr);gap:10px}
+  .card{min-height:0;padding:12px 14px}
+  .card .pips{padding-top:2px}
+  .stage{grid-template-columns:minmax(0,1fr);perspective:1400px}
+  .facewrap{grid-area:1/1;transition:transform .6s ease;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+  .facewrap.backwrap{transform:rotateY(180deg)}
+  .stage.turned .frontwrap{transform:rotateY(-180deg)}
+  .stage.turned .backwrap{transform:rotateY(0)}
+  .flipbtn{display:inline-block}
+  .shelved{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:720px) and (prefers-reduced-motion:reduce){ .facewrap{transition:none} }
+</style>
+</head><body>
+<div class="wrap">
+<header>
+  <h1>Back Cover</h1>
+  <p class="lede">A writing machine for paperbacks that don't exist. Deal three cards, hold the ones you like, deal again, and it writes the cover, the title, the blurb and the reviews.</p>
+</header>
+
+<section class="deal" aria-label="Story cards">
+  <button class="card" id="c0" aria-pressed="false"></button>
+  <button class="card" id="c1" aria-pressed="false"></button>
+  <button class="card" id="c2" aria-pressed="false"></button>
+  <div class="controls">
+    <button class="btn" id="dealBtn">Deal</button>
+    <button class="btn ghost" id="rewriteBtn">Rewrite blurb</button>
+    <p class="hint" id="hint">Tap a card to hold it. Deal replaces the rest.</p>
+  </div>
+</section>
+
+<section class="stage" id="stage" aria-label="The book">
+  <div class="facewrap frontwrap"><span class="facelabel">Front</span><div class="face front" id="front"></div></div>
+  <div class="facewrap backwrap"><span class="facelabel">Back</span><div class="face back" id="back"></div></div>
+</section>
+<div class="copyrow">
+  <button class="btn ghost flipbtn" id="flipBtn">Turn it over</button>
+  <button class="btn ghost" id="copyBtn">Copy the blurb</button>
+  <span class="status" id="status" role="status"></span>
+</div>
+
+<section class="shelved" aria-label="How it was shelved">
+  <div><h2>How it got shelved</h2><p id="shelvedTxt"></p></div>
+  <div class="bars" id="bars"></div>
+</section>
+
+<section class="shelf" aria-label="Your shelf">
+  <h2>Your shelf <span id="shelfCount"></span></h2>
+  <div class="spines" id="spines"></div>
+</section>
+
+<footer>Every name, newspaper, prize and imprint here is invented. 15 people, 14 places and 14 kinds of trouble make 2,940 deals, each shelved in one of seven genres with its own cover.</footer>
+</div>
+
+<script>
+(()=>{
+const GENRES = {
+  crime:{label:'Crime',shelf:'Crime & Thriller',bg:'#141414',ink:'#ece8de',title:'#f4c400',acc:'#f4c400',font:"'Special Elite','Courier New',monospace",up:false,
+    titles:['Death at the {W}','{T}','The {W} Affair','{T}','Nobody Leaves the {W}'],
+    tags:['Everyone at the {W} has something to hide.','Some doors are locked for a reason.','One night. One body. Every guest a liar.','The truth is in there somewhere. So is the killer.'],
+    mids:['The doors are locked, the stories don\'t match, and someone is very good at lying.','The police want it closed by Friday. {Name} wants the truth, and the truth wants {o} gone.','Every clue points somewhere different, and one of them points straight back at {Name}.'],
+    closes:['{Name} has until morning to work out who did it, before the finger points at {o}.','To solve it, {Name} must open the one door {s} swore never to open again.','The answer is hidden in plain sight. So, for now, is the killer.'],
+    revs:['Fiendish. I suspected everyone, including myself.','Twisty, cold and impossible to put down.','The best locked-room puzzle in years.','I read it in one sitting and then checked the locks.'],
+    stickers:['The thriller everyone is talking about','A gripping debut','Shortlisted for the Black Ribbon Prize']},
+  romance:{label:'Romance',shelf:'Romance',bg:'#f6cfc6',ink:'#3d1620',title:'#8f1d3a',acc:'#8f1d3a',font:"'Playfair Display',Georgia,serif",up:false,
+    titles:['Meet Me at the {W}','{T}','Love and Other Disasters','{T}','Second Chances at the {W}'],
+    tags:['Falling in love was never part of the plan.','Some sparks are worth the fire.','It was supposed to be one week.','The heart wants what the heart wants. Unfortunately.'],
+    mids:['{Name} has rules about this sort of thing. Every single one of them is about to be broken.','There is someone infuriating at the {W}, and {Name} cannot stop thinking about them.','It is the worst possible timing, and the best thing that has ever happened to {o}.'],
+    closes:['Now {Name} must decide whether to play it safe, or risk {p} heart on the one person {s} should never have met.','Can {Name} let go of the past long enough to say the words out loud?','Warm, funny and full of longing, this is a love story for anyone who has ever said "never".'],
+    revs:['I laughed, I cried, I missed my stop.','Swoony, sharp and utterly charming.','The kind of book you press into a friend\'s hands.','Pure joy from the first page to the last.'],
+    stickers:['Book club pick','The feel-good read of the summer','Over 100,000 hearts melted']},
+  scifi:{label:'Science fiction',shelf:'Science Fiction',bg:'#0e1b3d',ink:'#d8e4ff',title:'#7ef0ff',acc:'#7ef0ff',font:"Orbitron,'Arial Black',sans-serif",up:true,
+    titles:['{T}','The {W} Protocol','{T}','Signal from the {W}','After the {W}'],
+    tags:['The future arrived early. Nobody was ready.','The maths says it can\'t happen. It is happening.','Time is running out. Literally.','Humanity\'s last chance has a terrible sense of humour.'],
+    mids:['The data makes no sense, the experts are panicking, and {Name} may be the only one who has noticed the pattern.','The rules of physics are bending, and only {Name} seems to know which way they will snap.','Somewhere in the noise is a message. It is addressed to {Name}.'],
+    closes:['To fix it, {Name} must do the impossible, and {s} must do it before Tuesday.','A mind-bending story about time, trust and the cost of being right.','What {Name} finds out next will change everything, including {o}.'],
+    revs:['Big ideas, bigger heart.','Mind-bending and strangely moving.','Hard science, soft centre. I loved it.','The most original novel I\'ve read this decade.'],
+    stickers:['Winner of the Parallax Award','Now a major series','Set in the near future']},
+  horror:{label:'Horror',shelf:'Horror',bg:'#170c0c',ink:'#ead9d2',title:'#d6211b',acc:'#d6211b',font:"Creepster,Impact,fantasy",up:false,
+    titles:['Do Not Go to the {W}','{T}','The {W}','{T}','Something at the {W}'],
+    tags:['Don\'t turn around.','It knows your name.','Some places remember everyone who leaves.','Lock the door. It won\'t help.'],
+    mids:['The lights flicker, the temperature drops, and something at the {W} has started to pay attention to {Name}.','At first it is easy to explain away. By the third night, it isn\'t.','Nobody else can see it yet. They will.'],
+    closes:['{Name} has to get out before dawn, if dawn still comes to the {W}.','Read it with the lights on. Then check the lights again.','To survive, {Name} must face the thing that has been waiting for {o} all along.'],
+    revs:['I slept with the light on for a week.','Genuinely frightening. Do not read alone.','Creeping, cruel and unforgettable.','The ending made me shut the book and leave the room.'],
+    stickers:['Not for the faint-hearted','A modern horror classic','Read it if you dare']},
+  fantasy:{label:'Fantasy',shelf:'Fantasy',bg:'#1d3a2c',ink:'#efe5c8',title:'#e7c35a',acc:'#e7c35a',font:"'Uncial Antiqua',Georgia,serif",up:false,
+    titles:['The Keeper of the {W}','{T}','A Map of the {W}','{T}','The {W} Under the Hill'],
+    tags:['Magic always has a price. This one has a late fee.','The old stories were true. Most of them.','An ordinary life. An extraordinary mistake.','Some doors only open once.'],
+    mids:['Old magic is waking up, and it seems to have chosen {Name}, which {Name} finds deeply inconvenient.','The rules of the {W} are older than anyone remembers, and {Name} has just broken three of them.','There are things in the {W} that should have stayed asleep.'],
+    closes:['Now {Name} must set out on a journey {s} never asked for, with companions {s} would never have chosen.','The first book in a dazzling new series about courage, chaos and very small acts of magic.','To set it right, {Name} must give up the one thing {s} cannot bear to lose.'],
+    revs:['A spellbinding, joyful adventure.','Rich, witty and full of wonder.','The fantasy world I didn\'t know I needed.','I would follow these characters anywhere.'],
+    stickers:['Book one of a new series','Special illustrated edition','Over a million copies sold']},
+  literary:{label:'Literary fiction',shelf:'Fiction',bg:'#efe8dc',ink:'#24201b',title:'#24201b',acc:'#b8321f',font:"'Libre Caslon Text',Georgia,serif",up:false,
+    titles:['{T}','The {W}','{T}','A Year at the {W}','All the Small Hours'],
+    tags:['A novel.','A novel about the things we keep.','Everything changes. Some things more slowly.','A quiet book about a very loud year.'],
+    mids:['What follows is a slow, astonishing unravelling of everything {Name} believed about {p} own life.','Over one long season, {Name} begins to see the {W}, and the people in it, as if for the first time.','It is a small thing. It changes everything.'],
+    closes:['Tender, funny and quietly devastating, this is a novel about memory, belonging and the stories we tell to survive.','A luminous portrait of a life at its turning point.','It asks what we owe the people we used to be.'],
+    revs:['Exquisite. Every sentence earns its place.','Quietly devastating.','A small book with an enormous heart.','I finished it and started again.'],
+    stickers:['Shortlisted for the Hollin Prize','The Reading Room choice','A novel of the year']},
+  comic:{label:'Comic fiction',shelf:'Humour',bg:'#ffd23f',ink:'#1d1a14',title:'#e2312b',acc:'#2047d6',font:"Chewy,'Comic Sans MS','Arial Rounded MT Bold',sans-serif",up:false,
+    titles:['{Name} and the {W}','{T}','How Not to Survive a {W}','{T}','Absolutely Nothing Happens at the {W}'],
+    tags:['What could possibly go wrong?','It seemed like a good idea at the time.','This is fine. Everything is fine.','A story of great courage and very poor decisions.'],
+    mids:['{Name} tries to handle it calmly. {Name} does not handle it calmly.','Things quickly escalate, then escalate again, then involve a goat.','Within a week {Name} has made one enemy, two terrible promises and a plan with no second step.'],
+    closes:['Can {Name} sort it out before anyone notices? Everyone has already noticed.','A gloriously daft romp about friendship, chaos and doing the wrong thing for the right reasons.','It will take nerve, luck and a great deal of improvisation, and {Name} has only one of those.'],
+    revs:['Laugh-out-loud funny. I snorted on a train.','A total delight from start to finish.','Silly in all the best ways.','The funniest book I\'ve read in years.'],
+    stickers:['Laugh-out-loud funny','Now with extra chaos','The comedy of the year']}
+};
+const GK = Object.keys(GENRES);
+
+const WHO = [
+  {name:'Mara Quill',d:'a night-shift locksmith',g:['crime','literary'],pr:['she','her','her'],life:'Mara Quill has opened every lock in the city except the one on her own past.'},
+  {name:'Delphine Ashe',d:'a disgraced pastry judge',g:['comic','crime'],pr:['she','her','her'],life:'Delphine Ashe once failed a soufflé on live television and has not been allowed near a baking tent since.'},
+  {name:'Otto Brandvold',d:'the last licensed dragon vet',g:['fantasy','comic'],pr:['he','him','his'],life:'Otto Brandvold is the last vet in the country licensed to treat dragons, and the insurance alone is ruining him.'},
+  {name:'Juniper',d:'an android who sells umbrellas',g:['scifi','romance'],pr:['they','them','their'],life:'Juniper is an android who sells umbrellas on a street where it has not rained for eleven years.'},
+  {name:'Nico Vance',d:'a wedding DJ with stage fright',g:['romance','comic'],pr:['he','him','his'],life:'Nico Vance has played four hundred weddings and is still sick before every first dance.'},
+  {name:'Ruth Okafor',d:'a retired stunt double',g:['crime','literary'],pr:['she','her','her'],life:'Ruth Okafor has fallen off more buildings than anyone alive, always on somebody else\'s behalf.'},
+  {name:'Ines Marlowe',d:'a beekeeper with a secret past',g:['crime','romance'],pr:['she','her','her'],life:'Ines Marlowe keeps forty hives, three aliases and one very old passport.'},
+  {name:'Theo Lark',d:'a teenage chess prodigy',g:['literary','scifi'],pr:['he','him','his'],life:'Theo Lark could see twelve moves ahead at the age of nine, and has never once seen a party coming.'},
+  {name:'Edith',d:'a ghost who is scared of the living',g:['horror','comic'],pr:['she','her','her'],life:'Edith has been dead since 1911 and is still frightened of the people who keep moving in.'},
+  {name:'Sunny Adeyemi',d:'a botanist on a failing moon base',g:['scifi','literary'],pr:['he','him','his'],life:'Sunny Adeyemi grows potatoes on the Moon and talks to them more than he talks to the crew.'},
+  {name:'Agnes Pike',d:'a widowed crossword setter',g:['crime','literary'],pr:['she','her','her'],life:'Agnes Pike has set the Saturday crossword for thirty years and hidden a message in every one.'},
+  {name:'Bram Whitlock',d:'a tired monster hunter',g:['horror','fantasy'],pr:['he','him','his'],life:'Bram Whitlock has hunted monsters for twenty years and would very much like to retire somewhere quiet.'},
+  {name:'Lu Fenwick',d:'a hedge witch with a mortgage',g:['fantasy','comic'],pr:['they','them','their'],life:'Lu Fenwick is a hedge witch with a mortgage, a sulking cat and three months of arrears.'},
+  {name:'Kit Sorensen',d:'a hospital night porter',g:['horror','literary'],pr:['he','him','his'],life:'Kit Sorensen wheels beds through the hospital at night and has learned not to ask about the empty ward.'},
+  {name:'Rosa Delgado',d:'a lonely-hearts columnist',g:['romance','comic'],pr:['she','her','her'],life:'Rosa Delgado has answered ten thousand letters about love and never sent one of her own.'}
+];
+const WHERE = [
+  {at:'at a snowed-in ski lodge',W:'Ski Lodge',g:['crime','horror']},
+  {at:'aboard a generation ship halfway to nowhere',W:'Generation Ship',g:['scifi','horror']},
+  {at:'in a village where it is always Tuesday',W:'Village',g:['fantasy','comic']},
+  {at:'in an all-night laundrette',W:'Laundrette',g:['literary','romance']},
+  {at:'in an abandoned funfair',W:'Funfair',g:['horror','crime']},
+  {at:'in a mountain monastery with very good wifi',W:'Monastery',g:['comic','literary']},
+  {at:'in a rival bakery across the street',W:'Bakery',g:['romance','comic']},
+  {at:'at a motorway service station at 3am',W:'Service Station',g:['horror','literary']},
+  {at:'in a city that walks on enormous legs',W:'Walking City',g:['fantasy','scifi']},
+  {at:'in a desert observatory',W:'Observatory',g:['scifi','literary']},
+  {at:'at a wedding that has lasted nine days',W:'Wedding',g:['comic','romance']},
+  {at:'in a manor house with too many staircases',W:'Manor',g:['crime','horror']},
+  {at:'in a botanical glasshouse during a heatwave',W:'Glasshouse',g:['romance','crime']},
+  {at:'in a library that only opens at night',W:'Night Library',g:['fantasy','literary']}
+];
+const TROUBLE = [
+  {when:'a body turns up in the walk-in freezer',T:'Cold Storage',g:['crime','horror']},
+  {when:'a letter arrives forty years late',T:'Return to Sender',g:['literary','romance']},
+  {when:'the Moon starts drifting closer',T:'Perigee',g:['scifi','horror']},
+  {when:'every mirror starts showing the same stranger',T:'The Stranger in the Glass',g:['horror','fantasy']},
+  {when:'a handwritten recipe turns out to grant wishes',T:'A Pinch of Wishes',g:['fantasy','comic']},
+  {when:'an inheritance arrives with one very strange condition',T:'The Condition',g:['comic','crime']},
+  {when:'a fake engagement starts to feel real',T:'Just Pretend',g:['romance','comic']},
+  {when:'the dead start sending postcards',T:'Wish You Were Here',g:['horror','literary']},
+  {when:'a heist gets planned entirely by accident',T:'The Accidental Job',g:['comic','crime']},
+  {when:'a door appears that was not there yesterday',T:'The Door',g:['fantasy','horror']},
+  {when:'an old rival turns up knowing everything',T:'Everything I Know About You',g:['romance','crime']},
+  {when:'every clock in the world stops at 4:17',T:'4:17',g:['scifi','literary']},
+  {when:'a dragon egg is handed in to lost property',T:'Lost Property',g:['fantasy','comic']},
+  {when:'someone starts quietly editing the past',T:'Revisions',g:['scifi','crime']}
+];
+const DECKS = [WHO,WHERE,TROUBLE];
+const FIRST = ['Harriet','Joseph','Amara','Felix','Imogen','Rafael','Tilly','Samuel','Priya','Conrad','Elsie','Mateo','Nell','Hugo','Ada','Laurie'];
+const LAST = ['Penrose','Achebe-Hart','Lindqvist','Moreau','Blackwood','Castell','Ferris','Okonjo','Whitlam','Rook','Vasquez','Hale','Sutherland','Ambrose','Kettle','Morrow'];
+const PAPERS = ['The Evening Lamp','Northgate Herald','The Margin','Bookstall Gazette','Readers\' Lantern','The Sunday Kite','Paper & Ink Monthly','The Common Room'];
+const OTHER = ['The Glass Orchard','Salt and Silver','Small Mercies','The Ninth Floor','Night Swimmers','A House of Keys','The Long Way Round','Hollow Bells'];
+const IMPRINT = 'Mothwing Books';
+
+let cards = [10,13,0];          // Agnes Pike, Night Library, a body in the freezer
+let held = [false,false,false];
+let seed = 7;
+let shelf = [];
+let book = null;
+const $ = id => document.getElementById(id);
+
+function rng(s){ return ()=>{ s|=0; s=s+0x6D2B79F5|0; let t=Math.imul(s^s>>>15,1|s); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+const pick = (r,a) => a[Math.floor(r()*a.length)];
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function scores(c){
+  const sc = Object.fromEntries(GK.map(k=>[k,0]));
+  const wts = [1,1,1.5];
+  c.forEach((ix,slot)=>{ const g = DECKS[slot][ix].g; sc[g[0]] += 2*wts[slot]; sc[g[1]] += 1*wts[slot]; });
+  return sc;
+}
+function genreOf(c){
+  const sc = scores(c);
+  const order = [TROUBLE[c[2]].g[0], WHERE[c[1]].g[0], WHO[c[0]].g[0], ...GK];
+  let best = null;
+  for (const k of order) if (best===null || sc[k] > sc[best]) best = k;
+  return best;
+}
+
+function compose(c, s){
+  const who = WHO[c[0]], where = WHERE[c[1]], tr = TROUBLE[c[2]];
+  const gk = genreOf(c), G = GENRES[gk];
+  const r = rng(s*7919 + c[0]*131 + c[1]*17 + c[2]);
+  const fill = (t, cap) => t.replace(/\{Name\}/g, who.name).replace(/\{W\}/g, cap ? where.W : where.W.toLowerCase()).replace(/\{T\}/g, tr.T)
+    .replace(/\{s\}/g, who.pr[0]).replace(/\{o\}/g, who.pr[1]).replace(/\{p\}/g, who.pr[2]);
+  const title = fill(pick(r, G.titles), true);
+  const tag = fill(pick(r, G.tags));
+  const p1 = who.life;
+  const p2 = 'Then, ' + where.at + ', ' + tr.when + '. ' + fill(pick(r, G.mids));
+  const p3 = fill(pick(r, G.closes));
+  const author = pick(r, FIRST) + ' ' + pick(r, LAST);
+  const revs = G.revs.slice().sort(()=>r()-.5);
+  const papers = PAPERS.slice().sort(()=>r()-.5);
+  let blurbAuthor = pick(r, FIRST) + ' ' + pick(r, LAST);
+  if (blurbAuthor === author) blurbAuthor = 'Imogen Kettle';
+  const front = {q: revs[0], by: blurbAuthor + ', author of ' + pick(r, OTHER)};
+  const reviews = [{q:revs[1], by:papers[0]}, {q:revs[2], by:papers[1]}];
+  const sticker = pick(r, G.stickers);
+  const price = '£' + pick(r, ['8.99','9.99','10.99','9.99']);
+  const isbn = '978-1-' + String(Math.floor(r()*90000)+10000) + '-' + String(Math.floor(r()*900)+100) + '-' + Math.floor(r()*10);
+  return {cards:c.slice(), seed:s, genre:gk, title, tag, p:[p1,p2,p3], author, front, reviews, sticker, price, isbn, bars:[...Array(30)].map(()=>1+Math.floor(r()*3)), emb:Math.floor(r()*1e6)};
+}
+
+function emblem(gk, n){
+  const r = rng(n), G = GENRES[gk];
+  const a = G.acc, i = G.ink, b = G.bg;
+  if (gk==='crime'){
+    const x = 38 + r()*24;
+    return `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M${x-6} 52 L${x+6} 52 L${x+40} 100 L${x-40} 100 Z" style="fill:${a};opacity:.18"/><circle cx="${x}" cy="34" r="11" style="fill:${a}"/><path d="M${x-6} 40 L${x+6} 40 L${x+9} 64 L${x-9} 64 Z" style="fill:${a}"/></svg>`;
+  }
+  if (gk==='romance'){
+    const d = 14 + r()*8;
+    return `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="${50-d}" cy="50" r="26" style="fill:${a};opacity:.85"/><circle cx="${50+d}" cy="50" r="26" style="fill:none;stroke:${a};stroke-width:3"/><circle cx="${50+d}" cy="50" r="26" style="fill:#fff;opacity:.35"/></svg>`;
+  }
+  if (gk==='scifi'){
+    let st = ''; for (let k=0;k<16;k++) st += `<circle cx="${(r()*100).toFixed(1)}" cy="${(r()*100).toFixed(1)}" r="${(0.4+r()*0.9).toFixed(2)}" style="fill:${i}"/>`;
+    const tilt = -25 + r()*50;
+    return `<svg viewBox="0 0 100 100" aria-hidden="true">${st}<g transform="rotate(${tilt.toFixed(1)} 50 52)"><ellipse cx="50" cy="52" rx="44" ry="9" style="fill:none;stroke:${a};stroke-width:2"/><circle cx="50" cy="52" r="22" style="fill:${b};stroke:${a};stroke-width:2"/><path d="M6 52 A44 9 0 0 0 94 52" style="fill:none;stroke:${a};stroke-width:2"/></g></svg>`;
+  }
+  if (gk==='horror'){
+    const gap = 3 + r()*6;
+    return `<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="28" y="12" width="44" height="80" style="fill:#000"/><path d="M${50-gap} 12 L${50+gap} 12 L${50+gap*5} 100 L${50-gap*5} 100 Z" style="fill:${a};opacity:.25"/><rect x="${50-gap/2}" y="12" width="${gap}" height="80" style="fill:${a}"/><rect x="26" y="10" width="48" height="84" style="fill:none;stroke:${i};stroke-width:1.5;opacity:.5"/></svg>`;
+  }
+  if (gk==='fantasy'){
+    const mx = 30 + r()*40;
+    let st=''; for (let k=0;k<5;k++) st += `<circle cx="${(10+r()*80).toFixed(1)}" cy="${(8+r()*28).toFixed(1)}" r="1" style="fill:${a}"/>`;
+    return `<svg viewBox="0 0 100 100" aria-hidden="true">${st}<circle cx="${mx}" cy="30" r="12" style="fill:${a}"/><circle cx="${mx+5}" cy="27" r="11" style="fill:${b}"/><path d="M0 92 L22 52 L34 70 L52 38 L70 72 L82 58 L100 92 Z" style="fill:${a};opacity:.9"/><path d="M52 38 L46 52 L52 49 L57 56 Z" style="fill:${b}"/></svg>`;
+  }
+  if (gk==='literary'){
+    const y = 54 + r()*14, cx = 30 + r()*40;
+    return `<svg viewBox="0 0 100 100" aria-hidden="true"><line x1="8" y1="${y}" x2="92" y2="${y}" style="stroke:${i};stroke-width:1"/><circle cx="${cx}" cy="${y-14}" r="5" style="fill:${a}"/></svg>`;
+  }
+  // comic
+  const pts = 14, rot = r()*30;
+  let d = '';
+  for (let k=0;k<pts*2;k++){ const ang = (k/(pts*2))*Math.PI*2 + rot/57.3; const rad = k%2 ? 26 : 46; d += (k?'L':'M') + (50+Math.cos(ang)*rad).toFixed(1) + ' ' + (50+Math.sin(ang)*rad).toFixed(1); }
+  return `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="${d}Z" style="fill:${a}"/><path d="${d}Z" transform="translate(4 4)" style="fill:#000;opacity:.15"/><circle cx="50" cy="50" r="16" style="fill:${GENRES.comic.title}"/></svg>`;
+}
+
+const moth = ink => `<svg viewBox="0 0 40 30" aria-hidden="true"><path d="M20 6 C14 0 2 2 3 12 C4 18 12 20 19 16 C12 22 10 28 18 27 L20 18 L22 27 C30 28 28 22 21 16 C28 20 36 18 37 12 C38 2 26 0 20 6 Z" style="fill:${ink}"/></svg>`;
+
+function barcode(bk){
+  let x = 0, s = '';
+  bk.bars.forEach((w,k)=>{ if (k%2===0) s += `<rect x="${x}" y="0" width="${w}" height="${k<2||k>27?44:40}" style="fill:#111"/>`; x += w + 1; });
+  return `<svg viewBox="0 0 ${x} 44" preserveAspectRatio="none" aria-hidden="true">${s}</svg><span>${bk.isbn}</span>`;
+}
+
+function setCoverVars(el, G){
+  el.style.setProperty('--cv-bg', G.bg); el.style.setProperty('--cv-ink', G.ink);
+  el.style.setProperty('--cv-title', G.title); el.style.setProperty('--cv-acc', G.acc); el.style.setProperty('--cv-font', G.font);
+}
+
+function fit(el, varName, start, min, box){
+  // shrink a cqw-based size until the box stops overflowing
+  let v = start;
+  el.style.setProperty(varName, v + 'cqw');
+  let guard = 0;
+  while ((box || el).scrollHeight > (box || el).clientHeight + 1 && v > min && guard++ < 60){ v -= 0.15; el.style.setProperty(varName, v.toFixed(2) + 'cqw'); }
+  return v;
+}
+
+function renderBook(){
+  const bk = book, G = GENRES[bk.genre];
+  const front = $('front'), back = $('back');
+  setCoverVars(front, G); setCoverVars(back, G);
+  front.innerHTML = `<div class="tag">${esc(bk.tag)}</div>
+    <div class="title${G.up?' up':''}" id="ttl">${esc(bk.title)}</div>
+    <div class="quote">“${esc(bk.front.q)}”<b>${esc(bk.front.by)}</b></div>
+    <div class="emb">${emblem(bk.genre, bk.emb)}</div>
+    <div class="author">${esc(bk.author)}</div>
+    <div class="imp">${moth(G.ink)}</div>
+    <div class="sticker">${esc(bk.sticker)}</div>`;
+  back.innerHTML = `<div class="hook${G.up?' up':''}">${esc(bk.tag)}</div>
+    ${bk.p.map(t=>`<p>${esc(t)}</p>`).join('')}
+    <div class="rev">${bk.reviews.map(v=>`<div>“${esc(v.q)}”<br><b>${esc(v.by)}</b></div>`).join('')}</div>
+    <div class="foot"><div class="meta"><strong>${esc(G.shelf)}</strong>${IMPRINT}<br>${bk.price}</div><div class="barcode">${barcode(bk)}</div></div>`;
+  // fit: title gets shorter-word sizing, emblem area absorbs slack
+  const ttl = $('ttl');
+  const longest = Math.max(...bk.title.split(' ').map(w=>w.length));
+  let t = Math.min(15, 92 / Math.max(6, longest) * (G.up ? 1.05 : 1.45));
+  ttl.style.setProperty('--tfs', t.toFixed(2)+'cqw');
+  const fw = front.clientWidth;
+  let g = 0;
+  while ((ttl.scrollWidth > ttl.clientWidth + 1 || ttl.offsetHeight > fw*0.62 || front.scrollHeight > front.clientHeight + 1) && t > 6 && g++ < 80){ t -= 0.25; ttl.style.setProperty('--tfs', t.toFixed(2)+'cqw'); }
+  fit(back, '--bfs', 3.7, 2.6);
+}
+
+function renderCards(){
+  const sc = scores(cards), gk = book.genre;
+  const labels = ['Who','Where','Trouble'];
+  cards.forEach((ix,slot)=>{
+    const c = DECKS[slot][ix], el = $('c'+slot);
+    let txt, sub = '';
+    if (slot===0){ txt = c.name; sub = c.d; }
+    else if (slot===1) txt = c.at.replace(/^(at|in|aboard) /,'').replace(/^./, m=>m.toUpperCase());
+    else txt = c.when.replace(/^./, m=>m.toUpperCase());
+    el.innerHTML = `<span class="kind"><span>${labels[slot]}</span><span class="hold">${held[slot]?'':'Tap to hold'}</span></span>
+      <span class="txt">${esc(txt)}</span>${sub?`<span class="who">${esc(sub)}</span>`:''}
+      <span class="pips">${c.g.map((g,k)=>`<span class="pip${g===gk?' lead':''}">${GENRES[g].label}${k===0?'':' (a little)'}</span>`).join('')}</span>`;
+    el.setAttribute('aria-pressed', held[slot]?'true':'false');
+    el.setAttribute('aria-label', `${labels[slot]}: ${txt}${sub?', '+sub:''}. ${held[slot]?'Held':'Not held'}.`);
+  });
+  const max = Math.max(...Object.values(sc));
+  const rows = GK.slice().sort((a,b)=>sc[b]-sc[a] || GK.indexOf(a)-GK.indexOf(b)).filter(k=>sc[k]>0);
+  $('bars').innerHTML = rows.map(k=>`<span class="${k===gk?'win':''}">${GENRES[k].label}</span><span class="bar"><i style="width:${(sc[k]/max*100).toFixed(0)}%"></i></span><span class="n">${sc[k]}</span>`).join('');
+  const tie = rows.filter(k=>sc[k]===sc[gk]).length > 1;
+  $('shelvedTxt').textContent = `Each card leans towards two genres: two points for its main one and one for the other, with the Trouble card counting half as much again. This book scored highest for ${GENRES[gk].label.toLowerCase()}${tie?' (a tie, settled by the Trouble card first)':''}, so it went on the ${GENRES[gk].shelf} shelf and got that cover.`;
+  const nh = held.filter(Boolean).length;
+  $('dealBtn').textContent = nh===3 ? 'All held' : nh ? `Deal ${3-nh}` : 'Deal';
+  $('dealBtn').disabled = nh===3;
+  $('hint').textContent = nh===3 ? 'Release a card to deal again, or rewrite the blurb.' : 'Tap a card to hold it. Deal replaces the rest.';
+}
+
+function renderShelf(){
+  const sp = $('spines');
+  if (!shelf.length){ sp.innerHTML = '<span class="empty">Books you deal land here. Tap a spine to take it down again.</span>'; $('shelfCount').textContent=''; return; }
+  sp.innerHTML = '';
+  shelf.forEach((s,k)=>{
+    const bk = compose(s.c, s.s), G = GENRES[bk.genre];
+    const b = document.createElement('button');
+    b.className = 'spine' + (s.c.join()===book.cards.join() && s.s===book.seed ? ' now' : '');
+    setCoverVars(b, G);
+    b.style.height = (150 + (bk.title.length*7 % 40)) + 'px';
+    b.textContent = bk.title;
+    b.title = bk.title + ' by ' + bk.author;
+    b.setAttribute('aria-label', 'Take down ' + bk.title + ' by ' + bk.author);
+    b.addEventListener('click', ()=>{ cards = s.c.slice(); seed = s.s; held=[false,false,false]; update(false); });
+    sp.appendChild(b);
+  });
+  $('shelfCount').textContent = shelf.length + (shelf.length===1?' book':' books') + ', newest on the left';
+}
+
+function save(){ try{ localStorage.setItem('backcover', JSON.stringify({shelf, cards, seed})); }catch(e){} }
+function load(){ try{ const d = JSON.parse(localStorage.getItem('backcover')||'null'); if (d && Array.isArray(d.shelf)){ shelf = d.shelf.filter(valid).slice(0,14); if (valid({c:d.cards,s:d.seed})){ cards=d.cards; seed=d.seed; } } }catch(e){} }
+function valid(s){ return s && Array.isArray(s.c) && s.c.length===3 && s.c.every((v,k)=>Number.isInteger(v)&&v>=0&&v<DECKS[k].length) && Number.isInteger(s.s); }
+
+function update(addToShelf){
+  book = compose(cards, seed);
+  renderBook(); renderCards();
+  if (addToShelf){
+    shelf = shelf.filter(s=>!(s.c.join()===cards.join() && s.s===seed));
+    shelf.unshift({c:cards.slice(), s:seed});
+    shelf = shelf.slice(0,14);
+  }
+  renderShelf(); save();
+  $('status').textContent = '';
+}
+
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function deal(){
+  if (held.every(Boolean)) return false;
+  const changed = [];
+  cards = cards.map((ix,slot)=>{
+    if (held[slot]) return ix;
+    let n; do { n = Math.floor(Math.random()*DECKS[slot].length); } while (n===ix);
+    changed.push(slot); return n;
+  });
+  seed = Math.floor(Math.random()*1e6);
+  if (reduce){ update(true); return true; }
+  changed.forEach(s=>$('c'+s).classList.add('flip'));
+  setTimeout(()=>{ update(true); changed.forEach(s=>$('c'+s).classList.remove('flip')); }, 260);
+  return true;
+}
+
+[0,1,2].forEach(s=>$('c'+s).addEventListener('click', ()=>{ held[s] = !held[s]; renderCards(); }));
+$('dealBtn').addEventListener('click', deal);
+$('rewriteBtn').addEventListener('click', ()=>{ seed = Math.floor(Math.random()*1e6); update(true); $('status').textContent = 'Same cards, new words.'; });
+$('flipBtn').addEventListener('click', ()=>{ const t = $('stage').classList.toggle('turned'); $('flipBtn').textContent = t ? 'Turn it back' : 'Turn it over'; });
+$('copyBtn').addEventListener('click', ()=>{
+  const txt = `${book.title}\nby ${book.author}\n\n${book.tag}\n\n${book.p.join('\n\n')}`;
+  const ok = ()=>{ $('status').textContent = 'Blurb copied.'; };
+  const fallback = ()=>{ const sel = getSelection(), rg = document.createRange(); rg.selectNodeContents($('back')); sel.removeAllRanges(); sel.addRange(rg); $('status').textContent = 'Copying is blocked here, so the back cover is selected for you.'; };
+  try{ navigator.clipboard.writeText(txt).then(ok, fallback); }catch(e){ fallback(); }
+});
+let rt; addEventListener('resize', ()=>{ clearTimeout(rt); rt = setTimeout(renderBook, 120); });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(()=>renderBook());
+
+load();
+update(shelf.length===0);
+
+window.__backcover = {
+  get state(){
+    const f=$('front'), b=$('back');
+    return {cards:cards.slice(), held:held.slice(), genre:book.genre, title:book.title, author:book.author, blurb:book.p.join(' '), shelf:shelf.length,
+      frontOverflow: f.scrollHeight - f.clientHeight, backOverflow: b.scrollHeight - b.clientHeight, titleOverflowX: $('ttl').scrollWidth - $('ttl').clientWidth};
+  },
+  set(c,s){ cards=c.slice(); seed=s; held=[false,false,false]; update(false); },
+  compose, genreOf, sizes:[WHO.length,WHERE.length,TROUBLE.length]
+};
+})();
+</script>
+</body></html>

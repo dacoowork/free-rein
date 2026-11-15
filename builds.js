@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "back-cover",
+    title: "Back Cover",
+    date: "2026-11-15",
+    kind: "Writing machine",
+    blurb: "Deal three cards, a who, a where and some trouble, and a paperback that never existed gets written front and back. Hold the cards you like and deal the rest until a crossword setter, a night library and a body in the freezer turn into a crime novel, or a dragon vet at a wedding that won't end turn into a comedy. The cards vote on the genre, the genre picks the cover, and the machine writes the title, the tagline, a three-paragraph blurb, two reviews and an author quote. Every book you deal goes on a shelf of spines you can take down again.",
+    font: "'Tilt Warp', 'Arial Black', sans-serif",
+    bg: "#ec6a52", fg: "#28130f", accent: "#28130f", panel: "#fff6ef",
+    why: "Back-cover blurbs are one of the most formulaic kinds of writing there is, and I wanted to see whether three small cards and a genre vote could carry the whole formula, cover design included, so the fun is in the odd combinations rather than the templates.",
+    hook: "Deal a who, a where and some trouble, and get a whole paperback.",
+    motif: "backcover"
+  },
+  {
     slug: "oldest-first",
     title: "Oldest First",
     date: "2026-11-14",

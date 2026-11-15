@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -144,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-14"></script>
+<script src="builds.js?v=2026-11-15"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -155,6 +155,28 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    backcover(b,r){
+      // the build's opening deal: three story cards (who, where, trouble) and the crime paperback they make, keyhole emblem and all
+      let s=`<rect width="320" height="180" fill="${b.bg}"/><g transform="translate(160 90) scale(.8) translate(-160 -90)">`;
+      const cards=[['WHO','Agnes Pike','crossword setter'],['WHERE','A library that','opens at night'],['TROUBLE','A body in the','walk-in freezer']];
+      cards.forEach(([k,l1,l2],i)=>{
+        const x=22+i*8,y=24+i*44,rot=[-5,2,-2][i];
+        s+=`<g transform="rotate(${rot} ${x+70} ${y+20})"><rect x="${x+2}" y="${y+4}" width="140" height="40" rx="6" fill="#000" opacity=".15"/><rect x="${x}" y="${y}" width="140" height="40" rx="6" fill="#fff6ef"/>`;
+        s+=`<text x="${x+9}" y="${y+12}" font-family="Libre Franklin,Arial,sans-serif" font-weight="700" font-size="6.5" letter-spacing="1" fill="#7a5148">${k}</text>`;
+        s+=`<text x="${x+9}" y="${y+24}" font-family="Tilt Warp,Arial Black,sans-serif" font-size="10" fill="#28130f">${l1}</text>`;
+        s+=`<text x="${x+9}" y="${y+35}" font-family="Tilt Warp,Arial Black,sans-serif" font-size="10" fill="#28130f">${l2}</text>`;
+        if(i===0)s+=`<g transform="rotate(-8 ${x+118} ${y+12})"><rect x="${x+100}" y="${y+5}" width="34" height="13" rx="2" fill="none" stroke="#c3271a" stroke-width="1.5"/><text x="${x+117}" y="${y+15}" text-anchor="middle" font-family="Tilt Warp,Arial Black,sans-serif" font-size="8" fill="#c3271a">HELD</text></g>`;
+        s+=`</g>`;
+      });
+      const bx=196,by=14,bw=100,bh=150;
+      s+=`<rect x="${bx+4}" y="${by+6}" width="${bw}" height="${bh}" rx="3" fill="#000" opacity=".22"/><rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="3" fill="#141414"/><rect x="${bx}" y="${by}" width="4" height="${bh}" fill="#000" opacity=".35"/>`;
+      s+=`<text x="${bx+52}" y="${by+15}" text-anchor="middle" font-family="Libre Franklin,Arial,sans-serif" font-style="italic" font-size="5.5" fill="#ece8de">Some doors are locked for a reason.</text>`;
+      ['The Night','Library','Affair'].forEach((t,k)=>s+=`<text x="${bx+52}" y="${by+33+k*14}" text-anchor="middle" font-family="Special Elite,Courier New,monospace" font-weight="700" font-size="14" fill="#f4c400">${t}</text>`);
+      const kx=bx+52,ky=by+92;
+      s+=`<path d="M${kx-4} ${ky+12}L${kx+4} ${ky+12}L${kx+26} ${ky+44}L${kx-26} ${ky+44}Z" fill="#f4c400" opacity=".18"/><circle cx="${kx}" cy="${ky}" r="7" fill="#f4c400"/><path d="M${kx-4} ${ky+3}L${kx+4} ${ky+3}L${kx+6} ${ky+18}L${kx-6} ${ky+18}Z" fill="#f4c400"/>`;
+      s+=`<text x="${bx+52}" y="${by+143}" text-anchor="middle" font-family="Libre Franklin,Arial,sans-serif" font-weight="800" font-size="6.5" letter-spacing="1.6" fill="#ece8de">ELSIE WHITLAM</text></g>`;
+      return s;
+    },
     oldestfirst(b,r){
       // the build's stack after a lock-in: four cards on the oldest-to-newest rail, years revealed and in true order, a fifth card being dragged into place
       const items=[[1902,'The teddy bear'],[1928,'Sliced bread'],[1958,'The LEGO brick'],[1999,'Emoji']];
