@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&family=Londrina+Solid:wght@900&family=Atkinson+Hyperlegible&family=Fragment+Mono&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -144,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-15"></script>
+<script src="builds.js?v=2026-11-16"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -155,6 +155,31 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    gillorpore(b,r){
+      // couplet 6 of the build's key: a penny bun on its tray, and the two leads, the pores lead (6a) taken
+      const O='#2b211c';
+      let s=`<rect width="320" height="180" fill="${b.bg}"/>`;
+      s+=`<clipPath id="gopT"><rect x="50" y="26" width="100" height="128" rx="10"/></clipPath><g clip-path="url(#gopT)"><rect x="50" y="26" width="100" height="128" fill="#efe7de"/><rect x="50" y="136" width="100" height="18" fill="#8c6744"/>`;
+      [[60,142,'#b77b3e'],[80,148,'#a0602c'],[110,144,'#c9944f'],[138,149,'#b77b3e'],[126,140,'#7a5230']].forEach(([x,y,c])=>s+=`<ellipse cx="${x}" cy="${y}" rx="6" ry="2.4" fill="${c}"/>`);
+      s+=`</g>`;
+      const stem='M92 100 C82 116 84 138 92 138 L108 138 C116 138 118 116 108 100 Z';
+      s+=`<clipPath id="gopS"><path d="${stem}"/></clipPath><path d="${stem}" fill="#e9ddc6"/><g clip-path="url(#gopS)">`;
+      for(let y=100;y<140;y+=6)for(let x=82;x<120;x+=6)s+=`<path d="M${x} ${y+3}l3 -3l3 3l-3 3z" fill="none" stroke="#fffaf0" stroke-width=".8"/>`;
+      s+=`</g><path d="${stem}" fill="none" stroke="${O}" stroke-width="1.5"/>`;
+      s+=`<ellipse cx="100" cy="100" rx="38" ry="8" fill="#ece0a4" stroke="${O}" stroke-width="1.5"/>`;
+      for(let rr=.35;rr<.97;rr+=.15){const n=Math.round(rr*20);for(let i=1;i<n;i++){const a=Math.PI*i/n;s+=`<circle cx="${100+38*rr*Math.cos(a)}" cy="${100+8*rr*Math.sin(a)}" r=".9" fill="${O}" fill-opacity=".45"/>`}}
+      s+=`<path d="M62 100 C60 66 140 66 138 100 Z" fill="#8a5a2e" stroke="${O}" stroke-width="1.5"/><ellipse cx="86" cy="82" rx="12" ry="5" fill="#fff" opacity=".22"/>`;
+      s+=`<rect x="56" y="32" width="32" height="12" rx="3" fill="#241a1e"/><text x="72" y="40.5" text-anchor="middle" font-family="Fragment Mono,Menlo,monospace" font-size="7" fill="#fbf8f4">No. 06</text>`;
+      const lead=(y,n,t1,t2,go,on)=>`<rect x="160" y="${y}" width="112" height="58" rx="9" fill="${on?'#fbf8f4':'#e6dbd0'}" stroke="${on?b.accent:'none'}" stroke-width="2.2"/>`+
+        `<text x="169" y="${y+14}" font-family="Fragment Mono,Menlo,monospace" font-weight="700" font-size="8" fill="${b.accent}">${n}</text>`+
+        `<text x="169" y="${y+28}" font-family="Atkinson Hyperlegible,Arial,sans-serif" font-size="9" fill="#241a1e" font-weight="${on?700:400}">${t1}</text>`+
+        `<text x="169" y="${y+40}" font-family="Atkinson Hyperlegible,Arial,sans-serif" font-size="9" fill="#241a1e" font-weight="${on?700:400}">${t2}</text>`+
+        `<text x="169" y="${y+51}" font-family="Fragment Mono,Menlo,monospace" font-size="7" fill="#6b5c58">${go}</text>`;
+      s+=lead(26,'6a','Spongy, with pores','instead of gills.','\u2192 go to 7',true);
+      s+=lead(96,'6b','Spines, ridges','or gills.','\u2192 go to 8',false);
+      s+=`<path d="M140 88 Q150 72 158 60" fill="none" stroke="${b.accent}" stroke-width="2.2" stroke-linecap="round"/><path d="M153 57l6 1-2 6" fill="none" stroke="${b.accent}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+      return s;
+    },
     backcover(b,r){
       // the build's opening deal: three story cards (who, where, trouble) and the crime paperback they make, keyhole emblem and all
       let s=`<rect width="320" height="180" fill="${b.bg}"/><g transform="translate(160 90) scale(.8) translate(-160 -90)">`;

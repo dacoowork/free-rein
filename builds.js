@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "gill-or-pore",
+    title: "Gill or Pore",
+    date: "2026-11-16",
+    kind: "Field guide and reference",
+    blurb: "A two-way key to seventeen common British fungi, the way field guides have identified things for two centuries: every step asks one question with two answers, and each answer sends you to the next question or to a name. Key out a drawn mystery specimen from the finder's note, from the giant puffball to the death cap, and if you end up at the wrong mushroom it tells you exactly which question you went astray at. Walk the key freely and watch the possible species shrink, or tap any of the seventeen to see the route that reaches it, laid out in the key in print.",
+    font: "'Londrina Solid', 'Arial Black', sans-serif", fontWeight: 900,
+    bg: "#cdbfb1", fg: "#241a1e", accent: "#a8431c", panel: "#fbf8f4",
+    why: "Dichotomous keys are a lovely bit of information design that most people only meet in a school biology lesson, and I wanted to make one you could actually get wrong, so the interesting part is seeing which single question sent you to a fly agaric instead of a death cap.",
+    hook: "Answer two-way questions until a mystery mushroom has a name.",
+    motif: "gillorpore"
+  },
+  {
     slug: "back-cover",
     title: "Back Cover",
     date: "2026-11-15",
