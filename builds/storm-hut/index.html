@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Storm Hut</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Krona+One&family=Spline+Sans:wght@400;500;700&family=Spline+Sans+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#e4e9ea; --card:#fbfcfc; --ink:#16252a; --muted:#56666b; --line:#cfd8da;
+  --accent:#1d5fc4; --accent-ink:#ffffff; --flame:#e8701c; --soft:#eef2f3; --cmd:#1d5fc4;
+  --tick:#2c8a52;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0e1619; --card:#172227; --ink:#e6eef0; --muted:#97a8ad; --line:#2a383e;
+    --accent:#5d9bff; --accent-ink:#06142b; --flame:#ff9a4a; --soft:#1e2b31; --cmd:#8fb9ff; --tick:#5fcf8c;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0e1619; --card:#172227; --ink:#e6eef0; --muted:#97a8ad; --line:#2a383e;
+  --accent:#5d9bff; --accent-ink:#06142b; --flame:#ff9a4a; --soft:#1e2b31; --cmd:#8fb9ff; --tick:#5fcf8c;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--ground);color:var(--ink);font:16px/1.5 'Spline Sans',system-ui,sans-serif;-webkit-text-size-adjust:100%}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 40px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+h1{font:400 clamp(26px,5vw,40px)/1 'Krona One',system-ui,sans-serif;margin:0;letter-spacing:-.01em}
+.sub{margin:6px 0 0;color:var(--muted);max-width:52ch;font-size:15px}
+.alt{font:600 13px 'Spline Sans Mono',monospace;color:var(--muted);text-align:right}
+.scene{position:relative;border-radius:14px;overflow:hidden;background:#3a4a52;box-shadow:0 1px 0 var(--line)}
+.scene svg{display:block;width:100%;height:auto}
+.status{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding:10px 2px;font-size:14px}
+.status .k{font:600 11px 'Spline Sans Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:6px}
+.warm{display:inline-flex;gap:3px;vertical-align:-2px}
+.warm i{width:14px;height:14px;border-radius:3px;background:var(--line)}
+.warm i.on{background:var(--flame)}
+.checks{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px;padding:0;list-style:none}
+.checks li{font-size:13px;padding:3px 10px 3px 8px;border-radius:99px;background:var(--card);border:1px solid var(--line);color:var(--muted)}
+.checks li::before{content:'○ ';}
+.checks li.done{color:var(--ink);border-color:var(--tick)}
+.checks li.done::before{content:'✓ ';color:var(--tick);font-weight:700}
+.term{background:var(--card);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;overflow:hidden}
+.log{height:340px;overflow-y:auto;padding:14px 16px 6px;overscroll-behavior:contain}
+.log p{margin:0 0 10px;max-width:68ch}
+.log .room{font:400 14px 'Krona One',sans-serif;margin:14px 0 4px;letter-spacing:.01em}
+.log .you{font:600 14px 'Spline Sans Mono',monospace;color:var(--cmd);margin:14px 0 6px}
+.log .you::before{content:'› '}
+.log .sys{color:var(--muted);font-size:14px}
+.log .evt{font-style:italic;color:var(--muted)}
+.log .err{color:var(--muted)}
+.log .page{border-left:3px solid var(--line);padding:2px 0 2px 12px;font-family:'Spline Sans Mono',monospace;font-size:14px}
+.log .page.mine{border-color:var(--accent)}
+.log .end{border:2px solid var(--flame);border-radius:12px;padding:12px 14px;background:var(--soft)}
+.log .end h3{font:400 18px 'Krona One',sans-serif;margin:0 0 6px}
+.n{font-weight:700;cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;text-decoration-thickness:2px}
+.n:hover{text-decoration-color:var(--accent)}
+form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line);background:var(--soft)}
+form label{position:absolute;left:-9999px}
+#cmd{flex:1;min-width:0;font:500 16px 'Spline Sans Mono',monospace;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);color:var(--ink)}
+#cmd:focus{outline:2px solid var(--accent);outline-offset:1px}
+button{font:700 14px 'Spline Sans',sans-serif;border-radius:10px;border:0;cursor:pointer}
+#go{background:var(--accent);color:var(--accent-ink);padding:0 16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 10px 10px;background:var(--soft)}
+.chips button{background:var(--card);color:var(--ink);border:1px solid var(--line);font:600 12px 'Spline Sans Mono',monospace;padding:6px 10px;text-transform:uppercase;letter-spacing:.04em}
+.chips button:hover{border-color:var(--accent)}
+.chips .hint{border-color:var(--flame)}
+.foot{margin-top:18px;color:var(--muted);font-size:14px;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.foot h2{font:400 13px 'Krona One',sans-serif;color:var(--ink);margin:0 0 4px}
+.foot p{margin:0}
+.foot code{font:600 13px 'Spline Sans Mono',monospace;color:var(--ink)}
+@keyframes fall{from{transform:translate(0,-40px)}to{transform:translate(-60px,300px)}}
+.flake{animation:fall linear infinite}
+@keyframes bang{0%,70%,100%{transform:rotateY(0)}80%{transform:rotateY(70deg)}90%{transform:rotateY(15deg)}}
+.shutter.loose{animation:bang 2.6s ease-in infinite;transform-box:fill-box;transform-origin:right center}
+@keyframes flick{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.82)}}
+.flame{animation:flick .35s ease-in-out infinite;transform-box:fill-box;transform-origin:center bottom}
+@keyframes rise{0%{opacity:0;transform:translateY(4px)}40%{opacity:.8}100%{opacity:0;transform:translateY(-22px)}}
+.steam path{animation:rise 1.8s ease-out infinite}
+.steam path:nth-child(2){animation-delay:.6s}.steam path:nth-child(3){animation-delay:1.2s}
+@media (prefers-reduced-motion: reduce){.flake,.shutter.loose,.flame,.steam path{animation:none}}
+@media (max-width:600px){
+  .log{height:300px;padding:12px 12px 4px}
+  .alt{text-align:left}
+  .log p{font-size:15px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Storm Hut</h1>
+      <p class="sub">A text adventure. You've reached an unstaffed mountain hut just as the storm closes in. Type what you do, and get through the night.</p>
+    </div>
+    <div class="alt">2,860 m · unstaffed<br>sleeps 6 · stove, no wood</div>
+  </header>
+
+  <div class="scene" id="scene" aria-label="Cutaway drawing of the hut">
+  <svg viewBox="0 0 640 300" role="img" aria-labelledby="scT">
+    <title id="scT">Cutaway of the hut: porch, main room and loft</title>
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop id="sk1" offset="0" stop-color="#2f3d47"/><stop id="sk2" offset="1" stop-color="#6c7c86"/>
+      </linearGradient>
+      <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+        <stop offset="0" stop-color="#ffb35c" stop-opacity=".55"/><stop offset="1" stop-color="#ffb35c" stop-opacity="0"/>
+      </radialGradient>
+      <clipPath id="winC"><rect x="420" y="168" width="64" height="44"/></clipPath>
+      <pattern id="plank" width="640" height="14" patternUnits="userSpaceOnUse"><rect width="640" height="14" fill="#c99a63"/><rect y="13" width="640" height="1" fill="#a87a48"/></pattern>
+    </defs>
+    <rect width="640" height="300" fill="url(#sky)"/>
+    <!-- mountains -->
+    <path id="peaks" d="M0 210 L60 150 L95 175 L150 110 L190 160 L210 150 L250 200 L0 210Z" fill="#8d9ba3" opacity=".55"/>
+    <path d="M560 300 L640 190 L640 300Z" fill="#9aa8b0" opacity=".4"/>
+    <!-- ground snow -->
+    <path d="M0 268 C60 258 120 262 175 266 L640 270 L640 300 L0 300Z" fill="#eef3f5"/>
+    <!-- hut body -->
+    <path d="M170 140 L385 30 L600 140 L600 270 L170 270Z" fill="url(#plank)"/>
+    <!-- interior back wall (cutaway) -->
+    <path d="M182 140 L385 40 L588 140Z" fill="#7c5a3a"/>
+    <rect x="182" y="146" width="406" height="124" fill="#8b6743"/>
+    <path id="warmth" d="M182 140 L385 40 L588 140 L588 270 L182 270Z" fill="#ff9a3c" opacity="0"/>
+    <!-- roof -->
+    <path d="M150 146 L385 22 L620 146 L606 150 L385 36 L164 150Z" fill="#3c2f2a"/>
+    <!-- loft floor -->
+    <rect x="182" y="140" width="406" height="7" fill="#5e4329"/>
+    <!-- window -->
+    <rect x="416" y="164" width="72" height="52" fill="#4a3725"/>
+    <g clip-path="url(#winC)"><rect x="420" y="168" width="64" height="44" fill="url(#sky)"/><path d="M420 200 L440 186 L452 194 L470 178 L484 190 L484 212 L420 212Z" fill="#a7b4bb"/><g id="winsnow"></g></g>
+    <path d="M452 168 V212 M420 190 H484" stroke="#4a3725" stroke-width="3"/>
+    <rect class="shutter loose" id="shutter" x="488" y="164" width="30" height="52" fill="#2f5f9e" stroke="#203f69" stroke-width="2"/>
+    <path id="tied" d="M486 182 L520 186 M486 196 L520 194" stroke="#ff7a1a" stroke-width="2.5" opacity="0"/>
+    <!-- door + shelf + tin -->
+    <rect x="170" y="190" width="14" height="80" fill="#4a3725"/>
+    <rect x="183" y="176" width="44" height="5" fill="#5e4329"/>
+    <rect id="tinS" x="192" y="163" width="22" height="14" rx="2" fill="#b52f2f" stroke="#6b1717"/>
+    <!-- drying line -->
+    <path d="M270 168 Q330 176 392 168" stroke="#e8e0d0" stroke-width="1.5" fill="none"/>
+    <g id="socksLine" opacity="0"><path d="M305 172 v14 l-8 4 v-4 l4 -2 v-12z" fill="#7a3b8c"/><path d="M322 173 v14 l-8 4 v-4 l4 -2 v-12z" fill="#7a3b8c"/><g id="sockSteam"><path d="M300 166 q3 -5 0 -10 M318 166 q3 -5 0 -10" stroke="#fff" stroke-width="1.3" fill="none" opacity=".7"/></g></g>
+    <!-- table -->
+    <rect x="270" y="226" width="130" height="7" rx="2" fill="#5e4329"/>
+    <rect x="280" y="233" width="7" height="37" fill="#5e4329"/><rect x="383" y="233" width="7" height="37" fill="#5e4329"/>
+    <!-- bench -->
+    <rect x="200" y="250" width="56" height="6" fill="#5e4329"/><rect x="204" y="256" width="5" height="14" fill="#5e4329"/><rect x="247" y="256" width="5" height="14" fill="#5e4329"/>
+    <!-- logbook -->
+    <g id="bookT"><rect x="286" y="219" width="26" height="7" fill="#2d6a4f"/><rect x="288" y="217" width="22" height="3" fill="#f2ead8"/></g>
+    <rect id="mugT" x="316" y="216" width="9" height="10" rx="1.5" fill="#f4f1ea" stroke="#9aa0a3"/>
+    <!-- stove -->
+    <rect x="345" y="214" width="34" height="12" rx="2" fill="#30363a"/>
+    <rect id="can" x="352" y="200" width="20" height="16" rx="5" fill="#1d5fc4" opacity="0"/>
+    <g id="flameG" opacity="0"><ellipse cx="362" cy="209" rx="22" ry="22" fill="url(#glow)"/><path class="flame" d="M354 214 q2 -9 8 -12 q6 3 8 12z" fill="#3b8cff"/></g>
+    <g id="potG" opacity="0"><rect x="347" y="194" width="30" height="16" rx="3" fill="#9aa4aa" stroke="#5d676c"/><rect x="377" y="198" width="10" height="2.5" fill="#5d676c"/><g class="steam" id="steam" opacity="0"><path d="M354 192 q3 -5 0 -10" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M362 192 q3 -5 0 -10" stroke="#fff" stroke-width="1.5" fill="none"/><path d="M370 192 q3 -5 0 -10" stroke="#fff" stroke-width="1.5" fill="none"/></g></g>
+    <rect id="potF" x="300" y="258" width="26" height="12" rx="3" fill="#9aa4aa" stroke="#5d676c"/>
+    <!-- ladder -->
+    <g stroke="#4a3725" stroke-width="4"><path d="M540 270 L548 140 M566 270 L574 140"/></g>
+    <g stroke="#4a3725" stroke-width="3"><path d="M541 255 H565 M542 232 H567 M544 209 H569 M545 186 H570 M546 163 H571"/></g>
+    <!-- loft bunks -->
+    <rect x="290" y="118" width="150" height="6" fill="#5e4329"/><rect x="290" y="124" width="6" height="16" fill="#5e4329"/><rect x="434" y="124" width="6" height="16" fill="#5e4329"/>
+    <rect id="blanketL" x="300" y="110" width="74" height="9" rx="3" fill="#8d9296"/>
+    <rect id="canL" x="300" y="128" width="16" height="12" rx="4" fill="#1d5fc4" opacity="0"/>
+    <path id="cordL" d="M462 92 c-8 6 8 12 0 18 c-8 6 8 12 0 18" stroke="#ff7a1a" stroke-width="3" fill="none"/>
+    <circle cx="462" cy="92" r="2" fill="#3c2f2a"/>
+    <!-- porch -->
+    <rect x="96" y="262" width="78" height="8" fill="#5e4329"/>
+    <path d="M100 262 V234 M100 236 H170" stroke="#5e4329" stroke-width="4"/><path d="M114 262 V238 M128 262 V238 M142 262 V238 M156 262 V238" stroke="#5e4329" stroke-width="2"/>
+    <path d="M96 262 C110 246 140 248 160 262Z" fill="#f6f9fa"/>
+    <!-- you -->
+    <g id="you" transform="translate(240,238)">
+      <path id="beam" d="M6 -22 L60 -36 L60 -8Z" fill="#fff6c8" opacity=".35"/>
+      <circle cx="0" cy="-22" r="6" fill="#f0c9a2" stroke="#16252a" stroke-width="1.5"/>
+      <circle cx="4" cy="-25" r="2.2" fill="#fff6c8"/>
+      <path d="M-8 -14 h16 v18 h-16z" fill="#c8321e" stroke="#16252a" stroke-width="1.5"/>
+      <path d="M-6 4 v10 M6 4 v10" stroke="#16252a" stroke-width="4"/>
+    </g>
+    <g id="snowfall"></g>
+    <!-- clock -->
+    <rect x="12" y="12" width="104" height="36" rx="8" fill="#16252a" opacity=".8"/>
+    <text id="clk" x="64" y="37.5" text-anchor="middle" font-family="Spline Sans Mono,monospace" font-size="22" font-weight="600" fill="#f4f7f8">17:40</text>
+  </svg>
+  </div>
+
+  <div class="status" aria-live="polite">
+    <span><span class="k">Where</span><b id="where">Main room</b></span>
+    <span><span class="k">Warmth</span><span class="warm" id="warm"></span> <span id="warmT"></span></span>
+  </div>
+  <ul class="checks" id="checks"></ul>
+
+  <div class="term">
+    <div class="log" id="log" aria-live="polite"></div>
+    <form id="f" autocomplete="off">
+      <label for="cmd">Your command</label>
+      <input id="cmd" placeholder="What do you do?" autocapitalize="none" spellcheck="false" enterkeyhint="go">
+      <button id="go" type="submit">Enter</button>
+    </form>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div class="foot">
+    <div><h2>How to play</h2><p>Type short commands: <code>look</code>, <code>examine stove</code>, <code>take pot</code>, <code>go up</code>, <code>out</code>, <code>in</code>, <code>inventory</code>. Tap any bold word to add it to the line.</p></div>
+    <div><h2>Stuck?</h2><p><code>hint</code> nudges you toward the next thing, <code>undo</code> takes back your last move, and <code>restart</code> begins the night again.</p></div>
+    <div><h2>Tonight</h2><p>Six small things make a night in a hut bearable. You can sleep whenever you like; how you wake depends on how many you managed.</p></div>
+  </div>
+</div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const OBJ={
+  logbook:{a:'the hut logbook',names:['logbook','log book','hut book','book','log','hut logbook']},
+  pencil:{a:'a stub of pencil',names:['pencil','stub']},
+  stove:{fixed:1,names:['stove','burner','cooker','camping stove']},
+  canister:{a:'a gas canister',names:['canister','gas canister','gas','cartridge','gas can']},
+  tin:{a:'a red biscuit tin',names:['tin','biscuit tin','red tin']},
+  matches:{a:'a box of matches',names:['matches','match','matchbox','box of matches','box']},
+  teabags:{a:'two tea bags',names:['tea bags','teabags','tea bag','teabag']},
+  pot:{a:'a dented pot',names:['pot','pan','saucepan','dented pot']},
+  mug:{a:'an enamel mug',names:['mug','cup','enamel mug']},
+  snow:{fixed:1,names:['snow','drift','snowdrift']},
+  shutter:{fixed:1,names:['shutter','shutters']},
+  cord:{a:'a hank of orange cord',names:['cord','rope','string','hank','orange cord']},
+  blanket:{a:'a grey wool blanket',names:['blanket','blankets','wool blanket','grey blanket']},
+  socks:{a:'your socks',names:['socks','sock','wet socks','my socks']},
+  axe:{a:'your ice axe',names:['ice axe','axe','iceaxe','pick']},
+  torch:{a:'your headtorch',names:['headtorch','head torch','torch','lamp','headlamp']},
+  line:{fixed:1,names:['line','drying line','washing line','clothes line']},
+  bunk:{fixed:1,names:['bunk','bunks','bed','beds','left bunk']},
+  window:{fixed:1,names:['window']},
+  door:{fixed:1,names:['door']},
+  ladder:{fixed:1,names:['ladder']},
+  bench:{fixed:1,names:['bench']},
+  table:{fixed:1,names:['table']},
+  shelf:{fixed:1,names:['shelf','lintel','ledge']},
+  storm:{fixed:1,names:['storm','wind','sky','valley','weather','mountain','mountains']}
+};
+const FIXED_LOC={stove:'main',snow:'porch',shutter:'porch|main',line:'main',bunk:'loft',window:'main|porch',door:'main|porch',ladder:'main|loft',bench:'main',table:'main',shelf:'main',storm:'porch|main'};
+const ROOMN={main:'Main room',loft:'Loft',porch:'Porch'};
+const POS={main:[240,256],loft:[480,126],porch:[135,248]};
+const CHECKS=[['stove','Stove lit'],['shutter','Shutter quiet'],['socks','Dry socks on'],['tea','Hot tea'],['blanket','Blanket round you'],['signed','Logbook signed']];
+
+let S;
+function fresh(){
+  return {room:'main',t:17*60+40,turns:0,loc:{logbook:'main',pencil:'main',canister:'hidden',tin:'shelf',matches:'tin',teabags:'tin',pot:'main',mug:'main',cord:'loft',blanket:'loft',socks:'worn',axe:'inv',torch:'worn'},
+    tinOpen:false,onBench:false,canOn:false,lit:false,pot:'empty',potOn:false,potHeat:0,sockWet:true,sockDry:0,tied:false,mug:'empty',tea:false,blanketOn:false,signed:null,readBook:false,searched:false,ended:false,banged:0};
+}
+let hist=[],silent=false,out=[];
+const say=(h,c)=>{if(!silent)out.push({h,c})};
+const n=(w,k)=>`<b class="n" data-k="${k||w}">${w}</b>`;
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+const hhmm=m=>{m=((m%1440)+1440)%1440;return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')};
+
+function locOf(k){return OBJ[k].fixed?FIXED_LOC[k]:S.loc[k]}
+function held(k){const l=S.loc[k];return l==='inv'||l==='worn'}
+function visible(k){
+  if(OBJ[k].fixed) return FIXED_LOC[k].split('|').includes(S.room);
+  const l=S.loc[k];
+  if(l==='inv'||l==='worn') return true;
+  if(l==='tin') return S.tinOpen && visible('tin');
+  if(l==='shelf'||l==='line'||l==='stove') return S.room==='main';
+  return l===S.room;
+}
+function resolve(noun){
+  noun=noun.trim();
+  if(!noun) return null;
+  for(const k in OBJ) if(OBJ[k].names.includes(noun)) return k;
+  const last=noun.split(' ').pop();
+  for(const k in OBJ) if(OBJ[k].names.includes(last)) return k;
+  return '?'+noun;
+}
+function need(noun,verb){
+  const k=resolve(noun);
+  if(!k){say(`${cap(verb)} what?`,'err');return null}
+  if(k[0]==='?'){say(`There's no “${k.slice(1)}” here that you can see.`,'err');return null}
+  if(!visible(k)){say(`You can't see ${OBJ[k].a||'that'} here.`,'err');return null}
+  return k;
+}
+function comforts(){return {stove:S.lit,shutter:S.tied,socks:S.loc.socks==='worn'&&!S.sockWet,tea:S.tea,blanket:S.blanketOn,signed:!!S.signed}}
+function warmth(){const c=comforts();return 1+(c.stove?1:0)+(c.tea?1:0)+(c.socks?1:0)+(c.blanket?1:0)}
+
+function here(){
+  const items=Object.keys(S.loc).filter(k=>S.loc[k]===S.room);
+  return items.length?`<p>Here: ${items.map(k=>n(OBJ[k].a,k)).join(', ')}.</p>`:'';
+}
+function look(){
+  say(`<div class="room">${ROOMN[S.room]}</div>`);
+  if(S.room==='main'){
+    let stove=S.lit?'roaring blue':S.canOn?'with a gas canister fitted':'with no gas in it';
+    let line=S.loc.socks==='line'?` Your ${n('socks','socks')} hang from it${S.sockWet?', dripping':''}.`:'';
+    let pot=S.potOn?` A ${n('pot')} sits on the stove${S.pot==='snow'?', full of snow':S.pot==='water'?', the water '+(S.potHeat>=2?'boiling':'warming'):''}.`:'';
+    say(`<p>One room of tongue-and-groove pine, smelling of old smoke and wet wool. A ${n('table')} stands in the middle with a camping ${n('stove')} on it, ${stove}.${pot} A ${n('bench')} runs along the wall, and a drying ${n('line')} is strung above the stove.${line} Over the ${n('door')}, on a high ${n('shelf')}, ${S.loc.tin==='shelf'?`sits a battered red ${n('tin')}`:'is a clean square in the dust where a tin sat'}. A small ${n('window')} looks out at the storm${S.tied?'':`, and outside it the ${n('shutter')} bangs`}. A ${n('ladder')} goes up to the loft; the door leads out to the porch.</p>`);
+  } else if(S.room==='loft'){
+    say(`<p>The loft, tucked under the roof. Two wooden ${n('bunks','bunk')} line the eaves and your headtorch picks out frost on the nail heads. The wind is louder up here, working at the roof.${S.searched?'':' Something glints in the dark under the left bunk.'} The ladder goes back down.</p>`);
+  } else {
+    say(`<p>The porch. Wind tears across the boards and the ${n('snow')} has drifted knee-deep against the rail. The valley below has gone; there is only the ${n('storm')}. Beside the window the ${n('shutter')} ${S.tied?'is lashed shut with orange cord':'swings on its hinges and slams against the wall'}. The door leads back in.</p>`);
+  }
+  const h=here(); if(h) say(h);
+}
+
+function move(dir){
+  const r=S.room;
+  let to=null;
+  if(dir==='up') to=r==='main'?'loft':null;
+  if(dir==='down') to=r==='loft'?'main':null;
+  if(dir==='out') to=r==='main'?'porch':r==='loft'?'x-loft':null;
+  if(dir==='in') to=r==='porch'?'main':null;
+  if(to==='x-loft'){say('You\'d have to climb down the ladder first.','err');return false}
+  if(!to){
+    say(dir==='up'?(r==='porch'?'The roof is iced over. Not tonight.':'You\'re already as high as the hut goes.'):dir==='down'?(r==='porch'?'Down is the valley, and the valley is in the storm. No.':'You\'re already on the ground floor.'):dir==='in'?'You\'re already inside.':'You\'re already outside, and you\'d rather not be.','err');return false
+  }
+  S.onBench=false;S.room=to;
+  if(to==='porch') say('<p class="evt">You lean on the door; the wind does the rest.</p>');
+  if(to==='main'&&r==='porch') say('<p class="evt">You shoulder the door shut behind you. The noise drops by half.</p>');
+  look();return true;
+}
+
+const EX={
+  logbook:()=>`A green clothbound book, swollen with damp. The cover says <i>Hüttenbuch · Hut book · Livre de cabane</i>. You could ${n('read','logbook')} it.`,
+  pencil:()=>'A stub of pencil on a string, sharpened with a knife.',
+  stove:()=>S.lit?'A squat camping stove, roaring with a ring of blue flame. The warmth reaches about as far as your knees.':S.canOn?'A squat camping stove with a gas canister screwed in underneath. It just needs lighting.':'A squat camping stove with an empty thread underneath where a gas canister should screw in.',
+  canister:()=>S.canOn?'Screwed into the stove. It sloshes when you tip it: about half full.':'A blue screw-thread gas canister. It sloshes: about half full. Cold to the touch.',
+  tin:()=>S.loc.tin==='shelf'?'A battered red biscuit tin on the shelf above the door, well out of reach. You\'d need to stand on something, or have something with a hook to it.':S.tinOpen?'An old red biscuit tin, open.'+(['matches','teabags'].filter(k=>S.loc[k]==='tin').map(k=>' Inside: '+n(OBJ[k].a,k)+'.').join('')):'An old red biscuit tin with a picture of shortbread on the lid. Something rattles inside.',
+  matches:()=>'A box of kitchen matches, mostly full, kept dry in the tin.',
+  teabags:()=>'Two tea bags, a bit dusty. Good enough.',
+  pot:()=>`A dented aluminium pot with a folding handle. ${S.pot==='empty'?'Empty.':S.pot==='snow'?'Packed with snow.':S.potHeat>=2?'Full of boiling water.':'Full of meltwater, warming.'}`,
+  mug:()=>S.mug==='tea'?'An enamel mug of hot, strong tea.':S.mug==='drunk'?'An enamel mug with a tide mark of tea.':'A chipped enamel mug. Empty.',
+  snow:()=>'Fine, dry, wind-packed snow, drifting against the rail faster than you could dig it.',
+  shutter:()=>S.tied?'The shutter is lashed to the rail with orange cord. Quiet at last.':`A wooden shutter on two hinges. The hook that should hold it has rusted to a stub, so it swings out and slams back every few seconds.${S.room==='main'?' It\'s outside: you\'d have to go out to the porch to deal with it.':''}`,
+  cord:()=>'A hank of orange cord, a couple of metres, hanging from a nail.',
+  blanket:()=>S.blanketOn?'Wrapped round your shoulders. It smells of a hundred previous walkers, and it is warm.':'A grey wool army blanket, scratchy and thick.',
+  socks:()=>S.sockWet?'Your hiking socks, soaked through from the last hour in the snow. Your feet are numb inside them.':'Your hiking socks, dry and stiff and warm from the line.',
+  axe:()=>'Your ice axe: a steel pick with a long curved hook of a point.',
+  torch:()=>'Your headtorch, on its last set of batteries but still bright.',
+  line:()=>S.loc.socks==='line'?`A drying line above the stove. Your socks hang from it${S.sockWet?(S.lit?', steaming gently':', dripping'):', dry'}.`:'A drying line strung above the stove, for exactly the kind of evening you\'re having.',
+  bunk:()=>S.searched?'Two plain wooden bunks with straw-filled mattresses.':(S.searched=true,S.loc.canister='loft','Two plain wooden bunks with straw-filled mattresses. You crouch and look under the left one: a '+n('gas canister','canister')+', pushed to the back.'),
+  window:()=>S.room==='main'?'Small and double-glazed. Outside, snow streams sideways past the glass.':'From out here the window is a square of brown glass with the shutter beside it.',
+  door:()=>'Heavy pine, with a draught excluder made from an old rope.',
+  ladder:()=>'A steep wooden ladder up to the loft.',
+  bench:()=>S.onBench?'You\'re standing on it.':'A long sturdy bench, the kind you could stand on.',
+  table:()=>'A scrubbed pine table with initials carved into every inch of it.',
+  shelf:()=>S.loc.tin==='shelf'?`A high shelf over the door. A red ${n('tin')} sits on it.`:'A high shelf over the door, empty now.',
+  storm:()=>S.ended?'The storm has blown itself out.':'White, roaring, and close. You can\'t see the rail from the door.'
+};
+
+function takeK(k){
+  if(OBJ[k].fixed){say(k==='snow'?'You scoop a handful. It melts and runs up your sleeve. Better carry it in something.':'That isn\'t going anywhere.','err');return}
+  if(held(k)){say(k==='socks'&&S.loc.socks==='worn'?'You\'re wearing them. (Try '+n('take off socks','socks')+'.)':'You already have it.','err');return}
+  if(k==='tin'&&S.loc.tin==='shelf'){
+    if(S.onBench){S.loc.tin='inv';say('You stretch from the bench and lift the tin down. It rattles.');S.onBench=false}
+    else say('The shelf is above the door, out of reach. You\'d need to stand on something, or hook it down.','err');
+    return;
+  }
+  if(k==='canister'&&S.canOn){say('It\'s screwed into the stove, and it\'s better there.','err');return}
+  if(k==='pot'&&S.potOn){S.potOn=false;}
+  if(k==='socks'&&S.loc.socks==='line'&&S.sockWet){S.loc.socks='inv';say('You take the socks down. Still wet.');return}
+  S.loc[k]='inv';
+  say(k==='blanket'?'You pull the blanket off the bunk. It\'s heavy and smells of wool.':'Taken.');
+}
+function dropK(k){
+  if(!held(k)){say('You aren\'t carrying that.','err');return}
+  if(k==='torch'){say('You\'d be in the dark. Better keep it on.','err');return}
+  if(k==='socks'&&S.loc.socks==='worn'){say('You\'d have to take them off first.','err');return}
+  if(k==='blanket')S.blanketOn=false;
+  S.loc[k]=S.room;say('Dropped.');
+}
+function openK(k){
+  if(k==='tin'){
+    if(S.loc.tin==='shelf'){say('You can\'t reach it up there.','err');return}
+    if(S.tinOpen){say('It\'s already open.','err');return}
+    S.tinOpen=true;say(`The lid is stiff with cold, but it gives. Inside: ${n('a box of matches','matches')} and ${n('two tea bags','teabags')}.`);return;
+  }
+  if(k==='door'){say(S.room==='main'?'Try '+n('out','door')+'.':'Try '+n('in','door')+'.','err');return}
+  if(k==='window'){say('And let the storm in? No.','err');return}
+  if(k==='shutter'){say('It\'s open already. Every few seconds. That\'s the problem.','err');return}
+  say('That doesn\'t open.','err');
+}
+function attach(){
+  if(!visible('canister')){say('You don\'t have a gas canister.','err');return}
+  if(S.canOn){say('It\'s already fitted.','err');return}
+  if(S.room!=='main'){say('The stove is in the main room.','err');return}
+  S.canOn=true;S.loc.canister='stove';say('You screw the canister into the stove until it seats with a hiss and stops. Ready to light.');
+}
+function light(k){
+  if(k&&k!=='stove'&&k!=='matches'){say('That won\'t burn, and you shouldn\'t want it to.','err');return}
+  if(S.room!=='main'){say('The stove is in the main room.','err');return}
+  if(S.lit){say('It\'s already lit.','err');return}
+  if(!S.canOn){say(held('canister')||visible('canister')?'The stove has no gas in it. Fit the canister first.':'You turn the valve. Nothing; the stove has no gas canister fitted.','err');return}
+  if(!held('matches')){say('With what? You\'ve nothing to light it with.','err');return}
+  S.lit=true;say('You open the valve and strike a match. <b>Fwump:</b> a ring of blue flame, and a low roar that fills the hut. Slowly, the air starts to soften.');
+}
+function fill(k,withK){
+  if(k!=='pot'&&k!=='mug'){say('You can\'t fill that.','err');return}
+  if(k==='mug'){say('Put snow in a mug? Melt it in the pot first.','err');return}
+  if(!held('pot')){say('You\'d have to be holding the pot.','err');return}
+  if(withK&&withK!=='snow'){say('Snow is the only water up here.','err');return}
+  if(S.room!=='porch'){say('There\'s no snow in here. It\'s all outside, on the porch.','err');return}
+  if(S.pot!=='empty'){say('It\'s already full.','err');return}
+  S.pot='snow';say('You pack the pot with snow, pressing it down with your glove. A full pot of snow will make about a mugful of water.');
+}
+function potOnStove(){
+  if(!visible('pot')){say('You don\'t have the pot.','err');return}
+  if(S.room!=='main'){say('The stove is in the main room.','err');return}
+  if(S.potOn){say('It\'s already on the stove.','err');return}
+  S.potOn=true;S.loc.pot='stove';S.potHeat=0;
+  say(S.lit?(S.pot==='empty'?'You set the empty pot on the flame. It ticks and smells of hot metal.':'You set the pot on the flame.'):'You set the pot on the stove. It would help if the stove were lit.');
+}
+function hang(k){
+  if(k!=='socks'){say(k==='blanket'?'It\'s too heavy for the line, and you\'d rather wear it.':'That doesn\'t need drying.','err');return}
+  if(S.room!=='main'){say('The drying line is in the main room.','err');return}
+  if(S.loc.socks==='worn'){say('You\'re still wearing them. Take them off first.','err');return}
+  if(S.loc.socks==='line'){say('They\'re already on the line.','err');return}
+  if(!S.sockWet){say('They\'re dry already. Put them on.','err');return}
+  S.loc.socks='line';S.sockDry=0;say(`You peg the socks to the line above the stove.${S.lit?' They begin to steam.':' They drip. They\'d dry faster with the stove going.'}`);
+}
+function wear(k){
+  if(k==='socks'){
+    if(S.loc.socks==='worn'){say('You\'re wearing them already.','err');return}
+    if(!visible('socks')){say('You can\'t see your socks here.','err');return}
+    S.loc.socks='worn';say(S.sockWet?'You pull the wet socks back on. Your toes complain.':'You pull on the dry, warm socks. Your toes come back to life one by one. This is happiness.');return;
+  }
+  if(k==='blanket'){
+    if(!visible('blanket')){say('You can\'t see a blanket here.','err');return}
+    if(S.blanketOn){say('It\'s already round your shoulders.','err');return}
+    S.loc.blanket='worn';S.blanketOn=true;say('You wrap the blanket round your shoulders like a cape. The shivering eases off a notch.');return;
+  }
+  if(k==='torch'){say('It\'s on your head already.','err');return}
+  say('You can\'t wear that.','err');
+}
+function remove(k){
+  if(k==='socks'){
+    if(S.loc.socks!=='worn'){say('You aren\'t wearing them.','err');return}
+    S.loc.socks='inv';say(S.sockWet?'You peel off the wet socks. Your feet are white and wrinkled. Better get them dry.':'You take off your socks.');return;
+  }
+  if(k==='blanket'&&S.blanketOn){S.blanketOn=false;S.loc.blanket='inv';say('You take the blanket off your shoulders. Instantly colder.');return}
+  if(k==='torch'){say('You\'d be in the dark.','err');return}
+  say('You aren\'t wearing that.','err');
+}
+function tie(k,withK){
+  if(k==='cord'&&withK)k=withK;
+  if(k!=='shutter'){say(k==='cord'?'Tie the cord to what?':'There\'s nothing to tie that to.','err');return}
+  if(S.room!=='porch'){say('The shutter is outside. You\'d have to go out on the porch.','err');return}
+  if(S.tied){say('It\'s tied already.','err');return}
+  if(!held('cord')){say('You grab the shutter and hold it shut. As soon as you let go, it swings out again. You need something to tie it with.','err');return}
+  S.tied=true;S.loc.cord='used';say('You catch the shutter on its swing, lash it to the porch rail with the orange cord and pull the knot tight. Silence, apart from the wind. Glorious silence.');
+}
+function makeTea(){
+  if(S.tea||S.mug!=='empty'){say(S.mug==='tea'?'You\'ve made it. Now drink it.':'You\'ve had your tea. The tea bags are gone.','err');return}
+  if(S.room!=='main'){say('The stove and the pot are in the main room.','err');return}
+  if(!visible('teabags')){say('You haven\'t got any tea bags.','err');return}
+  if(!visible('mug')){say('You\'d need a mug.','err');return}
+  if(S.pot==='empty'){say('There\'s no water. The pot is empty.','err');return}
+  if(S.pot==='snow'){say('That\'s snow. Melt it on the stove first.','err');return}
+  if(!(S.potOn&&S.potHeat>=2)){say('The water isn\'t hot yet. Give it a little longer on the flame.','err');return}
+  S.mug='tea';S.pot='empty';S.loc.teabags='used';say(`You pour the boiling water over both tea bags at once. It goes the colour of a peat bog. A mug of ${n('tea','mug')}, at nearly three thousand metres.`);
+}
+function drink(k){
+  if(k==='snow'){say('You eat a mouthful. Your teeth ache, and you\'re colder than before. The logbook warned you.','err');return}
+  if(k==='pot'){say(S.pot==='empty'?'It\'s empty.':'Straight from the pot? Make a proper cup of tea.','err');return}
+  if(k!=='mug'&&k!=='tea'&&k!=='teabags'){say('You can\'t drink that.','err');return}
+  if(S.mug!=='tea'){say(S.tea?'You\'ve finished it.':'You haven\'t made any tea yet.','err');return}
+  S.mug='drunk';S.tea=true;say('You wrap both hands round the mug and drink. The heat goes all the way down. Best tea of your life, very nearly.');
+}
+function readBook(){
+  if(!visible('logbook')){say('You can\'t see the logbook here.','err');return}
+  S.readBook=true;
+  say('<p>You leaf through the last few pages.</p>');
+  [['3 Aug','Clear night, a hundred thousand stars. Spare gas canister back UNDER THE LEFT BUNK where it lives. Don\'t leave it by the stove, it freezes. — Mari &amp; Jo'],
+   ['21 Sep','Matches are in the tin on the shelf over the door, as always. If you\'re short like me, the hook of an ice axe brings it down. Tea bags in there too. — T. Barros'],
+   ['2 Oct','The shutter hook has rusted off and it bangs ALL NIGHT. There is cord in the loft. For heaven\'s sake tie it. — the Kowalskis (3 adults, no sleep)'],
+   ['29 Oct','Don\'t eat snow, melt it. Socks dry on the line over the stove in about half an hour. The blankets upstairs are scratchy and wonderful. — anon']
+  ].forEach(([d,t])=>say(`<p class="page"><b>${d}.</b> ${t}</p>`));
+  if(S.signed) say(`<p class="page mine"><b>Today.</b> ${S.signed}</p>`);
+  else say(`<p class="sys">There's a blank page after the last entry, and a ${n('pencil')} on a string.</p>`);
+}
+function entry(){
+  const c=comforts(),bits=['Came in out of a whiteout at 17:40, soaked to the knees.'];
+  if(c.stove)bits.push('Found the canister under the left bunk (thank you, Mari & Jo) and got the stove going.');
+  else bits.push('Couldn\'t get the stove lit.');
+  if(c.shutter)bits.push('Tied the shutter with the loft cord. Someone please fix that hook.');
+  if(c.tea)bits.push('Tea made from snow. Excellent.');
+  if(c.socks)bits.push('Dry socks!');
+  if(c.blanket)bits.push('Wearing a blanket as I write this.');
+  bits.push('Storm still going. — a grateful walker');
+  return bits.join(' ');
+}
+function write(){
+  if(!visible('logbook')){say('There\'s nothing to write in here.','err');return}
+  if(!visible('pencil')){say('You\'d need the pencil.','err');return}
+  if(S.signed){say('You\'ve already written your entry. Let the next walker have some paper.','err');return}
+  S.signed=entry();say(`You lick the pencil and write on the next blank page:</p><p class="page mine">${S.signed}`);
+}
+function hint(){
+  const c=comforts();let h;
+  if(!S.readBook) h=`The ${n('logbook')} on the table holds notes from people who stayed here before. Try ${n('read logbook','logbook')}.`;
+  else if(!c.stove){
+    if(!S.canOn&&!visible('canister')&&S.loc.canister!=='loft') h='The stove needs gas. Mari and Jo said where the spare canister lives: under the left bunk, up in the loft. Go up and look under the bunk.';
+    else if(!S.canOn&&!held('canister')) h='Take the canister and bring it down to the stove.';
+    else if(!S.canOn) h='Back in the main room, fit the canister to the stove (try “put canister on stove”).';
+    else if(!held('matches')) h=S.loc.tin==='shelf'?'The matches are in the red tin over the door. Stand on the bench and take it, or hook it down with your ice axe.':!S.tinOpen?'Open the tin.':'Take the matches.';
+    else h='Light the stove.';
+  }
+  else if(!c.shutter) h=held('cord')?'Take the cord out to the porch and tie the shutter.':'The Kowalskis mention some cord in the loft. Fetch it, then tie the shutter out on the porch.';
+  else if(!c.socks) h=S.loc.socks==='worn'?'Your socks are soaked. Take them off and hang them on the line over the stove.':S.loc.socks==='line'?(S.sockWet?'Give the socks time on the line. Do something else, or WAIT.':'Take the socks off the line and wear them.'):S.sockWet?'Hang the wet socks on the line above the stove.':'Put your dry socks on.';
+  else if(!c.tea){
+    if(S.mug==='tea') h='Drink the tea.';
+    else if(!visible('teabags')&&S.loc.teabags!=='used') h=S.tinOpen?'The tea bags are in the tin.':'T. Barros says the tea bags are in the tin with the matches.';
+    else if(S.pot==='empty') h='You need water. Take the pot out to the porch and fill it with snow.';
+    else if(!S.potOn) h='Put the pot on the stove.';
+    else if(S.potHeat<2) h='Wait for it to boil.';
+    else h='Make tea.';
+  }
+  else if(!c.blanket) h='There are blankets on the bunks in the loft. Fetch one and wear it.';
+  else if(!c.signed) h='Write your own entry in the logbook.';
+  else h='That\'s everything a hut can offer. SLEEP when you\'re ready.';
+  say(`<span class="sys">Hint: ${h}</span>`);
+}
+function ending(){
+  if(S.room==='porch'){say('Not out here. They\'d find you in spring.','err');return false}
+  const c=comforts(),k=Object.values(c).filter(Boolean).length;
+  S.ended=true;
+  const title=k===6?'A Proper Night':k>=4?'Snug Enough':k>=2?'A Long Night':'Teeth Chattering Till Dawn';
+  const lines=[];
+  lines.push(S.room==='loft'?'You climb onto the bunk and pull the straw mattress straight.':'You stretch out on the bench by the stove.');
+  lines.push(c.shutter?'With the shutter tied, the hut goes quiet except for the wind in the roof, and you are asleep before you mean to be.':'Every few minutes, BANG. The shutter. You count them for a while and stop at forty.');
+  lines.push(c.stove?(c.tea?'The tea sits warm in your middle for hours.':'The stove ticks as it cools.'):'With no stove, the cold comes up through the boards and stays.');
+  lines.push(c.socks?'Your feet are dry.':'Your feet never quite warm up.');
+  lines.push(c.blanket?'Under the wool you sleep in long, heavy stretches.':'You curl tight in your jacket and doze in pieces.');
+  lines.push('At 06:10 the light comes grey and then pink. The storm has blown itself out. Below the hut the whole valley is new snow, and there is no sound at all.');
+  if(c.signed) lines.push('Before you leave, you read your entry once more and close the book.');
+  else lines.push('You leave without writing in the logbook. Nobody will know you were here.');
+  say(`<div class="end"><h3>${title}</h3><p>${lines.join(' ')}</p><p class="sys">${k} of 6 small comforts. Type ${n('restart','restart')} for another night, or ${n('undo','undo')} to go back a step.</p></div>`);
+  return true;
+}
+
+function tick(){
+  S.turns++;S.t+=10;if(S.t>23*60+50)S.t=23*60+50;
+  if(S.potOn&&S.lit){
+    if(S.pot==='snow'){S.pot='water';S.potHeat=0;if(S.room==='main')say('<span class="evt">The snow in the pot slumps and turns to water.</span>')}
+    else if(S.pot==='water'){S.potHeat++;if(S.potHeat===2&&S.room==='main')say('<span class="evt">The pot starts to rattle on the stove. Boiling.</span>')}
+  }
+  if(S.loc.socks==='line'&&S.sockWet&&S.lit){S.sockDry++;if(S.sockDry>=3){S.sockWet=false;if(S.room==='main')say('<span class="evt">The socks on the line have stopped steaming. They\'re dry.</span>')}}
+  if(!S.tied&&S.room!=='porch'&&S.turns%4===2)say('<span class="evt">BANG. The shutter, again.</span>');
+}
+
+function parse(raw){
+  let s=raw.toLowerCase().replace(/[^a-z0-9' ]/g,' ').replace(/\s+/g,' ').trim();
+  s=s.replace(/\b(the|a|an|some|my|your|please|then)\b/g,' ').replace(/\s+/g,' ').trim();
+  return s;
+}
+const DIRS={u:'up',up:'up',upstairs:'up',d:'down',down:'down',downstairs:'down',o:'out',out:'out',outside:'out',exit:'out',leave:'out',porch:'out',in:'in',inside:'in',enter:'in',loft:'up'};
+function exec(raw){
+  const s=parse(raw);let m;
+  if(!s){say('Say something. Even “look” will do.','err');return false}
+  if(/^(help|\?|commands)$/.test(s)){say('<span class="sys">Type short commands: LOOK, EXAMINE (or X) something, TAKE, DROP, OPEN, PUT X ON Y, GO UP, DOWN, OUT, IN, INVENTORY (or I), WAIT, SLEEP. Also HINT, UNDO and RESTART. Tap any bold word to add it to your command.</span>');return false}
+  if(/^hint|^clue/.test(s)){hint();return false}
+  if(S.ended){say('The night is over. Type '+n('restart','restart')+' or '+n('undo','undo')+'.','err');return false}
+  if(/^(l|look|look around)$/.test(s)){look();return true}
+  if(/^(i|inv|inventory|invent)$/.test(s)){
+    const h=Object.keys(S.loc).filter(k=>S.loc[k]==='inv'||S.loc[k]==='worn');
+    say('You have: '+h.map(k=>n(OBJ[k].a,k)+(S.loc[k]==='worn'&&k!=='torch'?' (wearing'+(k==='socks'&&S.sockWet?', wet':'')+')':k==='torch'?' (on)':'')).join(', ')+'.');return false}
+  if(/^(n|s|e|w|ne|nw|se|sw|north|south|east|west)$/.test(s)){say('In a hut this size compass directions don\'t help. Try UP, DOWN, OUT or IN.','err');return false}
+  if(m=s.match(/^(?:go |walk |climb |head |move )?(?:to )?(up|u|down|d|out|o|outside|in|inside|upstairs|downstairs|exit|leave|enter|porch|loft)(?: ladder| door| hut| stairs)?$/)){return move(DIRS[m[1]])}
+  if(/^(go |climb )?(up )?(ladder)$/.test(s)||s==='climb up ladder'||s==='go up ladder'){return move(S.room==='loft'?'down':'up')}
+  if(s==='climb down ladder'||s==='go down ladder')return move('down');
+  if(/^(go |walk )?(back )?in(to)? (hut|main room)$|^go back in$|^go back inside$/.test(s))return move('in');
+  if(m=s.match(/^go (.+)$/)){say(`You can't go “${m[1]}”. Try UP, DOWN, OUT or IN.`,'err');return false}
+  if(/^(look under|search|check under|look beneath|search under) (left )?(bunk|bunks|bed|beds)$/.test(s)){
+    if(S.room!=='loft'){say('The bunks are up in the loft.','err');return false}
+    if(S.searched){say('Just dust and a dead fly now.');return true}
+    S.searched=true;S.loc.canister='loft';say(`You crouch and shine your torch under the left bunk. Pushed to the back: a blue ${n('gas canister','canister')}.`);return true}
+  if(/^(get down|get off|step down|get off bench|climb down from bench)$/.test(s)){S.onBench=false;say('You step down.');return true}
+  if(/^(wait|z|rest|sit|sit down|warm up|warm hands)$/.test(s)){say(S.lit?'You sit by the stove for a while and let the warmth work.':'You stand and wait. The cold waits with you.');return true}
+  if(/^(sleep|go to sleep|go to bed|lie down|bed|nap)$/.test(s)){return ending()}
+  if(/^make (tea|cup of tea|cuppa|brew)$|^brew tea$/.test(s)){makeTea();return true}
+  if(/^(write|sign)( in| on)?( (logbook|book|hut book|log|page))?( with pencil)?$|^write entry$|^(use|take) pencil on (logbook|book)$/.test(s)){write();return true}
+  if(m=s.match(/^read (.+)$/)){const k=need(m[1],'read');if(!k)return false;if(k==='logbook'){readBook();return true}say(k==='tin'?'The lid says SHORTBREAD in faded gold.':'There\'s nothing written on it.');return true}
+  if(m=s.match(/^(?:x|examine|look at|look in|look into|inspect|check|search|l at|study|ex) (.+)$/)){const k=need(m[1],'examine');if(!k)return false;say(EX[k]());return true}
+  if(m=s.match(/^(?:take off|remove) (.+)$|^take (.+) off$/)){const k=need(m[1]||m[2],'remove');if(!k)return false;remove(k);return true}
+  if(m=s.match(/^(?:wear|put on|don|wrap|wrap up in|wrap yourself in) (.+?)(?: around .+| round .+)?$|^put (.+) on$/)){const k=need(m[1]||m[2],'wear');if(!k)return false;wear(k);return true}
+  if(m=s.match(/^(?:take|get|grab|pick up|pick|hook|reach) (.+?)(?: (?:from|off|with|using) (.+))?$/)){
+    const k=need(m[1],'take');if(!k)return false;
+    if(k==='tin'&&S.loc.tin==='shelf'&&m[2]&&resolve(m[2])==='axe'&&held('axe')){S.loc.tin='inv';say('You reach up with the ice axe, catch the tin\'s rim with the hook of the pick and tip it into your arms. It rattles.');return true}
+    if(k==='socks'&&S.loc.socks==='line'&&!S.sockWet){S.loc.socks='inv';say('You unpeg the socks. Dry, and warm from the stove.');return true}
+    takeK(k);return true}
+  if(m=s.match(/^(?:use) (.+?)(?: (?:on|with|to|in) (.+))?$/)){
+    const k=need(m[1],'use');if(!k)return false;const t=m[2]?need(m[2],'use it on'):null;if(m[2]&&!t)return false;
+    if(k==='axe'&&(t==='tin'||t==='shelf')){if(S.loc.tin!=='shelf'){say('The tin is already down.','err');return false}S.loc.tin='inv';say('You reach up with the ice axe, catch the tin\'s rim with the hook of the pick and tip it into your arms. It rattles.');return true}
+    if(k==='matches'){light('stove');return true}
+    if(k==='canister'){attach();return true}
+    if(k==='cord'){tie('shutter');return true}
+    if(k==='pot'&&t==='snow'){fill('pot');return true}
+    if(k==='pot'&&t==='stove'){potOnStove();return true}
+    if(k==='bench'){return exec('stand on bench')}
+    if(k==='blanket'){wear('blanket');return true}
+    if(k==='pencil'||k==='logbook'){write();return true}
+    if(k==='stove'){light('stove');return true}
+    say('You\'ll have to be more specific about what you want to do.','err');return false}
+  if(m=s.match(/^(?:stand on|climb on|climb onto|get on|step on|climb) (.+)$/)){const k=need(m[1],'stand on');if(!k)return false;
+    if(k==='bench'||k==='table'){if(k==='table'){say('The table wobbles under one hand. Not that.','err');return false}S.onBench=true;say('You climb onto the bench. The shelf over the door is within reach now.');return true}
+    say('Better not.','err');return false}
+  if(/^(get down|get off|step down|get off bench)$/.test(s)){S.onBench=false;say('You step down.');return true}
+  if(m=s.match(/^(?:fill) (.+?)(?: with (.+))?$/)){const k=need(m[1],'fill');if(!k)return false;fill(k,m[2]?resolve(m[2]):null);return true}
+  if(m=s.match(/^(?:put|place|set|pack|scoop) (.+?) (?:in|into|on|onto|over|inside|under) (.+)$/)){
+    const a=need(m[1],'put'),b=a&&need(m[2],'put it on');if(!a||!b)return false;
+    if(a==='snow'&&b==='pot'){if(!held('pot')){say('Pick the pot up first.','err');return false}fill('pot','snow');return true}
+    if(a==='pot'&&b==='stove'){potOnStove();return true}
+    if(a==='canister'&&b==='stove'){attach();return true}
+    if(a==='socks'&&(b==='line'||b==='stove')){hang('socks');return true}
+    if(a==='teabags'&&(b==='mug'||b==='pot')){makeTea();return true}
+    if(a==='blanket'&&b!=='bunk'){wear('blanket');return true}
+    if(held(a)){dropK(a);return true}
+    say('That doesn\'t go there.','err');return false}
+  if(m=s.match(/^(?:attach|fit|screw|connect|screw in) (.+?)(?: (?:to|on|onto|into|in) (.+))?$/)){const k=need(m[1],'fit');if(!k)return false;if(k!=='canister'&&k!=='stove'){say('That doesn\'t attach to anything.','err');return false}attach();return true}
+  if(m=s.match(/^(?:drop|put down|leave) (.+)$/)){const k=need(m[1],'drop');if(!k)return false;dropK(k);return true}
+  if(m=s.match(/^(?:hang|dry|peg) (.+?)(?: (?:on|over|above|by) (.+))?$/)){const k=need(m[1],'hang');if(!k)return false;hang(k);return true}
+  if(m=s.match(/^(?:open|unscrew|lift lid of|prise open) (.+)$/)){const k=need(m[1],'open');if(!k)return false;openK(k);return true}
+  if(m=s.match(/^(?:close|shut) (.+)$/)){const k=need(m[1],'close');if(!k)return false;
+    if(k==='shutter'){if(S.room!=='porch'){say('It\'s outside. You\'d have to go out to the porch.','err');return false}say(S.tied?'It\'s tied shut.':'You push it shut. The wind tears it open again at once. It needs tying.','err');return true}
+    if(k==='tin'){S.tinOpen=false;say('You press the lid back on.');return true}
+    say('It\'s as shut as it gets.','err');return false}
+  if(m=s.match(/^(?:light|ignite|start|turn on|strike) (.+?)(?: (?:with|using) (.+))?$/)){const k=need(m[1],'light');if(!k)return false;light(k);return true}
+  if(m=s.match(/^(?:tie|fasten|secure|lash|knot) (.+?)(?: (?:with|to|using|onto|on) (.+))?$/)){const k=need(m[1],'tie');if(!k)return false;const w=m[2]?need(m[2],'tie it with'):null;if(m[2]&&!w)return false;tie(k,w);return true}
+  if(m=s.match(/^(?:drink|sip|eat) (.+)$/)){const t=m[1].trim();if(t==='tea'){drink('tea');return true}const k=need(t,'drink');if(!k)return false;drink(k);return true}
+  if(m=s.match(/^(?:boil|melt|heat) (.+)$/)){const k=need(m[1],'heat');if(!k)return false;if(k==='snow'||k==='pot'){if(S.potOn){say(S.lit?'It\'s on the flame. Give it time.':'Light the stove.','err');return false}potOnStove();return true}say('You can\'t heat that.','err');return false}
+  if(/^(shout|yell|scream|call for help|pray|cry)$/.test(s)){say('The storm takes your voice and does nothing with it.');return true}
+  if(/^(swear|damn|xyzzy|plugh)$/.test(s)){say('A hollow voice says nothing. It\'s just the wind.');return false}
+  if(m=s.match(/^(\w+)/))say(`I don't know how to “${m[1]}”. Try HELP for the kinds of thing you can do.`,'err');
+  return false;
+}
+
+function run(raw,record=true){
+  const s=parse(raw);
+  if(/^(restart|start again|new game)$/.test(s)){hist=[];S=fresh();clear();intro();render();return}
+  if(/^undo$/.test(s)){
+    if(!hist.length){say('There\'s nothing to undo.','err');flush(raw);return}
+    const last=hist.pop();S=fresh();silent=true;for(const c of hist){if(exec(c))tick()}silent=false;
+    out=[];say(`<span class="sys">Undone: “${esc(last)}”.</span>`);look();flush(raw);render();return;
+  }
+  out=[];
+  const acted=exec(raw);
+  if(acted&&!S.ended)tick();
+  if(acted&&record)hist.push(raw);
+  flush(raw);render();
+}
+const esc=t=>t.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const logEl=$('log');
+function clear(){logEl.innerHTML=''}
+function flush(raw){
+  if(raw!=null){const p=document.createElement('p');p.className='you';p.textContent=raw;logEl.appendChild(p)}
+  for(const o of out){
+    const h=o.h.trim();
+    const el=document.createElement('div');
+    el.innerHTML=h.startsWith('<')?h:`<p class="${o.c||''}">${h}</p>`;
+    while(el.firstChild)logEl.appendChild(el.firstChild);
+  }
+  out=[];
+  logEl.scrollTop=logEl.scrollHeight;
+}
+function intro(){
+  out=[];
+  say('<p class="sys">Late November. Late afternoon.</p>');
+  say('<p>The forecast said the front would hold off until night. It didn\'t. For the last hour you\'ve been following marker poles you could barely see, and when the hut finally loomed out of the white you nearly walked past it.</p>');
+  say('<p>You\'re in. You\'re soaked to the knees, your hands won\'t work properly, and it\'s going to be a long night unless you do something about it.</p>');
+  look();
+  say(`<p class="sys">Type a command below, or tap a bold word to start one. Stuck? Try ${n('hint','hint')}.</p>`);
+  flush(null);
+}
+
+/* scene */
+const snowG=$('snowfall'),winS=$('winsnow');
+(function mkSnow(){let s='',w='';for(let i=0;i<46;i++){const x=Math.random()*700,dur=1.6+Math.random()*1.8,dl=-Math.random()*3,r=.9+Math.random()*1.6;s+=`<circle class="flake" cx="${x}" cy="${Math.random()*40}" r="${r}" fill="#fff" opacity=".85" style="animation-duration:${dur}s;animation-delay:${dl}s"/>`}
+for(let i=0;i<10;i++){const x=420+Math.random()*90;w+=`<circle class="flake" cx="${x}" cy="168" r="1.2" fill="#fff" style="animation-duration:${1+Math.random()}s;animation-delay:${-Math.random()*2}s"/>`}
+snowG.innerHTML=s;winS.innerHTML=w})();
+function render(){
+  const c=comforts();
+  $('clk').textContent=S.ended?'06:10':hhmm(S.t);
+  $('where').textContent=ROOMN[S.room];
+  const w=warmth();$('warm').innerHTML=Array.from({length:5},(_,i)=>`<i class="${i<w?'on':''}"></i>`).join('');
+  $('warmT').textContent=['','frozen','chilled','cold','warming','warm'][w];
+  $('checks').innerHTML=CHECKS.map(([k,l])=>`<li class="${c[k]?'done':''}">${l}</li>`).join('');
+  const [x,y]=POS[S.room];$('you').setAttribute('transform',`translate(${x},${y})`);
+  $('you').style.display=S.ended?'none':'';
+  $('beam').setAttribute('d',S.room==='porch'?'M-6 -22 L-60 -36 L-60 -8Z':'M6 -22 L60 -36 L60 -8Z');
+  $('can').setAttribute('opacity',S.canOn?1:0);
+  $('canL').setAttribute('opacity',S.loc.canister==='loft'?1:0);
+  $('flameG').setAttribute('opacity',S.lit?1:0);
+  $('warmth').setAttribute('opacity',S.lit?.16:0);
+  $('potG').setAttribute('opacity',S.potOn?1:0);
+  $('potF').setAttribute('opacity',S.loc.pot==='main'?1:0);
+  $('steam').setAttribute('opacity',S.potOn&&S.lit&&S.potHeat>=2?1:0);
+  $('tinS').setAttribute('opacity',S.loc.tin==='shelf'?1:0);
+  $('bookT').setAttribute('opacity',S.loc.logbook==='main'?1:0);
+  $('mugT').setAttribute('opacity',S.loc.mug==='main'?1:0);
+  $('blanketL').setAttribute('opacity',S.loc.blanket==='loft'?1:0);
+  $('cordL').setAttribute('opacity',S.loc.cord==='loft'?1:0);
+  $('socksLine').setAttribute('opacity',S.loc.socks==='line'?1:0);
+  $('sockSteam').setAttribute('opacity',S.loc.socks==='line'&&S.sockWet&&S.lit?1:0);
+  $('shutter').classList.toggle('loose',!S.tied&&!S.ended);
+  $('tied').setAttribute('opacity',S.tied?1:0);
+  snowG.style.display=winS.style.display=S.ended?'none':'';
+  $('sk1').setAttribute('stop-color',S.ended?'#7fa6cf':'#2f3d47');$('sk2').setAttribute('stop-color',S.ended?'#f6c4b0':'#6c7c86');
+  $('peaks').setAttribute('fill',S.ended?'#f4f6f8':'#8d9ba3');$('peaks').setAttribute('opacity',S.ended?.95:.55);
+  const chips=S.ended?['restart','undo']:['look','inventory',S.room==='main'?'up':S.room==='loft'?'down':'in',S.room==='main'?'out':null,'wait','sleep','undo','hint'].filter(Boolean);
+  $('chips').innerHTML=chips.map(c=>`<button type="button" class="${c==='hint'?'hint':''}" data-c="${c}">${c}</button>`).join('');
+}
+$('chips').addEventListener('click',e=>{const b=e.target.closest('button');if(b)run(b.dataset.c)});
+const inp=$('cmd');
+$('f').addEventListener('submit',e=>{e.preventDefault();const v=inp.value.trim();inp.value='';if(!v)return;run(v)});
+const VERB={logbook:'read',restart:'restart',undo:'undo',hint:'hint'};
+logEl.addEventListener('click',e=>{const b=e.target.closest('.n');if(!b)return;const k=b.dataset.k;
+  if(VERB[k]&&['restart','undo','hint'].includes(k)){run(k);return}
+  const word=(OBJ[k]?OBJ[k].names[0]:k);
+  if(inp.value.trim())inp.value=inp.value.trim()+' '+word+' ';else inp.value=(k==='logbook'?'read ':'examine ')+word;
+  inp.focus({preventScroll:true});});
+inp.addEventListener('keydown',e=>{if(e.key==='ArrowUp'&&hist.length){e.preventDefault();inp.value=hist[hist.length-1]}});
+
+S=fresh();intro();render();
+window.__stormhut={get state(){return JSON.parse(JSON.stringify({...S,comforts:comforts(),warmth:warmth(),hist}))},run:c=>run(c),get log(){return logEl.innerText}};
+})();
+</script>
+</body>
+</html>

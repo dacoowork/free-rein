@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&family=Londrina+Solid:wght@900&family=Atkinson+Hyperlegible&family=Fragment+Mono&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&family=Londrina+Solid:wght@900&family=Atkinson+Hyperlegible&family=Fragment+Mono&family=Krona+One&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -144,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-16"></script>
+<script src="builds.js?v=2026-11-17"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -155,6 +155,26 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    stormhut(b,r){
+      // the build's hut in the storm: stove lit, shutter tied with orange cord, socks on the line, and the command that lit it
+      let s=`<rect width="320" height="180" fill="#3a4a54"/>`;
+      s+=`<path d="M40 120 L80 80 L104 100 L130 66 L160 112Z" fill="#8d9ba3" opacity=".5"/>`;
+      s+=`<path d="M0 150 C60 144 120 146 320 150 L320 180 L0 180Z" fill="#eef3f5"/>`;
+      s+=`<path d="M92 82 L160 36 L228 82 L228 150 L92 150Z" fill="#c99a63"/><path d="M98 82 L160 42 L222 82 L222 150 L98 150Z" fill="#8b6743"/>`;
+      s+=`<path d="M98 82 L160 42 L222 82 L222 150 L98 150Z" fill="#ff9a3c" opacity=".18"/>`;
+      s+=`<path d="M84 86 L160 32 L236 86 L230 89 L160 40 L90 89Z" fill="#3c2f2a"/><rect x="98" y="82" width="124" height="4" fill="#5e4329"/>`;
+      s+=`<rect x="124" y="70" width="44" height="4" fill="#5e4329"/><rect x="128" y="66" width="22" height="4" rx="1.5" fill="#8d9296"/>`;
+      s+=`<rect x="176" y="96" width="26" height="20" fill="#4a3725"/><rect x="178" y="98" width="22" height="16" fill="#5f6f79"/><path d="M189 98V114M178 106H200" stroke="#4a3725" stroke-width="1.5"/>`;
+      s+=`<rect x="202" y="96" width="12" height="20" fill="#2f5f9e"/><path d="M200 102 L216 104 M200 110 L216 109" stroke="#ff7a1a" stroke-width="1.6"/>`;
+      s+=`<path d="M128 100 Q148 105 168 100" stroke="#e8e0d0" stroke-width="1" fill="none"/><path d="M142 102v7l-4 2v-2l2-1v-6z M150 103v7l-4 2v-2l2-1v-6z" fill="#7a3b8c"/>`;
+      s+=`<rect x="124" y="128" width="54" height="3" fill="#5e4329"/><rect x="128" y="131" width="3" height="19" fill="#5e4329"/><rect x="171" y="131" width="3" height="19" fill="#5e4329"/>`;
+      s+=`<circle cx="152" cy="122" r="12" fill="#ffb35c" opacity=".35"/><rect x="144" y="122" width="16" height="6" rx="1" fill="#30363a"/><path d="M148 122q1.5-5 4-6q3 1 4 6z" fill="#3b8cff"/>`;
+      s+=`<rect x="130" y="124" width="10" height="4" fill="#2d6a4f"/>`;
+      s+=`<g transform="translate(112 140)"><circle cx="0" cy="-11" r="3.5" fill="#f0c9a2" stroke="#16252a"/><path d="M-4.5 -7h9v10h-9z" fill="#c8321e" stroke="#16252a"/><path d="M-3 3v7M3 3v7" stroke="#16252a" stroke-width="2.5"/></g>`;
+      [[30,30],[60,52],[250,40],[280,70],[262,110],[40,96],[300,30],[20,130],[240,128],[110,24],[200,20],[290,140]].forEach(([x,y])=>s+=`<circle cx="${x}" cy="${y}" r="1.5" fill="#fff" opacity=".85"/>`);
+      s+=`<rect x="92" y="156" width="136" height="18" rx="5" fill="#fbfcfc"/><text x="100" y="168.5" font-family="Spline Sans Mono,Menlo,monospace" font-weight="600" font-size="9" fill="${b.accent}">› light stove</text><rect x="175" y="160" width="1.5" height="10" fill="#16252a"/>`;
+      return s;
+    },
     gillorpore(b,r){
       // couplet 6 of the build's key: a penny bun on its tray, and the two leads, the pores lead (6a) taken
       const O='#2b211c';

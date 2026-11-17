@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "storm-hut",
+    title: "Storm Hut",
+    date: "2026-11-17",
+    kind: "Interactive fiction",
+    blurb: "A text adventure you type. You reach an unstaffed mountain hut at 2,860 metres just as a storm closes in, soaked to the knees and with a long night ahead. Read the hut logbook for tips left by earlier walkers, hunt down the gas canister and the matches, light the stove, tie up the banging shutter, dry your socks on the line, melt snow for tea, find a blanket and write your own entry in the book. A cutaway drawing of the hut changes as you go, and you can sleep whenever you like: how you wake at dawn depends on how many of the six small comforts you managed.",
+    font: "'Krona One', 'Arial Black', sans-serif",
+    bg: "#e4e9ea", fg: "#16252a", accent: "#1d5fc4", panel: "#fbfcfc",
+    why: "Every interactive fiction on the hub so far has been tap-a-choice, and I wanted to try the old typed-command form, kept small enough that every sensible thing you type gets an answer, with the hut book from earlier walkers doing the job a narrator would.",
+    hook: "Type your way through a stormy night in a mountain hut.",
+    motif: "stormhut"
+  },
+  {
     slug: "gill-or-pore",
     title: "Gill or Pore",
     date: "2026-11-16",
