@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&family=Londrina+Solid:wght@900&family=Atkinson+Hyperlegible&family=Fragment+Mono&family=Krona+One&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&family=Londrina+Solid:wght@900&family=Atkinson+Hyperlegible&family=Fragment+Mono&family=Krona+One&family=Fredoka:wght@700&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -144,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-17"></script>
+<script src="builds.js?v=2026-11-18"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -155,6 +155,23 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    waggle(b,r){
+      // the build's comb panel: the dancer's figure-of-eight with her waggle run 40 degrees right of up (up = the sun), and the angle marked
+      let s=`<rect width="320" height="180" fill="#f3dfae"/>`;
+      const R=11,w=Math.sqrt(3)*R;
+      for(let row=-1;row<13;row++)for(let col=-1;col<18;col++){const cx=col*w+(row%2?w/2:0),cy=row*R*1.5;let d='';for(let i=0;i<6;i++){const a=(60*i+30)*Math.PI/180;d+=(i?'L':'M')+(cx+R*Math.cos(a)).toFixed(1)+' '+(cy+R*Math.sin(a)).toFixed(1)}const f=r()<.14;s+=`<path d="${d}Z" fill="${f?b.accent:'none'}" fill-opacity=".35" stroke="#e2c27e" stroke-width="1"/>`}
+      const C=[160,104],th=40*Math.PI/180,ux=Math.sin(th),uy=-Math.cos(th),L=56;
+      s+=`<path d="M160 104 V30" stroke="${b.fg}" stroke-width="1.6" stroke-dasharray="4 4" fill="none"/><circle cx="160" cy="20" r="7" fill="#f5b301"/>`;
+      s+=`<circle cx="160" cy="104" r="${L/2}" fill="none" stroke="${b.accent}" stroke-width="2"/>`;
+      s+=`<path d="M${160-ux*L/2} ${104-uy*L/2} L${160+ux*(L/2+18)} ${104+uy*(L/2+18)}" stroke="#9a5a00" stroke-width="2.6" stroke-linecap="round"/>`;
+      s+=`<path d="M160 68 A36 36 0 0 1 ${160+36*ux} ${104+36*uy}" fill="none" stroke="#9a5a00" stroke-width="2"/>`;
+      s+=`<text x="${172}" y="${58}" font-family="DM Mono,Menlo,monospace" font-size="10" fill="#9a5a00" paint-order="stroke" stroke="#f3dfae" stroke-width="3">40° right</text>`;
+      const bee=(x,y,deg,sc)=>`<g transform="translate(${x} ${y}) rotate(${deg}) scale(${sc})"><ellipse cx="-5.5" cy="-1" rx="5.5" ry="3" fill="#fff" fill-opacity=".85" stroke="#6a5f52" stroke-width=".6" transform="rotate(-25 -5.5 -1)"/><ellipse cx="5.5" cy="-1" rx="5.5" ry="3" fill="#fff" fill-opacity=".85" stroke="#6a5f52" stroke-width=".6" transform="rotate(25 5.5 -1)"/><ellipse cx="0" cy="7" rx="4.6" ry="7.2" fill="#e8a317"/><path d="M-4.4 4.2h8.8M-4.2 8.6h8.4M-3 12.4h6" stroke="#1d1812" stroke-width="2"/><circle cx="0" cy="-2.5" r="3.6" fill="#1d1812"/><circle cx="0" cy="-7.6" r="2.6" fill="#1d1812"/><path d="M-1 -9.6 L-3.2 -13.4 M1 -9.6 L3.2 -13.4" stroke="#1d1812" stroke-width=".9" stroke-linecap="round"/></g>`;
+      s+=bee(160+ux*6,104+uy*6,46,1.5);
+      s+=bee(160+ux*6-10,104+uy*6+30,36,1.25)+bee(160+ux*6+20,104+uy*6+26,44,1.25);
+      [[70,40,120],[96,150,-30],[236,140,200],[250,52,80],[66,120,10],[214,30,150]].forEach(([x,y,a])=>s+=bee(x,y,a,1.1));
+      return s;
+    },
     stormhut(b,r){
       // the build's hut in the storm: stove lit, shutter tied with orange cord, socks on the line, and the command that lit it
       let s=`<rect width="320" height="180" fill="#3a4a54"/>`;

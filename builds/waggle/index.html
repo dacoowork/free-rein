@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Waggle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Hanken+Grotesk:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbf9f4; --panel:#ffffff; --ink:#1d1812; --soft:#6a5f52; --line:#e6ddcd;
+  --honey:#e39a12; --honeyInk:#9a5a00; --wax:#f3dfae; --waxLine:#e2c27e;
+  --field:#f1f4e6; --fieldLine:#dbe3c3; --sun:#f5b301; --trail:#1d1812;
+  --clover:#c64f86; --heather:#7c5cc4; --bee:#1d1812; --beeBand:#e8a317;
+  --disp:'Fredoka','Avenir Next Rounded','Trebuchet MS',sans-serif;
+  --body:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'DM Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16130f; --panel:#1f1a14; --ink:#f4ede1; --soft:#b5a894; --line:#3a3127;
+    --honey:#f0a92a; --honeyInk:#f5b84a; --wax:#3a2c14; --waxLine:#6a5123;
+    --field:#1c2016; --fieldLine:#333b25; --trail:#f4ede1;
+    --clover:#e47aaa; --heather:#a58ae6; --bee:#0c0a08; --beeBand:#f0a92a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16130f; --panel:#1f1a14; --ink:#f4ede1; --soft:#b5a894; --line:#3a3127;
+  --honey:#f0a92a; --honeyInk:#f5b84a; --wax:#3a2c14; --waxLine:#6a5123;
+  --field:#1c2016; --fieldLine:#333b25; --trail:#f4ede1;
+  --clover:#e47aaa; --heather:#a58ae6; --bee:#0c0a08; --beeBand:#f0a92a;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 16px 56px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;margin-bottom:14px}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(40px,7vw,68px);line-height:.95;margin:0;letter-spacing:-.01em}
+h1 span{color:var(--honey)}
+.sub{color:var(--soft);margin:0;max-width:46ch}
+.stage{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:12px;overflow:hidden}
+.panes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pane{position:relative;border-radius:12px;overflow:hidden;transition:opacity .4s, filter .4s}
+.pane.dim{opacity:.45;filter:saturate(.5)}
+.pane svg{display:block;width:100%;height:auto}
+.tag{position:absolute;left:10px;top:10px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;background:var(--panel);color:var(--soft);padding:3px 8px;border-radius:999px;border:1px solid var(--line);pointer-events:none}
+.caption{min-height:3.3em;display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--disp);font-weight:600;font-size:clamp(18px,2.4vw,25px);line-height:1.25;padding:12px 8px 4px;text-wrap:balance}
+.caption .w{display:inline-block;opacity:0;transform:translateY(8px);transition:opacity .35s,transform .35s}
+.caption .w.on{opacity:1;transform:none}
+.caption b{color:var(--honeyInk);font-weight:700}
+.card{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:var(--panel);transition:opacity .6s;padding:20px;z-index:3}
+.card.off{opacity:0;pointer-events:none}
+.card .big{font-family:var(--disp);font-weight:700;font-size:clamp(54px,11vw,120px);line-height:.9;margin:0}
+.card .big span{color:var(--honey)}
+.card p{margin:12px 0 0;color:var(--soft);font-size:clamp(15px,1.8vw,19px);max-width:34ch}
+.card .big{color:var(--ink);max-width:none}
+.card .credit{font-family:var(--mono);font-size:13px;margin-top:18px;color:var(--soft)}
+.controls{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer}
+.play{width:48px;height:48px;border-radius:50%;border:0;background:var(--ink);color:var(--bg);display:grid;place-items:center;flex:none}
+.play:focus-visible,.speed button:focus-visible,.chap:focus-visible{outline:3px solid var(--honey);outline-offset:2px}
+.play svg{width:20px;height:20px}
+.track{flex:1 1 300px;position:relative;min-width:200px}
+.track input{width:100%;margin:0;accent-color:var(--honey);height:28px}
+.ticks{position:relative;height:14px}
+.ticks i{position:absolute;top:0;width:2px;height:8px;background:var(--line);transform:translateX(-1px)}
+.time{font-family:var(--mono);font-size:14px;color:var(--soft);min-width:96px;text-align:right}
+.speed{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.speed button{border:0;background:transparent;color:var(--ink);padding:7px 12px;font-family:var(--mono);font-size:13px}
+.speed button[aria-pressed="true"]{background:var(--honey);color:#1d1812}
+.chapters{list-style:none;margin:22px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.chap{width:100%;text-align:left;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:baseline}
+.chap .n{font-family:var(--mono);font-size:12px;color:var(--soft);flex:none}
+.chap .t{font-weight:500}
+.chap[aria-current="true"]{border-color:var(--honey);box-shadow:inset 4px 0 0 var(--honey)}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px 28px;margin-top:34px;border-top:1px solid var(--line);padding-top:24px}
+.notes h2{font-family:var(--disp);font-weight:600;font-size:20px;margin:0 0 4px}
+.notes p{margin:0;color:var(--soft);font-size:15px}
+svg text{font-family:var(--mono)}
+.lbl{font-size:18px;fill:var(--ink)}
+.lblS{font-size:16px;fill:var(--soft)}
+.lblH{font-size:19px;fill:var(--honeyInk);font-weight:500}
+#comb text{paint-order:stroke;stroke:var(--wax);stroke-width:5px;stroke-linejoin:round}
+#field text{paint-order:stroke;stroke:var(--field);stroke-width:5px;stroke-linejoin:round}
+.capin{display:block}
+@media (max-width:700px){
+  .panes{grid-template-columns:1fr}
+  .wrap{padding-top:20px}
+  .stage{padding:8px}
+  .time{min-width:0}
+}
+@media (prefers-reduced-motion:reduce){.caption .w,.card,.pane{transition:none}}
+</style>
+</head><body>
+
+<div class="wrap">
+  <header>
+    <h1>Wag<span>g</span>le</h1>
+    <p class="sub">A one-minute film about how a honeybee tells her sisters where the flowers are, with nothing but a dance in the dark.</p>
+  </header>
+
+  <section class="stage" aria-label="Film">
+    <div class="caption" id="caption" aria-live="polite"></div>
+    <div class="panes">
+      <div class="pane" id="paneComb">
+        <svg id="comb" viewBox="0 0 500 500" role="img" aria-label="The vertical honeycomb inside the hive, where the forager dances"></svg>
+        <span class="tag">Inside · the comb</span>
+      </div>
+      <div class="pane" id="paneField">
+        <svg id="field" viewBox="0 0 500 500" role="img" aria-label="Map of the countryside around the hive, seen from above"></svg>
+        <span class="tag">Outside · from above</span>
+      </div>
+    </div>
+    <div class="card" id="titleCard">
+      <p class="big">Wag<span>g</span>le</p>
+      <p>How a honeybee gives directions, in one minute.</p>
+    </div>
+    <div class="card off" id="endCard">
+      <p class="big">Wag<span>g</span>le</p>
+      <p>Angle to the sun, and time spent waggling. That is the whole message.</p>
+      <p class="credit">Decoded by Karl von Frisch in the 1940s · Nobel Prize 1973</p>
+    </div>
+  </section>
+
+  <div class="controls">
+    <button class="play" id="play" aria-label="Pause"></button>
+    <div class="track">
+      <input type="range" id="scrub" min="0" max="64" step="0.01" value="0" aria-label="Position in film">
+      <div class="ticks" id="ticks"></div>
+    </div>
+    <span class="time" id="time">0:00 / 1:04</span>
+    <div class="speed" role="group" aria-label="Speed">
+      <button data-s="0.5" aria-pressed="false">½×</button>
+      <button data-s="1" aria-pressed="true">1×</button>
+      <button data-s="2" aria-pressed="false">2×</button>
+    </div>
+  </div>
+
+  <ol class="chapters" id="chapters"></ol>
+
+  <section class="notes">
+    <div><h2>Up means the sun</h2><p>Inside the hive it is dark and the comb hangs vertically, so the dancer uses gravity as a stand-in: straight up the comb stands for the sun's direction outside. A run tilted 40° right of up means "fly 40° right of the sun".</p></div>
+    <div><h2>Time means distance</h2><p>The longer the waggle run, the farther the flowers: very roughly a second of waggling per kilometre, though the exact rate varies between colonies. Bees seem to judge distance by how much scenery streams past their eyes on the way.</p></div>
+    <div><h2>The dance keeps time</h2><p>The sun crosses the sky about 15° an hour. A bee dancing for a long while slowly turns her waggle run to keep pointing at the same patch, adjusting with an internal clock even though she can't see the sky.</p></div>
+    <div><h2>Close to home</h2><p>For flowers within a few tens of metres a forager does a looser "round dance" with little direction in it. The waggle dance takes over as distance grows. Followers also smell the flowers on her body.</p></div>
+  </section>
+</div>
+
+<script>
+(function(){
+const NS='http://www.w3.org/2000/svg';
+const T=64;
+const $=id=>document.getElementById(id);
+const comb=$('comb'), field=$('field');
+const D2R=Math.PI/180;
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const ease=x=>x<0?0:x>1?1:x*x*(3-2*x);
+const ramp=(t,a,b)=>ease((t-a)/(b-a));
+const lerp=(a,b,k)=>a+(b-a)*k;
+
+/* ---------- story ---------- */
+const CLOVER={az:20,km:0.9}, HEATHER={az:-95,km:2.2};
+const SUN0=-20, SUN1=25;
+const CHAPTERS=[
+  [0,'Title'],
+  [4,'A forager finds clover'],
+  [12,'She dances on the comb'],
+  [18,'Up the comb means the sun'],
+  [25,'Waggle time means distance'],
+  [32,'Followers fly the bearing'],
+  [41,'A farther patch, a longer dance'],
+  [51,'The sun moves, the dance turns'],
+  [60,'End']
+];
+const CAPS=[
+  [4,12,'A forager finds a patch of <b>clover</b>, 900 m from the hive, and flies home.'],
+  [12,18,'Inside the hive it is dark. She dances on the <b>vertical</b> comb.'],
+  [18,25,'Straight <b>up</b> the comb stands for the <b>sun</b>. Her run points <b>40°</b> right of up, so the clover is 40° right of the sun.'],
+  [25,32,'How <b>long</b> she waggles says how <b>far</b>: about <b>0.9 s</b> for 900 m.'],
+  [32,41,'Her sisters follow the dance with their antennae, then fly the <b>bearing</b>.'],
+  [41,51,'Another forager has found <b>heather</b> 2.2 km away: <b>75°</b> left of the sun, and a waggle run of about <b>2.2 s</b>.'],
+  [51,60,'Hours pass. The sun moves about <b>15° an hour</b>, so she turns her dance to keep pointing at the clover.'],
+];
+function sunAz(t){return lerp(SUN0,SUN1,ramp(t,52,58))}
+
+/* ---------- drawing helpers ---------- */
+function bee(parent,scale,cls){
+  const g=el('g',{},parent);
+  const inner=el('g',{transform:`scale(${scale})`},g);
+  el('ellipse',{cx:-5.5,cy:-1,rx:5.5,ry:3,style:'fill:var(--panel);fill-opacity:.8;stroke:var(--soft);stroke-width:.6',transform:'rotate(-25 -5.5 -1)','data-w':'L'},inner);
+  el('ellipse',{cx:5.5,cy:-1,rx:5.5,ry:3,style:'fill:var(--panel);fill-opacity:.8;stroke:var(--soft);stroke-width:.6',transform:'rotate(25 5.5 -1)','data-w':'R'},inner);
+  el('ellipse',{cx:0,cy:7,rx:4.6,ry:7.2,style:'fill:var(--beeBand)'},inner);
+  el('path',{d:'M-4.4 4.2h8.8M-4.2 8.6h8.4M-3 12.4h6',style:'stroke:var(--bee);stroke-width:2;fill:none'},inner);
+  el('circle',{cx:0,cy:-2.5,r:3.6,style:'fill:var(--bee)'},inner);
+  el('circle',{cx:0,cy:-7.6,r:2.6,style:'fill:var(--bee)'},inner);
+  el('path',{d:'M-1 -9.6 L-3.2 -13.4 M1 -9.6 L3.2 -13.4',style:'stroke:var(--bee);stroke-width:.9;fill:none;stroke-linecap:round'},inner);
+  if(cls)g.setAttribute('class',cls);
+  return g;
+}
+function place(g,x,y,deg,op){g.setAttribute('transform',`translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${deg.toFixed(1)})`);if(op!==undefined)g.style.opacity=op}
+function arcPath(cx,cy,r,a0,a1){ // angles in deg from up, clockwise
+  const p=a=>[cx+r*Math.sin(a*D2R),cy-r*Math.cos(a*D2R)];
+  const [x0,y0]=p(a0),[x1,y1]=p(a1);
+  const large=Math.abs(a1-a0)>180?1:0, sweep=a1>a0?1:0;
+  return `M${x0.toFixed(2)} ${y0.toFixed(2)} A${r} ${r} 0 ${large} ${sweep} ${x1.toFixed(2)} ${y1.toFixed(2)}`;
+}
+
+/* ---------- comb ---------- */
+const CC={x:250,y:262}; // dance centre
+(function drawComb(){
+  el('rect',{width:500,height:500,style:'fill:var(--wax)'},comb);
+  const R=17, w=Math.sqrt(3)*R, r=rng(7);
+  const cells=el('g',{},comb);
+  for(let row=-1;row<20;row++)for(let col=-1;col<18;col++){
+    const cx=col*w+(row%2?w/2:0), cy=row*R*1.5;
+    let d='';for(let i=0;i<6;i++){const a=(60*i+30)*D2R;d+=(i?'L':'M')+(cx+R*Math.cos(a)).toFixed(1)+' '+(cy+R*Math.sin(a)).toFixed(1)}
+    const capped=r()<.16 && Math.hypot(cx-CC.x,cy-CC.y)>150;
+    el('path',{d:d+'Z',style:`fill:${capped?'var(--honey)':'none'};fill-opacity:${capped?.35:0};stroke:var(--waxLine);stroke-width:1.4`},cells);
+  }
+})();
+const combAnno=el('g',{},comb);
+const upLine=el('path',{d:`M${CC.x} ${CC.y} V${CC.y-150}`,style:'stroke:var(--ink);stroke-width:2;stroke-dasharray:5 6;fill:none'},combAnno);
+const upHead=el('path',{d:`M${CC.x-7} ${CC.y-140} L${CC.x} ${CC.y-154} L${CC.x+7} ${CC.y-140}`,style:'stroke:var(--ink);stroke-width:2;fill:none;stroke-linejoin:round'},combAnno);
+const upTxt=el('text',{x:CC.x+12,y:CC.y-160,class:'lbl'},combAnno);upTxt.textContent='up = sun';
+const sunDot=el('circle',{cx:CC.x,cy:CC.y-176,r:9,style:'fill:var(--sun)'},combAnno);
+const runLine=el('path',{style:'stroke:var(--honeyInk);stroke-width:3;fill:none;stroke-linecap:round'},combAnno);
+const runArc=el('path',{style:'stroke:var(--honeyInk);stroke-width:2.5;fill:none'},combAnno);
+const runTxt=el('text',{class:'lblH','text-anchor':'middle'},combAnno);
+const timer=el('g',{},comb);
+el('rect',{x:150,y:440,width:200,height:38,rx:19,style:'fill:var(--panel);stroke:var(--line)'},timer);
+const timerTxt=el('text',{x:250,y:464,'text-anchor':'middle',class:'lbl'},timer);
+const dTrail=el('path',{style:'stroke:var(--honey);stroke-width:2;fill:none;stroke-opacity:.7;stroke-linecap:round'},comb);
+// idle bees
+const idle=[];const ri=rng(31);
+for(let i=0;i<16;i++){
+  let x,y;do{x=30+ri()*440;y=30+ri()*440}while(Math.hypot(x-CC.x,y-CC.y)<140||(y>425&&x>140&&x<360));
+  idle.push({g:bee(comb,1.25),x,y,a:ri()*360,ph:ri()*10});
+}
+const followers=[0,1,2].map(()=>bee(comb,1.3));
+const dancer=bee(comb,1.45);
+
+// dance kinematics: returns {x,y,deg,waggling,cycleT}
+function dance(tau,theta,L,Tw,Tr){
+  const cyc=2*(Tw+Tr);tau=((tau%cyc)+cyc)%cyc;
+  const half=Math.floor(tau/(Tw+Tr)); let p=tau-half*(Tw+Tr);
+  const ux=Math.sin(theta*D2R), uy=-Math.cos(theta*D2R); // run direction
+  const nx=-uy, ny=ux;
+  const Ax=CC.x-ux*L/2, Ay=CC.y-uy*L/2;
+  if(p<Tw){
+    const k=p/Tw, s=k*L, wob=Math.sin(p*2*Math.PI*11)*3.2;
+    return {x:Ax+ux*s+nx*wob,y:Ay+uy*s+ny*wob,deg:theta+Math.sin(p*2*Math.PI*11)*14,waggling:true,k};
+  }
+  // return loop: semicircle from B back to A on alternating side
+  const k=ease((p-Tw)/Tr), side=half%2?1:-1;
+  const ang=k*Math.PI; // 0 at B, PI at A
+  const rr=L/2;
+  const ox=ux*Math.cos(ang)*rr + nx*side*Math.sin(ang)*rr*1.05;
+  const oy=uy*Math.cos(ang)*rr + ny*side*Math.sin(ang)*rr*1.05;
+  // heading: derivative
+  const dx=-ux*Math.sin(ang)+nx*side*Math.cos(ang)*1.05, dy=-uy*Math.sin(ang)+ny*side*Math.cos(ang)*1.05;
+  return {x:CC.x+ox,y:CC.y+oy,deg:Math.atan2(dx,-dy)/D2R,waggling:false,k};
+}
+// which dance is running at time t
+function danceAt(t){
+  if(t<12||t>=60)return null;
+  if(t>=41&&t<51){return {theta:HEATHER.az-sunAz(t),L:150,Tw:2.2,Tr:1.5,start:41.6,col:'var(--heather)',km:HEATHER.km}}
+  return {theta:CLOVER.az-sunAz(t),L:90,Tw:0.9,Tr:1.2,start:12.6,col:'var(--clover)',km:CLOVER.km};
+}
+
+/* ---------- field ---------- */
+const H={x:300,y:385}, S=120; // hive, px per km
+function fpt(az,km){return [H.x+Math.sin(az*D2R)*km*S,H.y-Math.cos(az*D2R)*km*S]}
+(function drawField(){
+  el('rect',{width:500,height:500,style:'fill:var(--field)'},field);
+  // field boundaries: gentle hedge lines
+  const g=el('g',{style:'stroke:var(--fieldLine);stroke-width:2;fill:none'},field);
+  ['M0 120 C120 110 260 140 500 118','M0 300 C150 290 330 320 500 296','M120 0 C130 140 100 330 140 500','M420 0 C400 160 440 320 410 500','M0 440 C160 430 300 460 500 450'].forEach(d=>el('path',{d},g));
+  // clover patch
+  const [cx,cy]=fpt(CLOVER.az,CLOVER.km);const rc=rng(3);
+  const cg=el('g',{},field);
+  for(let i=0;i<26;i++){const a=rc()*6.283,r=Math.sqrt(rc())*22;el('circle',{cx:cx+Math.cos(a)*r,cy:cy+Math.sin(a)*r*.8,r:3.2,style:'fill:var(--clover)'},cg)}
+  const ct=el('text',{x:cx+30,y:cy-6,class:'lbl'},field);ct.textContent='clover';
+  const ct2=el('text',{x:cx+30,y:cy+11,class:'lblS'},field);ct2.textContent='900 m';
+  // heather patch
+  const [hx,hy]=fpt(HEATHER.az,HEATHER.km);const rh=rng(5);
+  for(let i=0;i<30;i++){const a=rh()*6.283,r=Math.sqrt(rh())*24;el('circle',{cx:hx+Math.cos(a)*r*.8,cy:hy+Math.sin(a)*r,r:3,style:'fill:var(--heather)'},field)}
+  const ht=el('text',{x:hx-16,y:hy-50,class:'lbl'},field);ht.textContent='heather';
+  const ht2=el('text',{x:hx-16,y:hy-32,class:'lblS'},field);ht2.textContent='2.2 km';
+  // scale bar
+  el('path',{d:`M28 476 h${S} M28 470 v12 M${28+S} 470 v12`,style:'stroke:var(--soft);stroke-width:2;fill:none'},field);
+  const sb=el('text',{x:28+S+10,y:481,class:'lblS'},field);sb.textContent='1 km';
+})();
+const sunRay=el('path',{style:'stroke:var(--ink);stroke-width:2;stroke-dasharray:5 6;fill:none'},field);
+const sunG=el('g',{},field);
+for(let i=0;i<8;i++){const a=i*45*D2R;el('path',{d:`M${Math.cos(a)*17} ${Math.sin(a)*17} L${Math.cos(a)*24} ${Math.sin(a)*24}`,style:'stroke:var(--sun);stroke-width:3;stroke-linecap:round'},sunG)}
+el('circle',{r:12,style:'fill:var(--sun)'},sunG);
+const sunLbl=el('text',{class:'lblS','text-anchor':'middle'},field);sunLbl.textContent='sun';
+const bearLine=el('path',{style:'stroke:var(--honeyInk);stroke-width:3;fill:none;stroke-linecap:round'},field);
+const bearArc=el('path',{style:'stroke:var(--honeyInk);stroke-width:2.5;fill:none'},field);
+const bearTxt=el('text',{class:'lblH','text-anchor':'middle'},field);
+const flightTrail=el('path',{style:'stroke:var(--trail);stroke-width:1.6;stroke-dasharray:2 5;fill:none;stroke-linecap:round'},field);
+// hive
+(function(){const g=el('g',{transform:`translate(${H.x} ${H.y})`},field);
+  el('rect',{x:-20,y:-15,width:40,height:30,rx:3,style:'fill:var(--panel);stroke:var(--ink);stroke-width:2'},g);
+  el('path',{d:'M-20 -5 H20 M-20 5 H20',style:'stroke:var(--ink);stroke-width:1.2'},g);
+  const t=el('text',{x:0,y:36,'text-anchor':'middle',class:'lbl'},g);t.textContent='hive';
+})();
+const forager=bee(field,1.15);
+const recruits=[0,1,2].map(()=>bee(field,1.05));
+
+/* ---------- chapters / ticks ---------- */
+const chapList=$('chapters'), ticks=$('ticks');
+CHAPTERS.forEach(([s,name],i)=>{
+  const li=document.createElement('li');const b=document.createElement('button');b.className='chap';b.type='button';
+  b.innerHTML=`<span class="n">${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}</span><span class="t">${name}</span>`;
+  b.addEventListener('click',()=>{seek(s+.01);if(!playing)render()});
+  li.appendChild(b);chapList.appendChild(li);
+  const tk=document.createElement('i');tk.style.left=(s/T*100)+'%';ticks.appendChild(tk);
+});
+const chapBtns=[...chapList.querySelectorAll('.chap')];
+
+/* ---------- caption with word reveal ---------- */
+const capEl=$('caption');let capIdx=-2;
+function setCaption(t){
+  let idx=-1;CAPS.forEach((c,i)=>{if(t>=c[0]&&t<c[1])idx=i});
+  if(idx!==capIdx){
+    capIdx=idx;capEl.innerHTML='';const box=document.createElement('span');box.className='capin';capEl.appendChild(box);
+    if(idx>=0){
+      let bold=false;
+      CAPS[idx][2].split(' ').forEach((tok,k)=>{
+        const sp=document.createElement('span');sp.className='w';
+        let h='';const parts=tok.split(/(<\/?b>)/);
+        if(bold)h+='<b>';
+        parts.forEach(q=>{if(q==='<b>'){bold=true;h+='<b>'}else if(q==='</b>'){bold=false;h+='</b>'}else h+=q});
+        if(bold)h+='</b>';
+        sp.innerHTML=h;
+        if(k)box.appendChild(document.createTextNode(' '));
+        box.appendChild(sp);
+      });
+    }
+  }
+  if(idx>=0){
+    const ws=capEl.querySelectorAll('.w'), dt=t-CAPS[idx][0];
+    ws.forEach((w,i)=>w.classList.toggle('on',dt>i*0.07));
+  }
+}
+
+/* ---------- render(t) ---------- */
+let t=0, playing=true, speed=1;
+function render(){
+  // cards
+  $('titleCard').classList.toggle('off',!(t<3.6));
+  $('endCard').classList.toggle('off',!(t>=60));
+  setCaption(t);
+  const sun=sunAz(t);
+  const dz=danceAt(t);
+  // panes emphasis
+  const fieldFocus=(t>=4&&t<12)||(t>=34&&t<41);
+  $('paneComb').classList.toggle('dim',fieldFocus);
+  $('paneField').classList.toggle('dim',t>=12&&t<18);
+
+  // idle bees shuffle
+  idle.forEach((b,i)=>{
+    const wob=Math.sin(t*0.7+b.ph)*4;
+    place(b.g,b.x+wob,b.y+Math.cos(t*.5+b.ph)*3,b.a+Math.sin(t*.4+b.ph)*25);
+  });
+
+  // dancer
+  let dp=null;
+  if(dz){
+    if(t<dz.start){ // walk in from the comb's lower edge
+      const k=ease((t-(dz.start-1.6))/1.6);
+      const x=lerp(250,CC.x,k), y=lerp(520,CC.y+dz.L/2,k);
+      place(dancer,x,y,0,1);dp={x,y,deg:0,waggling:false};
+    }else{
+      dp=dance(t-dz.start,dz.theta,dz.L,dz.Tw,dz.Tr);
+      place(dancer,dp.x,dp.y,dp.deg,1);
+    }
+    // trail: the figure-of-eight path ghost
+    const pts=[];for(let s=0;s<=2*(dz.Tw+dz.Tr);s+=0.03){const q=dance(s,dz.theta,dz.L,dz.Tw,dz.Tr);if(!q.waggling)pts.push(q.x.toFixed(1)+' '+q.y.toFixed(1));else pts.push(null)}
+    let d='',pen=false;pts.forEach(p=>{if(!p){pen=false;return}d+=(pen?'L':'M')+p;pen=true});
+    dTrail.setAttribute('d',d);dTrail.style.opacity=t<dz.start?0:ramp(t,dz.start,dz.start+2)*.9;
+  }else{dancer.style.opacity=0;dTrail.style.opacity=0}
+  // wings buzz while waggling
+  dancer.querySelectorAll('[data-w]').forEach(w=>w.style.opacity=dp&&dp.waggling?(Math.sin(t*90)>0?1:.4):1);
+
+  // comb annotation
+  const annoOn=dz&&t>=18?ramp(t,18,19.5):0;
+  combAnno.style.opacity=annoOn;
+  if(dz){
+    const L2=dz.L/2+40, ux=Math.sin(dz.theta*D2R), uy=-Math.cos(dz.theta*D2R);
+    runLine.setAttribute('d',`M${CC.x-ux*(dz.L/2)} ${CC.y-uy*(dz.L/2)} L${CC.x+ux*L2} ${CC.y+uy*L2}`);
+    runArc.setAttribute('d',arcPath(CC.x,CC.y,64,0,dz.theta));
+    const mid=dz.theta/2, lr=Math.abs(dz.theta)<20?120:100;
+    runTxt.setAttribute('x',CC.x+Math.sin(mid*D2R)*lr);runTxt.setAttribute('y',CC.y-Math.cos(mid*D2R)*lr+5);
+    const a=Math.round(Math.abs(dz.theta));runTxt.textContent=a+'° '+(dz.theta>=0?'right':'left');
+    runTxt.style.opacity=a<4?0:1;
+    runArc.style.opacity=a<4?0:1;
+  }
+  // timer chip
+  const timerOn=dz&&t>=25?ramp(t,25,26):0;
+  timer.style.opacity=timerOn;
+  if(dz&&dp){
+    const per=dz.Tw.toFixed(1);
+    timerTxt.textContent=dp.waggling?`waggling… ${(dp.k*dz.Tw).toFixed(1)} s`:`run ${per} s ≈ ${dz.km<1?dz.km*1000+' m':dz.km+' km'}`;
+  }
+
+  // followers (32–41 and heather dance 44–51)
+  const follow=dz&&((t>=31&&t<38)||(t>=44&&t<51));
+  followers.forEach((f,i)=>{
+    if(!follow||!dz){f.style.opacity=0;return}
+    const q=dance(t-dz.start-0.12*(i+1),dz.theta,dz.L,dz.Tw,dz.Tr);
+    const h=q.deg*D2R, back=[-Math.sin(h),Math.cos(h)], side=[Math.cos(h),Math.sin(h)];
+    const off=[[-15,22],[15,22],[0,34]][i];
+    const x=q.x+side[0]*off[0]+back[0]*off[1], y=q.y+side[1]*off[0]+back[1]*off[1];
+    const fade=Math.min(ramp(t,31,32),1-ramp(t,37.4,38));
+    place(f,x,y,q.deg,(t>=44?ramp(t,44,45)*(1-ramp(t,50.4,51)):fade));
+  });
+
+  // field: sun
+  const sr=255;const sx=H.x+Math.sin(sun*D2R)*sr, sy=H.y-Math.cos(sun*D2R)*sr;
+  sunG.setAttribute('transform',`translate(${sx.toFixed(1)} ${sy.toFixed(1)})`);
+  sunLbl.setAttribute('x',sx);sunLbl.setAttribute('y',sy-32);
+  sunRay.setAttribute('d',`M${H.x} ${H.y} L${(H.x+Math.sin(sun*D2R)*(sr-30)).toFixed(1)} ${(H.y-Math.cos(sun*D2R)*(sr-30)).toFixed(1)}`);
+  sunRay.style.opacity=t>=18&&t<60?ramp(t,18,19.5):.25;
+  // field: bearing
+  const target=(t>=41&&t<51)?HEATHER:CLOVER;
+  const [tx,ty]=fpt(target.az,target.km);
+  const bearOn=t>=18&&t<60?ramp(t,19,20.5):0;
+  bearLine.setAttribute('d',`M${H.x} ${H.y} L${tx.toFixed(1)} ${ty.toFixed(1)}`);
+  bearArc.setAttribute('d',arcPath(H.x,H.y,64,sun,target.az));
+  const ba=Math.round(Math.abs(target.az-sun)), bmid=(sun+target.az)/2, blr=ba<20?120:104;
+  bearTxt.setAttribute('x',484);bearTxt.setAttribute('y',481);bearTxt.setAttribute('text-anchor','end');
+  bearTxt.textContent='fly '+ba+'° '+(target.az>=sun?'right':'left')+' of sun';
+  bearLine.style.opacity=bearOn;bearArc.style.opacity=ba<4?0:bearOn;bearTxt.style.opacity=bearOn;if(ba<4)bearTxt.textContent='fly straight at the sun';
+
+  // field: forager flights
+  let fx=null;
+  function flight(from,to,k,seed){ // wiggly path
+    const [x0,y0]=from,[x1,y1]=to;const x=lerp(x0,x1,k),y=lerp(y0,y1,k);
+    const nx=-(y1-y0),ny=x1-x0,n=Math.hypot(nx,ny)||1;const w=Math.sin(k*Math.PI*5+seed)*7*Math.sin(k*Math.PI);
+    return [x+nx/n*w,y+ny/n*w,Math.atan2(x1-x0,-(y1-y0))/D2R];
+  }
+  const C=fpt(CLOVER.az,CLOVER.km), HE=fpt(HEATHER.az,HEATHER.km), HV=[H.x,H.y];
+  if(t>=4&&t<11.4){const k=ease((t-5)/6);const p=flight(C,HV,k,0);place(forager,p[0],p[1],p[2],1-ramp(t,10.8,11.4));fx=[C,HV,k]}
+  else if(t>=41&&t<46){const k=ease((t-41.2)/4.4);const p=flight(HE,HV,k,1);place(forager,p[0],p[1],p[2],1-ramp(t,45.4,46));fx=[HE,HV,k]}
+  else forager.style.opacity=0;
+  if(fx){const [a,b,k]=fx;let d='';for(let s=0;s<=k;s+=.01){const p=flight(a,b,s,fx[0]===HE?1:0);d+=(s?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)}flightTrail.setAttribute('d',d);flightTrail.style.opacity=1}
+  else flightTrail.style.opacity=0;
+  recruits.forEach((r,i)=>{
+    const st=34.2+i*.5;
+    if(t<st||t>=41){r.style.opacity=0;return}
+    const k=ease((t-st)/4.6);const sp=(i-1)*9;
+    const p=flight(HV,[C[0]+sp,C[1]+sp*.3],k,i*2);place(r,p[0],p[1],p[2],1);
+  });
+
+  // UI
+  $('scrub').value=t;
+  const fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+  $('time').textContent=fmt(t)+' / '+fmt(T);
+  let ci=0;CHAPTERS.forEach(([s],i)=>{if(t>=s)ci=i});
+  chapBtns.forEach((b,i)=>b.setAttribute('aria-current',i===ci?'true':'false'));
+}
+
+/* ---------- playback ---------- */
+const playBtn=$('play');
+const ICON_PAUSE='<svg viewBox="0 0 20 20"><rect x="4" y="3" width="4" height="14" rx="1" fill="currentColor"/><rect x="12" y="3" width="4" height="14" rx="1" fill="currentColor"/></svg>';
+const ICON_PLAY='<svg viewBox="0 0 20 20"><path d="M5 3 L17 10 L5 17Z" fill="currentColor"/></svg>';
+function syncBtn(){playBtn.innerHTML=playing?ICON_PAUSE:ICON_PLAY;playBtn.setAttribute('aria-label',playing?'Pause':'Play')}
+function seek(s){t=clamp(s,0,T);render()}
+let last=null;
+function frame(now){
+  if(last!==null&&playing){t+=Math.min(.1,(now-last)/1000)*speed;if(t>=T)t-=T;render()}
+  last=now;requestAnimationFrame(frame);
+}
+playBtn.addEventListener('click',()=>{playing=!playing;syncBtn()});
+$('scrub').addEventListener('input',e=>{seek(+e.target.value)});
+document.querySelectorAll('.speed button').forEach(b=>b.addEventListener('click',()=>{
+  speed=+b.dataset.s;document.querySelectorAll('.speed button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));
+}));
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'&&e.key!==' ')return;
+  if(e.key===' '&&e.target.tagName!=='BUTTON'){e.preventDefault();playing=!playing;syncBtn()}
+  if(e.key==='ArrowRight'&&e.target.tagName!=='INPUT'){seek(t+5)}
+  if(e.key==='ArrowLeft'&&e.target.tagName!=='INPUT'){seek(t-5)}
+});
+if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){playing=false;t=20}
+syncBtn();render();requestAnimationFrame(frame);
+window.__waggle={get t(){return t},get playing(){return playing},seek,play(){playing=true;syncBtn()},pause(){playing=false;syncBtn()},danceAt};
+})();
+</script>
+</body></html>

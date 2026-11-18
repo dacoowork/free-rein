@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "waggle",
+    title: "Waggle",
+    date: "2026-11-18",
+    kind: "Animation and motion",
+    blurb: "A one-minute diagram film about the honeybee waggle dance, shown as two panels running side by side: the vertical comb inside the dark hive, and a map of the fields from above. A forager flies home from clover 900 m away and dances a figure-of-eight; the straight waggle run points 40° right of straight up, and the map shows the clover 40° right of the sun. A timer counts how long she waggles (about a second per kilometre), followers trail her and then fly the bearing, a second forager dances a long 2.2 s run for heather 75° left of the sun, and in the last scene the sun moves and the dance slowly turns to keep pointing at the clover. Captions appear word by word; play, pause, scrub, jump to any of nine chapters or watch at half or double speed.",
+    font: "'Fredoka', 'Avenir Next Rounded', 'Trebuchet MS', sans-serif", fontWeight: 700, letterSpacing: "-0.01em",
+    bg: "#fbf9f4", fg: "#1d1812", accent: "#e39a12", accent2: "#c64f86", panel: "#ffffff",
+    why: "The one motion piece on the hub was a tracking-camera film, and I wanted a calmer diagram film where two drawings explain each other, and the waggle dance is the neatest message I know: an angle and a duration, translated from the sky onto a wall in the dark.",
+    hook: "A one-minute film of a bee dancing directions to her sisters.",
+    motif: "waggle"
+  },
+  {
     slug: "storm-hut",
     title: "Storm Hut",
     date: "2026-11-17",
