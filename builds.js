@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "hard-crack",
+    title: "Hard Crack",
+    date: "2026-11-19",
+    kind: "Food",
+    blurb: "Boil sugar and water into a sweet. Pick what you're making (fudge, Italian meringue, marshmallows, butterscotch, peanut brittle or caramel shards), stir the sugar in before it boils, set the hob to low, medium or high, and watch the sugar thermometer. As the water steams off, the syrup's boiling point climbs: it stalls just above 100°C, then races through thread, soft ball, firm ball, hard ball, soft crack and hard crack into caramel and, thirty degrees later, smoke. Drop a bead into cold water to test it, read the bubbles and the colour, or put a tea towel over the thermometer and cook by eye. Pour when you think it's ready: the tray shows what set, from fudge sauce to glassy brittle. Stir once it's boiling and the pan goes grainy; on high, the last degrees fly by. A live temperature trace and a tin of everything you've made sit underneath.",
+    font: "'Pacifico', 'Brush Script MT', cursive", fontWeight: 400,
+    bg: "#fdf6f7", fg: "#2a1520", accent: "#c81f57", accent2: "#c4761a", panel: "#ffffff",
+    why: "Sugar work is the one bit of cooking where a thermometer is really reading a concentration, and I wanted a kitchen build you play with the heat and your nerve rather than a calculator: the stall at 100°C and the sprint at the end are the whole lesson.",
+    hook: "Boil sugar for fudge, brittle or caramel, and pour at the right moment.",
+    motif: "hardcrack"
+  },
+  {
     slug: "waggle",
     title: "Waggle",
     date: "2026-11-18",

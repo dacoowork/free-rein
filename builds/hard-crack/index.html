@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Hard Crack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Lexend:wght@400;500;600;700&family=Victor+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf6f7; --stripe:rgba(212,36,94,.075); --panel:#ffffff; --ink:#2a1520; --soft:#74586a; --line:#f0d6de;
+  --rasp:#c81f57; --raspInk:#a0123f; --raspSoft:#fde3eb; --caramel:#c4761a; --ok:#2f7d4f; --warn:#b05a00;
+  --chip:#fff; --chipOn:#2a1520; --chipOnInk:#fff;
+  --glass:#e6f3f8; --glassLine:#a9c9d6;
+  --display:'Pacifico','Brush Script MT',cursive;
+  --body:'Lexend',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'Victor Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1a1015; --stripe:rgba(255,92,142,.06); --panel:#26171f; --ink:#fbeef2; --soft:#c9a9b7; --line:#43293a;
+    --rasp:#ff5c8e; --raspInk:#ff8db0; --raspSoft:#3a1a28; --caramel:#f0a447; --ok:#6fd39a; --warn:#ffb25e;
+    --chip:#26171f; --chipOn:#fbeef2; --chipOnInk:#1a1015;
+    --glass:#1d2a31; --glassLine:#3f5c69;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1a1015; --stripe:rgba(255,92,142,.06); --panel:#26171f; --ink:#fbeef2; --soft:#c9a9b7; --line:#43293a;
+  --rasp:#ff5c8e; --raspInk:#ff8db0; --raspSoft:#3a1a28; --caramel:#f0a447; --ok:#6fd39a; --warn:#ffb25e;
+  --chip:#26171f; --chipOn:#fbeef2; --chipOnInk:#1a1015;
+  --glass:#1d2a31; --glassLine:#3f5c69;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background-color:var(--bg);
+  background-image:repeating-linear-gradient(-45deg,var(--stripe) 0 28px,transparent 28px 64px);
+  color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 56px}
+header{margin:4px 0 14px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(42px,8vw,64px);line-height:1.1;margin:0;color:var(--rasp)}
+.sub{margin:0 0 8px;max-width:560px;color:var(--soft)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 6px 22px rgba(120,20,60,.07)}
+h2{font-size:15px;letter-spacing:.06em;text-transform:uppercase;margin:0 0 10px;color:var(--soft);font-weight:600}
+.recipes{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:15px;border:1.5px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:7px 14px;cursor:pointer;min-height:40px}
+.chip:hover{border-color:var(--rasp)}
+.chip[aria-pressed="true"]{background:var(--chipOn);color:var(--chipOnInk);border-color:var(--chipOn)}
+.target{margin:10px 0 0;font-size:14.5px;color:var(--soft)}
+.target b{color:var(--ink)}
+.cook{margin-top:14px;padding:0;overflow:hidden}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.readout{display:flex;align-items:baseline;gap:10px;min-width:220px}
+.temp{font-family:var(--mono);font-weight:700;font-size:40px;line-height:1;font-variant-numeric:tabular-nums;min-width:4.2ch}
+.stage{display:inline-block;font-size:14px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--raspSoft);color:var(--raspInk);white-space:nowrap}
+.clock{font-family:var(--mono);font-size:13.5px;color:var(--soft);white-space:nowrap}
+.heat{display:flex;border:1.5px solid var(--line);border-radius:12px;overflow:hidden}
+.heat button{font:inherit;font-size:14.5px;border:0;background:transparent;color:var(--ink);padding:8px 12px;cursor:pointer;min-height:40px}
+.heat button+button{border-left:1.5px solid var(--line)}
+.heat button[aria-pressed="true"]{background:var(--rasp);color:#fff}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-left:auto}
+.btn{font:inherit;font-size:15px;font-weight:600;border:1.5px solid var(--ink);background:transparent;color:var(--ink);border-radius:12px;padding:8px 14px;cursor:pointer;min-height:42px}
+.btn.primary{background:var(--rasp);border-color:var(--rasp);color:#fff}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.scene{display:block;width:100%;height:auto;background:linear-gradient(#fff0f3,#fde6ec)}
+:root[data-theme="dark"] .scene{background:linear-gradient(#2a1820,#21131a)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .scene{background:linear-gradient(#2a1820,#21131a)}}
+.foot{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:12px 16px;border-top:1px solid var(--line)}
+.note{margin:0;font-size:15px;flex:1 1 320px;min-height:2.6em}
+.note b{color:var(--raspInk)}
+.eye{display:flex;align-items:center;gap:8px;font-size:14.5px;cursor:pointer;user-select:none}
+.eye input{width:20px;height:20px;accent-color:var(--rasp)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}.temp{font-size:34px}.actions{margin-left:0}}
+.trace svg{display:block;width:100%;height:auto}
+.result{display:none;margin-top:14px}
+.result.show{display:block}
+.result .verdict{font-family:var(--display);font-size:30px;line-height:1.25;margin:0 0 4px}
+.result .verdict.on{color:var(--ok)} .result .verdict.under,.result .verdict.over{color:var(--warn)} .result .verdict.burnt{color:var(--rasp)}
+.result p{margin:6px 0}
+.resgrid{display:grid;grid-template-columns:240px 1fr;gap:16px;align-items:center}
+@media (max-width:560px){.resgrid{grid-template-columns:1fr}}
+.resgrid svg{width:100%;height:auto;display:block}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--soft);font-size:13px;text-transform:uppercase;letter-spacing:.05em}
+td.n{font-family:var(--mono);white-space:nowrap}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:1px solid rgba(0,0,0,.15)}
+.tin{list-style:none;margin:0;padding:0}
+.tin li{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--line);font-size:14.5px;flex-wrap:wrap}
+.tin .tag{font-size:12.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--raspSoft);color:var(--raspInk)}
+.tin .tag.on{background:rgba(47,125,79,.14);color:var(--ok)}
+.tin .n{font-family:var(--mono);color:var(--soft)}
+.empty{color:var(--soft);font-size:14.5px;margin:0}
+.why p{margin:0 0 10px;max-width:70ch}
+.why p:last-child{margin:0}
+.fine{font-family:var(--mono)}
+@media (max-width:600px){.fine{display:none}}
+.tablewrap{overflow-x:auto}
+@media (max-width:600px){#stages thead{display:none}#stages,#stages tbody,#stages tr,#stages td{display:block;width:auto}
+#stages tr{padding:9px 0;border-bottom:1px solid var(--line)}#stages td{border:0;padding:1px 0}
+#stages td:nth-child(1),#stages td:nth-child(2){display:inline-block;font-weight:600;margin-right:8px}
+#stages td:nth-child(4){color:var(--soft);font-size:13.5px}#stages td:nth-child(4)::before{content:'Makes: '}}
+</style>
+</head><body>
+<div class="wrap">
+  <header>
+    <h1>Hard Crack</h1>
+    <p class="sub">Boil sugar and water for a sweet. As the water steams off, the syrup gets hotter and thicker, and the temperature you stop at decides what you get. Pick something to make, mind the heat, test a drop in cold water, and pour.</p>
+  </header>
+
+  <section class="card" aria-labelledby="mk">
+    <h2 id="mk">What are you making?</h2>
+    <div class="recipes" id="recipes" role="group" aria-label="Recipe"></div>
+    <p class="target" id="target"></p>
+  </section>
+
+  <section class="card cook" aria-label="The pan">
+    <div class="bar">
+      <div class="readout" aria-live="off">
+        <span class="temp" id="temp">20°</span>
+        <span>
+          <span class="stage" id="stage">Sugar and water</span><br>
+          <span class="clock" id="clock">0:00 on the clock</span>
+        </span>
+      </div>
+      <div class="heat" role="group" aria-label="Heat" id="heat">
+        <button data-h="0" aria-pressed="true">Off</button>
+        <button data-h="1" aria-pressed="false">Low</button>
+        <button data-h="2" aria-pressed="false">Medium</button>
+        <button data-h="3" aria-pressed="false">High</button>
+      </div>
+      <div class="actions">
+        <button class="btn" id="stir">Stir</button>
+        <button class="btn" id="drop">Drop test</button>
+        <button class="btn primary" id="pour">Pour</button>
+      </div>
+    </div>
+    <svg class="scene" id="scene" viewBox="0 0 640 360" role="img" aria-label="A pan of syrup on the hob with a sugar thermometer clipped to its side, and a glass of cold water for drop tests">
+      <defs>
+        <linearGradient id="steel" x1="0" x2="1">
+          <stop offset="0" stop-color="#8e959e"/><stop offset=".25" stop-color="#e4e8ec"/><stop offset=".55" stop-color="#b4bbc3"/><stop offset=".85" stop-color="#f1f3f5"/><stop offset="1" stop-color="#8a9199"/>
+        </linearGradient>
+        <linearGradient id="hob" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#2b2b31"/><stop offset="1" stop-color="#15151a"/></linearGradient>
+        <radialGradient id="glow"><stop offset="0" stop-color="#ff4a1c" stop-opacity=".9"/><stop offset="1" stop-color="#ff4a1c" stop-opacity="0"/></radialGradient>
+        <clipPath id="mouth"><ellipse cx="200" cy="168" rx="136" ry="26"/></clipPath>
+        <clipPath id="glassIn"><path d="M486 196 L594 196 L586 318 L494 318Z"/></clipPath>
+        <pattern id="towel" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#fbf4ea"/><rect width="18" height="5" fill="#c81f57" opacity=".75"/><rect width="5" height="18" fill="#c81f57" opacity=".35"/></pattern>
+      </defs>
+      <!-- hob -->
+      <rect x="0" y="300" width="640" height="60" fill="#d9b48c"/><rect x="0" y="300" width="640" height="3" fill="#b88d63"/><path d="M0 318 H640 M0 338 H640" stroke="#c99f74" stroke-width="1"/>
+      <rect x="20" y="300" width="380" height="60" fill="url(#hob)"/>
+      <ellipse id="burner" cx="200" cy="312" rx="150" ry="12" fill="url(#glow)" opacity="0"/>
+      <!-- pan inside (back wall) -->
+      <ellipse cx="200" cy="168" rx="136" ry="26" fill="#6d747c"/>
+      <g clip-path="url(#mouth)">
+        <rect x="60" y="140" width="290" height="80" fill="#7c838b"/>
+        <ellipse id="syrup" cx="200" cy="190" rx="132" ry="24" fill="#f6efe2"/>
+        <g id="grains"></g>
+        <g id="bubbles"></g>
+        <g id="crystals"></g>
+      </g>
+      <!-- thermometer (behind front wall, in the syrup) -->
+      <g id="thermo">
+        <rect x="292" y="22" width="26" height="196" rx="8" fill="#f8fafb" stroke="#9aa3ab" stroke-width="1.5"/>
+        <g id="bands"></g>
+        <rect x="302" y="30" width="6" height="180" rx="3" fill="#e9eef1"/>
+        <rect id="column" x="302" y="200" width="6" height="10" rx="3" fill="#d4213d"/>
+        <rect x="286" y="150" width="38" height="12" rx="3" fill="#a9b0b8"/>
+        <g id="ticks"></g>
+      </g>
+      <g id="towelG" style="display:none">
+        <path d="M276 14 C300 8 320 10 336 16 L344 150 C330 160 296 162 270 152Z" fill="url(#towel)" stroke="#b79f86" stroke-width="1.2"/>
+        <path d="M276 14 C300 8 320 10 336 16" fill="none" stroke="#8b7661" stroke-width="1.2"/>
+      </g>
+      <!-- front wall -->
+      <path d="M64 168 L72 296 Q74 304 84 304 L316 304 Q326 304 328 296 L336 168 A136 26 0 0 1 64 168Z" fill="url(#steel)"/>
+      <path d="M64 168 A136 26 0 0 0 336 168" fill="none" stroke="#d6dbe0" stroke-width="3"/>
+      <path d="M64 168 A136 26 0 0 0 336 168" fill="none" stroke="#7d848c" stroke-width="1"/>
+      <!-- handle -->
+      <path d="M66 190 L8 176 Q0 175 2 184 L4 192 Q6 198 14 198 L68 206Z" fill="#2b2b31"/>
+      <!-- spoon -->
+      <g id="spoon" style="display:none"><path d="M150 40 L196 170" stroke="#c99262" stroke-width="9" stroke-linecap="round"/><ellipse cx="200" cy="178" rx="14" ry="8" fill="#b9814f"/></g>
+      <!-- steam -->
+      <g id="steam" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-width="7"></g>
+      <g id="smoke"></g>
+      <!-- glass of cold water -->
+      <g id="glassG">
+        <path d="M486 196 L594 196 L586 318 L494 318Z" fill="var(--glass)" opacity=".9"/>
+        <g clip-path="url(#glassIn)">
+          <rect x="480" y="214" width="120" height="110" style="fill:#7cc3df" opacity=".35"/>
+          <g id="bead"></g>
+        </g>
+        <path d="M486 196 L594 196 L586 318 L494 318Z" fill="none" style="stroke:var(--glassLine)" stroke-width="2.5"/>
+        <path d="M494 206 L500 306" stroke="#ffffff" stroke-width="3" opacity=".6"/>
+        <text x="540" y="342" text-anchor="middle" class="fine" font-size="13" fill="#6b4a2c">cold water</text>
+      </g>
+      <text id="thermoLabel" x="330" y="30" class="fine" font-size="12" fill="#74586a"></text>
+    </svg>
+    <div class="foot">
+      <p class="note" id="note">Stir the sugar into the water before it boils, then leave it alone.</p>
+      <label class="eye"><input type="checkbox" id="byeye"> Cook by eye (towel over the thermometer)</label>
+    </div>
+  </section>
+
+  <section class="card result" id="result" aria-live="polite">
+    <div class="resgrid">
+      <svg id="tray" viewBox="0 0 240 150" role="img" aria-label="What came out of the pan"></svg>
+      <div>
+        <p class="verdict" id="verdict"></p>
+        <p id="resText"></p>
+        <p id="resMeta" style="color:var(--soft);font-size:14.5px"></p>
+        <button class="btn primary" id="again">Cook another</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid2">
+    <section class="card trace" aria-labelledby="tr">
+      <h2 id="tr">Temperature so far</h2>
+      <svg id="trace" viewBox="0 0 420 210" role="img" aria-label="Temperature against time for this cook"></svg>
+      <p style="margin:8px 0 0;font-size:14px;color:var(--soft)" id="traceNote">Watch the line stall just above 100°C while the water boils off, then climb faster and faster.</p>
+    </section>
+    <section class="card" aria-labelledby="tn">
+      <h2 id="tn">Your tin</h2>
+      <ul class="tin" id="tin"></ul>
+      <p class="empty" id="tinEmpty">Nothing poured yet. Everything you make lands here.</p>
+    </section>
+  </div>
+
+  <section class="card" style="margin-top:14px" aria-labelledby="st">
+    <h2 id="st">The stages</h2>
+    <div class="tablewrap"><table id="stages"><thead><tr><th>Stage</th><th>°C</th><th>A drop in cold water</th><th>Makes</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section class="card why" style="margin-top:14px" aria-labelledby="wy">
+    <h2 id="wy">Why the thermometer works</h2>
+    <p>A syrup boils at a temperature set by how much sugar is in it. Water alone boils at 100°C; a syrup that is 85% sugar boils at about 115°C, and one that is 99% sugar at about 150°C. So while the pan is boiling, the temperature is a readout of how much water is left, and how much water is left decides how hard the sweet sets.</p>
+    <p>That is why the line stalls at first (most of the water still has to go, and each gram takes a lot of heat to boil off) and races at the end (there is hardly any water left to spend the heat on). On high heat the last few stages go by in seconds. Cooks turn the heat down near the end, and an electric hob stays hot for a while after you switch it off.</p>
+    <p>Two ways to ruin it: undissolved grains, or stirring once it boils. A single crystal in a supersaturated syrup gives the rest something to grow on, and the pan can seize into a gritty white mass. Above about 160°C the water is gone and the sugar itself starts to break down and brown: that is caramel, and 30 degrees later it is smoke.</p>
+  </section>
+</div>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+const STAGES=[
+ {k:'syrup',name:'Syrup',lo:-99,hi:106,drop:'The drop dissolves into the water in a cloudy wisp.',makes:'Syrup for drinks and sorbet',col:'#f6efe2'},
+ {k:'thread',name:'Thread',lo:106,hi:112,drop:'It spins a fine thread in the water and won\'t gather into a ball.',makes:'Candied peel, glazes',col:'#f6eedd'},
+ {k:'soft',name:'Soft ball',lo:112,hi:116,drop:'It gathers into a soft ball that flattens between your fingers.',makes:'Fudge, fondant',col:'#f5ecd6'},
+ {k:'firm',name:'Firm ball',lo:116,hi:121,drop:'A firm ball that holds its shape, but squashes when you press it.',makes:'Italian meringue, soft caramels',col:'#f4e9cf'},
+ {k:'hard',name:'Hard ball',lo:121,hi:130,drop:'A hard, sticky ball that barely gives when you squeeze it.',makes:'Marshmallows, nougat',col:'#f2e5c6'},
+ {k:'softcrack',name:'Soft crack',lo:130,hi:145,drop:'It sets into threads that bend a little before they break.',makes:'Butterscotch, taffy',col:'#f1e1bb'},
+ {k:'hardcrack',name:'Hard crack',lo:145,hi:155,drop:'It sets into brittle threads that snap cleanly, like glass.',makes:'Brittle, toffee apples, lollipops',col:'#efdcaa'},
+ {k:'clear',name:'Melted sugar',lo:155,hi:160,drop:'Glassy and brittle, and only just beginning to turn straw-coloured.',makes:'Brittle, spun sugar',col:'#ecd08c'},
+ {k:'light',name:'Light caramel',lo:160,hi:172,drop:'Pale gold glass that snaps and tastes of caramel.',makes:'Caramel shards, praline',col:'#d99b3c'},
+ {k:'dark',name:'Dark caramel',lo:172,hi:190,drop:'Deep amber glass, bitter-sweet.',makes:'Crème caramel, sauces',col:'#9a5419'},
+ {k:'burnt',name:'Burnt',lo:190,hi:999,drop:'Black, bitter and smoking. It isn\'t food any more.',makes:'A job for the washing-up',col:'#241008'}];
+const stIdx=T=>{for(let i=0;i<STAGES.length;i++)if(T<STAGES[i].hi)return i;return STAGES.length-1};
+const RECIPES=[
+ {k:'fudge',name:'Fudge',stages:['soft'],range:'112–116°C',
+  under:'It never sets: you have made fudge sauce. Lovely on ice cream, no good in a tin.',
+  over:'Too firm. It goes hard and crumbly before you can beat it smooth.',
+  on:'Beaten as it cools, it turns creamy and sets firm enough to cut into squares.',
+  grainy:'Gritty fudge: big crystals grew before you beat it, so it crunches instead of melting.'},
+ {k:'meringue',name:'Italian meringue',stages:['firm'],range:'116–121°C',
+  under:'The thin syrup never firms the whites up; the meringue slumps and weeps.',
+  over:'The syrup is too thick to stream in and sets in hard strings round the whisk.',
+  on:'Streamed into whisked whites, it whips up a glossy meringue that holds stiff peaks.',
+  grainy:'The syrup crystallised on the way in and left sugary lumps through the meringue.'},
+ {k:'marsh',name:'Marshmallows',stages:['hard'],range:'121–130°C',
+  under:'Sticky marshmallows that slump in the tin and won\'t cut cleanly.',
+  over:'Rubbery and chewy, more like a jelly sweet than a marshmallow.',
+  on:'Whipped with gelatine, it sets springy and cuts into clean cubes.',
+  grainy:'Sugary, grainy marshmallows: the syrup crystallised before it was whipped.'},
+ {k:'scotch',name:'Butterscotch',stages:['softcrack'],range:'130–145°C',
+  under:'Chewy and clings to your teeth: more of a caramel chew than butterscotch.',
+  over:'Too hard to bite; it shatters like brittle.',
+  on:'Firm with a slight give; it snaps into pieces that melt slowly on the tongue.',
+  grainy:'It set cloudy and sandy instead of glossy: crystals took over the pan.'},
+ {k:'brittle',name:'Peanut brittle',stages:['hardcrack','clear'],range:'145–160°C',
+  under:'Bendy and tacky; it sticks to the paper and to your teeth.',
+  over:'It snaps, but the sugar has gone dark and bitter around the peanuts.',
+  on:'It sets like glass round the peanuts and breaks with a clean crack.',
+  grainy:'The slab seized into an opaque, crumbly sheet instead of clear glass.'},
+ {k:'shards',name:'Caramel shards',stages:['light'],range:'160–172°C',
+  under:'Clear glassy sugar that tastes only sweet: it never caramelised.',
+  over:'Dark and bitter. A shade lighter would have tasted of caramel, not of coffee grounds.',
+  on:'Golden glass that shatters into shards and tastes properly of caramel.',
+  grainy:'Crystals clouded it before it melted; the shards are patchy and opaque.'}];
+
+// ---- the model ----
+const SUGAR=250, WATER0=110, SPEED=6;
+const POW=[0,520,1000,1700];
+const BT=[[0,100],[.5,102],[.6,103.5],[.7,106],[.8,112],[.85,116],[.87,118],[.9,121.5],[.92,126],[.95,135],[.97,143],[.985,148],[.99,152],[.995,160],[.998,168]];
+function boil(w){if(w<=.5)return 9999;const c=SUGAR/(SUGAR+w);if(c>=BT[BT.length-1][0])return BT[BT.length-1][1];for(let i=1;i<BT.length;i++)if(c<BT[i][0]){const[a,ta]=BT[i-1],[b,tb]=BT[i];return ta+(tb-ta)*(c-a)/(b-a)}return 168}
+let S;
+function fresh(){return{t:0,T:20,w:WATER0,heat:0,hobP:0,dissolved:0,seeded:null,poured:false,trace:[[0,20]],lastTrace:0,dropAt:-1,dropStage:null,stirAt:-1,boiled:false,smoke:0}}
+S=fresh();
+function step(dt){ // dt in simulated seconds
+  if(S.poured)return;
+  const target=POW[S.heat];
+  S.hobP+=(target-S.hobP)*(1-Math.exp(-dt/10));
+  if(S.hobP<1&&target===0)S.hobP=0;
+  const C=SUGAR*1.25+Math.max(S.w,0)*4.18+450;
+  const loss=2.6*(S.T-20);
+  const net=S.hobP-loss;
+  const Tb=boil(S.w);
+  if(S.w>.5&&S.T>=Tb-0.01){
+    if(net>0){S.w=Math.max(0,S.w-net*dt/2260);S.T=Math.min(boil(S.w),S.T+net*dt/C)}
+    else S.T+=net*dt/C;
+  }else{
+    S.T+=net*dt/C;
+    if(S.w>.5){const tb=boil(S.w);if(S.T>tb)S.T=tb}
+  }
+  S.T=Math.min(S.T,235);
+  if(S.T>=103&&S.w>.5){
+    if(!S.boiled){S.boiled=true;if(S.dissolved<.999&&!S.seeded){S.seeded='grains';say('It came to the boil with <b>sugar still undissolved</b> on the bottom. Those grains will seed crystals.')}}
+  }
+  if(S.T>=90&&S.dissolved<1)S.dissolved=Math.min(1,S.dissolved+dt*0.002); // a little dissolves on its own as it heats
+  S.t+=dt;
+  if(S.t-S.lastTrace>=2){S.trace.push([S.t,S.T]);S.lastTrace=S.t}
+}
+
+// ---- UI ----
+let recipe=RECIPES[0], byEye=false, tin=[];
+const recEl=$('recipes');
+RECIPES.forEach(r=>{const b=document.createElement('button');b.className='chip';b.textContent=r.name;b.dataset.k=r.k;b.setAttribute('aria-pressed',r===recipe);b.onclick=()=>pick(r);recEl.appendChild(b)});
+function pick(r){recipe=r;[...recEl.children].forEach(c=>c.setAttribute('aria-pressed',c.dataset.k===r.k));if(S.t>0&&!S.poured){restart();say(`New pan for <b>${r.name}</b>. Stir the sugar in before it boils.`)}showTarget();drawTraceBg()}
+function showTarget(){const st=recipe.stages.map(k=>STAGES.find(s=>s.k===k).name.toLowerCase()).join(' to ');$('target').innerHTML=`<b>${recipe.name}</b> wants the syrup at <b>${st}</b>, ${recipe.range}. Test: ${STAGES.find(s=>s.k===recipe.stages[0]).drop.replace(/^It /,'it ').replace(/^A /,'a ')}`}
+function say(h){$('note').innerHTML=h}
+$('heat').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||S.poured)return;setHeat(+b.dataset.h)});
+function setHeat(h){S.heat=h;[...$('heat').children].forEach(c=>c.setAttribute('aria-pressed',+c.dataset.h===h))}
+$('stir').onclick=()=>{if(S.poured)return;S.stirAt=performance.now();
+  if(S.T>=103&&S.w>.5){if(!S.seeded){S.seeded='stir';say('You stirred a <b>boiling</b> syrup. That knocks sugar crystals off the spoon and the sides, and they can spread through the pan.')}else say('More stirring, more crystals.')}
+  else if(S.w<=.5){say('It is all melted sugar now; stirring won\'t seed crystals, but a swirl of the pan is gentler.')}
+  else{const gain=S.T>50?.5:.25;S.dissolved=Math.min(1,S.dissolved+gain);say(S.dissolved>=1?'<b>Dissolved.</b> The syrup is clear. From here on, don\'t stir.':`Stirring… ${S.dissolved<.5?'grains still gritty on the bottom':'nearly clear'}${S.T<50?' (it dissolves faster once it\'s warm)':''}.`)}};
+$('drop').onclick=()=>{if(S.poured)return;S.dropAt=performance.now();const i=stIdx(S.T);S.dropStage=i;
+  const s=STAGES[i];say(`<b>Drop test:</b> ${s.drop}${byEye?'':''}`);};
+$('pour').onclick=()=>pour();
+$('again').onclick=()=>{restart();$('result').classList.remove('show');say('Fresh pan. Stir the sugar in before it boils.');$('scene').scrollIntoView({block:'nearest'})};
+$('byeye').onchange=e=>{byEye=e.target.checked;$('towelG').style.display=byEye?'':'none';drawTraceBg()};
+function restart(){S=fresh();setHeat(0);buildGrains()}
+
+function pour(){
+  if(S.poured)return;
+  if(S.t<1){say('Put the heat on first.');return}
+  S.poured=true;setHeat(0);
+  const i=stIdx(S.T),st=STAGES[i];
+  const tIdx=recipe.stages.map(k=>STAGES.findIndex(s=>s.k===k));
+  let v;
+  if(st.k==='burnt')v='burnt';
+  else if(S.seeded&&i>=2&&i<=7)v='grainy';
+  else if(i<tIdx[0])v='under';else if(i>tIdx[tIdx.length-1])v='over';else v='on';
+  const head={on:'Spot on',under:'Too soft',over:'Too far',burnt:'Burnt',grainy:'Grainy'}[v];
+  $('verdict').textContent=v==='burnt'?'Burnt':`${head}: ${st.name.toLowerCase()}`;
+  $('verdict').className='verdict '+(v==='grainy'?'under':v);
+  $('resText').textContent=v==='burnt'?'The pan is smoking and the sugar has turned black and bitter. Soak the pan in hot water; it will dissolve overnight.':recipe[v];
+  const m=Math.floor(S.t/60),s=Math.floor(S.t%60);
+  $('resMeta').textContent=`${recipe.name}: poured at ${S.T.toFixed(0)}°C after ${m}:${String(s).padStart(2,'0')} on the clock, ${S.w>.5?S.w.toFixed(0)+' g of the '+WATER0+' g water left':'no water left'}. Aim: ${recipe.range}.`;
+  drawTray(i,v);
+  $('result').classList.add('show');
+  tin.unshift({r:recipe.name,T:S.T,st:st.name,v,head});renderTin();
+  say(`Poured at <b>${S.T.toFixed(0)}°C</b>.`);
+  requestAnimationFrame(()=>$('result').scrollIntoView({block:'nearest',behavior:'smooth'}));
+}
+function renderTin(){const ul=$('tin');ul.innerHTML='';$('tinEmpty').style.display=tin.length?'none':'';
+  tin.slice(0,12).forEach(x=>{const li=document.createElement('li');li.innerHTML=`<span class="tag ${x.v==='on'?'on':''}">${x.head}</span><span>${x.r}</span><span class="n">${x.T.toFixed(0)}°C · ${x.st.toLowerCase()}</span>`;ul.appendChild(li)})}
+
+// ---- drawing ----
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+const yT=T=>200-(T-40); // thermometer: 40°C at y200, 200°C at y40
+(function thermoScale(){const g=$('bands'),tk=$('ticks');
+  STAGES.forEach((s,i)=>{if(i===0)return;const lo=Math.max(s.lo,40),hi=Math.min(s.hi,200);if(hi<=lo)return;
+    el('rect',{x:294,y:yT(hi),width:22,height:yT(lo)-yT(hi),fill:s.col,opacity:.9},g)});
+  for(let T=40;T<=200;T+=10){el('line',{x1:310,x2:T%50===0?318:315,y1:yT(T),y2:yT(T),stroke:'#6b5560','stroke-width':1},tk)}
+  [100,150,200].forEach(T=>{const t=el('text',{x:322,y:yT(T)+4,'font-size':11,fill:'#6b5560',class:'fine'},tk);t.textContent=T});
+})();
+let grainEls=[];
+function buildGrains(){const g=$('grains');g.innerHTML='';grainEls=[];let a=7;const r=()=>{a=(a*16807)%2147483647;return a/2147483647};
+  for(let i=0;i<70;i++){grainEls.push(el('rect',{x:110+r()*180,y:186+r()*22,width:2.6,height:2.6,fill:'#ffffff',transform:`rotate(${r()*90})`,'transform-origin':'center'},g))}}
+buildGrains();
+const bubbles=[];for(let i=0;i<26;i++){bubbles.push({e:el('circle',{cx:0,cy:0,r:0,fill:'none','stroke-width':1.6},$('bubbles')),x:Math.random(),y:Math.random(),age:Math.random(),life:1})}
+const steam=[];for(let i=0;i<5;i++){steam.push({e:el('path',{d:'',opacity:0},$('steam')),ph:i/5})}
+const crystals=[];{let a=3;const r=()=>{a=(a*16807)%2147483647;return a/2147483647};for(let i=0;i<60;i++){const ang=r()*Math.PI*2;crystals.push(el('rect',{x:(200+Math.cos(ang)*(118+r()*12)).toFixed(1),y:(190+Math.sin(ang)*(18+r()*4)).toFixed(1),width:3+r()*3,height:3+r()*3,fill:'#ffffff',opacity:0},$('crystals')))}}
+function mix(a,b,t){const pa=a.match(/\w\w/g).map(h=>parseInt(h,16)),pb=b.match(/\w\w/g).map(h=>parseInt(h,16));return'#'+pa.map((v,i)=>Math.round(v+(pb[i]-v)*t).toString(16).padStart(2,'0')).join('')}
+function syrupColour(T){const P=[[20,'f6efe2'],[150,'f3e6c4'],[158,'eccf86'],[166,'d99b3c'],[176,'b46a1f'],[186,'7a3e12'],[196,'2a1208'],[240,'120804']];
+  if(T<=P[0][0])return'#'+P[0][1];for(let i=1;i<P.length;i++)if(T<=P[i][0])return mix(P[i-1][1],P[i][1],(T-P[i-1][0])/(P[i][0]-P[i-1][0]));return'#120804'}
+
+let last=performance.now(),evapRate=0;
+function frame(now){
+  const dtR=Math.min(.06,(now-last)/1000);last=now;
+  const w0=S.w;
+  const sub=6;for(let i=0;i<sub;i++)step(dtR*SPEED/sub);
+  evapRate=evapRate*.9+.1*((w0-S.w)/Math.max(dtR*SPEED,1e-6));
+  render(now,dtR);
+  requestAnimationFrame(frame);
+}
+function render(now,dtR){
+  const T=S.T,i=stIdx(T);
+  $('temp').textContent=byEye?'—°':`${Math.round(T)}°`;
+  $('stage').textContent=byEye?'Thermometer covered':(S.t<.5?'Sugar and water':(T<100&&!S.boiled?'Warming':STAGES[i].name));
+  const m=Math.floor(S.t/60),s=Math.floor(S.t%60);$('clock').textContent=`${m}:${String(s).padStart(2,'0')} on the clock`;
+  const Tc=Math.min(Math.max(T,40),204);$('column').setAttribute('y',Math.min(yT(Tc),206));$('column').setAttribute('height',210-Math.min(yT(Tc),206));
+  if(!byEye&&!S.poured&&S.heat===3&&!S.hinted){const lo=STAGES.find(x=>x.k===recipe.stages[0]).lo;if(T>lo-9&&T<lo){S.hinted=true;say(`Nearly at <b>${STAGES.find(x=>x.k===recipe.stages[0]).name.toLowerCase()}</b>. On high the last degrees fly by: turn the heat down.`)}}
+  $('burner').setAttribute('opacity',(S.hobP/1700).toFixed(2));
+  // syrup level shrinks with the water
+  const vol=SUGAR/1.59+S.w, lvl=196-vol*0.035;
+  const sy=$('syrup');sy.setAttribute('cy',lvl.toFixed(1));sy.setAttribute('fill',syrupColour(T));
+  // grains
+  const left=1-S.dissolved;grainEls.forEach((g,k)=>g.setAttribute('opacity',k/grainEls.length<left?.85:0));
+  // crystals
+  const cr=S.seeded&&!S.poured?Math.min(1,(S.t-(S.seedT??(S.seedT=S.t)))/40):(S.seeded?1:0);if(!S.seeded)S.seedT=undefined;
+  crystals.forEach((c,k)=>c.setAttribute('opacity',k/crystals.length<cr?.9:0));
+  // bubbles: big and fast early, small, slow and thick late; few in caramel
+  const boiling=(S.w>.5&&S.T>=boil(S.w)-.3&&S.hobP>200)||(S.w<=.5&&T>160&&S.hobP>200);
+  const c=SUGAR/(SUGAR+Math.max(S.w,0));
+  const size=S.w<=.5?3:(c<.8?9:c<.9?6:c<.97?4:3), speed=S.w<=.5?.35:(c<.8?2.2:c<.9?1.4:.8);
+  const n=boiling?(S.w<=.5?8:26):0;
+  bubbles.forEach((b,k)=>{if(k>=n){b.e.setAttribute('r',0);return}b.age+=dtR*speed*(.6+S.hobP/1700);if(b.age>=1){b.age=0;b.x=Math.random();b.y=Math.random()}
+    const ang=b.x*Math.PI*2,rr=Math.sqrt(b.y);const x=200+Math.cos(ang)*rr*118,y=lvl+Math.sin(ang)*rr*20;
+    b.e.setAttribute('cx',x.toFixed(1));b.e.setAttribute('cy',y.toFixed(1));b.e.setAttribute('r',(size*(.4+b.age)).toFixed(1));
+    b.e.setAttribute('stroke',T>165?'#6b3a12':'#ffffff');b.e.setAttribute('opacity',(1-b.age).toFixed(2))});
+  // steam
+  const sOp=Math.min(.55,evapRate*.9);
+  steam.forEach((p,k)=>{p.ph=(p.ph+dtR*.35)%1;const x0=130+k*36,y0=150-p.ph*110;p.e.setAttribute('d',`M${x0} ${y0} q12 -14 0 -28 q-12 -14 0 -28`);p.e.setAttribute('opacity',(sOp*Math.sin(p.ph*Math.PI)).toFixed(2))});
+  // smoke when burnt
+  const sm=$('smoke');if(T>190&&!S.poured){if(sm.childNodes.length<6)for(let k=0;k<6;k++)el('circle',{cx:150+k*20,cy:120,r:18,fill:'#3a3335',opacity:0},sm);[...sm.childNodes].forEach((ci,k)=>{const ph=((now/1600)+k/6)%1;ci.setAttribute('cy',(150-ph*130).toFixed(1));ci.setAttribute('r',(14+ph*26).toFixed(1));ci.setAttribute('opacity',(.5*Math.sin(ph*Math.PI)*Math.min(1,(T-190)/10)).toFixed(2))})}else sm.innerHTML='';
+  // spoon
+  const sa=(now-S.stirAt)/700;$('spoon').style.display=sa>=0&&sa<1&&S.stirAt>0?'':'none';if(sa<1){$('spoon').setAttribute('transform',`rotate(${Math.sin(sa*Math.PI*4)*8} 196 170)`)}
+  // drop test bead
+  drawBead(now);
+  // trace
+  if(now-(render.lt||0)>250){render.lt=now;drawTraceLine()}
+  // buttons
+  $('pour').disabled=S.poured;$('drop').disabled=S.poured;$('stir').disabled=S.poured;
+}
+function drawBead(now){
+  const g=$('bead');const a=(now-S.dropAt)/900;
+  if(S.dropStage==null||S.dropAt<0){g.innerHTML='';return}
+  const st=STAGES[S.dropStage];const k=st.k;const col=st.col;
+  if(a>1.2&&drawBead.done===S.dropAt)return;
+  if(a>1.2)drawBead.done=S.dropAt;
+  g.innerHTML='';
+  if(a<.45){const y=170+a/.45*120;el('ellipse',{cx:540,cy:y,rx:6,ry:8,fill:col,stroke:'#a07a3a','stroke-width':1},g);return}
+  const y=298,s='#a07a3a';
+  if(k==='syrup'){for(let j=0;j<3;j++)el('path',{d:`M${520+j*14} 300 q8 -30 -4 -60 q-10 -26 6 -50`,fill:'none',stroke:'#ffffff','stroke-width':6,opacity:.55},g)}
+  else if(k==='thread'){el('path',{d:'M510 298 C530 260 560 290 572 250 C580 226 548 230 556 212',fill:'none',stroke:col,'stroke-width':3},g);el('path',{d:'M510 298 C530 260 560 290 572 250 C580 226 548 230 556 212',fill:'none',stroke:s,'stroke-width':.8},g)}
+  else if(k==='soft'){el('ellipse',{cx:540,cy:y+8,rx:24,ry:9,fill:col,stroke:s,'stroke-width':1.2},g)}
+  else if(k==='firm'){el('ellipse',{cx:540,cy:y+3,rx:17,ry:13,fill:col,stroke:s,'stroke-width':1.2},g)}
+  else if(k==='hard'){el('circle',{cx:540,cy:y,r:15,fill:col,stroke:s,'stroke-width':1.4},g);el('circle',{cx:535,cy:y-5,r:4,fill:'#fff',opacity:.6},g)}
+  else if(k==='softcrack'){el('path',{d:'M508 304 Q540 270 574 300',fill:'none',stroke:col,'stroke-width':5,'stroke-linecap':'round'},g);el('path',{d:'M508 304 Q540 270 574 300',fill:'none',stroke:s,'stroke-width':1},g)}
+  else if(k==='burnt'){el('path',{d:'M512 306 L530 290 L548 302 L566 286 L574 306Z',fill:col},g)}
+  else {// glass shards
+    const f=k==='hardcrack'||k==='clear'?col:col;
+    [[508,304,532,294],[536,292,552,306],[556,300,576,290]].forEach(([x1,y1,x2,y2])=>{el('path',{d:`M${x1} ${y1} L${x2} ${y2}`,stroke:f,'stroke-width':6,'stroke-linecap':'butt'},g);el('path',{d:`M${x1} ${y1} L${x2} ${y2}`,stroke:s,'stroke-width':1},g)})}
+}
+// trace chart
+const TR={x0:42,x1:410,y0:186,y1:12,Tmin:20,Tmax:200};
+function tx(t,tm){return TR.x0+(TR.x1-TR.x0)*t/tm}function ty(T){return TR.y0-(TR.y0-TR.y1)*(T-TR.Tmin)/(TR.Tmax-TR.Tmin)}
+let traceMax=360;
+function drawTraceBg(){const sv=$('trace');sv.innerHTML='';const cs=getComputedStyle(document.documentElement);const soft=cs.getPropertyValue('--soft').trim(),line=cs.getPropertyValue('--line').trim(),rasp=cs.getPropertyValue('--rasp').trim();
+  const tI=recipe.stages.map(k=>STAGES.find(s=>s.k===k));const lo=tI[0].lo,hi=tI[tI.length-1].hi;
+  el('rect',{x:TR.x0,y:ty(hi),width:TR.x1-TR.x0,height:ty(lo)-ty(hi),fill:rasp,opacity:.14},sv);
+  [40,100,150,200].forEach(T=>{el('line',{x1:TR.x0,x2:TR.x1,y1:ty(T),y2:ty(T),stroke:line,'stroke-width':1},sv);const t=el('text',{x:TR.x0-6,y:ty(T)+4,'text-anchor':'end','font-size':12,fill:soft,'font-family':'Victor Mono,monospace'},sv);t.textContent=byEye?'':T+'°'});
+  for(let m=0;m<=traceMax/60;m++){const t=el('text',{x:tx(m*60,traceMax),y:204,'text-anchor':'middle','font-size':12,fill:soft,'font-family':'Victor Mono,monospace'},sv);t.textContent=m+'m'}
+  const tl=el('text',{x:TR.x1,y:ty(hi)-4,'text-anchor':'end','font-size':12,fill:rasp,'font-family':'Lexend,sans-serif'},sv);tl.textContent=byEye?'':recipe.name;
+  el('polyline',{id:'tline',fill:'none',stroke:cs.getPropertyValue('--ink').trim(),'stroke-width':2.2,'stroke-linejoin':'round'},sv);
+  el('circle',{id:'tdot',r:4,fill:rasp},sv);
+  drawTraceLine();}
+function drawTraceLine(){const need=Math.max(360,Math.ceil((S.t+30)/120)*120);if(need!==traceMax){traceMax=need;drawTraceBg();return}
+  const pts=S.trace.concat([[S.t,S.T]]);const pl=$('tline');if(!pl)return;
+  pl.setAttribute('points',byEye?'':pts.map(([t,T])=>tx(t,traceMax).toFixed(1)+','+ty(Math.min(T,200)).toFixed(1)).join(' '));
+  const d=$('tdot');d.setAttribute('cx',tx(S.t,traceMax));d.setAttribute('cy',ty(Math.min(S.T,200)));d.setAttribute('opacity',byEye?0:1);
+  $('traceNote').textContent=byEye?'Hidden while you cook by eye. Use the drop test, the bubbles and the colour.':'Watch the line stall just above 100°C while the water boils off, then climb faster and faster.'}
+// result tray
+function drawTray(i,v){const sv=$('tray');sv.innerHTML='';const st=STAGES[i];let col=st.col;
+  el('rect',{x:10,y:18,width:220,height:120,rx:8,fill:'#cfd4d9'},sv);el('rect',{x:18,y:26,width:204,height:104,rx:4,fill:'#f7f3ea'},sv);
+  if(v==='grainy')col='#f3eee6';
+  const ink='#8a6a3a';
+  if(v==='burnt'){el('path',{d:'M30 40 Q120 20 210 44 L214 118 Q120 132 26 116Z',fill:'#1c0c06'},sv);for(let k=0;k<4;k++)el('circle',{cx:70+k*34,cy:30-k%2*6,r:12,fill:'#5a5254',opacity:.4},sv);return}
+  if(i<=1){el('path',{d:'M26 96 Q60 70 120 80 Q190 70 214 100 L214 124 L26 124Z',fill:col,stroke:ink,'stroke-width':1},sv);el('path',{d:'M60 92 Q100 84 140 90',stroke:'#fff','stroke-width':3,fill:'none',opacity:.8},sv);return}
+  // set slab
+  el('rect',{x:24,y:34,width:192,height:90,rx:6,fill:col,stroke:ink,'stroke-width':1},sv);
+  if(v==='grainy'){let a=11;const r=()=>{a=(a*16807)%2147483647;return a/2147483647};for(let k=0;k<160;k++)el('circle',{cx:26+r()*188,cy:36+r()*86,r:.9+r()*1.2,fill:'#d8cfbf'},sv);return}
+  const soft=i<=4;
+  if(soft){ // cut squares
+    for(let x=24+48;x<216;x+=48)el('line',{x1:x,x2:x,y1:34,y2:124,stroke:ink,'stroke-width':1,opacity:.6},sv);
+    for(let y=34+30;y<124;y+=30)el('line',{x1:24,x2:216,y1:y,y2:y,stroke:ink,'stroke-width':1,opacity:.6},sv);
+    if(recipe.k==='meringue'&&v==='on'){for(let k=0;k<5;k++)el('path',{d:`M${44+k*38} 118 q14 -50 18 -70 q4 20 16 70Z`,fill:'#fffaf2',stroke:'#d8cbb2'},sv)}
+  }else{ // shattered glass
+    [['M24 34 L96 34 L84 76 L24 70Z'],['M96 34 L170 34 L150 82 L84 76Z'],['M170 34 L216 34 L216 90 L150 82Z'],['M24 70 L84 76 L72 124 L24 124Z'],['M84 76 L150 82 L140 124 L72 124Z'],['M150 82 L216 90 L216 124 L140 124Z']].forEach(([d])=>el('path',{d,fill:'none',stroke:ink,'stroke-width':1.4},sv));
+    el('path',{d:'M40 46 L70 44',stroke:'#fff','stroke-width':3,opacity:.7},sv);
+    if(recipe.k==='brittle'){let a=5;const r=()=>{a=(a*16807)%2147483647;return a/2147483647};for(let k=0;k<22;k++)el('ellipse',{cx:34+r()*172,cy:44+r()*72,rx:5,ry:3.4,fill:'#b9824a',stroke:'#7c5126','stroke-width':.8,transform:''},sv)}
+  }
+}
+// stage table
+(function table(){const tb=document.querySelector('#stages tbody');STAGES.forEach(s=>{const tr=document.createElement('tr');const rng=s.lo<0?'below 106°C':s.hi>500?'190°C+':`${s.lo}–${s.hi}°C`;tr.innerHTML=`<td><span class="sw" style="background:${s.col}"></span>${s.name}</td><td class="n">${rng}</td><td>${s.drop}</td><td>${s.makes}</td>`;tb.appendChild(tr)})})();
+const mq=matchMedia('(prefers-color-scheme: dark)');mq.addEventListener&&mq.addEventListener('change',drawTraceBg);
+showTarget();drawTraceBg();renderTin();
+requestAnimationFrame(frame);
+window.__hc={get S(){return S},advance(sec){const n=Math.ceil(sec/0.5);for(let k=0;k<n;k++)step(sec/n)},setHeat,pour,pick:k=>pick(RECIPES.find(r=>r.k===k)),boil,stIdx,STAGES};
+})();
+</script>
+</body></html>
