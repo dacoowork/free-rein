@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Pacifico&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&family=Londrina+Solid:wght@900&family=Atkinson+Hyperlegible&family=Fragment+Mono&family=Krona+One&family=Fredoka:wght@700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Pacifico&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&family=Londrina+Solid:wght@900&family=Atkinson+Hyperlegible&family=Fragment+Mono&family=Krona+One&family=Fredoka:wght@700&family=Silkscreen&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -144,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-19"></script>
+<script src="builds.js?v=2026-11-20"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -155,6 +155,24 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    doublings(b,r){
+      // the build's log-scale chart: real transistor counts (1971 to 2024) rising along a two-year doubling line, pink handle at 2024, wafer-scale squares above
+      let s=`<defs><radialGradient id="dblA" cx=".1" cy="0" r=".8"><stop offset="0" stop-color="#c9f1f4"/><stop offset="1" stop-color="#c9f1f4" stop-opacity="0"/></radialGradient><radialGradient id="dblB" cx=".95" cy=".1" r=".7"><stop offset="0" stop-color="#fadbef"/><stop offset="1" stop-color="#fadbef" stop-opacity="0"/></radialGradient><radialGradient id="dblC" cx=".7" cy="1" r=".7"><stop offset="0" stop-color="#fbefc8"/><stop offset="1" stop-color="#fbefc8" stop-opacity="0"/></radialGradient></defs>`;
+      s+=`<rect width="320" height="180" fill="${b.bg}"/><rect width="320" height="180" fill="url(#dblA)"/><rect width="320" height="180" fill="url(#dblB)"/><rect width="320" height="180" fill="url(#dblC)"/>`;
+      const X=y=>78+(y-1970)/(2025-1970)*164, Y=n=>152-(Math.log10(n)-3)/10*124;
+      for(let L=3;L<=13;L+=2)s+=`<line x1="72" x2="250" y1="${Y(Math.pow(10,L))}" y2="${Y(Math.pow(10,L))}" stroke="#dfe2ef" stroke-width="1"/>`;
+      s+=`<line x1="72" x2="250" y1="152" y2="152" stroke="#5a5e7a" stroke-width="1.2"/>`;
+      s+=`<path d="M${X(1971)} ${Y(2250)} L${X(2024)} ${Y(2250*Math.pow(2,26.5))}" stroke="${b.accent2}" stroke-width="3" stroke-linecap="round"/>`;
+      const cpu=[[1971,2250],[1974,4500],[1976,8500],[1978,29e3],[1979,68e3],[1982,134e3],[1985,275e3],[1989,1.18e6],[1993,3.1e6],[1995,5.5e6],[1997,7.5e6],[1999,9.5e6],[2000,42e6],[2002,220e6],[2003,106e6],[2006,291e6],[2008,731e6],[2011,1.16e9],[2014,2.6e9],[2019,39.5e9],[2020,16e9],[2022,90e9],[2022,114e9],[2023,92e9]];
+      const gpu=[[2006,681e6],[2010,3e9],[2012,7.08e9],[2017,21.1e9],[2020,54.2e9],[2022,80e9]];
+      cpu.forEach(([y,n])=>s+=`<circle cx="${X(y)}" cy="${Y(n)}" r="3.2" fill="${b.accent}"/>`);
+      gpu.forEach(([y,n])=>{const x=X(y),q=Y(n);s+=`<path d="M${x} ${q-4}L${x+4} ${q}L${x} ${q+4}L${x-4} ${q}Z" fill="#0f8f86"/>`});
+      [[2013,1e9],[2018,6.9e9],[2020,11.8e9],[2023,19e9]].forEach(([y,n])=>{const x=X(y),q=Y(n);s+=`<path d="M${x} ${q-4}L${x+3.6} ${q+2.7}L${x-3.6} ${q+2.7}Z" fill="${b.accent2}"/>`});
+      [[2019,1.2e12],[2021,2.6e12],[2024,4e12]].forEach(([y,n])=>s+=`<rect x="${X(y)-3.2}" y="${Y(n)-3.2}" width="6.4" height="6.4" fill="#b36b00"/>`);
+      s+=`<circle cx="${X(2024)}" cy="${Y(208e9)}" r="6.5" fill="${b.accent2}" stroke="#fff" stroke-width="2.5"/>`;
+      s+=`<text x="${X(1971)-4}" y="${Y(2250)-8}" text-anchor="end" font-family="Silkscreen,monospace" font-size="9" fill="${b.fg}" stroke="#fff" stroke-width="3" paint-order="stroke">4004</text><text x="${X(2024)-10}" y="${Y(208e9)-9}" text-anchor="end" font-family="Silkscreen,monospace" font-size="9" fill="${b.fg}" stroke="#fff" stroke-width="3" paint-order="stroke">B200</text>`;
+      return s;
+    },
     hardcrack(b,r){
       // the build's pan: a sugar thermometer reading 150°C, right in the hard-crack band, syrup boiling with small thick bubbles, and a bead snapped in the cold-water glass
       let s=`<rect width="320" height="180" fill="${b.bg}"/>`;

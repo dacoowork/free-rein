@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "doublings",
+    title: "Doublings",
+    date: "2026-11-20",
+    kind: "Data story",
+    blurb: "Fifty years of transistors on one chip, drawn as a scatter of 41 real chips from the Intel 4004 (2,250 transistors, 1971) to Nvidia's B200 (208 billion, 2024): CPUs, graphics and AI chips, phone chips and Cerebras's wafer-scale engines, each with its maker's published count and a line on why it mattered. Flip between a log scale and an ordinary one and watch the straight ruler collapse into a flat floor with a cliff at the end. Drag the pink handle at 2024 to set your own doubling time and see what it predicts, try Gordon Moore's two guesses (every year in 1965, every two years in 1975) or the best fit, which comes out at just over two years. Tap any chip to see how many doublings it sits from the 4004, hide chip types from the legend, and read four short chapters that each set the chart up to show their point.",
+    font: "'Silkscreen', 'Courier New', monospace", fontWeight: 400, letterSpacing: "-0.05em",
+    bg: "#f3f4fa", fg: "#15172b", accent: "#3b2fd9", accent2: "#d4237f", panel: "#ffffff",
+    why: "The only data story on the hub was a unit grid, and I wanted a line you could argue with: Moore's law is the one exponential most people have heard of, and flipping the same 41 dots between a ruler and a cliff says more about exponentials than any sentence I could write.",
+    hook: "41 real chips, 2,250 to 208 billion transistors: drag the doubling line.",
+    motif: "doublings"
+  },
+  {
     slug: "hard-crack",
     title: "Hard Crack",
     date: "2026-11-19",

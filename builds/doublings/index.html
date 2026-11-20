@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Doublings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Mulish:wght@400;600;700;800&family=Kode+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f4fa; --sheenA:#c9f1f4; --sheenB:#fadbef; --sheenC:#fbefc8; --sheenD:#dbe0ff;
+  --panel:#ffffff; --ink:#15172b; --soft:#5a5e7a; --line:#dfe2ef; --grid:#eceef6;
+  --acc:#3b2fd9; --accSoft:#e7e5ff; --mag:#d4237f; --magSoft:#fde2f0;
+  --cpu:#3b2fd9; --gpu:#0f8f86; --soc:#d4237f; --wafer:#b36b00;
+  --shadow:0 1px 0 rgba(21,23,43,.04),0 10px 30px -12px rgba(40,40,110,.18);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1020; --sheenA:#0f3640; --sheenB:#3a1534; --sheenC:#3a3014; --sheenD:#1c2050;
+  --panel:#171a2f; --ink:#eceefb; --soft:#a2a6c4; --line:#2b2f4b; --grid:#22263f;
+  --acc:#9d95ff; --accSoft:#2a2660; --mag:#ff6fb6; --magSoft:#4a1836;
+  --cpu:#9d95ff; --gpu:#4fd3c7; --soc:#ff6fb6; --wafer:#f0b04a;
+  --shadow:0 10px 30px -12px rgba(0,0,0,.6);
+}}
+:root[data-theme="dark"]{
+  --bg:#0e1020; --sheenA:#0f3640; --sheenB:#3a1534; --sheenC:#3a3014; --sheenD:#1c2050;
+  --panel:#171a2f; --ink:#eceefb; --soft:#a2a6c4; --line:#2b2f4b; --grid:#22263f;
+  --acc:#9d95ff; --accSoft:#2a2660; --mag:#ff6fb6; --magSoft:#4a1836;
+  --cpu:#9d95ff; --gpu:#4fd3c7; --soc:#ff6fb6; --wafer:#f0b04a;
+  --shadow:0 10px 30px -12px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Mulish,"Segoe UI",system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+   radial-gradient(60vmax 40vmax at 8% 0%,var(--sheenA),transparent 60%),
+   radial-gradient(50vmax 40vmax at 95% 12%,var(--sheenB),transparent 60%),
+   radial-gradient(55vmax 45vmax at 70% 95%,var(--sheenC),transparent 60%),
+   radial-gradient(50vmax 40vmax at 0% 85%,var(--sheenD),transparent 60%);
+  opacity:.9}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 16px 60px}
+header{margin-bottom:18px}
+h1{font-family:Silkscreen,"Courier New",monospace;font-weight:700;font-size:clamp(40px,8vw,76px);line-height:.95;letter-spacing:.01em;margin:0 0 10px}
+h1 span{color:var(--acc)}
+.lede{font-size:clamp(17px,2.1vw,20px);max-width:44em;margin:0;color:var(--ink)}
+.lede b{font-weight:800}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow)}
+.stat .n{font-family:"Kode Mono",ui-monospace,monospace;font-weight:700;font-size:clamp(18px,3vw,28px);line-height:1.1;color:var(--acc);overflow-wrap:anywhere}
+.stat .l{font-size:13px;color:var(--soft);margin-top:4px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;margin-bottom:8px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--bg)}
+.seg button{border:0;background:transparent;color:var(--soft);font:700 14px Mulish,system-ui,sans-serif;padding:7px 14px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--acc);color:#fff}
+:root[data-theme="dark"] .seg button[aria-pressed="true"]{color:#0e1020}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .seg button[aria-pressed="true"]{color:#0e1020}}
+.legend{display:flex;flex-wrap:wrap;gap:6px}
+.legend button{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:600 13px Mulish,system-ui,sans-serif;padding:5px 10px;border-radius:999px;cursor:pointer}
+.legend button[aria-pressed="false"]{opacity:.45;text-decoration:line-through}
+.legend svg{width:12px;height:12px;flex:none}
+#chartBox{position:relative;width:100%}
+#chart{display:block;width:100%;touch-action:none;user-select:none;-webkit-user-select:none}
+#chart text{font-family:"Kode Mono",ui-monospace,monospace}
+.axis{fill:var(--soft);font-size:11px}
+.lbl{fill:var(--ink);font-size:11px;font-weight:700;pointer-events:none;paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round}
+.dot{cursor:pointer}
+.note{fill:var(--soft);font-size:11px;pointer-events:none}
+.below{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin-top:10px}
+.line-ctl{border-top:1px solid var(--line);padding-top:10px}
+.read{font-size:15px;margin:0 0 8px}
+.read b{font-family:"Kode Mono",ui-monospace,monospace;color:var(--mag);font-size:18px}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.presets button,.show{border:1px solid var(--mag);background:var(--magSoft);color:var(--ink);font:700 13px Mulish,system-ui,sans-serif;padding:7px 12px;border-radius:10px;cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--mag);color:#fff}
+.hint{font-size:13px;color:var(--soft);margin:8px 0 0}
+.chip{border-top:1px solid var(--line);padding-top:10px;min-height:120px}
+.chip h3{margin:0;font-size:18px;font-weight:800}
+.chip .meta{font-size:13px;color:var(--soft)}
+.chip .big{font-family:"Kode Mono",ui-monospace,monospace;font-weight:700;font-size:22px;color:var(--acc);margin:4px 0;overflow-wrap:anywhere}
+.chip p{margin:4px 0 0;font-size:14px}
+.chapters{margin-top:34px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.chapter{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+.chapter .k{font-family:Silkscreen,"Courier New",monospace;font-size:13px;color:var(--acc);letter-spacing:.04em}
+.chapter h2{margin:4px 0 8px;font-size:22px;line-height:1.2;font-weight:800}
+.chapter p{margin:0 0 10px}
+.show{border-color:var(--acc);background:var(--accSoft)}
+.chapter.on{outline:2px solid var(--acc);outline-offset:2px}
+footer{margin-top:28px;font-size:13px;color:var(--soft);max-width:60em}
+footer p{margin:0 0 6px}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--mag);outline-offset:2px}
+@media (max-width:760px){
+  .below{grid-template-columns:1fr}
+  .chapters{grid-template-columns:1fr}
+  .stat{padding:10px}
+  .stat .l{font-size:12px}
+  .card{padding:10px}
+}
+</style>
+</head><body>
+<div class="wrap">
+<header>
+  <h1>DOUBL<span>I</span>NGS</h1>
+  <p class="lede">In 1971 the first microprocessor held <b>2,250 transistors</b>. In 2024 one graphics chip held <b>208 billion</b>. Here are 41 chips from that half-century, drawn by year and transistor count. Flip the scale, tap a chip, and drag the pink line to find the pace.</p>
+</header>
+
+<div class="stats" aria-label="Summary">
+  <div class="stat"><div class="n" id="sX">×92 million</div><div class="l">4004 to Nvidia B200</div></div>
+  <div class="stat"><div class="n" id="sD">26.5</div><div class="l">doublings in 53 years</div></div>
+  <div class="stat"><div class="n" id="sP">2.0 yrs</div><div class="l">per doubling, on average</div></div>
+</div>
+
+<section class="card" id="chartCard" aria-label="Transistor count chart">
+  <div class="toolbar">
+    <div class="seg" role="group" aria-label="Vertical scale">
+      <button id="bLog" aria-pressed="true">Log scale</button>
+      <button id="bLin" aria-pressed="false">Ordinary scale</button>
+    </div>
+    <div class="legend" id="legend" aria-label="Show or hide chip types"></div>
+  </div>
+  <div id="chartBox"><svg id="chart" role="img" aria-label="Scatter chart of transistor counts by year"></svg></div>
+  <div class="below">
+    <div class="line-ctl">
+      <p class="read" id="readout"></p>
+      <div class="presets" role="group" aria-label="Line presets">
+        <button data-p="m65">Moore 1965: every year</button>
+        <button data-p="m75">Moore 1975: every two years</button>
+        <button data-p="fit">Best fit</button>
+      </div>
+      <p class="hint">Drag the pink handle at 2024 up or down (or focus it and use the arrow keys). The line starts at the 4004 and keeps one doubling time all the way.</p>
+    </div>
+    <div class="chip" id="chip" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="chapters" aria-label="The story">
+  <article class="chapter" data-c="1">
+    <div class="k">01 · THE FLAT LINE</div>
+    <h2>On an ordinary scale, nothing happens for forty years</h2>
+    <p>Draw the counts on a plain axis and every chip before about 2012 sits on the floor. The Pentium 4's 42 million transistors are a rounding error next to 208 billion. That is what exponential growth looks like from the end: all the action seems recent, because each doubling adds more than all the doublings before it put together.</p>
+    <button class="show" data-show="1">Show on the chart</button>
+  </article>
+  <article class="chapter" data-c="2">
+    <div class="k">02 · THE RULER</div>
+    <h2>On a log scale, it's nearly a straight line</h2>
+    <p>Give every factor of ten the same height and the cloud turns into a ruler. A straight line on this scale means a fixed doubling time. Fit one through the single chips and it comes out at a little over two years per doubling, held for five decades by thousands of engineers who planned around the line itself.</p>
+    <button class="show" data-show="2">Show on the chart</button>
+  </article>
+  <article class="chapter" data-c="3">
+    <div class="k">03 · TWO GUESSES</div>
+    <h2>Gordon Moore guessed twice</h2>
+    <p>In 1965 Moore, then at Fairchild, noticed the number of components on a chip doubling every year and guessed it would carry on for ten years. In 1975 he slowed his guess to every two years. Start both lines at the 4004 and the first one is off by a factor of millions by 2024; the second runs straight through the cloud.</p>
+    <button class="show" data-show="3">Show on the chart</button>
+  </article>
+  <article class="chapter" data-c="4">
+    <div class="k">04 · BIGGER, NOT JUST SMALLER</div>
+    <h2>The recent climb is partly about size</h2>
+    <p>Shrinking transistors did most of the work, but not all of it. The M1 Ultra is two M1 Max dies joined edge to edge; the B200 is two dies in one package. Cerebras stopped cutting the wafer up at all and sells one plate of silicon as one chip: 4 trillion transistors, above the line because it is about fifty times the area of a large chip.</p>
+    <button class="show" data-show="4">Show on the chart</button>
+  </article>
+</section>
+
+<footer>
+  <p>Counts are the makers' published figures, rounded where they were given that way, by year of first shipment. Single chips are CPUs, graphics/AI chips and phone systems-on-chip; wafer-scale engines are shown separately and left out of the best fit. The fit is least squares on log₂ of the count.</p>
+</footer>
+</div>
+
+<script>
+(function(){
+const T={cpu:'CPU',gpu:'Graphics / AI',soc:'Phone chip',wafer:'Wafer-scale'};
+const D=[
+ ['Intel 4004','Intel',1971,2250,'cpu','The first commercial microprocessor, made for a Japanese desk calculator.'],
+ ['Intel 8008','Intel',1972,3500,'cpu','An 8-bit chip first ordered for a computer terminal.'],
+ ['Intel 8080','Intel',1974,4500,'cpu','Ran the Altair 8800, the kit computer that started the hobbyist boom.'],
+ ['MOS 6502','MOS Technology',1975,3510,'cpu','Cheap enough for the Apple II, the BBC Micro and the Nintendo NES.'],
+ ['Zilog Z80','Zilog',1976,8500,'cpu','Inside the ZX Spectrum and countless arcade machines.'],
+ ['Intel 8086','Intel',1978,29000,'cpu','The start of the x86 family that PCs still run.'],
+ ['Motorola 68000','Motorola',1979,68000,'cpu','The first Macintosh, the Amiga and the Sega Mega Drive.'],
+ ['Intel 80286','Intel',1982,134000,'cpu','The IBM PC/AT.'],
+ ['Intel 80386','Intel',1985,275000,'cpu','The first 32-bit x86 chip.'],
+ ['Intel 80486','Intel',1989,1180235,'cpu','The first x86 chip past a million transistors, with the maths unit built in.'],
+ ['Intel Pentium','Intel',1993,3100000,'cpu','Famous for a division bug that cost Intel a recall.'],
+ ['Intel Pentium Pro','Intel',1995,5500000,'cpu','Out-of-order execution comes to x86.'],
+ ['Intel Pentium II','Intel',1997,7500000,'cpu','Sold on a cartridge instead of a socketed chip.'],
+ ['Intel Pentium III','Intel',1999,9500000,'cpu','Clock speeds pass 1 GHz around now.'],
+ ['Intel Pentium 4','Intel',2000,42000000,'cpu','Built for very high clock speeds; ran hot.'],
+ ['Intel Itanium 2','Intel',2002,220000000,'cpu','A server chip with a huge on-chip cache.'],
+ ['AMD Athlon 64','AMD',2003,105900000,'cpu','The 64-bit extension that x86 kept.'],
+ ['Intel Core 2 Duo','Intel',2006,291000000,'cpu','Clock speeds stop climbing; the extra transistors go into more cores.'],
+ ['Intel Core i7 (Nehalem)','Intel',2008,731000000,'cpu','Four cores and the memory controller on one die.'],
+ ['Intel Core i7 (Sandy Bridge)','Intel',2011,1160000000,'cpu','Graphics moves onto the same die as the cores.'],
+ ['AMD Epyc (Rome)','AMD',2019,39540000000,'cpu','Built from nine chiplets in one package.'],
+ ['Apple M1','Apple',2020,16000000000,'cpu','A laptop chip grown from the phone line.'],
+ ['AMD Epyc (Genoa)','AMD',2022,90000000000,'cpu','Up to 96 cores across thirteen chiplets.'],
+ ['Apple M1 Ultra','Apple',2022,114000000000,'cpu','Two M1 Max dies joined edge to edge.'],
+ ['Apple M3 Max','Apple',2023,92000000000,'cpu','One die on a 3-nanometre-class process.'],
+ ['Nvidia G80 (8800 GTX)','Nvidia',2006,681000000,'gpu','The first Nvidia chip that could be programmed for general maths.'],
+ ['Nvidia GF100 (GTX 480)','Nvidia',2010,3000000000,'gpu','Three billion transistors in one graphics chip.'],
+ ['Nvidia GK110 (Titan)','Nvidia',2012,7080000000,'gpu','Went into supercomputers as well as gaming PCs.'],
+ ['Nvidia V100','Nvidia',2017,21100000000,'gpu','Built for training neural networks.'],
+ ['Nvidia A100','Nvidia',2020,54200000000,'gpu','The workhorse of the early large language models.'],
+ ['Nvidia H100','Nvidia',2022,80000000000,'gpu','One die close to the largest a lithography machine can print.'],
+ ['Nvidia B200','Nvidia',2024,208000000000,'gpu','Two dies of 104 billion transistors in one package.'],
+ ['Apple A7','Apple',2013,1000000000,'soc','The first 64-bit phone chip, at "over a billion" transistors.'],
+ ['Apple A12','Apple',2018,6900000000,'soc','The first 7-nanometre-class phone chip.'],
+ ['Apple A14','Apple',2020,11800000000,'soc','The phone sibling of the M1.'],
+ ['Apple A17 Pro','Apple',2023,19000000000,'soc','A phone chip with more transistors than a 2017 AI chip.'],
+ ['Cerebras WSE','Cerebras',2019,1200000000000,'wafer','A whole 300 mm wafer used as one chip.'],
+ ['Cerebras WSE-2','Cerebras',2021,2600000000000,'wafer','The same plate on a finer process.'],
+ ['Cerebras WSE-3','Cerebras',2024,4000000000000,'wafer','Four trillion transistors on one plate of silicon.']
+].map((r,i)=>({i,name:r[0],maker:r[1],year:r[2],n:r[3],t:r[4],note:r[5]}));
+// add two more widely cited chips to keep the 1990s and 2010s honest
+D.push({i:D.length,name:'AMD K6',maker:'AMD',year:1997,n:8800000,t:'cpu',note:'A cheaper rival to the Pentium II.'});
+D.push({i:D.length,name:'Intel Core i7 (Haswell-E)',maker:'Intel',year:2014,n:2600000000,t:'cpu',note:'Eight cores on one desktop die.'});
+
+const A0=2250, Y0=1971, YH=2024;
+const S={scale:'log',k:0,D:2.0,anchor:A0,preset:null,sel:0,hidden:new Set(),chapter:null,hl:null};
+const $=id=>document.getElementById(id);
+const svg=$('chart'), box=$('chartBox');
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+function fmt(n){
+  if(n>=1e18){const e=Math.floor(Math.log10(n)),m=n/Math.pow(10,e),sup='⁰¹²³⁴⁵⁶⁷⁸⁹';return (+m.toPrecision(2))+' × 10'+String(e).split('').map(c=>sup[+c]).join('')}
+  if(n>=1e15)return (+(n/1e15).toPrecision(3))+' quadrillion';
+  if(n>=1e12)return (+(n/1e12).toPrecision(3))+' trillion';
+  if(n>=1e9)return (+(n/1e9).toPrecision(3))+' billion';
+  if(n>=1e6)return (+(n/1e6).toPrecision(3))+' million';
+  return Math.round(n).toLocaleString('en-GB');
+}
+function short(v){
+  const u=[[1e12,'tn'],[1e9,'bn'],[1e6,'m'],[1e3,'k']];
+  for(const [d,s] of u)if(v>=d)return (+(v/d).toPrecision(3))+s;
+  return String(v);
+}
+// best fit over single chips
+function bestFit(){
+  const pts=D.filter(d=>d.t!=='wafer');
+  const n=pts.length;let sx=0,sy=0,sxx=0,sxy=0;
+  pts.forEach(d=>{const x=d.year-Y0,y=Math.log2(d.n);sx+=x;sy+=y;sxx+=x*x;sxy+=x*y});
+  const b=(n*sxy-sx*sy)/(n*sxx-sx*sx), a=(sy-b*sx)/n;
+  return {D:1/b,anchor:Math.pow(2,a)};
+}
+const FIT=bestFit();
+
+let W=800,H=450,P={l:56,r:18,t:14,b:30};
+function geom(){
+  W=Math.max(300,box.clientWidth);
+  H=W<600?Math.round(W*1.18):Math.round(Math.min(520,W*0.52));
+  P=W<600?{l:44,r:10,t:12,b:28}:{l:58,r:20,t:14,b:30};
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.setAttribute('height',H);
+}
+const X0=1969.5,X1=2026;
+const xs=y=>P.l+(y-X0)/(X1-X0)*(W-P.l-P.r);
+const LOG0=3,LOG1=13;
+const ylog=v=>{const L=Math.log10(Math.max(v,1));return H-P.b-(L-LOG0)/(LOG1-LOG0)*(H-P.t-P.b)};
+function linMax(){
+  const vis=D.filter(d=>!S.hidden.has(d.t));
+  const m=vis.length?Math.max(...vis.map(d=>d.n)):1e11;
+  return niceMax(m*1.06);
+}
+function niceMax(m){const p=Math.pow(10,Math.floor(Math.log10(m)));for(const f of [1,1.5,2,2.5,3,4,5,6,8,10])if(f*p>=m)return f*p;return 10*p}
+let LM=linMax(), LMfrom=LM, LMto=LM, lmK=1;
+const ylin=v=>H-P.b-(v/LM)*(H-P.t-P.b);
+const ys=v=>{const a=ylog(v),b=ylin(v);const k=ease(S.k);return a+(Math.max(b,-4000)-a)*k};
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const lineV=y=>S.anchor*Math.pow(2,(y-Y0)/S.D);
+function yInv(py){ // inverse of current (non-animating) scale
+  if(S.scale==='log'){const L=LOG0+(H-P.b-py)/(H-P.t-P.b)*(LOG1-LOG0);return Math.pow(10,L)}
+  return Math.max(1,(H-P.b-py)/(H-P.t-P.b)*LM);
+}
+
+function shape(t,x,y,r,fill,stroke,sw){
+  if(t==='cpu')return `<circle cx="${x}" cy="${y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+  if(t==='gpu')return `<path d="M${x} ${y-r*1.3}L${x+r*1.3} ${y}L${x} ${y+r*1.3}L${x-r*1.3} ${y}Z" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+  if(t==='soc')return `<path d="M${x} ${y-r*1.3}L${x+r*1.2} ${y+r*.9}L${x-r*1.2} ${y+r*.9}Z" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+  return `<rect x="${x-r}" y="${y-r}" width="${2*r}" height="${2*r}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+}
+const LABELS=new Set(['Intel 4004','Intel 8086','Intel 80486','Intel Pentium 4','Intel Core 2 Duo','Apple M1','Nvidia B200','Cerebras WSE-3']);
+const LABELS_PHONE=new Set(['Intel 4004','Intel 80486','Intel Core 2 Duo','Nvidia B200','Cerebras WSE-3']);
+
+function draw(){
+  const C={ink:css('--ink'),soft:css('--soft'),grid:css('--grid'),line:css('--line'),panel:css('--panel'),mag:css('--mag'),acc:css('--acc'),cpu:css('--cpu'),gpu:css('--gpu'),soc:css('--soc'),wafer:css('--wafer')};
+  const k=ease(S.k);
+  let s=`<defs><clipPath id="plot"><rect x="${P.l}" y="${P.t}" width="${W-P.l-P.r}" height="${H-P.t-P.b}"/></clipPath></defs>`;
+  // log grid
+  if(k<1){s+=`<g opacity="${1-k}">`;for(let L=LOG0;L<=LOG1;L++){const y=ylog(Math.pow(10,L));s+=`<line x1="${P.l}" x2="${W-P.r}" y1="${y}" y2="${y}" stroke="${C.grid}"/>`;if(W>=600||L%2===1)s+=`<text class="axis" x="${P.l-6}" y="${y+4}" text-anchor="end">${short(Math.pow(10,L))}</text>`}s+='</g>'}
+  if(k>0){s+=`<g opacity="${k}">`;const step=LM/5;for(let i=0;i<=5;i++){const v=step*i;const y=ylin(v);s+=`<line x1="${P.l}" x2="${W-P.r}" y1="${y}" y2="${y}" stroke="${C.grid}"/><text class="axis" x="${P.l-6}" y="${y+4}" text-anchor="end">${i?short(v):'0'}</text>`}s+='</g>'}
+  // x axis
+  const yb=H-P.b;
+  s+=`<line x1="${P.l}" x2="${W-P.r}" y1="${yb}" y2="${yb}" stroke="${C.line}" stroke-width="1.5"/>`;
+  for(let y=1970;y<=2020;y+=W<600?10:5){const x=xs(y);s+=`<line x1="${x}" x2="${x}" y1="${yb}" y2="${yb+4}" stroke="${C.soft}"/><text class="axis" x="${x}" y="${yb+17}" text-anchor="middle">${W<600?"'"+String(y).slice(2):y}</text>`}
+  // chapter notes
+  if(S.chapter===3){
+    s+=`<g clip-path="url(#plot)">`;
+    [[1,C.soft,'5 4'],[2,C.soft,'2 4']].forEach(([d,c,da])=>{let p='';for(let y=Y0;y<=X1;y+=.25){const v=A0*Math.pow(2,(y-Y0)/d);p+=(p?'L':'M')+xs(y).toFixed(1)+' '+ys(v).toFixed(1)}s+=`<path d="${p}" fill="none" stroke="${c}" stroke-width="1.5" stroke-dasharray="${da}"/>`});
+    s+='</g>';
+  }
+  // user line
+  let p='';for(let y=Y0;y<=X1;y+=.2){p+=(p?'L':'M')+xs(y).toFixed(1)+' '+ys(lineV(y)).toFixed(1)}
+  s+=`<g clip-path="url(#plot)"><path d="${p}" fill="none" stroke="${C.mag}" stroke-width="3" stroke-linecap="round" opacity=".9"/></g>`;
+  // dots
+  const lab=W<600?LABELS_PHONE:LABELS;
+  const hl=S.hl;
+  D.forEach(d=>{
+    if(S.hidden.has(d.t))return;
+    const x=xs(d.year), y=ys(d.n);
+    const sel=d.i===S.sel, dim=hl&&!hl.has(d.name);
+    const r=W<600?4.2:5;
+    s+=`<g class="dot" data-i="${d.i}" opacity="${dim?.28:1}">`+`<circle cx="${x}" cy="${y}" r="14" fill="transparent"/>`+shape(d.t,x,y,sel?r+2:r,C[d.t],sel?C.ink:C.panel,sel?2:1.2)+`</g>`;
+  });
+  D.forEach(d=>{
+    if(S.hidden.has(d.t))return;
+    const show=d.i===S.sel||(S.k>.5?d.n>LM*.15&&lab.has(d.name):(lab.has(d.name)||(hl&&hl.has(d.name)&&W>=600)));
+    if(!show)return;
+    const x=xs(d.year), y=ys(d.n);
+    const right=x<W*0.62;
+    let ly=y-9; if(y<P.t+14)ly=y+18;
+    s+=`<text class="lbl" x="${right?x+9:x-9}" y="${ly}" text-anchor="${right?'start':'end'}">${d.name.replace(/^(Intel|Nvidia|Apple|AMD|Cerebras) /,W<600?'':'$1 ')}</text>`;
+  });
+  // handle
+  const hx=xs(YH), hy=ys(lineV(YH));
+  const hyC=Math.max(P.t+2,Math.min(H-P.b-2,hy));
+  s+=`<g id="handle" tabindex="0" role="slider" aria-label="Doubling time of the pink line" aria-valuemin="0.8" aria-valuemax="6" aria-valuenow="${S.D.toFixed(2)}" aria-valuetext="doubling every ${S.D.toFixed(2)} years" style="cursor:ns-resize">`+
+    `<circle cx="${hx}" cy="${hyC}" r="18" fill="transparent"/><circle cx="${hx}" cy="${hyC}" r="9" fill="${C.mag}" stroke="${C.panel}" stroke-width="3"/>`+
+    (hy<P.t||hy>H-P.b?`<path d="M${hx-5} ${hyC+(hy<P.t?4:-4)}l5 ${hy<P.t?-7:7}l5 ${hy<P.t?7:-7}" fill="none" stroke="${C.panel}" stroke-width="2"/>`:'')+`</g>`;
+  svg.innerHTML=s;
+}
+
+function readout(){
+  const pred=lineV(YH);
+  const single=D.filter(d=>d.t!=='wafer'&&!S.hidden.has(d.t));
+  const above=single.filter(d=>d.n>lineV(d.year)).length;
+  const big=208e9;
+  const ratio=pred/big;
+  let cmp;
+  if(ratio>1.5)cmp=`${ratio>=1000?fmt(ratio):(+ratio.toPrecision(2))} times the biggest single chip that year`;
+  else if(ratio<1/1.5)cmp=`${1/ratio>=1000?fmt(1/ratio):(+(1/ratio).toPrecision(2))} times smaller than the B200`;
+  else cmp='close to the B200’s 208 billion';
+  $('readout').innerHTML=`Your line doubles every <b>${S.D.toFixed(2)} years</b>. It predicts ${fmt(pred)} transistors in 2024, ${cmp}. ${above} of ${single.length} single chips sit above it.`;
+  document.querySelectorAll('.presets button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.p===S.preset)));
+}
+function chip(){
+  const d=D[S.sel]; if(!d){$('chip').innerHTML='';return}
+  const x=d.n/A0, dbl=Math.log2(x);
+  $('chip').innerHTML=`<h3>${d.name}</h3><div class="meta">${d.maker} · ${d.year} · ${T[d.t]}</div><div class="big">${fmt(d.n)}</div><p>${d.note}</p><p class="meta">${d.i===0?'The starting point: every other chip is measured from here.':`${x>=1e6?fmt(x):(+x.toPrecision(3)).toLocaleString('en-GB')} times the 4004, or ${dbl.toFixed(1)} doublings in ${d.year-Y0} years.`}</p>`;
+}
+function all(){draw();readout();chip()}
+
+// scale animation
+let anim=null;
+function setScale(sc){
+  if(S.scale===sc)return;
+  S.scale=sc;
+  $('bLog').setAttribute('aria-pressed',String(sc==='log'));$('bLin').setAttribute('aria-pressed',String(sc==='lin'));
+  const from=S.k,to=sc==='lin'?1:0,t0=performance.now(),dur=750;
+  cancelAnimationFrame(anim);
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){S.k=to;all();return}
+  const tick=now=>{const u=Math.min(1,(now-t0)/dur);S.k=from+(to-from)*u;draw();if(u<1)anim=requestAnimationFrame(tick)};
+  anim=requestAnimationFrame(tick);
+}
+$('bLog').onclick=()=>setScale('log');
+$('bLin').onclick=()=>setScale('lin');
+
+// legend
+const leg=$('legend');
+Object.keys(T).forEach(t=>{
+  const b=document.createElement('button');b.dataset.t=t;b.setAttribute('aria-pressed','true');
+  b.innerHTML=`<svg viewBox="0 0 12 12">${shape(t,6,6.5,4,`var(--${t})`,'none',0).replace(/fill="var\(--(\w+)\)"/,'style="fill:var(--$1)"')}</svg>${T[t]}`;
+  b.onclick=()=>{if(S.hidden.has(t))S.hidden.delete(t);else S.hidden.add(t);b.setAttribute('aria-pressed',String(!S.hidden.has(t)));
+    if(S.hidden.has(D[S.sel].t)){const f=D.find(d=>!S.hidden.has(d.t));S.sel=f?f.i:S.sel}
+    LM=linMax();all()};
+  leg.appendChild(b);
+});
+
+// presets
+function preset(p){
+  S.preset=p;
+  if(p==='m65'){S.D=1;S.anchor=A0}
+  else if(p==='m75'){S.D=2;S.anchor=A0}
+  else if(p==='fit'){S.D=FIT.D;S.anchor=FIT.anchor}
+  all();
+}
+document.querySelectorAll('.presets button').forEach(b=>b.onclick=()=>preset(b.dataset.p));
+
+// pointer: drag handle or pick dot
+let drag=false;
+function pt(e){const r=svg.getBoundingClientRect();return {x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
+function setFromY(py){
+  const v=yInv(Math.max(P.t,Math.min(H-P.b,py)));
+  const dbl=Math.log2(v/S.anchor);
+  let d=dbl>0?(YH-Y0)/dbl:6;
+  S.D=Math.max(.8,Math.min(6,d));S.preset=null;
+}
+svg.addEventListener('pointerdown',e=>{
+  const q=pt(e);
+  const hx=xs(YH),hy=Math.max(P.t+2,Math.min(H-P.b-2,ys(lineV(YH))));
+  if(Math.hypot(q.x-hx,q.y-hy)<24){drag=true;svg.setPointerCapture(e.pointerId);e.preventDefault();return}
+  const g=e.target.closest('.dot');
+  if(g){S.sel=+g.dataset.i;all()}
+});
+svg.addEventListener('pointermove',e=>{if(!drag)return;setFromY(pt(e).y);draw();readout()});
+const end=e=>{if(drag){drag=false;try{svg.releasePointerCapture(e.pointerId)}catch(_){}}};
+svg.addEventListener('pointerup',end);svg.addEventListener('pointercancel',end);
+svg.addEventListener('keydown',e=>{
+  if(!e.target.closest('#handle'))return;
+  const st=e.shiftKey?.25:.05;
+  if(e.key==='ArrowUp'||e.key==='ArrowRight'){S.D=Math.max(.8,S.D-st)}
+  else if(e.key==='ArrowDown'||e.key==='ArrowLeft'){S.D=Math.min(6,S.D+st)}
+  else return;
+  e.preventDefault();S.preset=null;draw();readout();
+  const h=svg.querySelector('#handle');h&&h.focus();
+});
+
+// chapters
+const CH={
+ 1:()=>{S.hl=null;S.hidden.clear();S.hidden.add('wafer');syncLegend();LM=linMax();S.sel=D.findIndex(d=>d.name==='Intel Pentium 4');preset('m75');setScale('lin')},
+ 2:()=>{S.hl=null;setScale('log');S.sel=0;preset('fit')},
+ 3:()=>{S.hl=null;setScale('log');S.sel=D.findIndex(d=>d.name==='Nvidia B200');preset('m65')},
+ 4:()=>{S.hl=new Set(['Apple M1 Ultra','Nvidia B200','Cerebras WSE','Cerebras WSE-2','Cerebras WSE-3','AMD Epyc (Rome)','AMD Epyc (Genoa)']);S.hidden.clear();syncLegend();LM=linMax();setScale('log');S.sel=D.findIndex(d=>d.name==='Cerebras WSE-3');preset('fit')}
+};
+function syncLegend(){leg.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(!S.hidden.has(b.dataset.t))))}
+document.querySelectorAll('.show').forEach(b=>b.onclick=()=>{
+  const c=+b.dataset.show;S.chapter=c;
+  document.querySelectorAll('.chapter').forEach(a=>a.classList.toggle('on',+a.dataset.c===c));
+  CH[c]();all();
+  $('chartCard').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+});
+
+// summary stats from data
+(function(){const last=D.find(d=>d.name==='Nvidia B200');const x=last.n/A0;const dbl=Math.log2(x);
+  $('sX').textContent='×'+fmt(x);$('sD').textContent=dbl.toFixed(1);$('sP').textContent=((last.year-Y0)/dbl).toFixed(1)+' yrs';})();
+
+new ResizeObserver(()=>{const w=box.clientWidth;if(Math.abs(w-W)>1||!svg.getAttribute('viewBox')){geom();draw()}}).observe(box);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',draw);
+geom();preset('m75');
+
+window.__doublings={get state(){return {scale:S.scale,k:S.k,D:S.D,anchor:S.anchor,preset:S.preset,sel:D[S.sel].name,hidden:[...S.hidden],chapter:S.chapter,fitD:FIT.D,count:D.length,predicted2024:lineV(YH),handle:{x:xs(YH),y:ys(lineV(YH)),W,H}}}};
+})();
+</script>
+</body></html>
