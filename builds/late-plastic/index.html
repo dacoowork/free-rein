@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Late Plastic</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Albert+Sans:wght@400;500;600;700&family=Chivo+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: a museum hall page. Title, then the trench section drawn full width, the finds register,
+   then the workbench: the excavation tray beside its museum label. */
+:root{
+  --bg:#f7f6f2; --panel:#ffffff; --ink:#191a1f; --soft:#5d5f66; --line:#dddbd3;
+  --acc:#cf2a1e; --accInk:#ffffff; --tag:#ffffff; --future:#2b3a8f;
+  --l0:#c6d3db; --l1:#5a4636; --l2:#a68b6c; --l3:#8a7b6a; --l4:#5f5a55; --l5:#9e8a74; --liner:#141414;
+  --dot:rgba(0,0,0,.18); --hl:rgba(255,255,255,.75);
+  --display:'Chakra Petch','Eurostile','Arial Narrow',sans-serif;
+  --body:'Albert Sans','Avenir Next','Segoe UI',system-ui,sans-serif;
+  --mono:'Chivo Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141518; --panel:#1d1f24; --ink:#eeede8; --soft:#a3a5ac; --line:#33363d;
+  --acc:#ff5a46; --accInk:#1a0a08; --tag:#1d1f24; --future:#9fb0ff;
+  --l0:#2b3a46; --l1:#4a3a2d; --l2:#8a7258; --l3:#6f6355; --l4:#4a4643; --l5:#7f6e5c; --liner:#000;
+  --dot:rgba(0,0,0,.28); --hl:rgba(20,21,24,.8); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141518; --panel:#1d1f24; --ink:#eeede8; --soft:#a3a5ac; --line:#33363d;
+  --acc:#ff5a46; --accInk:#1a0a08; --tag:#1d1f24; --future:#9fb0ff;
+  --l0:#2b3a46; --l1:#4a3a2d; --l2:#8a7258; --l3:#6f6355; --l4:#4a4643; --l5:#7f6e5c; --liner:#000;
+  --dot:rgba(0,0,0,.28); --hl:rgba(20,21,24,.8); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;margin:0}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px;display:flex;flex-direction:column;gap:28px}
+.eyebrow,.mono{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--soft)}
+header{display:grid;grid-template-columns:auto 1fr;gap:12px 36px;align-items:end}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(52px,10vw,118px);line-height:.86;letter-spacing:-.01em;text-transform:uppercase;margin:6px 0 0}
+h1 span{display:block;color:var(--acc)}
+.intro{max-width:58ch;margin:0;color:var(--ink)}
+.intro p{margin:0 0 8px}
+.intro .soft{color:var(--soft);font-size:15px}
+@media (max-width:760px){header{grid-template-columns:1fr}}
+h2{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.02em;text-transform:uppercase;margin:0;text-wrap:balance}
+.sechead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 18px;margin-bottom:10px}
+/* trench section */
+.trench{background:var(--panel);border:1px solid var(--line);border-radius:4px;overflow-x:auto}
+.trench svg{display:block;width:100%;min-width:720px;height:auto}
+.trench text{font-family:var(--mono)}
+.mk{cursor:pointer}
+.mk:focus{outline:none}
+.mk:focus-visible .ring{stroke:var(--future);stroke-width:4}
+/* register */
+.reg{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:8px}
+@media (max-width:900px){.reg{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.rb{appearance:none;font:inherit;color:inherit;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:8px 6px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;min-width:0;text-align:center}
+.rb:hover{border-color:var(--soft)}
+.rb:focus-visible{outline:3px solid var(--future);outline-offset:2px}
+.rb[aria-pressed="true"]{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}
+.rb .no{font-family:var(--mono);font-size:11px;color:var(--soft)}
+.rb .th{width:100%;aspect-ratio:3/2;display:grid;place-items:center;border-radius:3px;background:#6f6253;overflow:hidden}
+.rb .th svg{width:100%;height:100%;display:block}
+.rb .th .q{font-family:var(--display);font-weight:700;color:#e9dfcf;font-size:20px}
+.rb .nm{font-size:12px;line-height:1.2;font-weight:600;min-height:2.4em;display:flex;align-items:center;justify-content:center;overflow-wrap:break-word;hyphens:auto;max-width:100%}
+@media (max-width:480px){.rb .nm{font-size:11px}}
+.swipe{display:none}
+@media (max-width:760px){.swipe{display:block;margin-top:6px}}
+.rb.done .nm{color:var(--future)}
+/* workbench */
+.bench{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.bench{grid-template-columns:1fr}}
+.tray{background:#3c342c;border-radius:6px;padding:12px;color:#efe8dc;display:flex;flex-direction:column;gap:10px}
+.trayhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase}
+.meter{flex:1 1 140px;max-width:260px;height:8px;background:rgba(255,255,255,.14);border-radius:4px;overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:#f2c94c;transition:width .15s}
+.stack{position:relative;width:100%;aspect-ratio:3/2;max-width:100%;border-radius:3px;overflow:hidden;background:#2d2620;box-shadow:inset 0 0 0 3px #2a231d}
+.stack>*{position:absolute;inset:0;width:100%;height:100%;display:block}
+.stack canvas.soil{touch-action:none;cursor:crosshair;transition:opacity .9s ease}
+.stack canvas.soil.lifted{opacity:0;pointer-events:none}
+.stack.trowel canvas.soil{cursor:cell}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.seg{display:inline-flex;border:1px solid rgba(255,255,255,.28);border-radius:4px;overflow:hidden}
+.tools button{appearance:none;font:600 14px var(--body);color:#efe8dc;background:transparent;border:0;padding:8px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:#efe8dc;color:#2d2620}
+.tools .plain{border:1px solid rgba(255,255,255,.28);border-radius:4px}
+.tools button:focus-visible{outline:3px solid #f2c94c;outline-offset:2px}
+.tools button:disabled{opacity:.45;cursor:default}
+.hint{font-size:13px;color:#cfc4b3;margin:0}
+.label{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:18px 20px 20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.label .rec{display:grid;grid-template-columns:auto 1fr;gap:3px 14px;font-family:var(--mono);font-size:12.5px;margin:0}
+.label .rec dt{color:var(--soft);text-transform:uppercase;letter-spacing:.05em;font-size:11px;padding-top:2px}
+.label .rec dd{margin:0;font-variant-numeric:tabular-nums}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--line)}
+.tabs button{appearance:none;font:600 13px var(--body);color:var(--soft);background:none;border:0;border-bottom:3px solid transparent;padding:6px 10px 7px;margin-bottom:-1px;cursor:pointer}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--acc)}
+.tabs button:focus-visible{outline:2px solid var(--future)}
+.ltitle{font-family:var(--display);font-weight:700;font-size:26px;line-height:1.05;margin:0;text-wrap:balance}
+.future .ltitle{color:var(--future)}
+.lbody p{margin:0 0 10px;max-width:60ch}
+.lbody .sub{font-family:var(--mono);font-size:12px;color:var(--soft);letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
+.lasts{border-top:1px dashed var(--line);padding-top:10px;font-size:14.5px;color:var(--soft)}
+.lasts b{color:var(--ink)}
+.status{font-family:var(--mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;display:inline-flex;gap:8px;align-items:center}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--line)}
+.pill.rec{background:var(--acc);color:var(--accInk);border-color:var(--acc)}
+.pill.nick{border-color:var(--acc);color:var(--acc)}
+.finale{background:var(--panel);border:1px solid var(--acc);border-radius:4px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.finale p{margin:0;max-width:70ch}
+.finale button,.again{appearance:none;font:600 14px var(--body);background:var(--acc);color:var(--accInk);border:0;border-radius:4px;padding:9px 16px;cursor:pointer;align-self:flex-start}
+.again{background:transparent;color:var(--soft);border:1px solid var(--line)}
+footer{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;align-items:center;color:var(--soft);font-size:13.5px;border-top:1px solid var(--line);padding-top:16px}
+footer p{margin:0;max-width:70ch}
+.toast{font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:#f2c94c;min-height:1.5em;margin:0}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head><body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Museum of Deep Time · Hall 7 · Year 12,026</div>
+      <h1>Late <span>Plastic</span></h1>
+    </div>
+    <div class="intro">
+      <p>Ten thousand years from now, a team digs through a rubbish tip sealed under clay in what used to be the English Midlands. Everything in it was thrown away between about 1950 and 2100, the age its finders call the Late Plastic.</p>
+      <p class="soft">Pick a numbered find in the trench, brush the soil off it in the tray, and it goes into the hall with the curators' label. Turn the label over for what the thing really was, and why it lasted.</p>
+    </div>
+  </header>
+
+  <section aria-labelledby="h-trench">
+    <div class="sechead"><h2 id="h-trench">Trench 7, north face</h2><span class="mono">Section drawn at 1:20 · waste cells laid c. 1950 to 2100 with daily soil cover · depth in metres</span></div>
+    <div class="trench" id="trench"></div>
+    <div class="mono swipe">Scroll the section sideways for grid squares E to H, or pick a find from the register.</div>
+  </section>
+
+  <section aria-labelledby="h-reg">
+    <div class="sechead"><h2 id="h-reg">Finds register</h2><span class="mono" id="regcount">0 of 10 recorded</span></div>
+    <div class="reg" id="reg"></div>
+  </section>
+
+  <section class="bench" aria-label="Workbench">
+    <div class="tray">
+      <div class="trayhead"><span id="trayno">SF 003</span><div class="meter" aria-hidden="true"><i id="meter"></i></div><span id="pct">Exposed 0%</span></div>
+      <div class="stack" id="stack"></div>
+      <div class="tools">
+        <span class="seg" role="group" aria-label="Tool">
+          <button id="tBrush" aria-pressed="true">Brush</button>
+          <button id="tTrowel" aria-pressed="false">Trowel</button>
+        </span>
+        <button class="plain" id="auto">Brush it for me</button>
+      </div>
+      <p class="hint" id="hint">Drag across the tray to brush the soil away. The trowel moves soil much faster, but it scores anything it touches.</p>
+      <p class="toast" id="toast" aria-live="polite"></p>
+    </div>
+    <article class="label" id="label" aria-live="polite"></article>
+  </section>
+
+  <section class="finale" id="finale" hidden>
+    <h2>Hall 7 is ready to open</h2>
+    <p>All ten finds are recorded. The curators got the bird right and the mug wrong, which is about the usual rate. Of the ten, the mug and the wishbone have the best chance of lasting long enough to turn to stone; the plastics will probably outlive everyone who used them, as fragments, as stains in the clay, and as a thin layer that geologists of any age will be able to find.</p>
+    <button id="rebury">Rebury the trench and dig again</button>
+  </section>
+
+  <footer>
+    <p>The finds are imagined; the materials, dates and survival notes are real. Toy-brick lifetimes come from a 2020 University of Plymouth study; the chicken as a marker of our age from Bennett and colleagues, 2018.</p>
+    <button class="again" id="reset">Start the dig again</button>
+  </footer>
+</div>
+
+<script>
+(function(){
+const W=600,H=400,DPR=2;
+// ---------- the ten finds ----------
+const F=[
+{no:1,name:"Bottle cap",col:"C",depth:2.1,ctx:4011,mat:"Polypropylene",
+ svg:`<g transform="translate(300 200)"><circle r="92" fill="#3f6f9f"/><circle r="92" fill="none" stroke="#2c5179" stroke-width="12" stroke-dasharray="4 5"/><circle r="70" fill="#4a7cad"/><circle r="70" fill="none" stroke="#335f8c" stroke-width="3"/><circle r="52" fill="none" stroke="#5a8bbb" stroke-width="2"/><path d="M-40 -48 A70 70 0 0 1 30 -62" stroke="#8fb5d8" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7"/><text y="10" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#2f5986" letter-spacing="2">PP 5</text></g>`,
+ fTitle:"Votive disc, screw-fitted",
+ fText:["Found by the million in every Late Plastic deposit. Each disc has a spiral thread on its inner face, so it was twisted onto a sacred vessel and later removed in a rite of opening.","The discs are colour-coded by sect. Blue is the most common, followed by white and red; green sects seem to have been small."],
+ rTitle:"The cap from a drinks bottle",
+ rText:["A screw cap moulded from polypropylene (the 5 in the recycling triangle), made to seal a bottle of water or fizzy drink. Most were thrown away within minutes of being opened."],
+ lasts:"Buried away from light and oxygen, plastics like polypropylene break down extremely slowly. Nobody has watched one decay in a landfill long enough to know how long it takes; estimates run from hundreds of years to far longer."},
+{no:2,name:"Ring-pull",col:"D",depth:1.95,ctx:4011,mat:"Aluminium",
+ svg:`<g><path fill-rule="evenodd" fill="#b6bbc1" stroke="#7b8187" stroke-width="5" d="M190 130 H410 A70 70 0 0 1 410 270 H190 A70 70 0 0 1 190 130 Z M210 156 H318 A44 44 0 0 1 318 244 H210 A44 44 0 0 1 210 156 Z M392 186 a14 14 0 1 0 0.1 0 Z"/><path d="M190 140 H405" stroke="#dfe3e7" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M348 160 C360 200 360 200 348 240" stroke="#9aa0a6" stroke-width="4" fill="none"/><g fill="#eef0ea"><circle cx="150" cy="210" r="5"/><circle cx="162" cy="226" r="3"/><circle cx="430" cy="160" r="4"/><circle cx="440" cy="244" r="6"/><circle cx="246" cy="258" r="3"/><circle cx="378" cy="250" r="3"/></g></g>`,
+ fTitle:"Finger ring of the common people",
+ fText:["The elite of the Late Plastic wore rings of gold. Ordinary people wore these, stamped from a pale metal in such numbers that whole layers of the deposit glitter with them.","The small second hole probably held a stone. None has been found in place."],
+ rTitle:"The tab from a drinks can",
+ rText:["A stay-on tab, levered against the lid of an aluminium can to push the opening in. It replaced the old pull-off ring in the mid-1970s, partly because the loose rings cut people's feet on beaches."],
+ lasts:"Aluminium protects itself with a thin skin of oxide, so it corrodes slowly in neutral soil and faster where the ground is acid or salty. The white crust is aluminium corrosion, already started."},
+{no:3,name:"Toy brick",col:"F",depth:2.4,ctx:4012,mat:"ABS plastic",
+ svg:`<g><rect x="130" y="112" width="340" height="176" rx="8" fill="#b8473b"/><rect x="130" y="112" width="340" height="176" rx="8" fill="none" stroke="#7e2c24" stroke-width="5"/>${[0,1,2,3].map(i=>[0,1].map(j=>`<g transform="translate(${172+85*i} ${158+84*j})"><circle r="30" fill="#9d3a30"/><circle r="27" fill="#c9554a"/><circle r="27" fill="none" stroke="#e58a7f" stroke-width="3" stroke-dasharray="40 200" transform="rotate(200)"/></g>`).join("")).join("")}<path d="M148 120 H452" stroke="#d87368" stroke-width="4" stroke-linecap="round"/></g>`,
+ fTitle:"Building unit for a miniature city",
+ fText:["The Late Plastic people built their cities twice: once to live in, and again at about one-fiftieth of the size, out of interlocking units like this one, held together by eight studs.","The small cities have survived far better than the large ones. Some scholars think the small ones were the plans; others that they were the real cities and the large ones were the copies."],
+ rTitle:"A 2×4 toy building brick",
+ rText:["A toy brick moulded from ABS, a hard, glossy plastic. Bricks of this pattern have been made in enormous numbers since the late 1950s, and a brick made then still clicks onto one made today."],
+ lasts:"A 2020 University of Plymouth study of toy bricks washed up on beaches estimated they last between <b>100 and 1,300 years</b> in the sea, wearing down rather than rotting. Sealed in a dark, dry tip, this one may well last longer."},
+{no:4,name:"Wishbone",col:"C",depth:2.9,ctx:4014,mat:"Bone",
+ svg:`<g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M300 318 C300 300 286 286 270 262 C238 214 214 152 196 84" stroke="#a08f72" stroke-width="30"/><path d="M300 318 C300 300 314 286 330 262 C362 214 386 152 404 84" stroke="#a08f72" stroke-width="30"/><path d="M300 318 C300 300 286 286 270 262 C238 214 214 152 196 84" stroke="#e3d8bf" stroke-width="22"/><path d="M300 318 C300 300 314 286 330 262 C362 214 386 152 404 84" stroke="#e3d8bf" stroke-width="22"/><path d="M300 328 L300 344" stroke="#a08f72" stroke-width="26"/><path d="M300 328 L300 344" stroke="#e3d8bf" stroke-width="18"/><path d="M210 120 C222 170 240 214 262 248" stroke="#f3ecdc" stroke-width="5" opacity=".8"/><path d="M392 120 C378 170 360 214 340 246" stroke="#cbbd9f" stroke-width="4" opacity=".8"/></g>`,
+ fTitle:"The bird of the age",
+ fText:["By far the most common animal in the stratum. Its skeleton matches no wild bird: heavy, thick-legged and fast-grown, the bones of an animal that reached full size in a matter of weeks and was eaten before it was grown up.","The forked bone was snapped between two people as a game of chance. On this the curators are, for once, completely right."],
+ rTitle:"The wishbone of a broiler chicken",
+ rText:["The furcula of a meat chicken. More than 70 billion chickens are killed for meat every year, and a modern broiler reaches slaughter weight in about six weeks, with a skeleton heavier and more misshapen than its wild jungle-fowl ancestor's.","In 2018 a team led by Carys Bennett proposed broiler bones as a signature fossil of our age."],
+ lasts:"Bone keeps best where there is little oxygen and little disturbance, and a capped rubbish tip is close to ideal. Of everything in the trench, this has a real chance of turning to stone."},
+{no:5,name:"Mug",col:"G",depth:3.2,ctx:4015,mat:"Glazed stoneware",
+ svg:`<g><path d="M372 150 C440 146 452 190 446 222 C440 256 410 268 372 262" fill="none" stroke="#9c978c" stroke-width="34" stroke-linecap="round"/><path d="M372 150 C440 146 452 190 446 222 C440 256 410 268 372 262" fill="none" stroke="#efece4" stroke-width="24" stroke-linecap="round"/><path d="M188 100 H384 V300 Q384 322 362 322 H210 Q188 322 188 300 Z" fill="#efece4" stroke="#9c978c" stroke-width="5"/><path d="M240 100 l12 14 l10 -10 l8 12 l10 -16 Z" fill="#c9c2b2" stroke="#9c978c" stroke-width="3"/><ellipse cx="286" cy="100" rx="98" ry="10" fill="#d8d3c7" stroke="#9c978c" stroke-width="4"/><text x="286" y="190" text-anchor="middle" font-family="Georgia,serif" font-size="24" font-weight="700" fill="#21408a">WORLD'S</text><text x="286" y="222" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#21408a">BEST</text><text x="286" y="256" text-anchor="middle" font-family="Georgia,serif" font-size="30" font-weight="700" fill="#21408a">DAD</text><path d="M204 120 V296" stroke="#fffdf8" stroke-width="7" stroke-linecap="round" opacity=".9"/></g>`,
+ fTitle:"Drinking vessel of a ruler",
+ fText:["The inscription names its owner as the best father in the world, a title held by a remarkable number of men at once. Vessels making the same claim have been found in almost every household in the region, which points to a long and bitterly disputed succession.","The chip on the rim may record an attempt on the ruler's life."],
+ rTitle:"A Father's Day mug",
+ rText:["A stoneware mug glazed white and printed with a slogan, bought as a present for a father. One of millions like it, used every morning and chipped against a tap."],
+ lasts:"Fired clay is among the most durable things people make, which is why pottery is the backbone of archaeology: it hardly changes in the ground. This mug will outlast nearly everything else in the trench, slogan included."},
+{no:6,name:"Charging cable",col:"A",depth:2.6,ctx:4013,mat:"Copper, plastic, steel",
+ svg:`<g fill="none" stroke-linecap="round"><path d="M126 116 C200 96 270 120 268 176 C266 236 172 236 186 186 C200 136 330 140 352 196 C374 252 300 300 250 286 C200 272 236 220 300 232 C380 246 420 300 470 296" stroke="#9a978f" stroke-width="20"/><path d="M126 116 C200 96 270 120 268 176 C266 236 172 236 186 186 C200 136 330 140 352 196 C374 252 300 300 250 286 C200 272 236 220 300 232 C380 246 420 300 470 296" stroke="#ebe8e0" stroke-width="13"/><path d="M402 268 C424 284 444 296 470 296" stroke="#5f9a7c" stroke-width="9"/><path d="M408 262 l10 8" stroke="#3f6f58" stroke-width="5"/></g><g transform="translate(108 118) rotate(-14)"><rect x="-44" y="-15" width="58" height="30" rx="8" fill="#e4e1d8" stroke="#9a978f" stroke-width="4"/><rect x="-80" y="-9" width="40" height="18" rx="7" fill="#b8bcc1" stroke="#7d8288" stroke-width="3"/></g><g transform="translate(490 298) rotate(8)"><rect x="-14" y="-15" width="58" height="30" rx="8" fill="#e4e1d8" stroke="#9a978f" stroke-width="4"/><rect x="40" y="-9" width="40" height="18" rx="7" fill="#b8bcc1" stroke="#7d8288" stroke-width="3"/></g>`,
+ fTitle:"Tethering cord with twin finials",
+ fText:["Every household kept several of these, usually knotted together in a drawer, which suggests they were treasured as possessions rather than used as tools.","No object that fits both ends at once has ever been found complete. The cord may have joined two people in marriage."],
+ rTitle:"A USB-C charging cable",
+ rText:["Fine copper wires in a plastic jacket, with a steel-shelled plug at each end, used to charge a phone. Plug shapes came and went every few years; this one became the European Union's required charging port for new phones from December 2024."],
+ lasts:"The plastic jacket outlasts the metal it protects. Where it has split near the end, the copper has already turned to green copper salts."},
+{no:7,name:"Crisp packet",col:"E",depth:2.7,ctx:4013,mat:"Metallised film",
+ svg:`<defs><linearGradient id="foil" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d8dde0"/><stop offset=".45" stop-color="#9aa3a8"/><stop offset=".7" stop-color="#e9edef"/><stop offset="1" stop-color="#8b9499"/></linearGradient></defs><g><path d="M150 112 l14 -14 l14 14 l14 -14 l14 14 l14 -14 l14 14 l14 -14 l14 14 l14 -14 l14 14 l14 -14 l14 14 l14 -14 l14 14 l14 -14 l14 14 l14 -14 l14 14 l14 -14 l14 14 C462 170 476 240 452 292 l-14 14 l-14 -14 l-14 14 l-14 -14 l-14 14 l-14 -14 l-14 14 l-14 -14 l-14 14 l-14 -14 l-14 14 l-14 -14 l-14 14 l-14 -14 l-14 14 l-14 -14 l-14 14 l-14 -14 l-14 14 l-16 -14 C132 236 126 170 150 112 Z" fill="url(#foil)" stroke="#6c757a" stroke-width="4"/><path d="M168 134 C230 150 330 140 440 126 L446 262 C340 280 240 286 160 270 Z" fill="#2f7a4f" opacity=".82"/><text x="302" y="206" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-weight="900" font-size="38" fill="#f4f0e2" transform="rotate(-3 302 206)">SEA SALT</text><text x="302" y="244" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="18" fill="#cfe7d6" transform="rotate(-3 302 244)">HAND COOKED · 40 g</text><path d="M210 128 L240 286 M352 122 L330 290 M410 140 L420 280" stroke="#e8eef0" stroke-width="3" opacity=".6"/></g>`,
+ fTitle:"Silvered offering pouch",
+ fText:["Sealed at both ends with a crimped seam, silver inside and painted outside. Nearly all were found empty, the offering long gone; a few still hold a fine salty dust.","The pouches are found in every room of the house and in the earth beside every road, as if offerings were made constantly and on the move."],
+ rTitle:"A crisp packet",
+ rText:["Thin layers of plastic film with a coat of aluminium a fraction of a micrometre thick, bonded together to keep out light and air so the crisps stay crisp. Because the layers can't easily be separated, almost none were ever recycled."],
+ lasts:"A film built to let nothing through also keeps water and microbes away from itself. Packets from the 1980s still wash up on British beaches with their print readable."},
+{no:8,name:"Bath duck",col:"H",depth:2.2,ctx:4012,mat:"PVC (vinyl)",
+ svg:`<g><ellipse cx="300" cy="262" rx="150" ry="66" fill="#e2b934" stroke="#a7841c" stroke-width="5"/><path d="M168 236 C150 196 170 190 196 214" fill="#e2b934" stroke="#a7841c" stroke-width="5"/><circle cx="352" cy="160" r="70" fill="#e2b934" stroke="#a7841c" stroke-width="5"/><path d="M250 248 C290 222 340 228 372 250" fill="none" stroke="#b89322" stroke-width="5" stroke-linecap="round"/><path d="M412 166 C452 160 476 172 470 186 C460 200 430 196 410 192 Z" fill="#e0682f" stroke="#a6461b" stroke-width="4"/><circle cx="374" cy="140" r="9" fill="#1d1d1d"/><circle cx="377" cy="137" r="3" fill="#fff"/><path d="M308 120 C320 104 342 98 360 102" stroke="#f3dc84" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M190 240 C220 216 250 214 270 220" stroke="#f3dc84" stroke-width="6" fill="none" stroke-linecap="round"/></g>`,
+ fTitle:"Water spirit, household form",
+ fText:["A small yellow bird appears in the washing room of nearly every dwelling. Its hollow body, its upright head and its faint, fixed smile mark it as a guardian of bathing.","Some were made in other colours and dressed as kings, nurses or monsters. These are thought to be later and less devout."],
+ rTitle:"A bath duck",
+ rText:["A hollow bath toy moulded from PVC softened with plasticisers. Despite the name, almost none of them are rubber."],
+ lasts:"Over time the plasticisers seep out and the vinyl turns hard and brittle. The duck keeps its shape and its colour, but it will never squeak again."},
+{no:9,name:"Toothbrush",col:"D",depth:3.3,ctx:4015,mat:"Polypropylene, nylon",
+ svg:`<g transform="rotate(-18 300 200)"><rect x="110" y="182" width="300" height="36" rx="18" fill="#3aa3a0" stroke="#24706e" stroke-width="5"/><rect x="200" y="190" width="150" height="20" rx="10" fill="#d9f0ee" opacity=".55"/><path d="M406 186 C420 180 430 182 446 186 L500 186 Q512 200 500 214 L446 214 C430 218 420 220 406 214 Z" fill="#3aa3a0" stroke="#24706e" stroke-width="5"/>${Array.from({length:9},(_,i)=>`<path d="M${448+i*6.5} 186 L${440+i*7.5+(i%3-1)*6} ${128-(i%2)*8}" stroke="#f1f1ee" stroke-width="5" stroke-linecap="round"/><path d="M${448+i*6.5} 186 L${444+i*7} ${150-(i%3)*6}" stroke="#e6efee" stroke-width="4" stroke-linecap="round"/>`).join("")}</g>`,
+ fTitle:"Grooming brush for a figurine",
+ fText:["Far too small for a human head. The bristles sit at the very end of a long handle, set at an angle, as if to reach into a narrow space: probably the hair of the household's small sacred statues.","Every dwelling had one for each person, which suggests that each person kept a figurine of their own."],
+ rTitle:"A toothbrush",
+ rText:["A polypropylene handle with a head of nylon bristles. Dentists say to replace one every three months, so a person in a rich country gets through about 300 in a lifetime. Splayed bristles like these meant it was overdue."],
+ lasts:"The first nylon-bristled toothbrushes went on sale in 1938. Neither nylon nor polypropylene rots, so very likely most of the toothbrushes ever made in plastic still exist somewhere."},
+{no:10,name:"Bank card",col:"F",depth:3.0,ctx:4014,mat:"PVC, gold, copper",
+ svg:`<g transform="rotate(6 300 200)"><rect x="128" y="92" width="344" height="216" rx="18" fill="#22305e" stroke="#141c3a" stroke-width="5"/><path d="M128 220 C230 180 340 260 472 200 V290 Q472 308 454 308 H146 Q128 308 128 290 Z" fill="#2c3f7a" opacity=".9"/><rect x="164" y="148" width="62" height="48" rx="8" fill="#d9b45a" stroke="#9a7a2c" stroke-width="3"/><path d="M164 164 H190 M164 180 H190 M200 164 H226 M200 180 H226 M195 148 V196" stroke="#9a7a2c" stroke-width="2.5"/><g fill="none" stroke="#c9d0e6" stroke-width="5" stroke-linecap="round"><path d="M250 156 a18 18 0 0 1 0 32"/><path d="M262 148 a30 30 0 0 1 0 48"/><path d="M274 140 a42 42 0 0 1 0 64"/></g><text x="164" y="248" font-family="Courier New,monospace" font-weight="700" font-size="24" fill="#c9d0e6" letter-spacing="3">•••• •••• •••• 4021</text><text x="164" y="284" font-family="Arial,sans-serif" font-weight="700" font-size="16" fill="#9aa6cc" letter-spacing="2">M J OKAFOR</text><circle cx="418" cy="276" r="16" fill="#7f8db8" opacity=".7"/><circle cx="440" cy="276" r="16" fill="#b7c0dc" opacity=".6"/></g>`,
+ fTitle:"Token of admission to the market",
+ fText:["Each tablet carries a name, a square of gold and a long secret number. Holders seem to have tapped them against surfaces to be let in to places, or to be allowed to leave.","They are almost always found with a few others in a soft folding case, so most adults held several ranks at once."],
+ rTitle:"A contactless bank card",
+ rText:["A PVC card with a chip and a coiled copper aerial hidden between its layers, so it could pay by being held near a reader. In Britain the limit for a tap with no PIN went up to £100 in October 2021."],
+ lasts:"PVC lasts very well underground. The gold on the chip will come out of the ground looking new; the copper aerial coiled inside will not."}
+];
+const COLS="ABCDEFGH";
+const colX=c=>70+COLS.indexOf(c)*110+55;
+const depthY=d=>40+d*70;
+const JIT=[ -20, 18, -8, 26, -14, 6, 30, -24, 12, -2 ];
+
+// ---------- seeded random ----------
+function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+// ---------- state ----------
+const S={sel:2,tool:"brush",items:F.map(()=>({status:"ground",exposed:0,nicks:0,built:false})),side:{}};
+let busy=false;
+
+// ---------- trench section ----------
+const SVGNS="http://www.w3.org/2000/svg";
+function wave(y,seed,amp){const r=rng(seed);const a=r()*6,b=r()*6;let pts=[];for(let x=0;x<=1000;x+=20){pts.push([x,y+Math.sin(x/97+a)*amp+Math.sin(x/41+b)*amp*.45])}return pts}
+function buildTrench(){
+  const layers=[
+    {d0:0,d1:.4,fill:"--l1",name:"(1001) Topsoil",note:"present day"},
+    {d0:.4,d1:1.2,fill:"--l2",name:"(1002) Wind-blown silt",note:"c. 2200–12,000"},
+    {d0:1.2,d1:1.8,fill:"--l3",name:"(1003) Clay cap",note:"laid c. 2110"},
+    {d0:1.8,d1:3.6,fill:"--l4",name:"(4011–4015) Waste cells",note:"c. 1950–2100"},
+    {d0:3.6,d1:4.4,fill:"--l5",name:"(5001) Natural clay",note:""}
+  ];
+  const bounds=layers.map((L,i)=>i===0?wave(depthY(0),1,2):wave(depthY(L.d0),i*7+3,i===3?3:5));
+  bounds.push(wave(depthY(4.4),99,0));
+  let s=`<svg viewBox="0 0 1000 352" role="img" aria-label="Section drawing of the trench: topsoil, wind-blown silt, a clay cap, then rubbish tip layers with ten numbered finds, a plastic liner and natural clay below."><rect width="1000" height="40" style="fill:var(--panel)"/>`;
+  // grid letters
+  for(let i=0;i<8;i++){const x=70+i*110;s+=`<line x1="${x}" y1="14" x2="${x}" y2="40" style="stroke:var(--soft)" stroke-width="1" stroke-dasharray="3 3"/><text x="${x+55}" y="30" text-anchor="middle" font-size="14" font-weight="600" style="fill:var(--soft)">${COLS[i]}</text>`}
+  s+=`<line x1="950" y1="14" x2="950" y2="40" style="stroke:var(--soft)" stroke-dasharray="3 3"/>`;
+  layers.forEach((L,i)=>{
+    const top=bounds[i],bot=bounds[i+1];
+    const d="M"+top.map(p=>p.join(" ")).join(" L")+" L"+bot.slice().reverse().map(p=>p.join(" ")).join(" L")+" Z";
+    s+=`<path d="${d}" style="fill:var(${L.fill})"/>`;
+  });
+  // texture
+  const r=rng(42);let tex="";
+  for(let k=0;k<900;k++){const x=r()*1000,y=40+r()*308;const rad=r()*1.8+.4;tex+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rad.toFixed(1)}"/>`}
+  s+=`<g style="fill:var(--dot)">${tex}</g>`;
+  // debris in waste cells
+  const dc=["#c9453a","#3f6f9f","#e2b934","#e9e6dc","#2f7a4f","#9aa3a8","#d07a2c","#6a4c8c"];let deb="";
+  for(let k=0;k<240;k++){const x=r()*1000,y=depthY(1.86)+r()*(depthY(3.54)-depthY(1.86));const w=3+r()*12,h=1.5+r()*4;deb+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" fill="${dc[k%dc.length]}" opacity="${(.45+r()*.4).toFixed(2)}" transform="rotate(${(r()*60-30).toFixed(0)} ${x.toFixed(0)} ${y.toFixed(0)})"/>`}
+  s+=`<g>${deb}</g>`;
+  // daily cover lines
+  [2.35,2.8,3.25].forEach((d,i)=>{const p=wave(depthY(d),200+i,4);s+=`<path d="M${p.map(q=>q.join(" ")).join(" L")}" fill="none" style="stroke:var(--l3)" stroke-width="5" opacity=".9"/>`});
+  // liner
+  const lp=bounds[4];s+=`<path d="M${lp.map(q=>q.join(" ")).join(" L")}" fill="none" style="stroke:var(--liner)" stroke-width="4"/>`;
+  // labels
+  const lab=[[.2,"(1001) Topsoil"],[.8,"(1002) Wind-blown silt, c. 2200 to 12,000"],[1.5,"(1003) Clay cap, laid c. 2110"],[1.98,"(4011–4015) Waste cells"],[3.6,"(4099) Plastic liner"],[4.0,"(5001) Natural clay"]];
+  lab.forEach(([d,t])=>{const y=depthY(d)+(d===3.6?-6:5);const w=t.length*8.2+12;s+=`<rect x="8" y="${y-13}" width="${w}" height="18" rx="2" style="fill:var(--hl)"/><text x="14" y="${y}" font-size="13" style="fill:var(--ink)">${t}</text>`});
+  // depth scale
+  for(let m=0;m<=4;m++){const y=depthY(m);s+=`<line x1="960" y1="${y}" x2="972" y2="${y}" style="stroke:var(--ink)" stroke-width="2"/><text x="976" y="${y+4}" font-size="12" style="fill:var(--ink)">${m}</text>`}
+  s+=`<line x1="966" y1="40" x2="966" y2="${depthY(4.4)}" style="stroke:var(--ink)" stroke-width="2"/>`;
+  // markers
+  F.forEach((f,i)=>{const x=colX(f.col)+JIT[i],y=depthY(f.depth);
+    s+=`<g class="mk" id="mk${i}" tabindex="0" role="button" aria-label="Small find ${f.no}, grid ${f.col}, depth ${f.depth} metres" data-i="${i}"><circle r="22" cx="${x}" cy="${y}" fill="transparent"/><circle class="halo" cx="${x}" cy="${y}" r="20" fill="none" style="stroke:var(--acc)" stroke-width="3" opacity="0"/><circle class="ring" cx="${x}" cy="${y}" r="13" style="fill:var(--tag);stroke:var(--acc)" stroke-width="3"/><text class="mt" x="${x}" y="${y+4.5}" text-anchor="middle" font-size="13" font-weight="600" style="fill:var(--ink);pointer-events:none">${f.no}</text></g>`});
+  s+=`</svg>`;
+  const el=document.getElementById("trench");el.innerHTML=s;
+  el.querySelectorAll(".mk").forEach(g=>{g.addEventListener("click",()=>select(+g.dataset.i,true));g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select(+g.dataset.i,true)}})});
+}
+function paintMarkers(){
+  F.forEach((f,i)=>{const g=document.getElementById("mk"+i);if(!g)return;const done=S.items[i].status==="recorded";
+    g.querySelector(".ring").style.fill=done?"var(--acc)":"var(--tag)";
+    g.querySelector(".mt").style.fill=done?"var(--accInk)":"var(--ink)";
+    g.querySelector(".halo").setAttribute("opacity",i===S.sel?"1":"0");
+    g.setAttribute("aria-pressed",i===S.sel?"true":"false");});
+}
+
+// ---------- register ----------
+function objSVG(i,cls){return `<svg class="${cls||""}" viewBox="0 0 600 400" xmlns="${SVGNS}" aria-hidden="true">${F[i].svg}</svg>`}
+function buildReg(){
+  const el=document.getElementById("reg");el.innerHTML="";
+  F.forEach((f,i)=>{const b=document.createElement("button");b.className="rb";b.id="rb"+i;b.addEventListener("click",()=>select(i,false));el.appendChild(b)});
+  paintReg();
+}
+function paintReg(){
+  let n=0;
+  F.forEach((f,i)=>{const it=S.items[i],b=document.getElementById("rb"+i);const done=it.status==="recorded";if(done)n++;
+    b.classList.toggle("done",done);b.setAttribute("aria-pressed",i===S.sel?"true":"false");
+    const no="SF "+String(f.no).padStart(3,"0");
+    const want=done?"d":"g";if(b.dataset.k!==want){b.dataset.k=want;
+      b.innerHTML=`<span class="no">${no}</span><span class="th">${done?objSVG(i):'<span class="q">?</span>'}</span><span class="nm">${done?f.fTitle:"Grid "+f.col+", "+f.depth.toFixed(2)+" m"}</span>`;}
+    b.setAttribute("aria-label",`${no}, ${done?f.fTitle+", recorded":"still in the ground at grid "+f.col}`);
+  });
+  document.getElementById("regcount").textContent=`${n} of 10 recorded`;
+  document.getElementById("finale").hidden=n<10;
+}
+
+// ---------- tray ----------
+const masks={};
+function loadMask(i){
+  if(masks[i])return masks[i];
+  masks[i]=new Promise(res=>{const img=new Image();img.onload=()=>{const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");x.drawImage(img,0,0,W,H);const d=x.getImageData(0,0,W,H).data;const pts=[];const grid=new Uint8Array(W*H);for(let y=0;y<H;y++)for(let X=0;X<W;X++){if(d[(y*W+X)*4+3]>40){grid[y*W+X]=1;if(X%5===0&&y%5===0)pts.push(X,y)}}res({img,grid,pts})};
+    img.onerror=()=>res({img:null,grid:new Uint8Array(W*H),pts:[]});
+    img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(`<svg xmlns="${SVGNS}" viewBox="0 0 600 400" width="600" height="400">${F[i].svg}</svg>`)});
+  return masks[i];
+}
+const views={};
+function makeSoil(i,m){
+  const c=document.createElement("canvas");c.className="soil";c.width=W*DPR;c.height=H*DPR;c.setAttribute("aria-label","Soil over the find. Drag to brush it away.");
+  const x=c.getContext("2d");x.scale(DPR,DPR);const r=rng(1000+i*31);
+  const base=["#6f6253","#675b4e","#72604f","#5f574f","#6d5c4a"][i%5];
+  x.fillStyle=base;x.fillRect(0,0,W,H);
+  for(let k=0;k<70;k++){x.fillStyle=`rgba(${r()<.5?"40,32,24":"150,132,108"},${(.12+r()*.18).toFixed(2)})`;x.beginPath();x.ellipse(r()*W,r()*H,20+r()*80,10+r()*40,r()*3,0,7);x.fill()}
+  for(let k=0;k<3200;k++){const v=r();x.fillStyle=v<.5?"rgba(30,24,18,.45)":v<.85?"rgba(190,172,146,.45)":"rgba(240,230,210,.5)";x.fillRect(r()*W,r()*H,1+r()*2,1+r()*2)}
+  for(let k=0;k<70;k++){const g=110+r()*80|0;x.fillStyle=`rgb(${g},${g-6},${g-16})`;x.beginPath();x.ellipse(r()*W,r()*H,3+r()*9,2+r()*6,r()*3,0,7);x.fill();x.fillStyle="rgba(255,255,255,.18)";x.fill()}
+  const dc=["#c9453a","#3f6f9f","#e2b934","#e9e6dc","#2f7a4f","#d07a2c"];
+  for(let k=0;k<26;k++){x.save();x.translate(r()*W,r()*H);x.rotate(r()*3);x.fillStyle=dc[k%dc.length];x.globalAlpha=.7;x.fillRect(-4-r()*6,-1.5,8+r()*10,3+r()*2);x.restore()}
+  x.strokeStyle="rgba(200,178,140,.35)";x.lineWidth=1.3;for(let k=0;k<6;k++){x.beginPath();let px=r()*W,py=r()*H;x.moveTo(px,py);for(let s=0;s<6;s++){px+=r()*40-20;py+=r()*30;x.lineTo(px,py)}x.stroke()}
+  // the spot where the find was first seen
+  if(m.pts.length){const k=Math.floor(m.pts.length/2/ (i===2?3:2))*2;dab(x,m.pts[k],m.pts[k+1],i===2?46:20,1)}
+  if(i===2){ // the opening find starts partly brushed
+    for(let t=0;t<1;t+=.02){dab(x,150+t*170,150+Math.sin(t*6)*20,26,.9)}
+  }
+  return c;
+}
+function makeScratch(){const c=document.createElement("canvas");c.width=W*DPR;c.height=H*DPR;c.style.pointerEvents="none";const x=c.getContext("2d");x.scale(DPR,DPR);return c}
+function dab(ctx,x,y,rad,a){ctx.save();ctx.globalCompositeOperation="destination-out";const g=ctx.createRadialGradient(x,y,0,x,y,rad);g.addColorStop(0,`rgba(0,0,0,${a})`);g.addColorStop(.6,`rgba(0,0,0,${a*.8})`);g.addColorStop(1,"rgba(0,0,0,0)");ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,rad,0,7);ctx.fill();ctx.restore()}
+async function ensureView(i){
+  if(views[i])return views[i];
+  const m=await loadMask(i);
+  const holder=document.createElement("div");holder.innerHTML=objSVG(i);const svg=holder.firstChild;
+  const v={svg,scratch:makeScratch(),soil:makeSoil(i,m),mask:m};
+  wireSoil(i,v);views[i]=v;measure(i);return v;
+}
+function measure(i){
+  const v=views[i];if(!v)return 0;const pts=v.mask.pts;if(!pts.length)return 1;
+  const d=v.soil.getContext("2d").getImageData(0,0,W*DPR,H*DPR).data;let open=0;
+  for(let k=0;k<pts.length;k+=2){const a=d[((pts[k+1]*DPR)*W*DPR+pts[k]*DPR)*4+3];if(a<70)open++}
+  const e=open/(pts.length/2);S.items[i].exposed=S.items[i].status==="recorded"?1:e;return e;
+}
+function wireSoil(i,v){
+  const c=v.soil,ctx=c.getContext("2d");let last=null,touched=false,tick=0;
+  const pos=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H]};
+  function stroke(p){
+    if(S.items[i].status!=="ground")return;
+    const trowel=S.tool==="trowel",rad=trowel?36:15,a=trowel?1:.42;
+    const from=last||p;const dx=p[0]-from[0],dy=p[1]-from[1];const dist=Math.hypot(dx,dy);const steps=Math.max(1,Math.ceil(dist/(rad/3)));
+    for(let s=1;s<=steps;s++){const x=from[0]+dx*s/steps,y=from[1]+dy*s/steps;dab(ctx,x,y,rad,a);
+      if(trowel){const X=x|0,Y=y|0;if(X>=0&&Y>=0&&X<W&&Y<H&&v.mask.grid[Y*W+X]){scratch(v,from,[x,y]);if(!touched){touched=true;S.items[i].nicks++;showStatus()}}}}
+    last=p;
+    if(++tick%4===0)update(i);
+  }
+  c.addEventListener("pointerdown",e=>{if(busy)return;e.preventDefault();try{c.setPointerCapture(e.pointerId)}catch(_){};last=null;touched=false;stroke(pos(e))});
+  c.addEventListener("pointermove",e=>{if(last&&(e.buttons||e.pointerType==="touch"))stroke(pos(e))});
+  const end=()=>{if(last){last=null;update(i)}};
+  c.addEventListener("pointerup",end);c.addEventListener("pointercancel",end);c.addEventListener("lostpointercapture",end);
+}
+function scratch(v,a,b){
+  const x=v.scratch.getContext("2d");x.save();x.strokeStyle="rgba(255,255,255,.75)";x.lineWidth=1.6;x.lineCap="round";
+  const ang=Math.atan2(b[1]-a[1],b[0]-a[0])+Math.PI/2;
+  for(let k=-1;k<=1;k++){const ox=Math.cos(ang)*k*5,oy=Math.sin(ang)*k*5;x.beginPath();x.moveTo(a[0]+ox,a[1]+oy);x.lineTo(b[0]+ox+1,b[1]+oy+1);x.stroke()}
+  x.globalCompositeOperation="destination-in";if(v.mask.img)x.drawImage(v.mask.img,0,0,W,H);x.restore();
+}
+function update(i){
+  const e=measure(i);
+  if(i===S.sel)paintMeter();
+  if(S.items[i].status==="ground"&&e>=.85)record(i);
+}
+function paintMeter(){
+  const it=S.items[S.sel];const p=Math.round(it.exposed*100);
+  document.getElementById("meter").style.width=p+"%";
+  document.getElementById("pct").textContent=it.status==="recorded"?"Lifted and recorded":`Exposed ${p}%`;
+}
+function record(i){
+  const it=S.items[i];it.status="recorded";it.exposed=1;
+  const v=views[i];v.soil.classList.add("lifted");
+  setTimeout(()=>{v.soil.getContext("2d").clearRect(0,0,W,H)},950);
+  toast(`SF ${String(F[i].no).padStart(3,"0")} lifted, bagged and sent to Hall 7.`);
+  paintMeter();paintReg();paintMarkers();renderLabel();setAutoState();
+}
+function toast(t){document.getElementById("toast").textContent=t}
+
+// ---------- label ----------
+function showStatus(){renderLabel()}
+function condition(n){return n===0?"Excellent":n<=2?"Fresh trowel marks":"Badly scored by the trowel"}
+function renderLabel(){
+  const i=S.sel,f=F[i],it=S.items[i];const el=document.getElementById("label");
+  const no="SF "+String(f.no).padStart(3,"0");
+  let rec=`<dl class="rec"><dt>Small find</dt><dd>${no}</dd><dt>Context</dt><dd>(${f.ctx}) waste cell</dd><dt>Grid, depth</dt><dd>${f.col}, ${f.depth.toFixed(2)} m below surface</dd>`;
+  if(it.status==="recorded")rec+=`<dt>Material</dt><dd>${f.mat}</dd>`;
+  rec+=`<dt>Condition</dt><dd>${it.status==="recorded"||it.nicks?condition(it.nicks):"Not yet seen"}</dd></dl>`;
+  const st=it.status==="recorded"?`<span class="pill rec">Recorded</span>`:`<span class="pill">In the ground</span>`;
+  const nk=it.nicks?`<span class="pill nick">Trowel marks: ${it.nicks}</span>`:"";
+  if(it.status!=="recorded"){
+    el.className="label";
+    el.innerHTML=`<div class="status">${st}${nk}</div>${rec}<p class="lbody" style="margin:0;color:var(--soft)">Something ${f.depth>2.8?"deep in the lower cells":"in the upper waste cells"} caught the light here. Brush the soil off it to see what it is; the museum's label comes with it once it's lifted.</p>`;
+    return;
+  }
+  const side=S.side[i]||"future";
+  const body=side==="future"
+    ?`<div class="lbody future"><div class="sub">Museum label · Hall 7 · 12,026</div><h3 class="ltitle">${f.fTitle}</h3>${f.fText.map(p=>`<p>${p}</p>`).join("")}</div>`
+    :`<div class="lbody"><div class="sub">Field note · what it was in 2026</div><h3 class="ltitle">${f.rTitle}</h3>${f.rText.map(p=>`<p>${p}</p>`).join("")}<p class="lasts"><b>Why it lasted.</b> ${f.lasts}</p></div>`;
+  el.className="label";
+  el.innerHTML=`<div class="status">${st}${nk}</div><div class="tabs" role="tablist"><button role="tab" id="tabF" aria-selected="${side==="future"}">Museum label, 12,026</button><button role="tab" id="tabR" aria-selected="${side!=="future"}">What it was, 2026</button></div>${body}${rec}`;
+  el.querySelector("#tabF").onclick=()=>{S.side[i]="future";renderLabel()};
+  el.querySelector("#tabR").onclick=()=>{S.side[i]="real";renderLabel()};
+}
+
+// ---------- selection ----------
+let selToken=0;
+async function select(i,fromTrench){
+  if(busy)return;S.sel=i;const tok=++selToken;
+  paintReg();paintMarkers();renderLabel();
+  document.getElementById("trayno").textContent="SF "+String(F[i].no).padStart(3,"0")+" · grid "+F[i].col;
+  const v=await ensureView(i);if(tok!==selToken)return;
+  const st=document.getElementById("stack");st.replaceChildren(v.svg,v.scratch,v.soil);
+  paintMeter();toast(S.items[i].status==="recorded"?"Already recorded. Turn the label over to read the field note.":"");setAutoState();
+  if(fromTrench&&window.innerWidth<860)st.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function setAutoState(){document.getElementById("auto").disabled=S.items[S.sel].status==="recorded"}
+
+// ---------- tools ----------
+function setTool(t){S.tool=t;document.getElementById("tBrush").setAttribute("aria-pressed",t==="brush");document.getElementById("tTrowel").setAttribute("aria-pressed",t==="trowel");document.getElementById("stack").classList.toggle("trowel",t==="trowel")}
+document.getElementById("tBrush").onclick=()=>setTool("brush");
+document.getElementById("tTrowel").onclick=()=>setTool("trowel");
+document.getElementById("auto").onclick=()=>{
+  const i=S.sel;const v=views[i];if(!v||S.items[i].status!=="ground"||busy)return;
+  busy=true;document.getElementById("auto").disabled=true;
+  const ctx=v.soil.getContext("2d");const rows=[];for(let y=70;y<=340;y+=26)rows.push(y);
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let r=0,t0=null;const per=reduce?1:110;
+  function step(ts){if(t0===null)t0=ts;const target=reduce?rows.length:Math.floor((ts-t0)/per);
+    while(r<Math.min(target,rows.length)){const y=rows[r],dir=r%2?-1:1;for(let x=0;x<=480;x+=5){const X=dir>0?60+x:540-x;dab(ctx,X,y+Math.sin(x/40)*6,22,.95)}r++;measure(i);paintMeter()}
+    if(r<rows.length&&S.items[i].status==="ground")requestAnimationFrame(step);
+    else{busy=false;const e=measure(i);if(S.items[i].status==="ground"){if(e<.85){for(let k=0;k<v.mask.pts.length;k+=40)dab(ctx,v.mask.pts[k],v.mask.pts[k+1],20,1)}update(i)}setAutoState()}}
+  requestAnimationFrame(step);
+};
+window.addEventListener("keydown",e=>{if(e.target.closest&&e.target.closest("input,textarea"))return;if(e.key==="b"||e.key==="B")setTool("brush");if(e.key==="t"||e.key==="T")setTool("trowel")});
+function resetAll(){if(busy)return;S.items=F.map(()=>({status:"ground",exposed:0,nicks:0}));S.side={};for(const k in views)delete views[k];toast("");buildReg();select(2,false);window.scrollTo({top:0,behavior:"smooth"})}
+document.getElementById("reset").onclick=resetAll;
+document.getElementById("rebury").onclick=resetAll;
+
+buildTrench();buildReg();select(2,false);
+
+window.__lateplastic={get state(){return{selected:S.sel,tool:S.tool,busy,items:S.items.map((it,i)=>({no:F[i].no,status:it.status,exposed:+it.exposed.toFixed(3),nicks:it.nicks})),recorded:S.items.filter(it=>it.status==="recorded").length,label:document.getElementById("label").textContent.slice(0,140)}}};
+})();
+</script>
+</body></html>

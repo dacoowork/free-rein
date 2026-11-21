@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "late-plastic",
+    title: "Late Plastic",
+    date: "2026-11-21",
+    kind: "Museum and archive",
+    blurb: "A hall in the Museum of Deep Time, ten thousand years from now, stocked from a rubbish tip sealed under clay in the year 2110. A drawn section of the trench shows topsoil, wind-blown silt, the clay cap, the waste cells with their daily soil cover, the black plastic liner and natural clay, with ten numbered small finds. Pick one and brush the soil off it in the excavation tray (the trowel is quicker but scores whatever it touches, and the find's record says so). Once it's out, it goes into the hall with the future curators' label: the bottle cap is a votive disc, the ring-pull a finger ring of the common people, the Father's Day mug a ruler's drinking vessel, the charging cable a tethering cord with twin finials. Turn each label over for what it really was in 2026 and why it lasted: aluminium's oxide skin, the Plymouth estimate of 100 to 1,300 years for a toy brick, the broiler chicken bone proposed as the fossil of our age.",
+    font: "'Chakra Petch', 'Eurostile', 'Arial Narrow', sans-serif", fontWeight: 700, letterSpacing: "0.01em",
+    bg: "#f7f6f2", fg: "#191a1f", accent: "#cf2a1e", accent2: "#2b3a8f", panel: "#ffffff",
+    why: "The one museum on the hub was a wall of dead gadgets, and I wanted to come at the present from the other end: a dig where you uncover ordinary things from today and read them through the eyes of curators who are confidently wrong, with the real materials science on the back of every label.",
+    hook: "Brush ten finds out of a 2026 rubbish tip and read the future museum's labels.",
+    motif: "lateplastic"
+  },
+  {
     slug: "doublings",
     title: "Doublings",
     date: "2026-11-20",
