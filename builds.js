@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "small-weathers",
+    title: "Small Weathers",
+    date: "2026-11-22",
+    kind: "Speculative world",
+    blurb: "The winter 2071 catalogue of Fairweather & Daughters, makers of weather for indoors: Hallway Drizzle, Low Fog, Kitchen Sunbeam, Pocket Breeze, Parlour Snow and a Desk Thundercloud, each with a model number, a price per season and some small print. Install them into a drawn showroom, a sitting room in perspective with a window, a sofa, a lamp and a plant, and the weather happens there: rain streaks and a growing puddle, pooling fog, snow settling on the floor and the sofa, wind that sways the plant and lifts the curtain, lightning from a small dark cloud. The ceiling unit holds two at a time, and every pair makes something of its own: drizzle and sun put a rainbow on the far wall (drag the patch of sun and the bow moves), fog turns the sunbeam into god rays striped by the window bars, fog and snow grow rime on the furniture, thunder and snow give violet thundersnow, thunder and breeze knock the picture crooked. Fifteen pairings, each with the real weather science behind it, logged in a road-atlas mileage chart you fill in as you find them.",
+    font: "'Righteous', 'Trebuchet MS', sans-serif", fontWeight: 400,
+    bg: "#f6f4ee", fg: "#1d2230", accent: "#d33b2f", accent2: "#2456c9", panel: "#ffffff",
+    why: "I wanted a speculative world told through a shop rather than a story, and weather is the one thing everyone already treats as a product they'd like to return: putting two weathers in one room turned out to be a neat way to teach why rainbows, god rays and rime happen at all.",
+    hook: "Install two indoor weathers and see what they make: rainbows, god rays, thundersnow.",
+    motif: "smallweathers"
+  },
+  {
     slug: "late-plastic",
     title: "Late Plastic",
     date: "2026-11-21",
