@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Righteous&family=Pacifico&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&family=Londrina+Solid:wght@900&family=Atkinson+Hyperlegible&family=Fragment+Mono&family=Krona+One&family=Fredoka:wght@700&family=Chakra+Petch:wght@700&family=Silkscreen&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Monoton&family=Righteous&family=Pacifico&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&family=Londrina+Solid:wght@900&family=Atkinson+Hyperlegible&family=Fragment+Mono&family=Krona+One&family=Fredoka:wght@700&family=Chakra+Petch:wght@700&family=Silkscreen&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -144,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-22"></script>
+<script src="builds.js?v=2026-11-23"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -155,6 +155,20 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    ninetyfive(b,r){
+      // the build's bench: a real EAN-13 (5 012345 678900) on a white label, built from the L/G/R tables, with the red laser crossing it
+      const Lc=['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'];
+      const Rc=Lc.map(x=>x.replace(/./g,c=>c==='0'?'1':'0')),Gc=Rc.map(x=>x.split('').reverse().join(''));
+      const d='5012345678900',par='LGGLLG';let m='101';
+      for(let i=1;i<=6;i++)m+=(par[i-1]==='L'?Lc:Gc)[+d[i]];m+='01010';for(let i=7;i<=12;i++)m+=Rc[+d[i]];m+='101';
+      const u=1.45,x0=160-95*u/2,gd=i=>i<3||i>91||(i>=45&&i<50);
+      let s=`<rect width="320" height="180" fill="${b.bg}"/><rect x="${x0-26}" y="22" width="${95*u+44}" height="136" rx="6" fill="#fff" stroke="#dcdcd6"/>`;
+      for(let i=0;i<95;i++)if(m[i]==='1'){let j=i;while(j+1<95&&m[j+1]==='1'&&gd(j+1)===gd(i))j++;s+=`<rect x="${(x0+i*u).toFixed(2)}" y="34" width="${((j-i+1)*u).toFixed(2)}" height="${gd(i)?104:94}" fill="#111"/>`;i=j}
+      const tx=(x,c)=>`<text x="${x.toFixed(1)}" y="152" text-anchor="middle" font-family="Ubuntu Mono,monospace" font-size="12" fill="#111">${c}</text>`;
+      s+=tx(x0-10,d[0]);for(let i=1;i<=6;i++)s+=tx(x0+(3+(i-1)*7+3.5)*u,d[i]);for(let i=7;i<=12;i++)s+=tx(x0+(50+(i-7)*7+3.5)*u,d[i]);
+      s+=`<rect x="${x0-30}" y="78" width="${95*u+52}" height="9" fill="${b.accent}" opacity=".18"/><rect x="${x0-30}" y="81.5" width="${95*u+52}" height="2.2" fill="${b.accent}"/>`;
+      return s;
+    },
     smallweathers(b,r){
       // the build's showroom with Drizzle + Sunbeam installed: the room in one-point perspective, the low sun in the left-wall window, its beam onto the rug, the indoor rainbow on the back wall behind the sofa, drizzle under a sheet of cloud, and the Twin-Port ceiling unit with its red and blue port lights
       let s=`<rect width="320" height="180" fill="${b.bg}"/><g transform="translate(0 -6) scale(.4)">`;

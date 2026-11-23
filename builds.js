@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "ninety-five",
+    title: "Ninety-Five",
+    date: "2026-11-23",
+    kind: "Editorial and zine",
+    blurb: "A short magazine read about the barcode in seven sections, with a working figure in each. The first scan (a pack of Juicy Fruit at a supermarket in Troy, Ohio, 8:01 on 26 June 1974); Woodland's Morse dots and dashes on Miami Beach, which you drag down in the sand until they become thin and thick bars; the 1952 bullseye, which you run through a printing press beside a striped code to see why the rings smeared and the stripes didn't; the 95 modules, where tapping any digit lights up its seven columns and spells out its bars and gaps; the hidden thirteenth digit, written only in the L and G sets of the left six; and the check digit, where you misread digits, swap neighbours and find the one swap it can't catch (two digits five apart). It ends at a bench: type twelve digits, the page works out the check digit and draws a real EAN-13, then a red laser reads it back from the widths alone, backwards too, and refuses it when you scuff a bar.",
+    font: "'Monoton', 'Impact', sans-serif", fontWeight: 400,
+    bg: "#fcfcfa", fg: "#121212", accent: "#e3191c", panel: "#ffffff",
+    why: "I wanted a zine where every figure is the real thing rather than a picture of it: the barcodes are built from the actual encoding tables and the scanner genuinely decodes the stripes, so the reader can check the article's claims with their own hands.",
+    hook: "How a doodle in the sand became the stripes at every till, with a barcode you build and scan.",
+    motif: "ninetyfive"
+  },
+  {
     slug: "small-weathers",
     title: "Small Weathers",
     date: "2026-11-22",

@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ninety-Five</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Monoton&family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,800;1,400&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: a long-form magazine read about the barcode. Masthead with a full-width barcode rule,
+   then seven numbered sections in a single reading column, each with a figure that breaks out wider
+   than the text. The barcode labels stay black on white in both themes (that is how they scan). */
+:root{
+  --bg:#fcfcfa; --panel:#ffffff; --ink:#121212; --soft:#5b5b58; --line:#dcdcd6;
+  --laser:#e3191c; --laserSoft:rgba(227,25,28,.12); --sand:#e9dcc0; --sandInk:#7b6644;
+  --chip:#f0f0ec; --ok:#147a3d; --label:#ffffff; --labelInk:#111111;
+  --display:'Monoton','Impact',system-ui,sans-serif;
+  --body:'Inter Tight',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'Ubuntu Mono',ui-monospace,'SFMono-Regular',Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f0f10; --panel:#19191b; --ink:#efefea; --soft:#a5a5a0; --line:#323234;
+  --laser:#ff4a3d; --laserSoft:rgba(255,74,61,.16); --sand:#4a3f2c; --sandInk:#e4d2ab;
+  --chip:#232325; --ok:#4fd07f;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f0f10; --panel:#19191b; --ink:#efefea; --soft:#a5a5a0; --line:#323234;
+  --laser:#ff4a3d; --laserSoft:rgba(255,74,61,.16); --sand:#4a3f2c; --sandInk:#e4d2ab;
+  --chip:#232325; --ok:#4fd07f;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--body);overflow-x:hidden}
+.wrap{max-width:1060px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left)) 72px max(16px,env(safe-area-inset-right))}
+.col{max-width:680px;margin:0 auto}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--laser);outline-offset:2px}
+svg text{pointer-events:none}
+
+/* masthead */
+.top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:18px 0 8px;font:700 13px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--soft);border-bottom:2px solid var(--ink)}
+h1{font:400 clamp(34px,10.4vw,124px)/1 var(--display);margin:26px 0 4px;letter-spacing:.01em;white-space:nowrap;overflow:hidden}
+.stand{font-size:clamp(19px,2.6vw,25px);line-height:1.38;max-width:34em;margin:8px 0 0;font-weight:500}
+.byline{font:400 15px/1.4 var(--mono);color:var(--soft);margin:12px 0 0}
+.rule{display:block;width:100%;height:46px;margin:26px 0 8px}
+.rule rect{fill:var(--ink)}
+
+/* sections */
+section{padding:46px 0 10px;border-top:1px solid var(--line);margin-top:34px}
+.num{font:400 clamp(44px,8vw,72px)/1 var(--display);color:var(--laser);margin:0}
+h2{font:800 clamp(27px,4.2vw,40px)/1.1 var(--body);letter-spacing:-.015em;margin:8px 0 18px}
+p{margin:0 0 1em}
+.lede::first-letter{font:400 3.6em/.82 var(--display);float:left;margin:.06em .1em 0 0;color:var(--laser)}
+.pull{font:500 italic clamp(21px,3vw,27px)/1.35 var(--body);border-left:4px solid var(--laser);padding:2px 0 2px 18px;margin:26px 0}
+.fine{font-size:14px;color:var(--soft)}
+code,.m{font-family:var(--mono);font-size:1.05em}
+
+/* figures */
+figure{margin:28px 0 22px;padding:0}
+figcaption{font-size:14px;color:var(--soft);margin-top:10px;max-width:680px}
+figcaption b{color:var(--ink)}
+.fig{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.btn{border:1.5px solid var(--ink);background:var(--panel);border-radius:999px;padding:7px 15px;cursor:pointer;font-weight:600;font-size:15px;line-height:1.2}
+.btn:hover{background:var(--chip)}
+.btn.on,.btn.primary{background:var(--ink);color:var(--bg)}
+.btn.laser{background:var(--laser);border-color:var(--laser);color:#fff}
+.label{background:var(--label);border-radius:6px;padding:12px 10px 8px;color:var(--labelInk)}
+.label svg{display:block;width:100%;max-width:520px;margin:0 auto;height:auto}
+.press .label svg{max-width:260px}
+
+/* sand */
+.sand{background:var(--sand);border-radius:10px;padding:14px;touch-action:none;cursor:ns-resize;user-select:none}
+.sand svg{display:block;width:100%;height:auto}
+.sand .mk{fill:var(--sandInk)}
+.pullrow{display:flex;gap:12px;align-items:center;margin-top:12px;font-size:15px}
+.pullrow input{flex:1;accent-color:var(--laser)}
+
+/* bullseye */
+.press{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.press .label{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.press .tag{font:700 13px/1.2 var(--mono);letter-spacing:.05em;text-transform:uppercase;margin-top:8px;color:#444}
+.press .verdict{font:600 14px/1.3 var(--body);margin-top:4px;min-height:1.3em}
+
+/* anatomy */
+#anat rect.mod{cursor:pointer}
+.digits{display:grid;grid-template-columns:repeat(13,1fr);gap:4px;margin-top:12px}
+.dg{border:1.5px solid var(--line);background:var(--panel);border-radius:6px;padding:6px 0;font:700 19px/1 var(--mono);text-align:center;cursor:pointer}
+.dg.sel{border-color:var(--laser);background:var(--laserSoft)}
+.dg.first{border-style:dashed}
+.readout{margin-top:14px;padding:12px 14px;border-radius:8px;background:var(--chip);font-size:15px;min-height:4.6em}
+.readout .bits{font:700 20px/1.3 var(--mono);letter-spacing:.12em}
+.readout .bits i{font-style:normal;display:inline-block;width:.85em;text-align:center}
+.readout .bits i.k{background:var(--ink);color:var(--bg);border-radius:2px}
+
+/* parity */
+.ptable{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:6px}
+.prow{border:1.5px solid var(--line);border-radius:8px;padding:6px 4px;text-align:center;cursor:pointer;background:var(--panel)}
+.prow b{display:block;font:700 20px/1.1 var(--mono)}
+.prow span{font:400 14px/1.2 var(--mono);letter-spacing:.08em;color:var(--soft)}
+.prow.sel{border-color:var(--laser);background:var(--laserSoft)}
+.prow.sel span{color:var(--ink)}
+
+/* check */
+.tiles{display:grid;grid-template-columns:repeat(13,1fr);gap:4px}
+.tile{display:flex;flex-direction:column;align-items:center;border:1.5px solid var(--line);border-radius:6px;padding:6px 0 4px;cursor:pointer;background:var(--panel)}
+.tile b{font:700 21px/1 var(--mono)}
+.tile small{font:400 12px/1.2 var(--mono);color:var(--soft);margin-top:4px}
+.tile.changed{border-color:var(--laser);background:var(--laserSoft)}
+.tile.ck{border-style:dashed}
+.sum{font:400 15px/1.5 var(--mono);margin-top:12px;overflow-wrap:anywhere}
+.verdict2{font-weight:700;margin-top:6px;font-size:17px}
+.verdict2.bad{color:var(--laser)}
+.verdict2.good{color:var(--ok)}
+
+/* bench */
+.bench{display:grid;grid-template-columns:1fr;gap:16px}
+.field{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.field input{flex:1 1 240px;min-width:0;border:2px solid var(--ink);border-radius:8px;padding:9px 12px;background:var(--panel);font:700 22px/1.2 var(--mono);letter-spacing:.12em}
+.msg{font-size:15px;min-height:1.5em;margin-top:6px}
+.msg.bad{color:var(--laser);font-weight:600}
+.scanwrap{position:relative}
+.beam{position:absolute;top:0;bottom:0;width:3px;background:var(--laser);box-shadow:0 0 12px 3px rgba(255,40,30,.55);left:0;opacity:0;pointer-events:none}
+.decoded{font:400 16px/1.5 var(--body);padding:12px 14px;border-radius:8px;background:var(--chip);min-height:3.2em}
+.decoded .m{font-weight:700;font-size:19px;letter-spacing:.08em}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:4px}
+.meta div{border-top:2px solid var(--ink);padding-top:6px;font-size:15px}
+.meta div b{display:block;font:700 12px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.07em;color:var(--soft);margin-bottom:2px}
+
+.end{margin-top:46px;padding-top:18px;border-top:2px solid var(--ink);font-size:14px;color:var(--soft)}
+
+@media (max-width:560px){
+  body{font-size:16.5px}
+  .fig{padding:12px}
+  .press{grid-template-columns:1fr 1fr;gap:8px}
+  .digits,.tiles{gap:2px}
+  .dg{font-size:15px;padding:6px 0}
+  .tile b{font-size:16px}
+  .tile small{font-size:10px}
+  .ptable{grid-template-columns:repeat(5,1fr);gap:4px}
+  .prow b{font-size:17px}
+  .prow span{font-size:11px;letter-spacing:.02em}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head><body>
+<div class="wrap">
+  <div class="top"><span>A short read · No. 95</span><span>Stripes, shops &amp; arithmetic</span></div>
+  <h1 id="title">NINETY-FIVE</h1>
+  <p class="stand">Every barcode on every packet in the shop is ninety-five thin columns, black or white. This is how a doodle in the sand became the stripes that run the tills, and how to read one with your own eyes.</p>
+  <p class="byline">Seven short sections. Everything drawn here is a real, scannable EAN-13 built live on this page.</p>
+  <svg class="rule" id="rule" viewBox="0 0 113 40" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+  <section id="s1"><div class="col">
+    <p class="num">1</p>
+    <h2>8:01 in the morning, Troy, Ohio</h2>
+    <p class="lede">On 26 June 1974, at the Marsh Supermarket in Troy, Ohio, a ten-pack of Wrigley's Juicy Fruit gum slid across a pane of glass at the checkout. A red laser underneath swept across the stripes printed on its side, the till beeped, and 67 cents appeared on the display. It was the first product ever sold by scanning a Universal Product Code.</p>
+    <p>The gum was chosen almost by accident: it was the first thing in the basket. The pack is now in the Smithsonian. What it carried was not a picture of a price or a name. It was a twelve-digit number, written twice: once in figures for people, and once in stripes for the machine.</p>
+    <p class="pull">The stripes don't say "gum". They say a number. The shop's computer looks the number up.</p>
+    <p>That idea, a number the machine can read and the shop can look up, had been waiting twenty-five years for cheap lasers and cheap computers to catch up with it.</p>
+  </div></section>
+
+  <section id="s2"><div class="col">
+    <p class="num">2</p>
+    <h2>Dots and dashes in the sand</h2>
+    <p>In 1948 a graduate student at the Drexel Institute in Philadelphia, Bernard Silver, overheard a supermarket boss asking a dean whether the college could find a way to read product information automatically at the till. He told his friend Norman Joseph Woodland, who took the problem with him to Miami Beach.</p>
+    <p>Woodland knew Morse code from the Boy Scouts. Sitting on the beach, he pushed his fingers into the sand and drew dots and dashes. Then, without quite meaning to, he pulled them towards him. The dots became thin lines and the dashes became thick ones. Morse code, stretched, was a barcode.</p>
+    <figure>
+      <div class="sand" id="sand"><svg id="sandsvg" viewBox="0 0 300 140" role="img" aria-label="Morse code for U P C drawn in sand, stretching into thin and thick lines"></svg></div>
+      <div class="pullrow"><span>Dots</span><input type="range" id="pull" min="0" max="100" value="0" aria-label="Pull the marks down"><span>Lines</span></div>
+      <figcaption><b>Drag down on the sand</b> (or use the slider) to pull Woodland's marks into lines. This is <span class="m">U P C</span> in Morse: <span class="m">··–  ·––·  –·–·</span>. A dot keeps its width and becomes a thin bar; a dash becomes a fat one. The height carries no information at all, which is why a barcode still reads when the scanner crosses it high, low or at a slant.</figcaption>
+    </figure>
+  </div></section>
+
+  <section id="s3"><div class="col">
+    <p class="num">3</p>
+    <h2>The bullseye that smeared</h2>
+    <p>Woodland and Silver filed a patent in 1949 and were granted it in 1952. Their favourite version was not stripes but a bullseye: rings of different widths, which could be read from any direction, so the cashier wouldn't need to turn the packet.</p>
+    <p>Nobody could build the reader cheaply for another twenty years. When the American grocery trade finally set up a committee to pick one symbol, RCA tried the bullseye in a Kroger store in Cincinnati in 1972. It had a problem that only showed up on a printing press: paper moves through the rollers in one direction, and ink smears a little in that direction. Smear a ring and it gets fatter at the top and bottom. Smear a stripe along its own length and nothing that matters changes.</p>
+    <figure>
+      <div class="fig">
+        <div class="press">
+          <div class="label"><svg id="eye" viewBox="0 0 120 120" aria-label="Bullseye code"></svg><div class="tag">Bullseye, 1952</div><div class="verdict" id="eyev">Reads cleanly</div></div>
+          <div class="label"><svg id="stripes" viewBox="0 0 120 120" aria-label="Stripe code"></svg><div class="tag">Stripes, 1973</div><div class="verdict" id="stv">Reads cleanly</div></div>
+        </div>
+        <div class="bar"><button class="btn" id="smear">Run them through the press</button><span class="fine">Smear is up and down, the way the paper travels.</span></div>
+      </div>
+      <figcaption>The committee chose a design by <b>George Laurer</b> at IBM in 1973: straight stripes, laid out so the smear runs along the bars. Woodland, by then also at IBM, helped. Measure the widths across the middle of each symbol after printing and see which still holds its pattern.</figcaption>
+    </figure>
+  </div></section>
+
+  <section id="s4"><div class="col">
+    <p class="num">4</p>
+    <h2>Ninety-five modules</h2>
+    <p>Look closely at a barcode and the stripes come in only four widths. That's because the whole thing is drawn on a grid of 95 equal columns called modules, each one either black or white. At full size a module is a third of a millimetre wide. A bar is one, two, three or four modules wide; so is a gap.</p>
+    <p>Each digit takes seven modules, always as two bars and two gaps. Six digits on the left, six on the right, and three fixed patterns: <span class="m">101</span> at each end and <span class="m">01010</span> in the middle. Those guards, which reach lower than the rest, show the scanner how wide one module is, so it can measure everything else against them. That's why the barcode can be printed big or small.</p>
+    <figure>
+      <div class="fig">
+        <div class="label"><svg id="anat" viewBox="0 0 113 66" role="img" aria-label="An EAN-13 barcode, tap a digit to see its modules"></svg></div>
+        <div class="digits" id="digits"></div>
+        <div class="readout" id="readout"></div>
+      </div>
+      <figcaption><b>Tap any digit</b> (or a stripe) to light up its seven modules. Tap the guard bars too. The first digit, in the dashed box, has no stripes of its own, which is the next section's story.</figcaption>
+    </figure>
+  </div></section>
+
+  <section id="s5"><div class="col">
+    <p class="num">5</p>
+    <h2>The digit that isn't there</h2>
+    <p>The American code had twelve digits. In 1977 Europe adopted the same symbol but wanted thirteen, to leave room for country prefixes. The difficulty was that every scanner already in the world expected exactly 95 modules.</p>
+    <p>The trick was to hide the extra digit in a choice. Each left-hand digit can be drawn two ways: set <span class="m">L</span> (an odd number of black modules) or set <span class="m">G</span> (the right-hand pattern reversed, an even number). The order of L's and G's across the left six spells the hidden first digit. An American code is simply a European one that starts with 0, which uses L six times: exactly the old pattern, so nothing had to change.</p>
+    <figure>
+      <div class="fig">
+        <div class="label"><svg id="par" viewBox="0 -11 113 77" role="img" aria-label="Barcode showing the L and G set of each left digit"></svg></div>
+        <div class="ptable" id="ptable"></div>
+      </div>
+      <figcaption><b>Pick a first digit.</b> The left six figures under the bars stay the same, but watch their stripes change as the L/G pattern changes. (The last digit changes too; section 6 explains why.)</figcaption>
+    </figure>
+  </div></section>
+
+  <section id="s6"><div class="col">
+    <p class="num">6</p>
+    <h2>The thirteenth digit checks the other twelve</h2>
+    <p>The last digit carries no information. It's arithmetic. Multiply the twelve digits alternately by 1 and 3, add them up, and the check digit is whatever brings the total to the next multiple of ten. If the scanner misreads a single stripe and gets one digit wrong, the sum won't end in 0 and the till stays silent instead of charging you for the wrong thing.</p>
+    <p>It also catches most cases of two neighbouring digits swapping places, which is how people mistype numbers. The one swap it misses is two digits that differ by exactly 5, such as 1 and 6, because 3 × 5 and 1 × 5 leave the same last digit.</p>
+    <figure>
+      <div class="fig">
+        <div class="tiles" id="tiles"></div>
+        <div class="sum" id="sum"></div>
+        <div class="verdict2" id="verdict"></div>
+        <div class="bar">
+          <button class="btn" id="swapBtn">Swap two neighbours</button>
+          <button class="btn" id="swap5">Swap a 1 and a 6</button>
+          <button class="btn" id="resetCk">Put it back</button>
+        </div>
+      </div>
+      <figcaption><b>Tap a digit</b> to misread it (it goes up by one). The weight under each digit is ×1 or ×3. Try changing two digits at once and you can sometimes fool it; one at a time, never.</figcaption>
+    </figure>
+    <p>There's one more safety catch built into the stripes. Every left-hand digit in set L has an odd number of black modules, and every right-hand digit an even number. So a scanner reading the code upside down, right to left, notices straight away and flips it round. The cashier never has to.</p>
+  </div></section>
+
+  <section id="s7"><div class="col">
+    <p class="num">7</p>
+    <h2>Make one, then scan it</h2>
+    <p>Type twelve digits and the page works out the thirteenth, chooses the L and G sets, lays out the 95 modules and draws them. Then send the laser across. The reader doesn't peek at the digits you typed: it measures the black and white runs it crosses, turns them back into modules, looks each group of seven up, and checks the sum.</p>
+    <figure>
+      <div class="fig bench">
+        <div>
+          <div class="field"><input id="code" inputmode="numeric" autocomplete="off" spellcheck="false" maxlength="13" aria-label="Twelve or thirteen digits"><button class="btn primary" id="makeBtn">Draw it</button></div>
+          <div class="msg" id="msg"></div>
+          <div class="bar" id="presets"></div>
+        </div>
+        <div class="scanwrap label" id="scanwrap"><svg id="bench" viewBox="0 0 113 66" role="img" aria-label="Your barcode"></svg><div class="beam" id="beam"></div></div>
+        <div class="bar"><button class="btn laser" id="scanBtn">Scan it</button><button class="btn" id="scanBack">Scan it backwards</button><button class="btn" id="smudgeBtn">Scuff one bar, then scan</button></div>
+        <div class="decoded" id="decoded" aria-live="polite">The reader is waiting.</div>
+        <div class="meta" id="meta"></div>
+      </div>
+      <figcaption>The first two or three digits are a GS1 prefix: they say which national office issued the company its numbers, <b>not where the thing was made</b>. A British firm can make sauce in Spain and still print 50. Codes starting 2 are for the shop's own use, like the stickers on weighed cheese; 978 and 979 mean a book, and what follows is its ISBN.</figcaption>
+    </figure>
+    <p>Fifty years on, the stripes have company. QR codes and the newer two-dimensional codes on packets carry whole web addresses and batch numbers. But a beep at the till is still, nearly always, a laser measuring ninety-five columns and doing a sum.</p>
+  </div></section>
+
+  <div class="col end">Sources for the dates and names: the Smithsonian's National Museum of American History (the Marsh gum pack), US patent 2,612,994 (Woodland and Silver, 1952), and GS1's published EAN-13 specification for the encoding tables and prefixes. Made by Claude.</div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const NS='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id);
+const L=['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'];
+const R=L.map(s=>s.replace(/./g,c=>c==='0'?'1':'0'));
+const G=R.map(s=>s.split('').reverse().join(''));
+const PAR=['LLLLLL','LLGLGG','LLGGLG','LLGGGL','LGLLGG','LGGLLG','LGGGLL','LGLGLL','LGLLGL','LGGLGL'];
+const QL=11; // quiet zone in modules on the left; right quiet zone is 7 (113 total)
+
+function checkDigit(d12){let s=0;for(let i=0;i<12;i++)s+=(+d12[i])*(i%2?3:1);return (10-s%10)%10}
+function weightedSum(d){let s=0;for(let i=0;i<d.length;i++)s+=(+d[i])*(i%2?3:1);return s}
+function encode(d13){
+  const p=PAR[+d13[0]];let m='101';const parts=[{kind:'guard',name:'Start guard',from:0,len:3}];
+  for(let i=1;i<=6;i++){const set=p[i-1];parts.push({kind:'digit',pos:i,digit:+d13[i],set,from:m.length,len:7});m+=(set==='L'?L:G)[+d13[i]]}
+  parts.push({kind:'guard',name:'Centre guard',from:m.length,len:5});m+='01010';
+  for(let i=7;i<=12;i++){parts.push({kind:'digit',pos:i,digit:+d13[i],set:'R',from:m.length,len:7});m+=R[+d13[i]]}
+  parts.push({kind:'guard',name:'End guard',from:m.length,len:3});m+='101';
+  return {mods:m,parts};
+}
+// Decode a 95-module string. Tries forwards, then reversed. Returns {ok,digits,reversed,reason}
+function decodeMods(m){
+  const tryOne=s=>{
+    if(s.length!==95)return {ok:false,reason:'wrong length'};
+    if(s.slice(0,3)!=='101'||s.slice(45,50)!=='01010'||s.slice(92)!=='101')return {ok:false,reason:'guard bars not found'};
+    let par='',dig='';
+    for(let i=0;i<6;i++){const c=s.substr(3+i*7,7);let k=L.indexOf(c);if(k>=0){par+='L';dig+=k;continue}k=G.indexOf(c);if(k>=0){par+='G';dig+=k;continue}return {ok:false,reason:'left digit '+(i+2)+' is not a valid pattern'}}
+    let right='';for(let i=0;i<6;i++){const c=s.substr(50+i*7,7);const k=R.indexOf(c);if(k<0)return {ok:false,reason:'right digit '+(i+8)+' is not a valid pattern'};right+=k}
+    const f=PAR.indexOf(par);if(f<0)return {ok:false,reason:'the L/G pattern '+par+' spells no first digit'};
+    const d=f+dig+right;return {ok:true,digits:d,par};
+  };
+  let r=tryOne(m);if(r.ok)return {...r,reversed:false};
+  const r2=tryOne(m.split('').reverse().join(''));if(r2.ok)return {...r2,reversed:true};
+  return {ok:false,reason:r.reason};
+}
+// Read run lengths along the laser path and rebuild modules from the measured widths.
+function runsOf(m){const runs=[];let c=m[0],n=1;for(let i=1;i<m.length;i++){if(m[i]===c)n++;else{runs.push([c,n]);c=m[i];n=1}}runs.push([c,n]);return runs}
+
+function drawCode(svg,d13,opt={}){
+  const {mods,parts}=encode(d13);
+  svg.innerHTML='';
+  const H=50,GH=57;
+  const guardSet=new Set();parts.forEach(p=>{if(p.kind==='guard')for(let k=0;k<p.len;k++)guardSet.add(p.from+k)});
+  if(opt.hl){const p=opt.hl;const r=document.createElementNS(NS,'rect');r.setAttribute('x',QL+p.from);r.setAttribute('y',0);r.setAttribute('width',p.len);r.setAttribute('height',GH+1);r.setAttribute('fill','rgba(227,25,28,.18)');svg.appendChild(r)}
+  for(let i=0;i<95;i++){
+    if(mods[i]!=='1')continue;
+    let j=i;while(j+1<95&&mods[j+1]==='1'&&guardSet.has(j+1)===guardSet.has(i))j++;
+    const r=document.createElementNS(NS,'rect');
+    r.setAttribute('x',QL+i);r.setAttribute('y',0);r.setAttribute('width',j-i+1+0.001);r.setAttribute('height',guardSet.has(i)?GH:H);
+    r.setAttribute('fill',opt.hl&&i>=opt.hl.from&&i<opt.hl.from+opt.hl.len?'#c8101a':'#111');
+    r.setAttribute('class','mod');r.dataset.m=i;svg.appendChild(r);i=j;
+  }
+  // digits
+  const t=(x,s,cls)=>{const e=document.createElementNS(NS,'text');e.setAttribute('x',x);e.setAttribute('y',63);e.setAttribute('text-anchor','middle');e.setAttribute('font-family',"'Ubuntu Mono',ui-monospace,Menlo,monospace");e.setAttribute('font-size','9');e.setAttribute('fill','#111');e.textContent=s;svg.appendChild(e);return e};
+  t(QL-5,d13[0]);
+  for(let i=1;i<=6;i++)t(QL+3+(i-1)*7+3.5,d13[i]);
+  for(let i=7;i<=12;i++)t(QL+50+(i-7)*7+3.5,d13[i]);
+  if(opt.sets){for(let i=1;i<=6;i++){const e=document.createElementNS(NS,'text');e.setAttribute('x',QL+3+(i-1)*7+3.5);e.setAttribute('y',-3);e.setAttribute('text-anchor','middle');e.setAttribute('font-family',"'Ubuntu Mono',monospace");e.setAttribute('font-size','7');e.setAttribute('font-weight','700');const set=PAR[+d13[0]][i-1];e.setAttribute('fill',set==='G'?'#c8101a':'#111');e.textContent=set;svg.appendChild(e)}}
+  return {mods,parts};
+}
+
+/* shared state */
+const S={code:'',anatSel:null,pull:0,smeared:false,ck:null,ckChanged:new Set(),lastScan:null,scuffed:false,scanning:false};
+function full(d12){return d12+checkDigit(d12)}
+S.code=full('501234567890');
+
+/* masthead rule: a real barcode of the page's code, stretched */
+function drawRule(){const svg=$('rule');svg.innerHTML='';const m=encode(S.code).mods;for(let i=0;i<95;i++)if(m[i]==='1'){let j=i;while(j+1<95&&m[j+1]==='1')j++;const r=document.createElementNS(NS,'rect');r.setAttribute('x',9+i);r.setAttribute('y',0);r.setAttribute('width',j-i+1);r.setAttribute('height',40);svg.appendChild(r);i=j}}
+
+/* 2. sand */
+const MORSE=['..-','.--.','-.-.'];
+function drawSand(){
+  const svg=$('sandsvg');const u=6;const els=[];let x=0;
+  MORSE.forEach((ch,li)=>{if(li)x+=3*u;[...ch].forEach((c,ci)=>{if(ci)x+=u;const w=c==='.'?u:3*u;els.push({x,w,c});x+=w})});
+  const ox=(300-x)/2,t=S.pull/100,top=24,h=10+t*96;
+  let s='';
+  // sand grain texture
+  for(let k=0;k<90;k++){const gx=(k*73)%300,gy=(k*41)%140;s+=`<circle cx="${gx}" cy="${gy}" r=".9" class="mk" opacity=".22"/>`}
+  els.forEach(e=>{
+    const r=e.c==='.'?Math.max(0,(1-t))*e.w/2:Math.max(0,(1-t))*3;
+    s+=`<rect class="mk" x="${(ox+e.x).toFixed(2)}" y="${top}" width="${e.w}" height="${(e.c==='.'&&t<.05?e.w:h).toFixed(2)}" rx="${r.toFixed(2)}"/>`;
+  });
+  // finger trails
+  if(t>0.02)s+=`<path d="M${ox-10} ${top+h+8} H${ox+x+10}" stroke="var(--sandInk)" stroke-width="1" opacity=".35" stroke-dasharray="2 3"/>`;
+  svg.innerHTML=s;
+}
+(function(){
+  const el=$('sand');let y0=null,p0=0;
+  el.addEventListener('pointerdown',e=>{y0=e.clientY;p0=S.pull;el.setPointerCapture(e.pointerId)});
+  el.addEventListener('pointermove',e=>{if(y0===null)return;const dy=e.clientY-y0;S.pull=Math.max(0,Math.min(100,p0+dy/el.clientHeight*160));$('pull').value=S.pull;drawSand()});
+  const up=()=>{y0=null};el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);
+  $('pull').addEventListener('input',e=>{S.pull=+e.target.value;drawSand()});
+})();
+
+/* 3. press */
+function drawPress(){
+  const sm=S.smeared;
+  const filt=`<defs><filter id="sm" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="0 ${sm?3.2:0.001}"/><feComponentTransfer><feFuncA type="discrete" tableValues="0 0 1 1"/></feComponentTransfer></filter></defs>`;
+  const widths=[3,2,4,1,2,3];
+  let e=filt+`<g filter="url(#sm)">`;let r=54;
+  widths.forEach((w,i)=>{ if(i%2===0){e+=`<circle cx="60" cy="60" r="${r-w*2.2/2}" fill="none" stroke="#111" stroke-width="${w*2.2}"/>`} r-=w*2.2; });
+  e+=`<circle cx="60" cy="60" r="${r}" fill="#111"/></g>`;
+  $('eye').innerHTML=e;
+  let s=filt+`<g filter="url(#sm)">`;const m=encode(S.code).mods.slice(0,45);let x=60-45*1.1;
+  for(let i=0;i<45;i++)if(m[i]==='1')s+=`<rect x="${(x+i*2.2).toFixed(2)}" y="14" width="2.21" height="92" fill="#111"/>`;
+  s+='</g>';$('stripes').innerHTML=s.replace('id="sm"','id="sm2"').replace('url(#sm)','url(#sm2)');
+  $('eyev').textContent=sm?'Rings swollen top and bottom: misread':'Reads cleanly';
+  $('stv').textContent=sm?'Bars a little longer: still reads':'Reads cleanly';
+  $('eyev').style.color=sm?'#c8101a':'#147a3d';$('stv').style.color='#147a3d';
+  $('smear').textContent=sm?'Print a clean one':'Run them through the press';
+}
+$('smear').addEventListener('click',()=>{S.smeared=!S.smeared;drawPress()});
+
+/* 4. anatomy */
+function partForDigit(pos,parts){return parts.find(p=>p.kind==='digit'&&p.pos===pos)}
+function drawAnat(){
+  const parts=encode(S.code).parts;
+  const sel=S.anatSel;let hl=null;
+  if(sel&&sel.type==='digit'&&sel.pos>0)hl=partForDigit(sel.pos,parts);
+  if(sel&&sel.type==='guard')hl=parts.filter(p=>p.kind==='guard')[sel.idx];
+  drawCode($('anat'),S.code,{hl});
+  const dg=$('digits');dg.innerHTML='';
+  [...S.code].forEach((c,i)=>{const b=document.createElement('button');b.className='dg'+(i===0?' first':'')+(sel&&sel.type==='digit'&&sel.pos===i?' sel':'');b.textContent=c;b.setAttribute('aria-label','Digit '+(i+1)+': '+c);b.addEventListener('click',()=>{S.anatSel={type:'digit',pos:i};drawAnat()});dg.appendChild(b)});
+  const ro=$('readout');
+  if(!sel){ro.innerHTML='Nothing selected yet. Tap a digit or a stripe: every digit is seven modules, made of two bars and two gaps that always add up to seven.';return}
+  if(sel.type==='guard'){const p=hl;const bits=encode(S.code).mods.substr(p.from,p.len);ro.innerHTML=`<b>${p.name}</b> · modules ${p.from+1}–${p.from+p.len}<div class="bits">${[...bits].map(b=>`<i class="${b==='1'?'k':''}">${b}</i>`).join('')}</div>A fixed pattern on every barcode. Its thin bars are exactly one module wide, so the scanner learns the size of a module from them.`;return}
+  if(sel.pos===0){ro.innerHTML=`<b>First digit: ${S.code[0]}</b> · no stripes of its own<div class="bits">${[...PAR[+S.code[0]]].map(c=>`<i>${c}</i>`).join('')}</div>It is spelled out by which set (L or G) each of the next six digits uses. See section 5.`;return}
+  const p=hl;const bits=encode(S.code).mods.substr(p.from,p.len);
+  const runs=runsOf(bits).map(([c,n])=>(c==='1'?'bar ':'gap ')+n).join(', ');
+  const side=p.pos<=6?'left half':'right half';
+  const setNote=p.set==='L'?'set L: starts with a gap, odd number of black modules':p.set==='G'?'set G: the R pattern backwards, even number of black modules':'set R: starts with a bar, even number of black modules';
+  ro.innerHTML=`<b>Digit ${p.pos+1}: ${p.digit}</b> · ${side}, ${setNote} · modules ${p.from+1}–${p.from+7}<div class="bits">${[...bits].map(b=>`<i class="${b==='1'?'k':''}">${b}</i>`).join('')}</div>${runs}.`;
+}
+$('anat').addEventListener('click',e=>{
+  const t=e.target.closest('rect.mod');if(!t)return;const i=+t.dataset.m;const parts=encode(S.code).parts;
+  const p=parts.find(p=>i>=p.from&&i<p.from+p.len);
+  if(p.kind==='guard')S.anatSel={type:'guard',idx:parts.filter(q=>q.kind==='guard').indexOf(p)};else S.anatSel={type:'digit',pos:p.pos};
+  drawAnat();
+});
+
+/* 5. parity */
+function drawParity(){
+  drawCode($('par'),S.code,{sets:true});
+  const pt=$('ptable');pt.innerHTML='';
+  PAR.forEach((p,i)=>{const b=document.createElement('button');b.className='prow'+(+S.code[0]===i?' sel':'');b.innerHTML=`<b>${i}</b><span>${p}</span>`;b.setAttribute('aria-label','First digit '+i+', pattern '+p);b.addEventListener('click',()=>{setCode(full(i+S.code.slice(1,12)))});pt.appendChild(b)});
+}
+
+/* 6. check */
+function resetCk(){S.ckBase=[...S.code];S.ck=[...S.code];drawCheck()}
+function drawCheck(){
+  const d=S.ck,base=S.ckBase;const tl=$('tiles');tl.innerHTML='';
+  d.forEach((c,i)=>{const b=document.createElement('button');b.className='tile'+(c!==base[i]?' changed':'')+(i===12?' ck':'');b.innerHTML=`<b>${c}</b><small>×${i%2?3:1}</small>`;b.setAttribute('aria-label','Digit '+(i+1)+': '+c+', tap to misread');b.addEventListener('click',()=>{d[i]=String((+d[i]+1)%10);drawCheck()});tl.appendChild(b)});
+  const sum=weightedSum(d.join(''));
+  $('sum').innerHTML=d.map((c,i)=>`${c}×${i%2?3:1}`).join(' + ')+` = <b>${sum}</b>`;
+  const v=$('verdict');const good=sum%10===0;
+  const changed=d.filter((c,i)=>c!==base[i]).length;
+  if(good&&changed===0){v.textContent='Ends in 0. The till beeps.';v.className='verdict2 good'}
+  else if(good){v.textContent=`Ends in 0, so it passes, but ${changed} digits are wrong. Fooled.`;v.className='verdict2 bad'}
+  else{v.textContent=`Ends in ${sum%10}, not 0. Misread caught: the till stays silent.`;v.className='verdict2 bad'}
+  S.ckOk=good;
+}
+$('swapBtn').addEventListener('click',()=>{
+  resetCk();const d=S.ck;
+  for(let i=0;i<11;i++){const a=+d[i],b=+d[i+1];if(a!==b&&Math.abs(a-b)!==5){[d[i],d[i+1]]=[d[i+1],d[i]];break}}
+  drawCheck();
+});
+$('swap5').addEventListener('click',()=>{
+  // the same code with a 1 and a 6 as digits 4 and 5 (and its own correct check digit), then swapped
+  const f=S.code.slice(0,3)+'16'+S.code.slice(5,12);S.ckBase=[...f+checkDigit(f)];S.ck=S.ckBase.slice();
+  [S.ck[3],S.ck[4]]=[S.ck[4],S.ck[3]];drawCheck();
+});
+$('resetCk').addEventListener('click',resetCk);
+
+/* 7. bench */
+const PRESETS=[['A British firm','501234567890'],['A book (978)','978014044913'],['Weighed at the deli','212345001995'],['An American code','003600029145'],['A German firm','400638133393']];
+function prefixOf(d){
+  const n3=+d.slice(0,3);
+  const T=[[0,19,'USA and Canada'],[20,29,'Shop’s own use (in-store numbers)'],[30,39,'USA (medicines)'],[40,49,'Shop’s own use'],[50,59,'Coupons'],[60,139,'USA and Canada'],[200,299,'Shop’s own use: weighed or priced in store'],[300,379,'France and Monaco'],[380,380,'Bulgaria'],[400,440,'Germany'],[450,459,'Japan'],[460,469,'Russia'],[490,499,'Japan'],[500,509,'United Kingdom'],[520,521,'Greece'],[539,539,'Ireland'],[540,549,'Belgium and Luxembourg'],[560,560,'Portugal'],[570,579,'Denmark'],[590,590,'Poland'],[640,649,'Finland'],[690,699,'China'],[700,709,'Norway'],[730,739,'Sweden'],[760,769,'Switzerland'],[800,839,'Italy'],[840,849,'Spain'],[870,879,'Netherlands'],[880,880,'South Korea'],[890,890,'India'],[900,919,'Austria'],[930,939,'Australia'],[940,949,'New Zealand'],[977,977,'A magazine or newspaper (ISSN)'],[978,979,'A book (ISBN)'],[980,980,'Refund receipts'],[981,984,'Coupons'],[990,999,'Coupons']];
+  for(const [a,b,name] of T)if(n3>=a&&n3<=b)return name;
+  return 'Another GS1 member office';
+}
+function drawBench(){
+  const r=drawCode($('bench'),S.code);S.benchMods=r.mods;S.scuffed=false;
+  $('code').value=S.code;
+  const d=S.code;
+  $('meta').innerHTML=`<div><b>Prefix</b>${prefixOf(d)}</div><div><b>Check digit</b>${d[12]} (sum ${weightedSum(d.slice(0,12))}${d[12]!=='0'?' + '+d[12]:''} = ${weightedSum(d.slice(0,12))+ +d[12]})</div><div><b>Left sets</b><span class="m">${PAR[+d[0]]}</span> → first digit ${d[0]}</div>`;
+}
+function setMsg(t,bad){const m=$('msg');m.textContent=t;m.className='msg'+(bad?' bad':'')}
+function make(){
+  const v=$('code').value.trim().replace(/[\s-]/g,'');
+  if(!/^\d*$/.test(v)){setMsg('Digits only. A barcode like this can only carry 0 to 9.',true);S.lastReject='nondigit';return false}
+  if(v.length<12){setMsg(`${12-v.length} more digit${12-v.length>1?'s':''} needed: it takes twelve, and the page adds the thirteenth.`,true);S.lastReject='short';return false}
+  if(v.length===13&&+v[12]!==checkDigit(v.slice(0,12))){setMsg(`That last digit should be ${checkDigit(v.slice(0,12))}, not ${v[12]}. A till would refuse it, so it isn't drawn.`,true);S.lastReject='badcheck';return false}
+  S.lastReject=null;
+  setCode(full(v.slice(0,12)));
+  setMsg(v.length===13?'Check digit correct. Drawn.':`Check digit worked out: ${S.code[12]}. Drawn.`,false);
+  return true;
+}
+$('makeBtn').addEventListener('click',make);
+$('code').addEventListener('keydown',e=>{if(e.key==='Enter')make()});
+PRESETS.forEach(([n,c])=>{const b=document.createElement('button');b.className='btn';b.textContent=n;b.addEventListener('click',()=>{$('code').value=c;make()});$('presets').appendChild(b)});
+
+function scan(backwards,scuff){
+  if(S.scanning)return;S.scanning=true;
+  let mods=S.benchMods;
+  if(scuff){ // a scratch through one bar widens it by a module: find a black module next to a white one inside a digit
+    const arr=[...mods];const i=10+Math.floor(Math.random()*30);let k=i;while(!(arr[k]==='1'&&arr[k+1]==='0'))k++;arr[k+1]='1';mods=arr.join('');
+    drawCodeFromMods($('bench'),mods);S.scuffed=true;
+  }
+  const beam=$('beam');const wrap=$('scanwrap');const svg=$('bench');
+  const W=svg.getBoundingClientRect().width,off=svg.getBoundingClientRect().left-wrap.getBoundingClientRect().left;
+  const x0=off+W*(QL-4)/113,x1=off+W*(QL+99)/113;
+  const dur=900,t0=performance.now();beam.style.opacity='1';
+  $('decoded').innerHTML='Reading…';
+  const step=now=>{
+    const t=Math.min(1,(now-t0)/dur);const x=backwards?x1+(x0-x1)*t:x0+(x1-x0)*t;beam.style.left=x+'px';
+    if(t<1)requestAnimationFrame(step);else finish();
+  };
+  const finish=()=>{
+    beam.style.opacity='0';S.scanning=false;
+    // the laser sees runs of light and dark in the order it crosses them
+    const seen=backwards?mods.split('').reverse().join(''):mods;
+    const pm=W/113; // on-screen pixels per module: the laser measures widths in pixels, not modules
+    const runs=runsOf(seen).map(([c,n])=>[c,n*pm]);
+    const unit=(runs[0][1]+runs[1][1]+runs[2][1])/3; // the start guard: three one-module runs
+    const rebuilt=runs.map(([c,n])=>c.repeat(Math.round(n/unit))).join('');
+    const res=decodeMods(rebuilt);
+    let out;
+    if(!res.ok){out=`<b style="color:var(--laser)">No read.</b> The laser crossed ${runs.length} runs, but ${res.reason}. No beep.`;S.lastScan={ok:false,reason:res.reason}}
+    else{
+      const sumOk=weightedSum(res.digits)%10===0;
+      const dir=res.reversed?'Read right to left; the odd/even counts showed it was backwards, so it flipped it. ':'';
+      if(!sumOk){out=`Read <span class="m">${res.digits}</span>, but the sum ends in ${weightedSum(res.digits)%10}. ${dir}Rejected: no beep.`;S.lastScan={ok:false,digits:res.digits,reason:'check'}}
+      else{out=`<b>Beep.</b> Read <span class="m">${res.digits}</span> from ${runs.length} runs of light and dark (the start guard put one module at ${unit.toFixed(1)} px wide). ${dir}Sum checks out.`;S.lastScan={ok:true,digits:res.digits,reversed:res.reversed}}
+    }
+    $('decoded').innerHTML=out;
+  };
+  requestAnimationFrame(step);
+}
+function drawCodeFromMods(svg,mods){
+  [...svg.querySelectorAll('rect')].forEach(r=>r.remove());
+  for(let i=0;i<95;i++){if(mods[i]!=='1')continue;let j=i;while(j+1<95&&mods[j+1]==='1')j++;const r=document.createElementNS(NS,'rect');r.setAttribute('x',QL+i);r.setAttribute('y',0);r.setAttribute('width',j-i+1.001);r.setAttribute('height',(i<3||i>91||(i>=45&&i<50))?57:50);r.setAttribute('fill','#111');svg.insertBefore(r,svg.firstChild);i=j}
+}
+$('scanBtn').addEventListener('click',()=>{if(S.scuffed)drawBench();scan(false,false)});
+$('scanBack').addEventListener('click',()=>{if(S.scuffed)drawBench();scan(true,false)});
+$('smudgeBtn').addEventListener('click',()=>{if(S.scuffed)drawBench();scan(false,true)});
+
+function setCode(c){S.code=c;drawRule();drawPress();drawAnat();drawParity();resetCk();drawBench();$('decoded').textContent='The reader is waiting.';S.lastScan=null}
+
+drawSand();setCode(S.code);
+
+window.__ninetyfive={
+  get state(){return {code:S.code,mods:S.benchMods,pull:S.pull,smeared:S.smeared,anatSel:S.anatSel,ck:S.ck.join(''),ckBase:S.ckBase.join(''),ckOk:S.ckOk,lastScan:S.lastScan,lastReject:S.lastReject,scanning:S.scanning}},
+  encode,decodeMods,checkDigit
+};
+})();
+</script>
+</body></html>
