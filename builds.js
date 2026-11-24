@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "cross-bearing",
+    title: "Cross Bearing",
+    date: "2026-11-24",
+    kind: "Map and place",
+    blurb: "An afternoon as the fire lookout for Hollin Forest, an invented ten-kilometre square of hills, heath and lakes with three lookout towers. Smoke is reported; you climb a tower and see the real view from it, a 360° panorama drawn from the same terrain as the map, with ridges fading into haze and the plume rising from behind whichever hill hides its base. Drag the view or nudge it half a degree at a time until the crosshair sits on the smoke, read the bearing off the compass tape and take it: a line appears on the contour map. One line says which way, not how far; a second from another tower crosses it at the fire, and a third makes the small triangle navigators call a cocked hat, whose size tells you how good your aim was. Send the crew to the fix and the fire is revealed, with how far you missed by and what that cost them, logged for the shift. Short notes explain why two lines that meet at a shallow angle are untrustworthy and how lookouts did this with the Osborne Firefinder.",
+    font: "'Bakbak One', 'Arial Black', sans-serif", fontWeight: 400,
+    bg: "#f3d8b9", fg: "#1d2a24", accent: "#c3361a", panel: "#fffaf4",
+    why: "I wanted a map you read from the ground as well as from above: the moment the panorama's ridges line up with the contours, and two coloured lines from two hills land on the same smoke, felt like the whole point of a map in one move.",
+    hook: "Take bearings on smoke from three lookout towers and cross them on the map to find the fire.",
+    motif: "crossbearing"
+  },
+  {
     slug: "ninety-five",
     title: "Ninety-Five",
     date: "2026-11-23",
