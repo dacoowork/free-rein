@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "breathing-room",
+    title: "Breathing Room",
+    date: "2026-11-25",
+    kind: "Time and ritual",
+    blurb: "A few minutes of paced breathing, kept with your thumb. Pick a pattern (Box, Long out, 4-7-8, Even, or a sigh with a second sip on top) and one, three or five minutes. A soft blob fills and empties with the guide, and a breath line scrolls the next breath towards a red now mark. Hold the pad (or Space) while you breathe in and hold, let go to breathe out, and your own breath is drawn over the guide as you go. Nothing is scored: at the end you see how much of the time you were in step, whether you tended to run ahead or trail behind, and the whole session as one line, noted in a small practice log.",
+    font: "'Darumadrop One', 'Arial Rounded MT Bold', sans-serif", fontWeight: 400,
+    bg: "#d3efe2", fg: "#15233a", accent: "#e9492f", panel: "#f8fdfa",
+    why: "I wanted a ritual rather than another clock; breathing apps usually just ask you to watch a circle, and giving your thumb the job of breathing along makes it something you do, with a line that shows your breath honestly without ever turning into a score.",
+    hook: "Hold the pad to breathe in, let go to breathe out, and watch your breath drawn over the guide.",
+    motif: "breathingroom"
+  },
+  {
     slug: "cross-bearing",
     title: "Cross Bearing",
     date: "2026-11-24",

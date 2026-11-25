@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Monoton&family=Righteous&family=Pacifico&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&family=Londrina+Solid:wght@900&family=Atkinson+Hyperlegible&family=Fragment+Mono&family=Krona+One&family=Fredoka:wght@700&family=Chakra+Petch:wght@700&family=Silkscreen&family=Bakbak+One&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Darumadrop+One&family=Monoton&family=Righteous&family=Pacifico&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&family=Londrina+Solid:wght@900&family=Atkinson+Hyperlegible&family=Fragment+Mono&family=Krona+One&family=Fredoka:wght@700&family=Chakra+Petch:wght@700&family=Silkscreen&family=Bakbak+One&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -144,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-24"></script>
+<script src="builds.js?v=2026-11-25"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -155,6 +155,24 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    breathingroom(b,r){
+      // the build's stage: the mint blob mid-breath with its dashed "your breath" outline, the word "in", and below it the breath line
+      // (Box 4-4-4-4: in, hold, out, rest) with the user's trace drawn over the guide up to the red now mark
+      let s=`<rect width="320" height="180" fill="${b.bg}"/><rect x="52" y="8" width="216" height="164" rx="14" fill="${b.panel}"/>`;
+      const blob=(r0,ph)=>{let d='';for(let i=0;i<=40;i++){const a=i/40*Math.PI*2,w=1+.05*(Math.sin(a*3+ph)*.6+Math.sin(a*5-ph)*.4);d+=(i?'L':'M')+(160+Math.cos(a)*r0*w*1.25).toFixed(1)+' '+(62+Math.sin(a)*r0*w).toFixed(1)}return d+'Z'};
+      s+=`<path d="${blob(44,2)}" fill="#8fd3b8" opacity=".35"/><path d="${blob(38,0)}" fill="#8fd3b8" stroke="#2f8f70" stroke-width="1.6"/><path d="${blob(33,0)}" fill="none" stroke="${b.fg}" stroke-width="1.6" stroke-dasharray="4 4" opacity=".75"/>`;
+      s+=`<text x="160" y="70" text-anchor="middle" font-family="Darumadrop One,sans-serif" font-size="24" fill="${b.fg}">in</text>`;
+      const X0=64,X1=256,top=114,bot=158,ph=[[4,0,1],[4,1,1],[4,1,0],[4,0,0]],T=24,nowT=8.6;
+      const lv=t=>{t=((t%16)+16)%16;let k=0;while(t>=ph[k][0]){t-=ph[k][0];k++}const [d,a,c]=ph[k];return a===c?a:a+(c-a)*(.5-.5*Math.cos(Math.PI*t/d))};
+      const x=t=>X0+(X1-X0)*t/T,y=l=>bot-(bot-top)*l;
+      s+=`<rect x="${X0-4}" y="${top-8}" width="${X1-X0+8}" height="${bot-top+16}" rx="7" fill="#c2e7d6"/>`;
+      let g=`M${X0} ${bot}`;for(let t=0;t<=T;t+=.25)g+=`L${x(t).toFixed(1)} ${y(lv(t-6)).toFixed(1)}`;s+=`<path d="${g}L${X1} ${bot}Z" fill="#8fd3b8" stroke="#2f8f70" stroke-width="1.2"/>`;
+      // the user's trace: linear rise/fall, a touch late on the first breath
+      let u=0,yd=`M${X0} ${y(0).toFixed(1)}`;for(let t=0;t<=nowT;t+=.25){const p=((t-6)%16+16)%16,want=p>=0&&p<8&&t>=6.5;u=want?Math.min(1,u+.25/4):Math.max(0,u-.25/4);yd+=`L${x(t).toFixed(1)} ${y(u).toFixed(1)}`}
+      s+=`<path d="${yd}" fill="none" stroke="${b.fg}" stroke-width="2" stroke-linejoin="round"/>`;
+      s+=`<rect x="${(x(nowT)-1).toFixed(1)}" y="${top-6}" width="2" height="${bot-top+10}" fill="${b.accent}"/><circle cx="${x(nowT).toFixed(1)}" cy="${y(u).toFixed(1)}" r="3.2" fill="${b.accent}"/>`;
+      return s;
+    },
     crossbearing(b,r){
       // the build's map: a contoured forest square with a lake, its three lookout towers (teal, violet, ochre) on their hills,
       // and their three bearing lines meeting in a small cocked hat over the fire, with the smoke drifting off it

@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Breathing Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Darumadrop+One&family=Urbanist:ital,wght@0,400;0,500;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+/* Breathing Room: a few minutes of paced breathing, done with your thumb.
+   Layout (single column): header, pattern chips, the stage (a soft blob that fills and empties with the guide, the phase word and count),
+   the breath line (a strip where the guide's shape scrolls past a "now" mark and your own breath is drawn over it),
+   the pad (hold it, or Space, while you breathe in and while you hold full; let go to breathe out),
+   then a session card at the end, and a short practice log kept in this browser. */
+:root{
+  --bg:#d3efe2; --bg2:#c2e7d6; --panel:#f8fdfa; --ink:#15233a; --muted:#4b5b6c; --line:rgba(21,35,58,.14);
+  --accent:#e9492f; --accent-ink:#fff; --guide:#8fd3b8; --guide-edge:#2f8f70; --you:#15233a; --pad:#15233a; --pad-ink:#f8fdfa;
+  --shadow:0 1px 0 rgba(21,35,58,.06),0 10px 30px -18px rgba(21,35,58,.35);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1d1b; --bg2:#13272a; --panel:#172b2c; --ink:#e7f5ee; --muted:#9fb7b0; --line:rgba(231,245,238,.14);
+    --accent:#ff7658; --accent-ink:#1a0d08; --guide:#2c6d5a; --guide-edge:#74d1ad; --you:#f1fbf6; --pad:#e7f5ee; --pad-ink:#10201e;
+    --shadow:0 1px 0 rgba(0,0,0,.2),0 10px 30px -18px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1d1b; --bg2:#13272a; --panel:#172b2c; --ink:#e7f5ee; --muted:#9fb7b0; --line:rgba(231,245,238,.14);
+  --accent:#ff7658; --accent-ink:#1a0d08; --guide:#2c6d5a; --guide-edge:#74d1ad; --you:#f1fbf6; --pad:#e7f5ee; --pad-ink:#10201e;
+  --shadow:0 1px 0 rgba(0,0,0,.2),0 10px 30px -18px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Urbanist,system-ui,sans-serif;min-height:100vh}
+.wrap{max-width:760px;margin:0 auto;padding:28px 16px 48px}
+h1{font-family:'Darumadrop One',Urbanist,sans-serif;font-weight:400;font-size:clamp(44px,9vw,72px);line-height:.95;margin:0 0 10px;letter-spacing:.01em}
+h1 span{color:var(--accent)}
+.lede{margin:0 0 22px;max-width:56ch;color:var(--muted);font-size:17px}
+.lede b{color:var(--ink);font-weight:700}
+.label{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.chip{font:700 15px/1 Urbanist,sans-serif;border:1.5px solid var(--line);background:var(--panel);color:var(--ink);padding:10px 14px;border-radius:999px;cursor:pointer}
+.chip small{font-weight:500;color:var(--muted);margin-left:6px;font-size:13px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.chip[aria-pressed="true"] small{color:inherit;opacity:.75}
+.chip:disabled{opacity:.45;cursor:not-allowed}
+.chip:focus-visible,.btn:focus-visible,.pad:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.note{min-height:3em;margin:0 0 18px;color:var(--muted);font-size:15px;max-width:62ch}
+.card{background:var(--panel);border-radius:22px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.stage{position:relative;padding:18px 18px 14px;overflow:hidden}
+.stagetop{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.stagetop b{color:var(--ink)}
+.blobbox{position:relative;height:250px;display:grid;place-items:center}
+#blob{position:absolute;inset:0;width:100%;height:100%}
+.phase{position:relative;text-align:center;pointer-events:none}
+.phase .word{font-family:'Darumadrop One',Urbanist,sans-serif;font-size:44px;line-height:1;display:block;color:var(--ink)}
+.phase .count{font-weight:800;font-size:22px;font-variant-numeric:tabular-nums;display:block;margin-top:4px;color:var(--ink)}
+.strip{margin-top:6px}
+#line{display:block;width:100%;height:120px;border-radius:14px;background:var(--bg2)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:18px;height:10px;border-radius:3px;vertical-align:-1px;margin-right:6px}
+.legend .g{background:var(--guide);border:1.5px solid var(--guide-edge)}
+.legend .y{background:var(--you);height:3px;vertical-align:3px}
+.legend .n{background:var(--accent);width:3px;height:12px}
+.controls{display:grid;grid-template-columns:1fr auto;gap:12px;margin-top:16px;align-items:stretch}
+.pad{font:800 18px/1.2 Urbanist,sans-serif;border:0;border-radius:18px;background:var(--pad);color:var(--pad-ink);padding:22px 16px;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .12s, box-shadow .12s;position:relative;overflow:hidden}
+.pad small{display:block;font-weight:500;font-size:13px;opacity:.75;margin-top:4px}
+.pad.down{transform:scale(.98);box-shadow:inset 0 0 0 4px var(--accent)}
+.pad .fill{position:absolute;left:0;bottom:0;width:100%;background:var(--guide);opacity:.3;pointer-events:none}
+.pad span{position:relative}
+.side{display:flex;flex-direction:column;gap:8px}
+.btn{font:800 15px/1 Urbanist,sans-serif;border-radius:14px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);padding:12px 16px;cursor:pointer;white-space:nowrap}
+.btn.go{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.lengths{display:flex;gap:6px}
+.lengths .chip{padding:8px 10px;font-size:14px;flex:1;text-align:center;white-space:nowrap}
+.summary{margin-top:18px;padding:20px 18px}
+.summary[hidden]{display:none}
+.summary h2{font-family:'Darumadrop One',Urbanist,sans-serif;font-weight:400;font-size:32px;margin:0 0 4px;line-height:1.1}
+.summary p{margin:0 0 12px;color:var(--muted)}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0 14px}
+.fact{background:var(--bg2);border-radius:14px;padding:10px 12px}
+.fact b{display:block;font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15}
+.fact span{font-size:13px;color:var(--muted)}
+#whole{display:block;width:100%;height:110px;border-radius:12px;background:var(--bg2)}
+.log{margin-top:22px;padding:18px}
+.log ol{list-style:none;margin:0;padding:0}
+.log li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line);font-size:15px}
+.log li:first-child{border-top:0}
+.log li span:last-child{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.log .empty{color:var(--muted);margin:0}
+.loghead{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.linkish{font:700 13px Urbanist,sans-serif;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:4px}
+.about{margin-top:22px;font-size:14px;color:var(--muted);max-width:62ch}
+.about p{margin:0 0 8px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:560px){
+  .wrap{padding-top:20px}
+  .lede{font-size:16px;margin-bottom:16px}
+  .blobbox{height:190px}
+  .phase .word{font-size:38px}
+  #line{height:96px}
+  .controls{grid-template-columns:1fr}
+  .side{flex-direction:row;flex-wrap:wrap}
+  .side .btn{flex:1}
+  .lengths{flex:1 1 100%}
+  .facts{grid-template-columns:1fr 1fr 1fr;gap:6px}
+  .fact{padding:8px}
+  .fact b{font-size:19px}
+  .chip{padding:9px 12px;font-size:14px}
+}
+@media (prefers-reduced-motion: reduce){ .pad{transition:none} }
+</style>
+</head><body>
+<div class="wrap">
+  <h1>Breathing <span>Room</span></h1>
+  <p class="lede">A few minutes of paced breathing, kept with your thumb. Pick a pattern, press start, and <b>hold the pad while you breathe in</b> (and while you hold full). <b>Let go to breathe out.</b> The line shows the breath coming up and draws yours over it.</p>
+
+  <p class="label">Pattern</p>
+  <div class="chips" id="patterns" role="group" aria-label="Breathing pattern"></div>
+  <p class="note" id="note"></p>
+
+  <section class="card stage" aria-label="Breathing guide">
+    <div class="stagetop"><span id="patname"></span><span><b id="clock">0:00</b> / <span id="total">3:00</span> · breath <b id="round">0</b></span></div>
+    <div class="blobbox">
+      <svg id="blob" viewBox="-150 -110 300 220" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path id="blobHalo" style="fill:var(--guide);opacity:.35"></path>
+        <path id="blobPath" style="fill:var(--guide);stroke:var(--guide-edge);stroke-width:2"></path>
+        <path id="youPath" style="fill:none;stroke:var(--you);stroke-width:2.5;stroke-dasharray:5 6;opacity:.75"></path>
+      </svg>
+      <div class="phase" aria-live="polite"><span class="word" id="word">ready</span><span class="count" id="count">press start</span></div>
+    </div>
+    <div class="strip">
+      <canvas id="line" aria-label="Breath line: the guide's shape scrolling past now, with your breath drawn over it"></canvas>
+      <div class="legend"><span><i class="g"></i>the guide</span><span><i class="y"></i>your breath (from the pad)</span><span><i class="n"></i>now</span></div>
+    </div>
+    <div class="controls">
+      <button class="pad" id="pad" aria-label="Hold while breathing in"><div class="fill" id="padfill"></div><span>Hold to breathe in<small>let go to breathe out · or hold Space</small></span></button>
+      <div class="side">
+        <button class="btn go" id="start">Start</button>
+        <div class="lengths" role="group" aria-label="Session length" id="lengths"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card summary" id="summary" hidden aria-live="polite">
+    <h2 id="sumTitle">That's three minutes</h2>
+    <p id="sumText"></p>
+    <div class="facts">
+      <div class="fact"><b id="fBreaths">0</b><span>breaths</span></div>
+      <div class="fact"><b id="fPace">0</b><span>per minute</span></div>
+      <div class="fact"><b id="fStep">–</b><span id="fStepLbl">in step</span></div>
+    </div>
+    <canvas id="whole" aria-label="The whole session: guide and your breath"></canvas>
+  </section>
+
+  <section class="card log" aria-label="Practice log">
+    <div class="loghead"><p class="label">Your practice (this browser only)</p><button class="linkish" id="clear">Clear</button></div>
+    <ol id="log"></ol>
+  </section>
+
+  <div class="about">
+    <p><b>Why a pad?</b> Following a shape with your eyes is easy to drift from; pressing turns it into something your hand does too, so you notice when you've hurried. Nothing is scored. The line only shows you where you were.</p>
+    <p>These are ordinary relaxation patterns, not treatment. If you feel light-headed, stop and breathe normally.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+// ---- patterns: each phase moves the lungs from `a` to `b` (0 empty, 1 full) over `s` seconds
+const P = {
+  box:{name:'Box', tag:'4 · 4 · 4 · 4', note:'Four counts in, hold four, four out, hold four. A square: easy to remember, steady, and used for settling before something.',
+    ph:[{k:'in',s:4,a:0,b:1},{k:'hold',s:4,a:1,b:1},{k:'out',s:4,a:1,b:0},{k:'rest',s:4,a:0,b:0}]},
+  long:{name:'Long out', tag:'4 · 6', note:'Four in, six out, no holds. A longer breath out than in is the simplest calming shape there is.',
+    ph:[{k:'in',s:4,a:0,b:1},{k:'out',s:6,a:1,b:0}]},
+  e478:{name:'4-7-8', tag:'4 · 7 · 8', note:'In for four, hold for seven, out slowly for eight. Long and slow, often used at bedtime. Only three or four rounds to begin with.',
+    ph:[{k:'in',s:4,a:0,b:1},{k:'hold',s:7,a:1,b:1},{k:'out',s:8,a:1,b:0}]},
+  even:{name:'Even', tag:'5½ · 5½', note:'Five and a half seconds in, the same out: about 5.5 breaths a minute, no pauses. Smooth, like a slow swing.',
+    ph:[{k:'in',s:5.5,a:0,b:1},{k:'out',s:5.5,a:1,b:0}]},
+  sigh:{name:'Sigh', tag:'2 + 1 · 6', note:'A breath in through the nose, a short second sip on top to fill right up, then a long, slow sigh out. Then a beat of rest.',
+    ph:[{k:'in',s:2,a:0,b:.78},{k:'top up',s:1,a:.78,b:1},{k:'out',s:6,a:1,b:0},{k:'rest',s:1,a:0,b:0}]}
+};
+const ORDER=['box','long','e478','even','sigh'];
+const LENGTHS=[1,3,5];
+const WORD={in:'in','top up':'top up',hold:'hold',out:'out',rest:'rest'};
+
+const qs=new URLSearchParams(location.search);
+const SPEED=Math.max(1,Math.min(50,+qs.get('speed')||1)); // test hook: time runs faster
+
+const $=id=>document.getElementById(id);
+const S={pattern:'box',minutes:3,running:false,done:false,t:0,user:0,pressed:false,used:false,
+  samples:[],breaths:0,inStep:0,measured:0,lastPhase:-1,log:[]};
+
+function cycleLen(p){return p.ph.reduce((a,x)=>a+x.s,0)}
+function at(p,t){ // phase index, time into phase, guide level
+  const L=cycleLen(p); let u=((t%L)+L)%L, i=0;
+  while(u>=p.ph[i].s && i<p.ph.length-1){u-=p.ph[i].s;i++}
+  const ph=p.ph[i], f=Math.min(1,u/ph.s);
+  const e=ph.a===ph.b?ph.a:ph.a+(ph.b-ph.a)*(0.5-0.5*Math.cos(Math.PI*f)); // eased like a real breath
+  return {i,u,ph,level:e,round:Math.floor(t/L)};
+}
+function inSecs(p){return p.ph.filter(x=>x.b>x.a).reduce((a,x)=>a+x.s,0)}
+function outSecs(p){return p.ph.filter(x=>x.b<x.a).reduce((a,x)=>a+x.s,0)}
+
+// ---- UI: chips
+function buildChips(){
+  const box=$('patterns'); box.innerHTML='';
+  ORDER.forEach(k=>{const b=document.createElement('button');b.className='chip';b.type='button';b.dataset.p=k;
+    b.innerHTML=`${P[k].name}<small>${P[k].tag}</small>`;b.setAttribute('aria-pressed',k===S.pattern);
+    b.onclick=()=>{if(S.running)return;S.pattern=k;resetView();refreshChips()};box.appendChild(b)});
+  const lb=$('lengths'); lb.innerHTML='';
+  LENGTHS.forEach(m=>{const b=document.createElement('button');b.className='chip';b.type='button';b.dataset.m=m;b.textContent=m+' min';
+    b.setAttribute('aria-pressed',m===S.minutes);b.onclick=()=>{if(S.running)return;S.minutes=m;resetView();refreshChips()};lb.appendChild(b)});
+}
+function refreshChips(){
+  document.querySelectorAll('#patterns .chip').forEach(b=>{b.setAttribute('aria-pressed',b.dataset.p===S.pattern);b.disabled=S.running&&b.dataset.p!==S.pattern});
+  document.querySelectorAll('#lengths .chip').forEach(b=>{b.setAttribute('aria-pressed',+b.dataset.m===S.minutes);b.disabled=S.running&&+b.dataset.m!==S.minutes});
+  const p=P[S.pattern];
+  $('note').textContent=p.note;
+  $('patname').textContent=p.name+' · '+(cycleLen(p))+' s a breath';
+  $('total').textContent=fmt(S.minutes*60);
+  $('start').textContent=S.running?'Stop':(S.done?'Again':'Start');
+  $('start').classList.toggle('go',!S.running);
+}
+function fmt(s){s=Math.max(0,Math.floor(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+
+function resetView(){
+  S.t=0;S.user=0;S.samples=[];S.breaths=0;S.inStep=0;S.measured=0;S.lastPhase=-1;S.done=false;S.used=false;
+  $('summary').hidden=true;$('clock').textContent='0:00';$('round').textContent='0';
+  $('word').textContent='ready';$('count').textContent='press start';
+  draw(0);
+}
+
+// ---- pad
+function setPressed(v){
+  if(S.pressed===v)return; S.pressed=v; $('pad').classList.toggle('down',v);
+  if(v&&S.running)S.used=true;
+}
+const pad=$('pad');
+pad.addEventListener('pointerdown',e=>{e.preventDefault();try{pad.setPointerCapture(e.pointerId)}catch(_){ }setPressed(true)});
+['pointerup','pointercancel','lostpointercapture'].forEach(ev=>pad.addEventListener(ev,()=>setPressed(false)));
+pad.addEventListener('contextmenu',e=>e.preventDefault());
+pad.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();setPressed(true)}});
+pad.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();setPressed(false)}});
+window.addEventListener('keydown',e=>{if(e.key===' '&&e.target===document.body){e.preventDefault();setPressed(true)}});
+window.addEventListener('keyup',e=>{if(e.key===' '&&e.target===document.body){e.preventDefault();setPressed(false)}});
+window.addEventListener('blur',()=>setPressed(false));
+
+// ---- start/stop
+$('start').onclick=()=>{
+  if(S.running){finish(true);return}
+  resetView(); S.running=true; S.done=false; refreshChips(); last=performance.now();
+  const pb=$('pad').getBoundingClientRect(); if(pb.bottom>innerHeight-8){try{window.scrollBy({top:pb.bottom-innerHeight+16,behavior:'smooth'})}catch(_){window.scrollBy(0,pb.bottom-innerHeight+16)}}
+};
+
+// ---- loop
+let last=performance.now();
+const SAMPLE=0.1; let acc=0;
+function step(now){
+  let dt=Math.min(0.1,(now-last)/1000)*SPEED; last=now;
+  if(S.running){
+    advance(dt);
+  }else if(!S.done){
+    // idle: the blob still breathes softly with the chosen pattern, the line shows what's coming
+    idleT+=dt;
+  }
+  draw(S.running||S.done?S.t:idleT);
+  requestAnimationFrame(step);
+}
+let idleT=0;
+function advance(dt){
+  const p=P[S.pattern], end=S.minutes*60;
+  // chop big steps (fast test speed) into small ones so the trace is honest
+  while(dt>0&&S.running){
+    const h=Math.min(dt,0.05); dt-=h;
+    const ri=1/inSecs(p), ro=1/outSecs(p);
+    S.user=S.pressed?Math.min(1,S.user+h*ri):Math.max(0,S.user-h*ro);
+    S.t+=h; acc+=h;
+    const g=at(p,S.t);
+    if(acc>=SAMPLE){acc-=SAMPLE;S.samples.push([S.t,g.level,S.user,S.pressed?1:0]);
+      if(S.used){S.measured++; if(Math.abs(g.level-S.user)<0.2)S.inStep++;}
+    }
+    if(g.round>=1&&g.i===0&&S.lastPhase!==0)S.breaths=g.round; // a breath completes when the next in begins
+    S.lastPhase=g.i;
+    if(S.t>=end){S.t=end;S.breaths=Math.floor(end/cycleLen(p));finish(false)}
+  }
+}
+
+function finish(early){
+  S.running=false; S.done=true; setPressed(false);
+  const p=P[S.pattern], secs=S.t;
+  const full=Math.floor(secs/cycleLen(p)); S.breaths=full;
+  $('sumTitle').textContent=early?(secs<30?'Stopped early':'Stopped at '+fmt(secs)):(S.minutes===1?"That's a minute":S.minutes===3?"That's three minutes":"That's five minutes");
+  const pace=secs>0?(full/(secs/60)):0;
+  $('fBreaths').textContent=full;
+  $('fPace').textContent=secs>=20?(60/cycleLen(p)).toFixed(1):'–';
+  let txt;
+  if(!S.used){ $('fStep').textContent='–'; $('fStepLbl').textContent='pad not used';
+    txt='You followed along with your eyes. Next time try the pad: hold while breathing in, let go to breathe out, and the line will show your breath against the guide.';}
+  else{
+    const share=S.measured?S.inStep/S.measured:0;
+    $('fStep').textContent=Math.round(share*100)+'%'; $('fStepLbl').textContent='of the time in step';
+    // where did they drift? look for the commonest way of being off
+    let early=0,late=0;
+    S.samples.forEach(([t,g,u])=>{ if(u-g>0.2)early++; else if(g-u>0.2)late++; });
+    if(share>0.8) txt='Your breath sat on the guide most of the way. The faint line below is the whole session.';
+    else if(early>late*1.5) txt='Your breath tended to run ahead of the guide: filling up before it did, or not letting go in time. Slower is fine; the guide waits.';
+    else if(late>early*1.5) txt='Your breath tended to trail the guide: starting the breath in late, or emptying early. Try pressing the moment the word changes to "in".';
+    else txt='Sometimes ahead, sometimes behind, which is how it usually goes. The faint line below is the whole session.';
+  }
+  if(secs<30) txt='Under half a minute, so it isn’t logged. '+txt;
+  $('sumText').textContent=txt;
+  $('summary').hidden=false;
+  drawWhole();
+  if(secs>=30){S.log.unshift({d:Date.now(),p:S.pattern,s:Math.round(secs),b:full});S.log=S.log.slice(0,8);saveLog();renderLog();}
+  $('word').textContent=early?'stopped':'done'; $('count').textContent=fmt(secs);
+  refreshChips();
+  requestAnimationFrame(()=>{ try{$('summary').scrollIntoView({behavior:'smooth',block:'nearest'})}catch(_){} });
+}
+
+// ---- drawing
+const blobPath=$('blobPath'), halo=$('blobHalo'), youPath=$('youPath');
+function blobD(level,t,rmin,rmax,wob){
+  const n=48, r0=rmin+(rmax-rmin)*level; let d='';
+  for(let i=0;i<=n;i++){const a=i/n*Math.PI*2;
+    const w=1+wob*(Math.sin(a*3+t*0.7)*0.5+Math.sin(a*5-t*0.5)*0.3+Math.sin(a*2+t*0.3)*0.2);
+    const x=Math.cos(a)*r0*w*1.25, y=Math.sin(a)*r0*w;
+    d+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1);}
+  return d+'Z';
+}
+function draw(t){
+  const p=P[S.pattern], g=at(p,t);
+  blobPath.setAttribute('d',blobD(g.level,t,50,88,0.045));
+  halo.setAttribute('d',blobD(g.level,t+2,56,98,0.06));
+  if(S.running&&S.used){youPath.setAttribute('d',blobD(S.user,t,50,88,0.045));youPath.style.display='';}
+  else youPath.style.display='none';
+  $('padfill').style.height=(S.running?S.user*100:0)+'%';
+  if(S.running){
+    $('word').textContent=WORD[g.ph.k];
+    const left=Math.ceil(g.ph.s-g.u-1e-6);
+    $('count').textContent=left>0?left:'';
+    $('clock').textContent=fmt(t);
+    $('round').textContent=Math.min(g.round+1,Math.ceil(S.minutes*60/cycleLen(p)));
+  }
+  drawLine(t);
+}
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+let colors=null;
+function readColors(){colors={guide:css('--guide'),edge:css('--guide-edge'),you:css('--you'),accent:css('--accent'),muted:css('--muted'),line:css('--line'),ink:css('--ink')}}
+readColors();
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{readColors()});
+function fitCanvas(c){const r=c.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
+  const W=Math.max(1,Math.round(r.width*dpr)),H=Math.max(1,Math.round(r.height*dpr));
+  if(c.width!==W||c.height!==H){c.width=W;c.height=H}return {ctx:c.getContext('2d'),W,H,dpr}}
+function drawLine(t){
+  const c=$('line'); const {ctx,W,H,dpr}=fitCanvas(c); const p=P[S.pattern];
+  ctx.clearRect(0,0,W,H);
+  const span=W/dpr<500?16:26, nowX=W*0.62, pps=W/span; // pixels per second
+  const top=H*0.16, bot=H*0.86, y=l=>bot-(bot-top)*l;
+  // second ticks
+  ctx.strokeStyle=colors.line; ctx.lineWidth=1*dpr;
+  for(let s=Math.ceil(t-span);s<=t+span;s++){const x=nowX+(s-t)*pps; if(x<0||x>W)continue; ctx.beginPath();ctx.moveTo(x,bot+4*dpr);ctx.lineTo(x,bot+(s%5===0?10:7)*dpr);ctx.stroke()}
+  // guide area
+  const t0=t-nowX/pps, t1=t+(W-nowX)/pps;
+  ctx.beginPath(); ctx.moveTo(0,bot);
+  for(let x=0;x<=W;x+=2*dpr){const tt=t0+x/pps; ctx.lineTo(x,y(at(p,tt).level))}
+  ctx.lineTo(W,bot); ctx.closePath(); ctx.fillStyle=colors.guide; ctx.globalAlpha=.85; ctx.fill(); ctx.globalAlpha=1;
+  ctx.beginPath(); for(let x=0;x<=W;x+=2*dpr){const tt=t0+x/pps; const yy=y(at(p,tt).level); x?ctx.lineTo(x,yy):ctx.moveTo(x,yy)}
+  ctx.strokeStyle=colors.edge; ctx.lineWidth=2*dpr; ctx.stroke();
+  // phase words along the guide (only upcoming and current)
+  ctx.font=`700 ${11*dpr}px Urbanist, sans-serif`; ctx.fillStyle=colors.muted; ctx.textAlign='center';
+  const L=cycleLen(p); let start=Math.floor(t0/L)*L;
+  for(let c0=start;c0<t1;c0+=L){let acc2=c0;for(const ph of p.ph){const mid=acc2+ph.s/2;const x=nowX+(mid-t)*pps;
+      if(x>14*dpr&&x<W-14*dpr&&ph.s>=1.5){const lv=(ph.a+ph.b)/2;ctx.fillText(WORD[ph.k],x,Math.max(12*dpr,y(lv)-7*dpr))}acc2+=ph.s}}
+  // your breath
+  if(S.samples.length&&S.used){
+    ctx.beginPath(); let started=false;
+    for(const [st,,u] of S.samples){const x=nowX+(st-t)*pps; if(x<-4)continue; const yy=y(u); if(!started){ctx.moveTo(x,yy);started=true}else ctx.lineTo(x,yy)}
+    if(S.running){ctx.lineTo(nowX,y(S.user))}
+    ctx.strokeStyle=colors.you; ctx.lineWidth=3*dpr; ctx.lineJoin='round'; ctx.stroke();
+  }
+  // now mark
+  ctx.fillStyle=colors.accent; ctx.fillRect(nowX-1.5*dpr,top-8*dpr,3*dpr,bot-top+12*dpr);
+  ctx.beginPath(); ctx.arc(nowX,y(S.running?S.user:at(p,t).level),5*dpr,0,Math.PI*2); ctx.fill();
+}
+function drawWhole(){
+  const c=$('whole'); const {ctx,W,H,dpr}=fitCanvas(c); const p=P[S.pattern];
+  ctx.clearRect(0,0,W,H);
+  const T=Math.max(S.t,1), top=H*0.12, bot=H*0.88, y=l=>bot-(bot-top)*l, X=tt=>6*dpr+(W-12*dpr)*tt/T;
+  ctx.beginPath();ctx.moveTo(X(0),bot);
+  for(let i=0;i<=600;i++){const tt=T*i/600;ctx.lineTo(X(tt),y(at(p,tt).level))}
+  ctx.lineTo(X(T),bot);ctx.closePath();ctx.fillStyle=colors.guide;ctx.fill();
+  if(S.used&&S.samples.length){ctx.beginPath();S.samples.forEach(([st,,u],i)=>{i?ctx.lineTo(X(st),y(u)):ctx.moveTo(X(st),y(u))});
+    ctx.strokeStyle=colors.you;ctx.lineWidth=1.6*dpr;ctx.stroke();}
+  ctx.fillStyle=colors.muted;ctx.font=`700 ${11*dpr}px Urbanist, sans-serif`;ctx.textAlign='left';ctx.fillText('0:00',6*dpr,H-2*dpr);
+  ctx.textAlign='right';ctx.fillText(fmt(T),W-6*dpr,H-2*dpr);
+}
+
+// ---- log
+const KEY='breathing-room-log';
+function loadLog(){try{const v=JSON.parse(localStorage.getItem(KEY)||'[]');if(Array.isArray(v))S.log=v.filter(x=>x&&P[x.p]).slice(0,8)}catch(_){S.log=[]}}
+function saveLog(){try{localStorage.setItem(KEY,JSON.stringify(S.log))}catch(_){}}
+function renderLog(){
+  const ol=$('log'); ol.innerHTML='';
+  if(!S.log.length){const li=document.createElement('li');li.innerHTML='<p class="empty">Nothing yet. Sessions of half a minute or more are noted here.</p>';ol.appendChild(li);$('clear').hidden=true;return}
+  $('clear').hidden=false;
+  S.log.forEach(x=>{const li=document.createElement('li');const d=new Date(x.d);
+    const when=d.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'})+', '+d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
+    li.innerHTML=`<span>${P[x.p].name} · ${x.b} breath${x.b===1?'':'s'}</span><span>${fmt(x.s)} · ${when}</span>`;ol.appendChild(li)});
+}
+$('clear').onclick=()=>{S.log=[];saveLog();renderLog()};
+
+window.addEventListener('resize',()=>{draw(S.running||S.done?S.t:idleT);if(S.done)drawWhole()});
+
+buildChips(); loadLog(); renderLog(); refreshChips(); resetView();
+requestAnimationFrame(step);
+
+window.__breathingRoom={get state(){const p=P[S.pattern],g=at(p,S.running||S.done?S.t:idleT);
+  return {pattern:S.pattern,minutes:S.minutes,running:S.running,done:S.done,t:+S.t.toFixed(2),phase:g.ph.k,guide:+g.level.toFixed(3),
+    user:+S.user.toFixed(3),pressed:S.pressed,used:S.used,breaths:S.breaths,inStep:S.measured?+(S.inStep/S.measured).toFixed(3):null,
+    logCount:S.log.length,summaryShown:!$('summary').hidden}}};
+})();
+</script>
+</body></html>
