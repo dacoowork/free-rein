@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Haybale Weekender</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Climate+Crisis&family=Sofia+Sans:ital,wght@0,400;0,600;0,800;1,400&family=Anonymous+Pro:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Haybale Weekender: the official programme of an invented three-day music festival, with a puzzle hunt folded into its pages.
+   Layout (single column, like a stapled booklet): cover with the line-up poster, then numbered spreads (p.2 to p.11),
+   each a riso-printed page on the lemon ground. Four pages each hide one answer; the back cover asks who the special guest is. */
+:root{
+  --ground:#f6f0a8;      /* lemon festival-wristband yellow */
+  --page:#fffdf2;        /* programme stock */
+  --ink:#1d1b3f;         /* riso blue-black */
+  --soft:#5b587c;        /* secondary ink */
+  --pink:#ff3fa4;        /* riso fluorescent pink */
+  --blue:#0a74c4;        /* riso medium blue */
+  --rule:#ddd6a6;
+  --tint:#fde3f0;        /* pink at 15% */
+  --btint:#dcecf8;       /* blue at 15% */
+  --ok:#147a4a;
+  --sky1:#ffd76a; --sky2:#ff8a5c; --field:#7fa64a;
+  --display:'Climate Crisis','Arial Black','Impact',sans-serif;
+  --body:'Sofia Sans','Segoe UI',system-ui,sans-serif;
+  --mono:'Anonymous Pro',ui-monospace,'Courier New',monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ground:#16152b;--page:#211f3b;--ink:#f4f0d6;--soft:#b6b2cf;--pink:#ff6cbf;--blue:#5cb2ff;--rule:#3b3860;
+  --tint:#45213f;--btint:#1c3550;--ok:#5fd39a;--sky1:#7a4a8a;--sky2:#d4664f;--field:#3d5a2c;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ground:#16152b;--page:#211f3b;--ink:#f4f0d6;--soft:#b6b2cf;--pink:#ff6cbf;--blue:#5cb2ff;--rule:#3b3860;
+  --tint:#45213f;--btint:#1c3550;--ok:#5fd39a;--sky1:#7a4a8a;--sky2:#d4664f;--field:#3d5a2c;color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--ground);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.book{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.pg{background:var(--page);border-radius:4px;padding:28px clamp(16px,4vw,40px) 22px;position:relative;
+  box-shadow:0 1px 0 var(--rule),0 10px 24px -18px rgba(30,20,60,.45)}
+.folio span:last-child{white-space:nowrap}
+.folio{font-family:var(--mono);font-size:13px;color:var(--soft);display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--rule);margin-top:22px;padding-top:8px}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1;margin:0;text-wrap:balance;letter-spacing:.01em}
+h2{font-size:clamp(28px,6vw,44px);color:var(--pink);mix-blend-mode:normal}
+h3{font-size:18px}
+.kick{font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin:0 0 8px}
+p{margin:0}
+.flow{display:flex;flex-direction:column;gap:12px}
+.prose{max-width:62ch}
+.dots{background-image:radial-gradient(var(--btint) 1.3px,transparent 1.4px);background-size:7px 7px}
+a{color:var(--blue)}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+
+/* cover */
+.cover{padding-top:0;overflow:hidden}
+.cover .sky{margin:0 calc(-1*clamp(16px,4vw,40px));padding:26px clamp(16px,4vw,40px) 18px;background:linear-gradient(var(--sky1),var(--sky2));position:relative}
+.cover h1{font-size:clamp(30px,10.5vw,82px);white-space:nowrap;color:var(--ink);position:relative;z-index:1}
+.cover h1 span{display:block;color:var(--pink);mix-blend-mode:multiply}
+.cover .meta{font-family:var(--mono);font-size:14px;margin-top:12px;display:flex;flex-wrap:wrap;gap:6px 16px;position:relative;z-index:1}
+.coversvg{display:block;width:100%;height:auto;margin-top:6px}
+.lineup{display:flex;flex-direction:column;gap:18px;margin-top:20px;text-align:center}
+.day .dname{font-family:var(--mono);font-size:13px;letter-spacing:.2em;color:var(--blue);text-transform:uppercase}
+.day .top{font-family:var(--display);font-size:clamp(22px,5.4vw,36px);line-height:1.05}
+.day .mid{font-weight:800;font-size:clamp(17px,3.6vw,22px);text-transform:uppercase;letter-spacing:.03em;text-wrap:balance}
+.day .low{color:var(--soft);font-size:15px;text-wrap:balance}
+.guest{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.blank{display:inline-block;min-width:1.1em;border-bottom:3px solid var(--pink);color:var(--pink)}
+.guest small{font-family:var(--mono);font-size:13px;color:var(--soft);letter-spacing:.05em}
+
+/* wristband */
+.band{display:grid;grid-template-columns:repeat(4,1fr) 1.15fr;gap:6px;background:var(--pink);padding:8px;border-radius:999px 12px 12px 999px}
+.slot{background:var(--page);border-radius:8px;padding:8px 6px;text-align:center;min-width:0;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:2px}
+.slot:first-child{border-radius:999px 8px 8px 999px}
+.slot .n{font-family:var(--mono);font-size:12px;color:var(--soft)}
+.slot .w{font-family:var(--mono);font-weight:700;font-size:15px;letter-spacing:.12em;overflow-wrap:anywhere}
+.slot.done .w{color:var(--ok)}
+.slot.meta{background:var(--ink);color:var(--page)}
+.slot.meta .n{color:var(--page);opacity:.75}
+@media (max-width:560px){.band{grid-template-columns:repeat(2,1fr);border-radius:14px}.slot:first-child{border-radius:8px}.slot.meta{grid-column:span 2}}
+
+/* answer box */
+.answer{border:2px dashed var(--blue);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.answer .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.answer label{font-weight:800}
+.answer input{font-family:var(--mono);font-weight:700;font-size:20px;letter-spacing:.2em;text-transform:uppercase;padding:6px 10px;border:2px solid var(--ink);border-radius:6px;background:var(--page);width:min(100%,14ch);min-width:0}
+.btn{border:2px solid var(--ink);background:var(--ink);color:var(--page);border-radius:999px;padding:6px 16px;font-weight:800;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+.msg{font-size:15px;min-height:1.5em}
+.msg.bad{color:var(--pink)} .msg.good{color:var(--ok);font-weight:800}
+.hint{background:var(--btint);border-radius:8px;padding:10px 12px;font-size:15px}
+.answer.solved{border-style:solid;border-color:var(--ok)}
+.stamp{font-family:var(--display);color:var(--ok);font-size:22px;transform:rotate(-4deg);display:inline-block}
+
+/* map */
+.mapwrap{overflow-x:auto}
+.map{display:block;width:100%;min-width:280px;height:auto;touch-action:manipulation;user-select:none}
+.map .cell{fill:transparent;cursor:pointer}
+.map .cell:hover{fill:var(--btint)}
+.map text{pointer-events:none}
+.lost{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0}
+.lost li{display:grid;grid-template-columns:3.2em 1fr;gap:10px;padding:8px 0;border-bottom:1px dotted var(--rule)}
+.lost .t{font-family:var(--mono);color:var(--soft);font-size:14px;padding-top:2px}
+.lost b{font-weight:800}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.two>*{min-width:0}
+@media (max-width:640px){.two{grid-template-columns:1fr}}
+
+/* clash finder */
+.clashwrap{overflow-x:auto;margin:0 -4px;padding:0 4px}
+.clash{display:grid;grid-template-columns:38px repeat(4,minmax(64px,1fr));min-width:300px;gap:0 4px}
+.clash .hd{font-family:var(--mono);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;text-align:center;padding:6px 2px;border-bottom:2px solid var(--ink);position:sticky;top:0;background:var(--page)}
+.col{position:relative;height:calc(var(--h)*1px);background:repeating-linear-gradient(var(--rule) 0 1px,transparent 1px 72px)}
+.times{position:relative;height:calc(var(--h)*1px)}
+.times span{position:absolute;left:0;font-family:var(--mono);font-size:12px;color:var(--soft);transform:translateY(-50%)}
+.set{position:absolute;left:0;right:0;border-radius:6px;background:var(--btint);border:1.5px solid var(--blue);padding:3px 5px;font-size:13px;line-height:1.15;text-align:left;cursor:pointer;overflow:hidden;display:flex;flex-direction:column}
+.set .tm{font-family:var(--mono);font-size:11px;color:var(--soft)}
+@media (max-width:560px){.set{font-size:11.5px;letter-spacing:-.01em;padding:2px 4px}.set .tm{font-size:10px}.clash .hd{font-size:10px;letter-spacing:.02em}}
+.set .nm{font-weight:800;overflow-wrap:anywhere;hyphens:auto}
+.set.star{background:var(--tint);border-color:var(--pink)}
+.set.star .nm::before{content:"★ ";color:var(--pink)}
+.note{background:var(--tint);border-radius:2px;padding:14px 16px;transform:rotate(-.6deg);font-size:16px;max-width:52ch}
+.note .sig{font-style:italic;text-align:right;margin-top:6px}
+
+/* bar */
+.menu{list-style:none;margin:0;padding:0;columns:2;column-gap:28px}
+.menu li{display:flex;gap:6px;break-inside:avoid;padding:3px 0}
+.menu li .dl{flex:1;border-bottom:1px dotted var(--soft);transform:translateY(-6px)}
+.menu li b{font-family:var(--mono)}
+@media (max-width:480px){.menu{columns:1}}
+.strip{display:grid;grid-template-columns:repeat(13,1fr);gap:0;border:2px solid var(--blue);border-radius:6px;overflow:hidden}
+.tok{border-right:1.5px dashed var(--blue);border-bottom:1.5px dashed var(--blue);padding:4px 0 3px;text-align:center;font-family:var(--mono);line-height:1.05;background:var(--page);cursor:pointer}
+.tok:nth-child(13n){border-right:0}
+.tok:nth-child(n+14){border-bottom:0}
+.tok .num{font-size:11px;color:var(--soft);display:block}
+.tok .let{font-weight:700;font-size:16px;color:var(--blue)}
+.tok.torn{background:var(--btint);opacity:.55}
+.tab{list-style:none;margin:0;padding:0;counter-reset:r}
+.tab li{counter-increment:r;display:grid;grid-template-columns:2.4em 1fr;gap:8px;padding:6px 0;border-bottom:1px dotted var(--rule)}
+.tab li::before{content:"R" counter(r);font-family:var(--mono);color:var(--soft);font-size:14px;padding-top:2px}
+
+/* know before you go */
+.misreg{color:var(--pink);display:inline-block;transform:translate(1.6px,-1.2px)}
+.cols2{columns:2;column-gap:28px}
+.cols2 p{break-inside:avoid;margin-bottom:12px}
+@media (max-width:600px){.cols2{columns:1}}
+.errata{border:1.5px solid var(--ink);padding:10px 12px;font-size:14px;font-family:var(--mono);max-width:56ch}
+
+/* back cover */
+.back{overflow:hidden}
+.sunset{display:block;width:100%;height:auto;border-radius:4px}
+#sun{transition:transform 3.2s cubic-bezier(.3,.1,.3,1)}
+.solvedsun #sun{transform:translateY(64px)}
+#sky2{transition:opacity 3s}
+.solvedsun #sky2{opacity:1}
+.epilogue{background:var(--tint);border-radius:8px;padding:14px 16px}
+@media (prefers-reduced-motion:reduce){#sun,#sky2{transition:none}}
+.small{font-size:14px;color:var(--soft)}
+.ctr{text-align:center}
+.reset{background:none;border:0;color:var(--soft);text-decoration:underline;cursor:pointer;font-size:14px;padding:0}
+</style>
+</head><body>
+
+<div class="book" id="book">
+
+<!-- p.1 cover -->
+<section class="pg cover" id="p1" aria-label="Cover">
+  <div class="sky">
+    <h1>Haybale<span>Weekender</span></h1>
+    <div class="meta"><span>Fri 11 – Sun 13 June 2027</span><span>Long Meadow Farm</span><span>Official programme · £5</span></div>
+  </div>
+  <svg class="coversvg" viewBox="0 0 680 70" aria-hidden="true">
+    <path d="M0 40 Q120 18 240 34 T480 30 T680 38 V70 H0Z" style="fill:var(--field)"/>
+    <g style="fill:var(--sky1);stroke:var(--ink);stroke-width:2">
+      <rect x="120" y="22" width="44" height="24" rx="6"/><rect x="172" y="26" width="36" height="20" rx="6"/><rect x="520" y="20" width="44" height="26" rx="6"/>
+    </g>
+    <g style="stroke:var(--ink);stroke-width:1.2;opacity:.6">
+      <path d="M126 30h32M126 38h32M178 33h24M178 40h24M526 28h32M526 37h32" fill="none"/>
+    </g>
+    <path d="M330 46 l26 -26 26 26Z" style="fill:var(--pink);stroke:var(--ink);stroke-width:2"/>
+    <path d="M404 46 l18 -18 18 18Z" style="fill:var(--blue);stroke:var(--ink);stroke-width:2"/>
+  </svg>
+  <div class="lineup" aria-label="Line-up">
+    <div class="day"><div class="dname">Friday</div>
+      <div class="top">Grandma's Trampoline</div>
+      <div class="mid">Little Spoon · The Hedge Funds · Sister Wellington</div>
+      <div class="low">Paper Planes for Pilots · Mo &amp; the Molehills · Damp Squib · Ten Pin Choir</div></div>
+    <div class="day"><div class="dname">Saturday</div>
+      <div class="top">Velvet Tractor</div>
+      <div class="mid">Marmalade Riot · Lemon Drizzle · Neon Allotment · Quiet Carriage</div>
+      <div class="low">The Lowlanders · Pylon · Rotary Club Riot · Unpaid Interns · Holly &amp; the Hounds · Oxbow · Cardigan · Bus Shelter Choir · and more</div></div>
+    <div class="day"><div class="dname">Sunday</div>
+      <div class="top guest">Special guest <span id="guestName"><span class="blank">&nbsp;</span> <span class="blank">&nbsp;</span> <span class="blank">&nbsp;</span></span></div>
+      <div class="guest"><small>Main Stage · sets 21:24 · see back page</small></div>
+      <div class="mid">Tin Roof Orchestra · Fox &amp; Fiddle · The Second Breakfasts</div>
+      <div class="low">Kite Season · Gravy Boat Jones · The Spare Keys · Sunday Best Brass Band</div></div>
+  </div>
+  <div class="folio"><span>Haybale Weekender 2027</span><span>p.1</span></div>
+</section>
+
+<!-- p.2-3 welcome -->
+<section class="pg" id="p2" aria-label="Welcome">
+  <p class="kick">pp.2–3 · Welcome</p>
+  <h2>Hello, field.</h2>
+  <div class="flow prose" style="margin-top:14px">
+    <p>Welcome to the eleventh Haybale Weekender. Forty-one acts, four stages, one very patient farmer, and an orchard that has been asked to look its best.</p>
+    <p>One act on the poster has no name. We have told nobody who our Sunday special guest is, not even the stage crew, who have been told only to clear the Main Stage at 21:24 and turn the lights off.</p>
+    <p>If you'd like to find out early, we've hidden the answer in this programme. Four pages each hold one word: the site map, the Saturday clash-finder, the bar list and the know-before-you-go page. Each one has a box for its answer and a nudge if you get stuck. Find all four words, look at what they have in common, and you'll know who's coming. Your wristband below keeps track.</p>
+  </div>
+  <div style="margin-top:18px">
+    <div class="band" id="band" aria-label="Your hunt wristband">
+      <a class="slot" href="#p4" data-for="map"><span class="n">p.4 · map</span><span class="w">······</span></a>
+      <a class="slot" href="#p6" data-for="clash"><span class="n">p.6 · Saturday</span><span class="w">····</span></a>
+      <a class="slot" href="#p8" data-for="bar"><span class="n">p.8 · bars</span><span class="w">·······</span></a>
+      <a class="slot" href="#p10" data-for="pack"><span class="n">p.10 · know</span><span class="w">···</span></a>
+      <a class="slot meta" href="#p12" data-for="meta"><span class="n">back · guest</span><span class="w">???</span></a>
+    </div>
+  </div>
+  <div class="folio"><span>The organisers, Long Meadow Farm</span><span>pp.2–3</span></div>
+</section>
+
+<!-- p.4-5 map -->
+<section class="pg" id="p4" aria-label="Site map and lost property">
+  <p class="kick">pp.4–5 · Getting around</p>
+  <h2>Site map</h2>
+  <p class="prose" style="margin-top:10px">The site is laid out in squares, A to J across and 1 to 8 down. The pink pennants are meeting flags; each has a letter. Tap any square to pencil a circle on it.</p>
+  <div class="mapwrap" style="margin-top:12px"><svg class="map" id="map" viewBox="0 0 432 352" role="img" aria-label="Site map with a lettered grid and meeting flags"></svg></div>
+  <div class="two" style="margin-top:16px">
+    <div class="flow">
+      <h3>Lost property, Saturday</h3>
+      <p class="small">From the log at the Info tent, in the order things were handed in.</p>
+      <ol class="lost">
+        <li><span class="t">10:12</span><span><b>Bucket hat</b>, found at the flag two squares east of the Cider Bus.</span></li>
+        <li><span class="t">11:40</span><span><b>Phone charger</b>, found at the flag exactly halfway between the Info tent and First Aid.</span></li>
+        <li><span class="t">13:05</span><span><b>One welly (left)</b>, found at the flag three squares south of the Main Stage mixing desk.</span></li>
+        <li><span class="t">15:30</span><span><b>A great deal of glitter</b>, found at the flag nearest the pond.</span></li>
+        <li><span class="t">16:15</span><span><b>One welly (right)</b>, found at the same flag as the glitter. Nobody has asked questions.</span></li>
+        <li><span class="t">18:50</span><span><b>Lanyard</b>, found at the flag in the Orchard stage's column and the Big Top's row.</span></li>
+      </ol>
+    </div>
+    <div class="flow">
+      <h3>Key</h3>
+      <p class="small">Stages: Main Stage, Orchard, Big Top, Lantern Tent. The mixing desk is the small box in front of the Main Stage. Water points at every toilet block (WC).</p>
+      <div class="answer" id="a-map" data-id="map">
+        <div class="row"><label for="in-map">Lost property flags</label><span class="small">(6)</span></div>
+        <div class="row"><input id="in-map" maxlength="12" autocomplete="off" spellcheck="false" aria-describedby="m-map"><button class="btn" data-check="map">Check</button></div>
+        <div class="msg" id="m-map" aria-live="polite"></div>
+        <div class="row"><button class="btn ghost" data-hint="map">Nudge</button><button class="btn ghost" data-reveal="map" hidden>Show answer</button></div>
+        <div class="hint" id="h-map" hidden>Find each flag on the map in the order the log lists them, and read its letter. Two things ended up at the same flag.</div>
+      </div>
+    </div>
+  </div>
+  <div class="folio"><span>Getting around</span><span>pp.4–5</span></div>
+</section>
+
+<!-- p.6-7 clash finder -->
+<section class="pg" id="p6" aria-label="Saturday clash-finder">
+  <p class="kick">pp.6–7 · Saturday 12 June</p>
+  <h2>Clash-finder</h2>
+  <p class="prose" style="margin-top:10px">Every Saturday set on every stage. Stages are listed left to right as they sit in the field. Tap a set to star it.</p>
+  <div class="clashwrap" style="margin-top:12px"><div class="clash" id="clash"></div></div>
+  <div class="two" style="margin-top:18px">
+    <div class="note">
+      <p>My Saturday, by my usual rules. I start with whoever opens the Orchard. Whenever a set finishes, I go straight to whichever set starts next, anywhere on site, because I never walk in halfway through. Four sets, then a long lie down in the tent. Their initials spell what I always come home with.</p>
+      <p class="sig">Jess, a regular, on the Haybale forum</p>
+    </div>
+    <div class="answer" id="a-clash" data-id="clash">
+      <div class="row"><label for="in-clash">What Jess always comes home with</label><span class="small">(4)</span></div>
+      <div class="row"><input id="in-clash" maxlength="12" autocomplete="off" spellcheck="false" aria-describedby="m-clash"><button class="btn" data-check="clash">Check</button></div>
+      <div class="msg" id="m-clash" aria-live="polite"></div>
+      <div class="row"><button class="btn ghost" data-hint="clash">Nudge</button><button class="btn ghost" data-reveal="clash" hidden>Show answer</button></div>
+      <div class="hint" id="h-clash" hidden>The Orchard opens at 12:00. That set ends at 13:00: which set anywhere starts soonest after that? Keep going until you have four.</div>
+    </div>
+  </div>
+  <div class="folio"><span>Times can change: check the screens by each stage</span><span>pp.6–7</span></div>
+</section>
+
+<!-- p.8-9 bars -->
+<section class="pg" id="p8" aria-label="Bars and food">
+  <p class="kick">pp.8–9 · Eat and drink</p>
+  <h2>The Hayloft Bar</h2>
+  <p class="prose" style="margin-top:10px">The bars take tokens only. Buy a strip of 26 at the token booth by the gate. To pay, tear tokens off from the A end: a drink that costs four tokens takes A, B, C and D. Tap a token to tear it.</p>
+  <div style="margin-top:14px" class="strip" id="strip" aria-label="Token strip, A to Z"></div>
+  <p class="small" style="margin-top:6px"><button class="reset" id="mend">Mend the strip</button></p>
+  <div class="two" style="margin-top:16px">
+    <div class="flow">
+      <h3>Price list</h3>
+      <ul class="menu">
+        <li><span>Haybale lager</span><span class="dl"></span><b>4</b></li>
+        <li><span>Scrumpy cider</span><span class="dl"></span><b>5</b></li>
+        <li><span>Pimm's, jug</span><span class="dl"></span><b>9</b></li>
+        <li><span>Lemonade</span><span class="dl"></span><b>2</b></li>
+        <li><span>Tea</span><span class="dl"></span><b>1</b></li>
+        <li><span>Coffee</span><span class="dl"></span><b>2</b></li>
+        <li><span>Hot chocolate</span><span class="dl"></span><b>3</b></li>
+        <li><span>Tap water</span><span class="dl"></span><b>free</b></li>
+        <li><span>Chips</span><span class="dl"></span><b>3</b></li>
+        <li><span>Halloumi wrap</span><span class="dl"></span><b>6</b></li>
+      </ul>
+      <p class="small">Every round we pour comes in a reusable cup. Bring it back to any bar for a token back.</p>
+    </div>
+    <div class="flow">
+      <h3>The Moss family's tab</h3>
+      <p class="small">Seven rounds on Saturday, each paid with a fresh strip. On each strip, the last token they tore off was the one they kept as a souvenir. Together the souvenirs spell what the family kept leaving on the tables.</p>
+      <ol class="tab">
+        <li>A cider and a lemonade</li>
+        <li>Three lagers</li>
+        <li>A tea, and tap water for Grandad</li>
+        <li>A jug of Pimm's, a halloumi wrap and a lager</li>
+        <li>Two ciders, a lager, chips and a coffee</li>
+        <li>A coffee and a hot chocolate</li>
+        <li>Last orders: two jugs of Pimm's and a tea</li>
+      </ol>
+    </div>
+  </div>
+  <div class="answer" id="a-bar" data-id="bar" style="margin-top:14px">
+    <div class="row"><label for="in-bar">What the Mosses kept leaving behind</label><span class="small">(7)</span></div>
+    <div class="row"><input id="in-bar" maxlength="12" autocomplete="off" spellcheck="false" aria-describedby="m-bar"><button class="btn" data-check="bar">Check</button></div>
+    <div class="msg" id="m-bar" aria-live="polite"></div>
+    <div class="row"><button class="btn ghost" data-hint="bar">Nudge</button><button class="btn ghost" data-reveal="bar" hidden>Show answer</button></div>
+    <div class="hint" id="h-bar" hidden>Add up each round in tokens. A round costing 7 tears off A to G, so its souvenir is G. Water is free.</div>
+  </div>
+  <div class="folio"><span>Please drink responsibly · Challenge 25</span><span>pp.8–9</span></div>
+</section>
+
+<!-- p.10-11 know before you go -->
+<section class="pg" id="p10" aria-label="Know before you go">
+  <p class="kick">pp.10–11 · The small print</p>
+  <h2>Know before you go</h2>
+  <div class="cols2" id="kbyg" style="margin-top:14px"></div>
+  <div class="errata" style="margin-top:8px"><b>Errata from the printers.</b> On one page of this programme a handful of letters ended up on the pink drum instead of the black one, and came out pink and slightly off. We're very sorry. Duplo Press, riso printers, Stroud.</div>
+  <div class="answer" id="a-pack" data-id="pack" style="margin-top:14px">
+    <div class="row"><label for="in-pack">What the printers' mistake tells you to pack</label><span class="small">(3)</span></div>
+    <div class="row"><input id="in-pack" maxlength="12" autocomplete="off" spellcheck="false" aria-describedby="m-pack"><button class="btn" data-check="pack">Check</button></div>
+    <div class="msg" id="m-pack" aria-live="polite"></div>
+    <div class="row"><button class="btn ghost" data-hint="pack">Nudge</button><button class="btn ghost" data-reveal="pack" hidden>Show answer</button></div>
+    <div class="hint" id="h-pack" hidden>The misprinted page is this one. Read only the pink letters in the text above, in order. They make a short instruction; the answer is its last word.</div>
+  </div>
+  <div class="folio"><span>Duplo Press, Stroud</span><span>pp.10–11</span></div>
+</section>
+
+<!-- p.12 back cover -->
+<section class="pg back" id="p12" aria-label="Back cover: Sunday night">
+  <p class="kick">Back cover · Sunday 13 June, 21:24</p>
+  <h2>Who closes Sunday?</h2>
+  <svg class="sunset" id="sunset" viewBox="0 0 680 220" aria-hidden="true">
+    <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--btint)"/><stop offset="1" style="stop-color:var(--sky1)"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--sky2)"/><stop offset="1" style="stop-color:var(--sky1)"/></linearGradient>
+    <clipPath id="above"><rect width="680" height="160"/></clipPath></defs>
+    <rect width="680" height="220" fill="url(#g1)"/>
+    <rect id="sky2" width="680" height="220" fill="url(#g2)" opacity="0"/>
+    <g clip-path="url(#above)"><circle id="sun" cx="340" cy="112" r="40" style="fill:var(--pink);mix-blend-mode:multiply"/></g>
+    <g id="clouds" style="fill:var(--page);opacity:.95">
+      <ellipse cx="300" cy="98" rx="70" ry="20"/><ellipse cx="350" cy="86" rx="46" ry="22"/><ellipse cx="398" cy="100" rx="60" ry="17"/>
+    </g>
+    <path d="M0 160 Q170 142 340 156 T680 150 V220 H0Z" style="fill:var(--field)"/>
+    <g style="fill:var(--ink)">
+      <rect x="268" y="128" width="144" height="8"/><rect x="272" y="136" width="6" height="26"/><rect x="402" y="136" width="6" height="26"/>
+      <rect x="282" y="152" width="116" height="10"/>
+    </g>
+    <g style="fill:var(--ink)"><circle cx="120" cy="178" r="5"/><circle cx="140" cy="180" r="5"/><circle cx="160" cy="177" r="5"/><circle cx="510" cy="180" r="5"/><circle cx="532" cy="178" r="5"/><circle cx="552" cy="181" r="5"/><circle cx="230" cy="186" r="5"/><circle cx="450" cy="185" r="5"/></g>
+  </svg>
+  <div class="flow" style="margin-top:14px">
+    <p class="prose">Our special guest has been late every year since 2016, and some years hasn't turned up at all. Write their name on your wristband.</p>
+    <div class="answer" id="a-meta" data-id="meta">
+      <div class="row"><label for="in-meta">Sunday's special guest</label><span class="small">(3)</span></div>
+      <div class="row"><input id="in-meta" maxlength="12" autocomplete="off" spellcheck="false" aria-describedby="m-meta"><button class="btn" data-check="meta">Check</button></div>
+      <div class="msg" id="m-meta" aria-live="polite"></div>
+      <div class="row"><button class="btn ghost" data-hint="meta">Nudge</button><button class="btn ghost" data-reveal="meta" hidden>Show answer</button></div>
+      <div class="hint" id="h-meta" hidden>Your four answers each make a longer word, all with the same three letters in front. They're all things you need (or get) when this guest finally shows up.</div>
+    </div>
+    <div class="epilogue" id="epilogue" hidden>
+      <p><b>The sun.</b> Sunburn, sunscreen, sunglasses, sunhat. After two days of grey, the forecast says the cloud breaks on Sunday evening, and sunset in Long Meadow is at 21:24. The Main Stage goes quiet, the lights go off, and four thousand people in wellies sit down in the grass and watch the special guest go down behind the hill. Then Tin Roof Orchestra come back on for one more song.</p>
+    </div>
+    <p class="small ctr"><button class="reset" id="resetAll">Rub out my answers and start again</button></p>
+  </div>
+  <div class="folio"><span>See you next June</span><span>p.12</span></div>
+</section>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+// answers kept slightly out of sight of a casual view-source
+const K={map:'TkVFUkNT',clash:'TlJVQg==',bar:'U0VTU0FMRw==',pack:'VEFI',meta:'TlVT'};
+const ans=k=>atob(K[k]).split('').reverse().join('');
+const norm=s=>s.toUpperCase().replace(/[^A-Z]/g,'');
+const S={solved:{map:false,clash:false,bar:false,pack:false,meta:false},hints:{},pencils:[],stars:[],torn:0,tries:0};
+try{const s=JSON.parse(localStorage.getItem('haybale-weekender')||'null');if(s&&s.solved)Object.assign(S.solved,s.solved)}catch(e){}
+const save=()=>{try{localStorage.setItem('haybale-weekender',JSON.stringify({solved:S.solved}))}catch(e){}};
+
+/* ---------- map ---------- */
+const NS='http://www.w3.org/2000/svg',C=40,OX=28,OY=24;
+const COLS='ABCDEFGHIJ';
+const at=(c,r)=>[OX+COLS.indexOf(c)*C,OY+(r-1)*C];
+const map=$('map');
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);(parent||map).appendChild(e);return e}
+function txt(x,y,s,st,parent){const t=el('text',{x,y,'text-anchor':'middle',style:st||''},parent);t.textContent=s;return t}
+function drawMap(){
+  map.innerHTML='';
+  el('rect',{x:OX,y:OY,width:C*10,height:C*8,rx:6,style:'fill:var(--page);stroke:var(--ink);stroke-width:2'});
+  // paths
+  el('path',{d:`M${OX+4.5*C} ${OY+8*C} V${OY+3.5*C} H${OX+2.5*C} M${OX+4.5*C} ${OY+5.5*C} H${OX+8.5*C} V${OY+2.5*C} M${OX+4.5*C} ${OY+3.5*C} H${OX+7.5*C}`,style:'fill:none;stroke:var(--sky1);stroke-width:10;stroke-linecap:round;stroke-linejoin:round;opacity:.9'});
+  // pond J5-J6
+  el('ellipse',{cx:OX+9.5*C,cy:OY+4*C,rx:17,ry:34,style:'fill:var(--btint);stroke:var(--blue);stroke-width:1.5'});
+  txt(OX+9.5*C,OY+4*C+4,'pond','font:600 11px var(--body);fill:var(--blue)');
+  // campsite G7-H8
+  el('rect',{x:OX+6*C+3,y:OY+6*C+3,width:2*C-6,height:2*C-6,rx:4,style:'fill:var(--btint);opacity:.6'});
+  for(let i=0;i<6;i++){const x=OX+6*C+12+(i%3)*22,y=OY+6*C+22+Math.floor(i/3)*30;el('path',{d:`M${x-8} ${y+8}L${x} ${y-6}L${x+8} ${y+8}Z`,style:'fill:none;stroke:var(--blue);stroke-width:1.5'})}
+  txt(OX+7*C,OY+8*C-5,'campsite','font:600 10px var(--body);fill:var(--blue)');
+  // gridlines
+  for(let i=1;i<10;i++)el('line',{x1:OX+i*C,y1:OY,x2:OX+i*C,y2:OY+8*C,style:'stroke:var(--rule);stroke-width:1'});
+  for(let i=1;i<8;i++)el('line',{x1:OX,y1:OY+i*C,x2:OX+10*C,y2:OY+i*C,style:'stroke:var(--rule);stroke-width:1'});
+  for(let i=0;i<10;i++)txt(OX+i*C+C/2,OY-8,COLS[i],'font:700 12px var(--mono);fill:var(--soft)');
+  for(let i=0;i<8;i++)txt(OX-14,OY+i*C+C/2+4,String(i+1),'font:700 12px var(--mono);fill:var(--soft)');
+  const box=(c,r,w,h,label,fill,fs)=>{const[x,y]=at(c,r);el('rect',{x:x+4,y:y+4,width:w*C-8,height:h*C-8,rx:5,style:`fill:${fill};stroke:var(--ink);stroke-width:1.5`});
+    const lines=label.split('|');lines.forEach((l,i)=>txt(x+w*C/2,y+h*C/2+4+(i-(lines.length-1)/2)*12,l,`font:800 ${fs||10}px var(--body);fill:var(--ink)`))};
+  box('B',1,2,2,'MAIN|STAGE','var(--tint)',13);
+  box('B',4,1,1,'desk','var(--page)',9);
+  box('H',2,1,1,'Orchard','var(--tint)',9);
+  box('E',6,1,1,'Big Top','var(--tint)',9);
+  box('I',7,1,1,'Lantern|Tent','var(--tint)',9);
+  box('D',3,1,1,'Cider|Bus','var(--sky1)',9);
+  box('F',2,1,1,'Info','var(--btint)',10);
+  box('F',6,1,1,'First|Aid','var(--btint)',9);
+  box('D',5,1,1,'Food|court','var(--sky1)',9);
+  box('G',5,1,1,'Hayloft|Bar','var(--sky1)',9);
+  box('J',2,1,1,'WC','var(--page)',10);box('C',6,1,1,'WC','var(--page)',10);
+  box('E',8,1,1,'Gate','var(--ink)',10); map.lastChild.style.fill='var(--page)';
+  // trees
+  [['A',1],['A',8],['J',1],['G',3],['B',8]].forEach(([c,r])=>{const[x,y]=at(c,r);for(let k=0;k<3;k++)el('circle',{cx:x+10+k*10,cy:y+14+(k%2)*12,r:7,style:'fill:var(--field);opacity:.8'})});
+  // flags
+  const F=[['S','F',3],['C','F',4],['R','B',7],['E','I',4],['N','H',6],['A','A',4],['K','D',7],['T','E',3],['O','H',4],['W','C',8],['M','G',1],['L','A',2],['P','J',8],['D','I',1],['Y','C',3]];
+  F.forEach(([L,c,r])=>{const[x,y]=at(c,r);const g=el('g',{});
+    el('line',{x1:x+12,y1:y+6,x2:x+12,y2:y+36,style:'stroke:var(--ink);stroke-width:2'},g);
+    el('path',{d:`M${x+13} ${y+6} L${x+36} ${y+13} L${x+13} ${y+21}Z`,style:'fill:var(--pink)'},g);
+    txt(x+22,y+18,L,'font:800 11px var(--body);fill:#fff',g)});
+  // pencil marks and hit cells
+  S.pencils.forEach(k=>{const[x,y]=at(k[0],+k.slice(1));el('circle',{cx:x+C/2,cy:y+C/2,r:17,style:'fill:none;stroke:var(--blue);stroke-width:2.5;stroke-dasharray:5 3'})});
+  for(let i=0;i<10;i++)for(let j=1;j<=8;j++){const[x,y]=at(COLS[i],j);const r=el('rect',{x,y,width:C,height:C,class:'cell','data-cell':COLS[i]+j});
+    const t=el('title',{},r);t.textContent=COLS[i]+j}
+}
+map.addEventListener('click',e=>{const k=e.target.getAttribute&&e.target.getAttribute('data-cell');if(!k)return;
+  const i=S.pencils.indexOf(k);i<0?S.pencils.push(k):S.pencils.splice(i,1);drawMap()});
+drawMap();
+
+/* ---------- clash finder ---------- */
+const STAGES=['Main Stage','Orchard','Big Top','Lantern Tent'];
+const SETS=[
+ [['12:30','13:30','Kettle Logic'],['14:00','15:00','Paper Lanterns'],['16:00','17:15','Neon Allotment'],['17:45','19:00','The Lowlanders'],['19:45','21:00','Marmalade Riot'],['21:30','23:00','Velvet Tractor']],
+ [['12:00','13:00','Bus Shelter Choir'],['13:30','14:30','Dandelion Clocks'],['15:00','16:00','Holly & the Hounds'],['16:30','17:30','Oxbow'],['18:00','19:15','Quiet Carriage'],['20:00','21:15','Lemon Drizzle']],
+ [['12:15','13:00','Tiny Giants'],['13:15','14:15','Unpaid Interns'],['14:45','15:30','Ferris Wheel Club'],['16:15','17:15','Cardigan'],['18:30','19:30','Yard Sale'],['21:00','23:45','Big Top Disco']],
+ [['12:00','12:45','Open Mic'],['12:45','13:45','Wren & Rook'],['14:30','15:45','Rotary Club Riot'],['16:45','17:45','Glow Worms'],['18:15','19:15','Ice Cream Van'],['20:15','21:30','Pylon']]];
+const mins=s=>+s.slice(0,2)*60+ +s.slice(3);
+const PX=1.2,T0=12*60,H=(24*60-T0)*PX; // 72px per hour
+const clash=$('clash');
+clash.style.setProperty('--h',H);
+clash.innerHTML='<div class="hd"></div>'+STAGES.map(s=>`<div class="hd">${s.replace(' Stage','').replace(' Tent','')}</div>`).join('');
+const times=document.createElement('div');times.className='times';
+for(let h=12;h<=24;h++){const sp=document.createElement('span');sp.style.top=((h*60-T0)*PX)+'px';sp.textContent=(h===24?'00':h)+':00';if(h===12)sp.style.transform='none';if(h===24)sp.style.transform='translateY(-100%)';times.appendChild(sp)}
+clash.appendChild(times);
+SETS.forEach((col,ci)=>{const c=document.createElement('div');c.className='col';
+  col.forEach(([a,b,n])=>{const s=document.createElement('button');s.className='set';s.type='button';
+    s.style.top=((mins(a)-T0)*PX+1)+'px';s.style.height=((mins(b)-mins(a))*PX-2)+'px';
+    s.innerHTML=`<span class="nm"></span><span class="tm">${a}–${b}</span>`;s.querySelector('.nm').textContent=n;
+    s.setAttribute('aria-pressed','false');s.dataset.name=n;
+    s.addEventListener('click',()=>{const on=s.classList.toggle('star');s.setAttribute('aria-pressed',on);
+      const i=S.stars.indexOf(n);on?(i<0&&S.stars.push(n)):(i>=0&&S.stars.splice(i,1))});
+    s.title=`${n}, ${a}–${b}`;c.appendChild(s)});
+  clash.appendChild(c)});
+// a short set with a long name drops its printed time (the time stays in its tooltip and in the grid)
+function fitSets(){document.querySelectorAll('.set').forEach(s=>{const t=s.querySelector('.tm');t.hidden=false;if(s.scrollHeight>s.clientHeight+1)t.hidden=true})}
+fitSets();addEventListener('resize',fitSets);document.fonts&&document.fonts.ready.then(fitSets);
+
+/* ---------- token strip ---------- */
+const strip=$('strip');
+for(let i=0;i<26;i++){const t=document.createElement('button');t.type='button';t.className='tok';t.dataset.i=i+1;
+  t.setAttribute('aria-label',`Token ${i+1}, ${String.fromCharCode(65+i)}`);
+  t.innerHTML=`<span class="num">${i+1}</span><span class="let">${String.fromCharCode(65+i)}</span>`;
+  t.addEventListener('click',()=>{S.torn=(S.torn===i+1)?i:i+1;paintStrip()});strip.appendChild(t)}
+function paintStrip(){[...strip.children].forEach((t,i)=>t.classList.toggle('torn',i<S.torn))}
+$('mend').addEventListener('click',()=>{S.torn=0;paintStrip()});
+
+/* ---------- know before you go (letters in {} were printed on the pink drum) ---------- */
+const KB=[
+ '<b>Getting in.</b> Gates open at 10:00 on Friday. {B}ring your ticket, on your phone or printed, and photo ID if you look under twenty-five. Glass stays at the gate; we\'ll swap it for a cup.',
+ '<b>Parking.</b> Pa{r}king is in the Long Meadow, a ten-minute walk from the gate. Follow the yellow arrows, not the sat nav, which wants you to drive through the pond.',
+ '<b>Camping.</b> The campsite opens at noon on Friday. Pitch at least two steps from your neighbour\'s guy ropes. Qu{i}et hours in the family field run from 22:00 to 08:00.',
+ '<b>Water.</b> There\'s free drinki{n}g water at every toilet block and at the Info tent. Refill a bottle rather than buying one.',
+ '<b>Lost a friend?</b> {G}o to a meeting flag. Every flag has a letter on it, so agree on yours before you need it. Lost things go to the Info tent.',
+ '<b>First Aid</b> is in the white tent near the Big Top, staffed all weekend. If you feel unwell, tell any steward: they all c{a}rry radios.',
+ '<b>Weather.</b> The forecast is mixed. Pack a waterproof, wellies and something warm, because the fields get cold after dark even in June. If it brightens up, look for s{h}ade under the orchard trees.',
+ '<b>Not allowed.</b> No drones, no sky lanterns, no g{a}zebos in the arena, and no glass anywhere.',
+ '<b>Dogs</b> are welcome in the car park only. Assistance dogs are welcome everywhere. {T}hanks for reading, and see you in the field.'];
+$('kbyg').innerHTML=KB.map(p=>'<p>'+p.replace(/\{(.)\}/g,'<span class="misreg">$1</span>')+'</p>').join('');
+
+/* ---------- answers ---------- */
+const LEN={map:6,clash:4,bar:7,pack:3,meta:3};
+const NEAR={meta:['SUNSET','SUNDAY','SUNSHINE','SUNRISE','SUNNY','SUNLIGHT','SOL'],pack:['BRINGAHAT','AHAT'],clash:['SUNBURN'],map:['SUNSCREEN'],bar:['SUNGLASSES']};
+function check(id){
+  const v=norm($('in-'+id).value);const m=$('m-'+id);S.tries++;
+  if(!v){m.className='msg bad';m.textContent='Type an answer first.';return false}
+  const ok=v===ans(id)||(id==='meta'&&v==='THESUN');
+  if(ok){S.solved[id]=true;save();paint();return true}
+  m.className='msg bad';
+  if((NEAR[id]||[]).includes(v))m.textContent=id==='meta'?'Very close. The guest\'s name is just three letters.':'Close, but the box wants '+LEN[id]+' letters.';
+  else if(v.length!==LEN[id])m.textContent=`That's ${v.length} letter${v.length===1?'':'s'}; this one has ${LEN[id]}.`;
+  else m.textContent='Not this one. Check your working, or take a nudge.';
+  return false}
+function paint(){
+  for(const id in S.solved){
+    const box=$('a-'+id),inp=$('in-'+id),m=$('m-'+id);const done=S.solved[id];
+    box.classList.toggle('solved',done);
+    if(done){inp.value=id==='meta'?'SUN':ans(id);inp.readOnly=true;box.querySelector('[data-check]').disabled=true;
+      m.className='msg good';m.innerHTML='<span class="stamp">Solved</span>'}
+    else{inp.readOnly=false;box.querySelector('[data-check]').disabled=false}
+    box.querySelector('[data-hint]').closest('.row').hidden=done;
+    const slot=document.querySelector(`.slot[data-for="${id}"]`);slot.classList.toggle('done',done);
+    slot.querySelector('.w').textContent=done?(id==='meta'?'THE SUN':ans(id)):(id==='meta'?'???':'·'.repeat(LEN[id]))}
+  const g=S.solved.meta;
+  $('epilogue').hidden=!g;$('sunset').classList.toggle('solvedsun',g);
+  $('guestName').innerHTML=g?'<span style="color:var(--pink)">The Sun</span>':'<span class="blank">&nbsp;</span> <span class="blank">&nbsp;</span> <span class="blank">&nbsp;</span>';
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.check)check(b.dataset.check);
+  if(b.dataset.hint){const id=b.dataset.hint;$('h-'+id).hidden=false;S.hints[id]=1;b.disabled=true;document.querySelector(`[data-reveal="${id}"]`).hidden=false}
+  if(b.dataset.reveal){const id=b.dataset.reveal;
+    if(b.dataset.sure){$('in-'+id).value=ans(id);S.solved[id]=true;save();paint();b.hidden=true}
+    else{b.dataset.sure='1';b.textContent='Tap again to show it'}}
+});
+['map','clash','bar','pack','meta'].forEach(id=>$('in-'+id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();check(id)}}));
+$('resetAll').addEventListener('click',function(){
+  if(!this.dataset.sure){this.dataset.sure='1';this.textContent='Sure? Tap again to rub everything out';return}
+  delete this.dataset.sure;this.textContent='Rub out my answers and start again';
+  for(const id in S.solved){S.solved[id]=false;$('in-'+id).value='';$('m-'+id).textContent='';$('h-'+id).hidden=true;
+    document.querySelector(`[data-hint="${id}"]`).disabled=false;const r=document.querySelector(`[data-reveal="${id}"]`);r.hidden=true;delete r.dataset.sure;r.textContent='Show answer'}
+  S.hints={};save();paint()});
+paint();
+// fit the cover title to the page width
+function fitTitle(){const h=document.querySelector('.cover h1');h.style.fontSize='';const w=h.parentElement.clientWidth-parseFloat(getComputedStyle(h.parentElement).paddingLeft)*2;const sw=Math.max(...[...h.querySelectorAll('span')].map(x=>x.scrollWidth),h.scrollWidth);if(sw>w)h.style.fontSize=(parseFloat(getComputedStyle(h).fontSize)*w/sw*.98)+'px'}
+fitTitle();addEventListener('resize',fitTitle);document.fonts&&document.fonts.ready.then(fitTitle);
+
+window.__weekender={get state(){return{solved:{...S.solved},solvedCount:Object.values(S.solved).filter(Boolean).length,
+  pencils:[...S.pencils],stars:[...S.stars],torn:S.torn,tries:S.tries,hints:Object.keys(S.hints),
+  epilogueShown:!$('epilogue').hidden,guest:$('guestName').textContent.trim()}}};
+})();
+</script>
+
+</body></html>

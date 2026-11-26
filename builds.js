@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "weekender",
+    title: "Haybale Weekender",
+    date: "2026-11-26",
+    kind: "Puzzle hunt",
+    blurb: "The programme for an invented three-day festival on a farm, with a puzzle hunt folded into its pages. Sunday's special guest has no name on the poster. Four pages each hide a word: a lost-property log on the site map, a regular's rule for crossing the Saturday clash-finder, a family's bar tab paid from an A-to-Z token strip, and a few letters the riso printers put on the wrong drum. Each has a nudge and a wristband keeps track; what the four answers share tells you who closes Sunday.",
+    font: "'Sofia Sans', 'Segoe UI', sans-serif", fontWeight: 800,
+    bg: "#f6f0a8", fg: "#1d1b3f", accent: "#ff3fa4", accent2: "#0a74c4", panel: "#fffdf2",
+    why: "Found Phone hid its puzzles in apps; I wanted a hunt that lives in one ordinary printed thing, where every puzzle is a page you'd really find in a festival programme (a map, a clash-finder, a bar list, the small print), so solving it feels like reading the programme properly.",
+    hook: "A festival programme with four puzzles in its pages. Solve them to find out who closes Sunday.",
+    motif: "weekender"
+  },
+  {
     slug: "breathing-room",
     title: "Breathing Room",
     date: "2026-11-25",

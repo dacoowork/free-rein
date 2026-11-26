@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Darumadrop+One&family=Monoton&family=Righteous&family=Pacifico&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&family=Londrina+Solid:wght@900&family=Atkinson+Hyperlegible&family=Fragment+Mono&family=Krona+One&family=Fredoka:wght@700&family=Chakra+Petch:wght@700&family=Silkscreen&family=Bakbak+One&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Climate+Crisis&family=Sofia+Sans:wght@800&family=Darumadrop+One&family=Monoton&family=Righteous&family=Pacifico&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&family=Londrina+Solid:wght@900&family=Atkinson+Hyperlegible&family=Fragment+Mono&family=Krona+One&family=Fredoka:wght@700&family=Chakra+Petch:wght@700&family=Silkscreen&family=Bakbak+One&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -144,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-25"></script>
+<script src="builds.js?v=2026-11-26"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -155,6 +155,24 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    weekender(b,r){
+      // the build's Saturday clash-finder (12:00 to 18:00, real set times), with Jess's four sets starred in pink:
+      // Bus Shelter Choir, Unpaid Interns, Rotary Club Riot, Neon Allotment (B, U, R, N)
+      const S=[[[750,810],[840,900],[960,1035,'N'],[1065,1140]],[[720,780,'B'],[810,870],[900,960],[990,1050],[1080,1155]],
+        [[735,780],[795,855,'U'],[885,930],[975,1035]],[[720,765],[765,825],[870,945,'R'],[1005,1065],[1095,1155]]];
+      const y=m=>30+(m-720)*0.36,X=k=>84+k*44;
+      let s=`<rect width="320" height="180" fill="${b.bg}"/><rect x="58" y="8" width="204" height="172" rx="4" fill="${b.panel}"/>`;
+      s+=`<text x="66" y="22" font-family="Anonymous Pro,monospace" font-size="9" font-weight="700" fill="#0a74c4">SAT</text>`;
+      ['MAIN','ORCH','TOP','LANT'].forEach((t,k)=>{s+=`<text x="${X(k)+20}" y="22" text-anchor="middle" font-family="Anonymous Pro,monospace" font-size="8" font-weight="700" fill="${b.fg}">${t}</text>`});
+      s+=`<rect x="64" y="26" width="192" height="1.6" fill="${b.fg}"/>`;
+      for(let h=12;h<=18;h++)s+=`<rect x="84" y="${y(h*60)}" width="172" height=".6" fill="#ddd6a6"/><text x="66" y="${y(h*60)+3}" font-family="Anonymous Pro,monospace" font-size="7" fill="#5b587c">${h}</text>`;
+      s+=`<clipPath id="wkclip"><rect x="60" y="28" width="200" height="152"/></clipPath><g clip-path="url(#wkclip)">`;
+      S.forEach((col,k)=>col.forEach(([a,e,L])=>{const pk=!!L;
+        s+=`<rect x="${X(k)}" y="${y(a)+1}" width="40" height="${(e-a)*0.36-2}" rx="3" fill="${pk?'#fde3f0':'#dcecf8'}" stroke="${pk?b.accent:'#0a74c4'}" stroke-width="1.2"/>`;
+        if(pk)s+=`<text x="${X(k)+20}" y="${y(a)+(e-a)*0.18+6}" text-anchor="middle" font-family="Climate Crisis,Arial Black,sans-serif" font-size="15" fill="${b.accent}">${L}</text>`;}));
+      s+=`</g>`;
+      return s;
+    },
     breathingroom(b,r){
       // the build's stage: the mint blob mid-breath with its dashed "your breath" outline, the word "in", and below it the breath line
       // (Box 4-4-4-4: in, hold, out, rest) with the user's trace drawn over the guide up to the red now mark
