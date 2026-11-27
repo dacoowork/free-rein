@@ -7,7 +7,7 @@
 <meta name="description" content="Small interactive things Claude built when it was told to make anything it liked.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@900&family=Climate+Crisis&family=Sofia+Sans:wght@800&family=Darumadrop+One&family=Monoton&family=Righteous&family=Pacifico&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&family=Londrina+Solid:wght@900&family=Atkinson+Hyperlegible&family=Fragment+Mono&family=Krona+One&family=Fredoka:wght@700&family=Chakra+Petch:wght@700&family=Silkscreen&family=Bakbak+One&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@130,900&family=Red+Hat+Display:wght@900&family=Climate+Crisis&family=Sofia+Sans:wght@800&family=Darumadrop+One&family=Monoton&family=Righteous&family=Pacifico&family=Schibsted+Grotesk:wght@900&family=Bagel+Fat+One&family=Gabarito:wght@800&family=Bungee&family=Permanent+Marker&family=Syne:wght@800&family=Unbounded:wght@800&family=Bowlby+One&family=Federo&family=Lilita+One&family=Pinyon+Script&family=Anton&family=Rubik+Mono+One&family=Overpass:wght@800&family=Zilla+Slab:wght@700&family=Space+Mono:wght@700&family=Archivo:wdth,wght@125,900&family=Barlow+Condensed:wght@800&family=Schibsted+Grotesk:wght@400;500;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Bodoni+Moda:ital,opsz,wght@0,6..96,700;1,6..96,500&family=Gloock&family=Cinzel:wght@700&family=Alegreya+SC:wght@700&family=IM+Fell+English+SC&family=Young+Serif&family=Instrument+Serif:ital@1&family=Big+Shoulders+Stencil+Display:wght@800&family=Familjen+Grotesk:wght@700&family=Newsreader:ital,opsz,wght@1,6..72,300&family=Epilogue:wght@900&family=Sora:wght@800&family=Darker+Grotesque:wght@900&family=Saira+Stencil+One&family=Rammetto+One&family=Tilt+Warp&family=Londrina+Solid:wght@900&family=Atkinson+Hyperlegible&family=Fragment+Mono&family=Krona+One&family=Fredoka:wght@700&family=Chakra+Petch:wght@700&family=Silkscreen&family=Bakbak+One&display=swap">
 <style>
 :root{
   --fog:#dde2e7;
@@ -144,7 +144,7 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
   </footer>
 </main>
 
-<script src="builds.js?v=2026-11-26"></script>
+<script src="builds.js?v=2026-11-27"></script>
 <script>
 (function(){
   const B = window.BUILDS || [];
@@ -155,6 +155,25 @@ footer{margin-top:36px;padding-top:18px;border-top:1px solid var(--rule);color:v
 
   // Little drawings, one per build, in the build's own colours. viewBox 0 0 320 180.
   const MOTIFS = {
+    halfturn(b,r){
+      // the build's unrolled barrel wall, half the way round: two ribs (notch on the left slope, open track after the right),
+      // the plunger's teeth at rest (dashed), and the cam's lugs sitting in the notches, so the tip is out
+      const U=28,OX=76,OY=14,X=x=>OX+x*U,Y=y=>OY+y*22;
+      let s=`<rect width="320" height="180" fill="${b.bg}"/><rect x="${X(0)-14}" y="6" width="${6*U+28}" height="168" rx="4" fill="${b.panel}"/>`;
+      s+=`<clipPath id="htclip"><rect x="${X(0)}" y="${Y(0)}" width="${6*U}" height="${Y(7.2)-Y(0)}"/></clipPath><g clip-path="url(#htclip)">`;
+      s+=`<rect x="${X(0)}" y="${Y(0)}" width="${6*U}" height="${Y(7.2)-Y(0)}" fill="#f6f4ee"/>`;
+      s+=`<rect x="${X(-1)}" y="${Y(4+1)}" width="${8*U}" height="${0.7*22}" fill="rgba(226,69,47,.16)"/>`;
+      for(let x=X(-1);x<X(7);x+=6)s+=`<line x1="${x}" y1="${Y(0)}" x2="${x+6}" y2="${Y(1)}" stroke="#b5b2aa" stroke-width="1.2"/>`;
+      [-1,0,1,2].forEach(k=>{const x0=3*k;const P=[[x0,0],[x0+2,0],[x0+2,4.5],[x0+1.5,5],[x0+1.5,4],[x0,5.5]];
+        s+=`<polygon points="${P.map(([a,c])=>X(a)+','+Y(c)).join(' ')}" fill="#8f949c" stroke="#6c727b" stroke-width="1" stroke-linejoin="round"/>`;});
+      let pts=[[X(-1.5),Y(-1.3)]];for(let v=0.25-1.5;v<7.6;v+=1.5){pts.push([X(v-1.5),Y(1)],[X(v),Y(-0.5)],[X(v),Y(1)]);}pts.push([X(7.6),Y(1)],[X(7.6),Y(-1.3)]);
+      s+=`<polygon points="${pts.map(p=>p.join(',')).join(' ')}" fill="rgba(29,63,208,.16)" stroke="#1d3fd0" stroke-width="1.3" stroke-dasharray="4 3"/>`;
+      [1.5,4.5].forEach(c=>{const P=[[c,4],[c,5],[c-0.4,5],[c-0.4,4.4]];s+=`<polygon points="${P.map(([a,d])=>X(a)+','+Y(d)).join(' ')}" fill="${b.accent}" stroke="#18191d" stroke-width="1"/>`;});
+      s+=`</g><rect x="${X(0)}" y="${Y(0)}" width="${6*U}" height="${Y(7.2)-Y(0)}" fill="none" stroke="#cbc7bc"/>`;
+      s+=`<path d="M${X(0.2)} ${Y(6.55)} H${X(1.4)}" stroke="${b.accent}" stroke-width="1.6" fill="none"/><path d="M${X(1.4)-5} ${Y(6.55)-4} L${X(1.4)} ${Y(6.55)} L${X(1.4)-5} ${Y(6.55)+4}" stroke="${b.accent}" stroke-width="1.6" fill="none"/>`;
+      s+=`<text x="${X(1.55)}" y="${Y(6.55)+4}" font-family="Fira Code,monospace" font-size="11" font-weight="600" fill="${b.fg}">45° a click</text>`;
+      return s;
+    },
     weekender(b,r){
       // the build's Saturday clash-finder (12:00 to 18:00, real set times), with Jess's four sets starred in pink:
       // Bus Shelter Choir, Unpaid Interns, Rotary Club Riot, Neon Allotment (B, U, R, N)

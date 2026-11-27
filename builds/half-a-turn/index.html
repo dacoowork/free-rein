@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Half a Turn</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,400..900&family=Golos+Text:wght@400;500;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Half a Turn: how a retractable click pen holds its tip out, then lets it go.
+   Layout: a graphite desk ground; one drawing board (cutaway pen beside the barrel's inside unrolled flat),
+   the four steps of a click as a numbered sequence, things to try, then an exploded view of the six parts. */
+:root{
+  --ground:#2b2c31; --ground-2:#33353b; --on-ground:#ecebe6; --on-ground-muted:#a9abb1;
+  --paper:#f6f4ee; --paper-2:#ebe8df; --ink:#18191d; --muted:#5c5e66; --line:#cbc7bc;
+  --blue:#1d3fd0; --blue-soft:rgba(29,63,208,.16); --red:#e2452f; --red-soft:rgba(226,69,47,.16);
+  --steel:#a3a8b0; --steel-dark:#6c727b; --rib:#8f949c; --title-ink:#5b78ff;
+  --display:'Anybody','Arial Black',system-ui,sans-serif;
+  --body:'Golos Text','Segoe UI',system-ui,sans-serif;
+  --mono:'Fira Code',ui-monospace,'SFMono-Regular',Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#111215; --ground-2:#18191d; --on-ground:#ecebe6; --on-ground-muted:#9b9da3;
+  --paper:#1f2025; --paper-2:#27282e; --ink:#ecebe6; --muted:#a2a4ab; --line:#3b3d44;
+  --blue:#8399ff; --blue-soft:rgba(131,153,255,.2); --red:#ff6b52; --red-soft:rgba(255,107,82,.2);
+  --steel:#6d727b; --steel-dark:#9aa0a9; --rib:#585d66; --title-ink:#8399ff; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ground:#111215; --ground-2:#18191d; --on-ground:#ecebe6; --on-ground-muted:#9b9da3;
+  --paper:#1f2025; --paper-2:#27282e; --ink:#ecebe6; --muted:#a2a4ab; --line:#3b3d44;
+  --blue:#8399ff; --blue-soft:rgba(131,153,255,.2); --red:#ff6b52; --red-soft:rgba(255,107,82,.2);
+  --steel:#6d727b; --steel-dark:#9aa0a9; --rib:#585d66; --title-ink:#8399ff; color-scheme:dark}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--on-ground);font:16px/1.55 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.045) 1px,transparent 1.2px);background-size:14px 14px}
+.wrap{max-width:1080px;margin:0 auto;padding-block:40px 64px;display:grid;gap:40px}
+header{display:grid;gap:14px;max-width:760px}
+.eyebrow{font:600 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--on-ground-muted)}
+h1{margin:0;font-family:var(--display);font-weight:900;font-stretch:150%;font-variation-settings:"wdth" 150;
+  font-size:clamp(44px,9vw,96px);line-height:.92;letter-spacing:-.02em;text-wrap:balance}
+h1 .ink{color:var(--title-ink)}
+.lede{margin:0;font-size:clamp(17px,2.2vw,20px);color:var(--on-ground);max-width:62ch}
+h2{margin:0;font-family:var(--display);font-weight:800;font-stretch:125%;font-variation-settings:"wdth" 125;font-size:clamp(24px,3.6vw,34px);line-height:1.05;text-wrap:balance}
+.board{background:var(--paper);color:var(--ink);border-radius:6px;padding:clamp(14px,3vw,28px);display:grid;gap:20px;
+  box-shadow:0 1px 0 rgba(255,255,255,.05),0 18px 40px rgba(0,0,0,.28)}
+.side{display:grid;gap:18px;align-content:start;min-width:0}
+.stage{display:grid;grid-template-columns:minmax(78px,150px) minmax(0,1fr);gap:clamp(10px,3vw,36px);align-items:start}
+.panel{display:grid;gap:6px;min-width:0}
+.panel-label{font:600 11px/1.3 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.panel svg{display:block;width:100%;height:auto;max-width:100%}
+#pen{touch-action:none;cursor:grab;max-height:560px}
+#pen:active{cursor:grabbing}
+#strip{max-width:440px;cursor:ns-resize}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{font:600 15px/1 var(--body);border-radius:999px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);padding:11px 18px;cursor:pointer;min-height:44px}
+button:hover{background:var(--paper-2)}
+button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+button.primary{background:var(--blue);border-color:var(--blue);color:var(--paper);font-size:17px;padding:12px 26px}
+button.primary:hover{filter:brightness(1.08);background:var(--blue)}
+button:disabled{opacity:.45;cursor:default}
+.readouts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-left:auto;font:400 13px/1.2 var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.readouts b{color:var(--ink);font-weight:600}
+.tipchip{display:inline-block;padding:3px 8px;border-radius:4px;background:var(--paper-2);color:var(--ink);font-weight:600}
+.tipchip.out{background:var(--blue);color:var(--paper)}
+.caption{margin:0;min-height:3.1em;font-size:16px;color:var(--ink);max-width:70ch}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.steps li{border-top:3px solid var(--line);padding-top:10px;display:grid;gap:4px;color:var(--muted);transition:border-color .15s,color .15s;min-width:0}
+.steps li .n{font:600 12px/1 var(--mono);letter-spacing:.08em}
+.steps li strong{font-weight:700;color:var(--ink);font-size:15px}
+.steps li span.t{font-size:14px;line-height:1.45}
+.steps li.on{border-color:var(--red);color:var(--ink)}
+.steps li.on .n{color:var(--red)}
+section{display:grid;gap:16px}
+section > p{margin:0;max-width:68ch;color:var(--on-ground)}
+.try{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.try .card{background:var(--ground-2);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:16px;display:grid;gap:10px;align-content:start;min-width:0}
+.try h3{margin:0;font:700 17px/1.2 var(--body)}
+.try p{margin:0;font-size:14.5px;color:var(--on-ground-muted)}
+.try button{justify-self:start;border-color:var(--on-ground);color:var(--on-ground)}
+.try button:hover{background:rgba(255,255,255,.08)}
+.explode{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:24px;align-items:start}
+#parts{display:block;width:100%;height:auto}
+#parts .part{cursor:pointer;transition:transform .8s cubic-bezier(.6,.05,.25,1)}
+#parts .part:focus{outline:none}
+#parts .part:focus-visible .hit{stroke:var(--blue);stroke-width:2;stroke-dasharray:3 3}
+#parts .lbl{font:600 11px var(--mono);fill:var(--ink);transition:opacity .4s;pointer-events:none}
+#parts .lbl.n{fill:var(--muted)}
+#parts.together .lbl{opacity:0}
+.partinfo{display:grid;gap:10px;align-content:start}
+.partinfo .num{font:600 12px/1 var(--mono);color:var(--red);letter-spacing:.1em}
+.partinfo h3{margin:0;font-family:var(--display);font-weight:800;font-stretch:125%;font-variation-settings:"wdth" 125;font-size:26px;line-height:1.05}
+.partinfo p{margin:0;font-size:15.5px}
+.partlist{display:flex;flex-wrap:wrap;gap:6px}
+.partlist button{font-size:13px;padding:7px 12px;min-height:36px}
+.partlist button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.notes div{display:grid;gap:8px;min-width:0}
+.notes h3{margin:0;font:700 17px/1.25 var(--body)}
+.notes p{margin:0;color:var(--on-ground-muted);font-size:15px}
+footer{font:400 12px/1.5 var(--mono);color:var(--on-ground-muted)}
+svg text{font-family:var(--mono)}
+@media (min-width:900px){
+  #board{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);column-gap:36px;align-items:start}
+  #board .steps{grid-template-columns:minmax(0,1fr);gap:10px}
+  #board .readouts{margin-left:0;width:100%}
+}
+@media (max-width:760px){
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .try{grid-template-columns:minmax(0,1fr)}
+  .explode{grid-template-columns:minmax(0,1fr)}
+  .notes{grid-template-columns:minmax(0,1fr)}
+  .readouts{margin-left:0;width:100%}
+}
+@media (max-width:480px){
+  .wrap{padding-block:28px 48px;gap:32px}
+  .stage{grid-template-columns:86px minmax(0,1fr);gap:10px}
+  .board{padding:12px}
+  .controls button:not(.primary){padding:10px 14px;font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){#parts .part{transition:none}}
+</style>
+</head><body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">How it works · the click pen</div>
+  <h1>Half a <span class="ink">Turn</span></h1>
+  <p class="lede">Click a ballpoint once and the tip stays out. Click it again and it goes back in. There is no switch inside, only a plastic ring that turns about 45° every time you press. Push the plunger and watch it go round.</p>
+</header>
+
+<div class="board" id="board">
+  <div class="stage">
+    <div class="panel">
+      <div class="panel-label">Cutaway</div>
+      <svg id="pen" viewBox="0 0 100 440" role="img" aria-label="Cutaway of a click pen. Drag the plunger down to press it."></svg>
+    </div>
+    <div class="panel">
+      <div class="panel-label">Inside the barrel, unrolled flat (half the way round)</div>
+      <svg id="strip" viewBox="0 0 252 336" role="img" aria-label="The inside wall of the barrel unrolled: two ribs, the plunger's teeth and two of the cam's lugs."></svg>
+    </div>
+  </div>
+  <div class="side">
+  <div class="controls">
+    <button class="primary" id="clickBtn" type="button">Click</button>
+    <div class="readouts" aria-live="polite">
+      <span>Tip <span class="tipchip" id="tipChip">IN</span></span>
+      <span>Clicks <b id="clicksOut">0</b></span>
+      <span>Cam turned <b id="turnOut">0°</b></span>
+    </div>
+  </div>
+  <p class="caption" id="caption">Drag the plunger down in the cutaway (or anywhere on the unrolled wall), press Click, or tap the space bar. The red lugs belong to the cam, the ring that turns.</p>
+  <ol class="steps" id="steps">
+    <li data-p="1"><span class="n">1</span><strong>Push</strong><span class="t">The plunger's teeth drive the cam down. Its lugs slide down the track between the ribs.</span></li>
+    <li data-p="2"><span class="n">2</span><strong>Nudge</strong><span class="t">Below the ribs the lugs are free, and the plunger's slanted teeth shove them sideways.</span></li>
+    <li data-p="3"><span class="n">3</span><strong>Catch</strong><span class="t">Let go and the spring pushes up. Each lug hits a sloped rib end and slides into its notch: tip out.</span></li>
+    <li data-p="4"><span class="n">4</span><strong>Drop in</strong><span class="t">Next time the nudge lands it on the other slope, which leads into the open track. Up it goes: tip in.</span></li>
+  </ol>
+  </div>
+</div>
+
+<section>
+  <h2>Things to try</h2>
+  <div class="try">
+    <div class="card"><h3>Half a press</h3><p>Push only part of the way and let go. The lugs never clear the rib ends, so nothing can turn them, and they come back to where they were.</p><button type="button" id="tryHalf">Half press</button></div>
+    <div class="card"><h3>Hold it down</h3><p>The tip pokes out further than it rests. The cam has already turned at the bottom of the press; the catch only happens on the way up.</p><button type="button" id="tryHold">Press and hold</button></div>
+    <div class="card"><h3>Eight clicks</h3><p>Four ribs and eight plunger teeth round the inside mean eight clicks carry the cam one full turn and every lug back to its starting track.</p><button type="button" id="tryEight">Click eight times</button></div>
+  </div>
+</section>
+
+<section>
+  <h2>Six parts</h2>
+  <p>Most click pens come apart into the same handful of pieces. Tap a part to see what it does.</p>
+  <div class="board explode">
+    <svg id="parts" viewBox="0 0 360 300" role="img" aria-label="Exploded view of the pen's six parts"></svg>
+    <div class="partinfo">
+      <div class="partlist" id="partlist"></div>
+      <div class="num" id="partNum">PART 2 OF 6</div>
+      <h3 id="partName">Cam</h3>
+      <p id="partText"></p>
+      <div><button type="button" id="assembleBtn">Put it together</button></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Why it's built like this</h2>
+  <div class="notes">
+    <div><h3>No springs or levers to latch</h3><p>The tip is held out by a lug sitting in a notch, pressed there by the same spring that wants to pull the tip back in. One spring does both jobs, and the only moving parts are two plastic rings.</p></div>
+    <div><h3>It always turns the same way</h3><p>Every slope in the barrel and on the plunger leans the same direction, so the cam can only ever go round one way. Nothing has to remember whether the tip is in or out: the cam's angle is the memory.</p></div>
+    <div><h3>Notch, track, notch, track</h3><p>Each rib has two sloped ends. The left one ends in a notch, the right one runs into the open track. A nudge of half a rib's spacing means the lugs land on alternate slopes, which is why clicks alternate.</p></div>
+    <div><h3>The refill turns too</h3><p>On pens where the refill rides on the cam, the refill turns with it. Parker advertised exactly that on its 1954 Jotter: a little turn every click, so the ball would wear evenly.</p></div>
+  </div>
+</section>
+
+<footer>The drawings are a working model: every position of the cam comes from where its lugs touch the ribs and the plunger's teeth, with one spring pushing up. Proportions are stretched so the parts can be seen.</footer>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const NS='http://www.w3.org/2000/svg';
+const $=id=>document.getElementById(id);
+const el=(tag,attrs,parent)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e};
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- The model (units: one rib tooth wide) ----------
+   Unrolled barrel wall, 12 units round (360°). Four ribs, each 2 units wide, with a 1-unit track between.
+   Rib ends (y downward = towards the tip): left slope 5.5 -> 4 (1.5 wide) ending in a notch, right slope 5 -> 4.5 (0.5 wide) into the track.
+   Track ceiling (top stop) at y = 1. Plunger: eight teeth, 1.5 units each, tips at depth D, slope 1.
+   A lug is modelled by its top-right corner; its top edge slopes at 1 and is 0.4 wide. */
+const YT=5.5, YT2=5, YV=4, YR=1, W=0.4, D0=1, DMAX=7.2;
+const mod=(a,n)=>((a%n)+n)%n;
+function f(x){const m=mod(x,3); if(m<1.5) return YT-m; if(m<2) return YT2-(m-1.5); return YR;}
+function g(x,D){const p=mod(x-1.75,1.5); return D-p;}
+function H(x,D){let F=-1e9,G=-1e9;for(let i=0;i<=10;i++){const s=W*i/10;F=Math.max(F,f(x-s)-s);G=Math.max(G,g(x-s,D)-s);}return Math.max(F,G);}
+function settle(x,D){for(let i=0;i<4000;i++){const h=H(x,D);if(H(x+0.004,D)<h-1e-6)x+=0.004;else break;}return x;}
+
+const S={D:D0,x:settle(2.996,D0),dx:0,dy:0,clicks:0,lastStable:'in',phase:0,pressing:false,busy:false,exploded:true,part:1};
+S.x0=S.x; S.dx=S.x; S.dy=H(S.x,D0);
+const lugY=()=>H(S.x,S.D);
+const tipState=()=>H(S.x,S.D)<2.5?'in':'out';
+
+/* ---------- Unrolled strip ---------- */
+const U=34, OX=24, OY=40;
+const sx=x=>OX+x*U, sy=y=>OY+y*U;
+const strip=$('strip');
+(function buildStrip(){
+  const defs=el('defs',{},strip);
+  const cp=el('clipPath',{id:'stripClip'},defs); el('rect',{x:sx(0),y:sy(0),width:6*U,height:7.6*U},cp);
+  const hatch=el('pattern',{id:'hatch',width:6,height:6,patternUnits:'userSpaceOnUse',patternTransform:'rotate(45)'},defs);
+  el('rect',{width:6,height:6,style:'fill:var(--paper-2)'},hatch);
+  el('line',{x1:0,y1:0,x2:0,y2:6,style:'stroke:var(--rib);stroke-width:1.6'},hatch);
+  // angle labels
+  [0,90,180].forEach((a,i)=>{el('text',{x:sx(i*3),y:22,'text-anchor':'middle','font-size':11,style:'fill:var(--muted)'},strip).textContent=a+'°';
+    el('line',{x1:sx(i*3),y1:27,x2:sx(i*3),y2:sy(0),style:'stroke:var(--line);stroke-width:1'},strip);});
+  el('rect',{x:sx(0),y:sy(0),width:6*U,height:7.6*U,style:'fill:var(--paper);stroke:var(--line);stroke-width:1'},strip);
+  const g0=el('g',{'clip-path':'url(#stripClip)'},strip);
+  S.camBand=el('rect',{x:sx(-1),width:8*U,height:0.7*U,style:'fill:var(--red-soft)'},g0);
+  S.ribs=el('g',{},g0);
+  // top stop
+  el('rect',{x:sx(-1),y:sy(0),width:8*U,height:YR*U,style:'fill:url(#hatch)'},S.ribs);
+  for(let k=-1;k<=2;k++){const x0=3*k;
+    const pts=[[x0,0],[x0+2,0],[x0+2,YT2-0.5],[x0+1.5,YT2],[x0+1.5,YV],[x0,YT]].map(([a,b])=>sx(a)+','+sy(b)).join(' ');
+    el('polygon',{points:pts,style:'fill:var(--rib);stroke:var(--steel-dark);stroke-width:1;stroke-linejoin:round'},S.ribs);}
+  S.plunger=el('polygon',{style:'fill:var(--blue-soft);stroke:var(--blue);stroke-width:1.3;stroke-dasharray:4 3;stroke-linejoin:round'},g0);
+  S.lugs=el('g',{},g0);
+  S.lugEls=[];for(let i=0;i<4;i++)S.lugEls.push(el('polygon',{style:'fill:var(--red);stroke:var(--ink);stroke-width:1;stroke-linejoin:round'},S.lugs));
+  // labels
+  const L=(x,y,t,anchor,cls)=>{const e=el('text',{x,y,'text-anchor':anchor||'start','font-size':11,style:'fill:var(--muted);pointer-events:none;paint-order:stroke;stroke:var(--paper);stroke-width:3px'},strip);e.textContent=t;return e};
+  L(sx(3.5),sy(0.62),'top stop','middle');
+  [1,4].forEach(c=>{const e=L(sx(c),sy(2.6),'rib','middle');e.style.fill='var(--paper)';e.style.stroke='var(--rib)';});
+  [2.5,5.5].forEach(c=>{const e=L(c?sx(c):0,sy(3.4),'track','middle');e.style.fill='var(--ink)';e.setAttribute('font-size',9.5);});
+  el('text',{x:sx(0),y:sy(7.6)+18,'font-size':10.5,style:'fill:var(--blue)'},strip).textContent='- - plunger teeth';
+  el('text',{x:sx(6),y:sy(7.6)+18,'text-anchor':'end','font-size':10.5,style:'fill:var(--red)'},strip).textContent='■ cam lugs';
+  el('text',{x:sx(6)+8,y:sy(3.8),'font-size':10,style:'fill:var(--muted)',transform:`rotate(90 ${sx(6)+8} ${sy(3.8)})`,'text-anchor':'middle'},strip).textContent='towards the tip →';
+})();
+function drawStrip(){
+  const x=S.dx, y=S.dy, D=S.D;
+  // plunger profile from x=-1.5 to 7.5
+  const pts=[[sx(-1.5),sy(D-2.3)]];
+  let v=3.25-1.5*6; while(v-1.5< -1.5) v+=1.5;
+  v-=1.5;
+  for(let t=v; t<7.6; t+=1.5){pts.push([sx(t-1.5),sy(D)]);pts.push([sx(t),sy(D-1.5)]);pts.push([sx(t),sy(D)]);}
+  pts.push([sx(7.6),sy(D)],[sx(7.6),sy(D-2.3)]);
+  S.plunger.setAttribute('points',pts.map(p=>p.join(',')).join(' '));
+  S.camBand.setAttribute('y',sy(y+1.0));
+  const base=mod(x,3);
+  [-3,0,3,6].forEach((o,i)=>{const cx=base+o;
+    const p=[[cx,y],[cx,y+1.0],[cx-W,y+1.0],[cx-W,y+W]].map(([a,b])=>sx(a)+','+sy(b)).join(' ');
+    S.lugEls[i].setAttribute('points',p);});
+}
+
+/* ---------- Cutaway pen ---------- */
+const pen=$('pen'); const PU=6; // px per model unit
+const P={};
+(function buildPen(){
+  const defs=el('defs',{},pen);
+  const cp=el('clipPath',{id:'barrelInside'},defs); el('rect',{x:37,y:70,width:26,height:300},cp);
+  const cp2=el('clipPath',{id:'noseInside'},defs); el('polygon',{points:'37,368 63,368 54,402 46,402'},cp2);
+  // shadow of barrel
+  el('rect',{x:34,y:68,width:32,height:302,rx:3,style:'fill:var(--steel)'},pen);
+  el('rect',{x:37,y:70,width:26,height:298,style:'fill:var(--paper-2)'},pen);
+  // nose cone
+  el('polygon',{points:'34,368 66,368 56,404 44,404',style:'fill:var(--steel);stroke:var(--steel-dark);stroke-width:1;stroke-linejoin:round'},pen);
+  el('polygon',{points:'37,368 63,368 54,402 46,402',style:'fill:var(--paper-2)'},pen);
+  const inside=el('g',{'clip-path':'url(#barrelInside)'},pen);
+  P.ribs=[];for(let i=0;i<4;i++)P.ribs.push(el('rect',{y:70,width:5,height:(YT-0.5)*PU+20,style:'fill:var(--rib)'},inside));
+  P.crown=el('g',{},inside);
+  P.crownBody=el('polygon',{style:'fill:var(--blue-soft);stroke:var(--blue);stroke-width:1'},P.crown);
+  P.cam=el('rect',{x:41,width:18,height:16,rx:1.5,style:'fill:var(--red-soft);stroke:var(--red);stroke-width:1'},inside);
+  P.camLugs=[];for(let i=0;i<4;i++)P.camLugs.push(el('rect',{width:4,height:6,style:'fill:var(--red)'},inside));
+  P.refill=el('rect',{x:46.5,width:7,style:'fill:var(--paper);stroke:var(--steel-dark);stroke-width:1'},inside);
+  P.ink=el('rect',{x:48,width:4,style:'fill:var(--blue);opacity:.75'},inside);
+  P.collar=el('rect',{x:43,width:14,height:4,style:'fill:var(--steel-dark)'},inside);
+  P.spring=el('polyline',{style:'fill:none;stroke:var(--ink);stroke-width:1.2;stroke-linejoin:round'},inside);
+  // tip assembly (not clipped so it can stick out)
+  P.tipG=el('g',{},pen);
+  P.tipCone=el('polygon',{style:'fill:var(--steel);stroke:var(--steel-dark);stroke-width:.8'},P.tipG);
+  P.ball=el('circle',{r:1.6,style:'fill:var(--ink)'},P.tipG);
+  // redraw nose front so tip shows only below it
+  P.noseFront=el('polygon',{points:'34,368 66,368 56,404 44,404 46,402 54,402 63,368 37,368',style:'fill:var(--steel)'},pen);
+  // barrel walls
+  el('rect',{x:34,y:68,width:3,height:300,style:'fill:var(--steel)'},pen);
+  el('rect',{x:63,y:68,width:3,height:300,style:'fill:var(--steel)'},pen);
+  // clip
+  el('path',{d:'M66 76 h5 q3 0 3 3 v110 q0 5 -4 5 h-1 v-112 h-3z',style:'fill:var(--steel-dark)'},pen);
+  // plunger button (outside)
+  P.button=el('g',{},pen);
+  el('rect',{x:42,y:0,width:16,height:40,rx:4,style:'fill:var(--blue)'},P.button);
+  el('rect',{x:45,y:4,width:3,height:28,rx:1.5,style:'fill:var(--paper);opacity:.35'},P.button);
+  // barrel lip
+  el('rect',{x:33,y:66,width:34,height:5,rx:2,style:'fill:var(--steel-dark)'},pen);
+  // grip hint
+  P.hint=el('text',{x:50,y:432,'text-anchor':'middle','font-size':10,style:'fill:var(--muted);pointer-events:none'},pen);
+  P.hint.textContent='drag the button ↓';
+})();
+function drawPen(){
+  const D=S.D, y=S.dy, x=S.dx;
+  const btnTop=26+(D-D0)*PU; // button top
+  P.button.setAttribute('transform',`translate(0 ${btnTop})`);
+  // crown (plunger teeth) inside barrel just below lip, bottom at depth
+  const cb=86+(D-D0)*PU; // crown tooth tips
+  const pts=[[42,btnTop+40],[58,btnTop+40]];
+  P.crownBody.setAttribute('points',`40,${btnTop+38} 60,${btnTop+38} 60,${cb} 55,${cb-5} 55,${cb} 50,${cb-5} 50,${cb} 45,${cb-5} 45,${cb} 40,${cb-5}`);
+  const camTop=86+(y-YR)*PU+ 4;
+  P.cam.setAttribute('y',camTop);
+  const th=x/12*2*Math.PI;
+  for(let i=0;i<4;i++){
+    const a=th+i*Math.PI/2; const s=Math.sin(a), c=Math.cos(a);
+    const l=P.camLugs[i]; l.setAttribute('x',50+s*10.5-2); l.setAttribute('y',camTop+1); l.style.opacity=c>0?1:.28;
+    // ribs fixed: rib centres at x=1+3k
+    const ra=(1+3*i)/12*2*Math.PI; const rs=Math.sin(ra), rc=Math.cos(ra);
+    const r=P.ribs[i]; r.setAttribute('x',50+rs*11-2.5); r.style.opacity=rc>0?.9:.3;
+  }
+  const refTop=camTop+16;
+  const tipY=394+(y-YR)*PU; // ball centre
+  P.refill.setAttribute('y',refTop); P.refill.setAttribute('height',Math.max(0,tipY-14-refTop));
+  P.ink.setAttribute('y',refTop+30); P.ink.setAttribute('height',Math.max(0,tipY-14-refTop-120));
+  const collarY=refTop+200; P.collar.setAttribute('y',collarY);
+  // spring from collar to nose shoulder at 366
+  const top=collarY+4, bot=366, n=9; let sp=[];
+  for(let i=0;i<=n;i++){const yy=top+(bot-top)*i/n; sp.push(`${i%2?58:42},${yy.toFixed(1)}`);} P.spring.setAttribute('points',sp.join(' '));
+  P.tipCone.setAttribute('points',`46.5,${tipY-14} 53.5,${tipY-14} 51.2,${tipY-1} 48.8,${tipY-1}`);
+  P.ball.setAttribute('cy',tipY);P.ball.setAttribute('cx',50);
+}
+
+/* ---------- Readouts ---------- */
+const stepsEls=[...document.querySelectorAll('#steps li')];
+const CAP={
+  0:'Drag the plunger down in the cutaway (or anywhere on the unrolled wall), press Click, or tap the space bar. The red lugs belong to the cam, the ring that turns.',
+  1:'Pushing. The plunger’s teeth drive the cam down, and its lugs are still boxed in between the ribs, so it cannot turn yet.',
+  2:'Through. The lugs have cleared the rib ends and the slanted plunger teeth have shoved them sideways, about 45° round.',
+  3:'Caught. On the way up each lug met a sloped rib end and slid into the notch. The spring now holds the tip out.',
+  4:'Dropped in. This time the lugs landed on the other slope, which runs into the open track, and the spring pushed the cam all the way up. Tip in.',
+  5:'Only part way. The lugs never got below the rib ends, so nothing could turn them, and the spring put them back where they were.'
+};
+function setPhase(p){S.phase=p;stepsEls.forEach(li=>li.classList.toggle('on',+li.dataset.p===p));$('caption').textContent=CAP[p];}
+function readouts(){
+  const t=S.lastStable; const chip=$('tipChip'); chip.textContent=t.toUpperCase(); chip.classList.toggle('out',t==='out');
+  $('clicksOut').textContent=S.clicks;
+  $('turnOut').textContent=Math.round((S.x-S.x0)*30)+'°';
+}
+
+/* ---------- Driving the plunger ---------- */
+let maxDepthThisPress=0, startX=S.x, startState='in';
+function setD(D){
+  D=Math.max(D0,Math.min(DMAX,D));
+  if(!S.pressing && D>D0+0.05){S.pressing=true;maxDepthThisPress=0;startX=S.x;startState=tipState();}
+  S.D=D; S.x=settle(S.x,D);
+  const y=lugY(); maxDepthThisPress=Math.max(maxDepthThisPress,y);
+  if(S.pressing){
+    if(D>S.prevD+1e-4){ setPhase(S.x>startX+0.01?2:1); }
+    if(D<=D0+0.001){ // back at rest
+      S.pressing=false; const st=tipState();
+      if(st!==startState){S.clicks++; setPhase(st==='out'?3:4);} else setPhase(5);
+      S.lastStable=st; readouts();
+    }
+  }
+  S.prevD=D; readouts();
+}
+S.prevD=D0;
+function frame(){
+  const ty=lugY(); const k=reduce?1:0.38;
+  S.dx+=(S.x-S.dx)*k; S.dy+=(ty-S.dy)*k;
+  if(Math.abs(S.x-S.dx)<1e-3)S.dx=S.x; if(Math.abs(ty-S.dy)<1e-3)S.dy=ty;
+  drawStrip(); drawPen();
+  requestAnimationFrame(frame);
+}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function tween(from,to,ms){return new Promise(res=>{const t0=performance.now();
+  const step=now=>{const u=Math.min(1,(now-t0)/ms);const e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;setD(from+(to-from)*e);if(u<1)requestAnimationFrame(step);else res();};requestAnimationFrame(step);});}
+async function press(depth=DMAX,hold=60){
+  if(S.busy) return; S.busy=true; setButtons(true);
+  await tween(S.D,depth,reduce?60:200); await sleep(hold); await tween(depth,D0,reduce?60:240);
+  setD(D0); await sleep(reduce?20:180); S.busy=false; setButtons(false);
+}
+function setButtons(dis){['clickBtn','tryHalf','tryHold','tryEight'].forEach(id=>$(id).disabled=dis);}
+$('clickBtn').addEventListener('click',()=>press());
+$('tryHalf').addEventListener('click',()=>{scrollBoard();press(4.4,250);});
+$('tryHold').addEventListener('click',async()=>{scrollBoard();await press(DMAX,1400);});
+$('tryEight').addEventListener('click',async()=>{scrollBoard();if(S.busy)return;
+  for(let i=0;i<8;i++){await press(DMAX,40); S.busy=true; setButtons(true); await sleep(reduce?40:160); S.busy=false;}
+  setButtons(false);
+  $('caption').textContent=`Eight clicks: the cam has gone ${Math.round((S.x-S.x0)*30)}° round since the page opened, and the tip is ${tipState()} again.`;});
+function scrollBoard(){const b=$('board').getBoundingClientRect(); if(b.top<0||b.bottom>innerHeight) $('board').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});}
+document.addEventListener('keydown',e=>{
+  if(e.code!=='Space'||e.repeat) return; const t=e.target; if(t&&(t.tagName==='BUTTON'||t.tagName==='INPUT'||t.closest&&t.closest('#parts'))) return;
+  e.preventDefault(); press();
+});
+// dragging
+function dragOn(svg,unitPx,touchOK){
+  let drag=null;
+  svg.addEventListener('pointerdown',e=>{
+    if(S.busy) return; if(e.pointerType==='touch'&&!touchOK) return;
+    const r=svg.getBoundingClientRect(); const scale=r.height/svg.viewBox.baseVal.height;
+    drag={y0:e.clientY,D0:S.D,per:unitPx*scale}; svg.setPointerCapture(e.pointerId); e.preventDefault();
+  });
+  svg.addEventListener('pointermove',e=>{if(!drag)return; setD(drag.D0+(e.clientY-drag.y0)/drag.per);});
+  const end=async()=>{if(!drag)return; drag=null; S.busy=true; await tween(S.D,D0,reduce?40:220); setD(D0); S.busy=false;};
+  svg.addEventListener('pointerup',end); svg.addEventListener('pointercancel',end);
+}
+dragOn(pen,PU,true); dragOn(strip,U*0.5,false);
+
+/* ---------- Exploded view ---------- */
+const PARTS=[
+  {name:'Plunger',text:'The button you press. Inside the barrel it ends in a crown of eight slanted teeth. It never turns: splines keep it straight, so all it can do is push the cam down and, at the bottom, shove it sideways.'},
+  {name:'Cam',text:'The part that turns, and the whole trick. A short ring with slanted teeth on top that meet the plunger’s, and four lugs round its side that run in the barrel’s tracks. Its angle is the pen’s memory of whether the tip is in or out.'},
+  {name:'Barrel',text:'The outer tube. Near the top its inside wall has four ribs with sloped ends: the left end of each finishes in a notch that holds the tip out, the right end runs into the open track that lets it back in.'},
+  {name:'Refill',text:'A tube of thick, oily ink with a steel or tungsten-carbide ball in a socket at the end. Its top sits under the cam, so wherever the cam stops, the tip stops.'},
+  {name:'Spring',text:'Sits round the refill between its collar and the nose cone, pushing the refill and cam upwards all the time. It pulls the tip in when the lugs reach a track, and holds them in the notches when they don’t.'},
+  {name:'Nose cone',text:'Screws onto the bottom of the barrel and gives the spring something to push against. Unscrew it and the spring and refill fall out, which is how you change a refill.'}
+];
+const partsSvg=$('parts');
+// local drawings, origin = top centre of each part
+const DRAW=[
+  g=>{el('rect',{x:-8,y:0,width:16,height:34,rx:4,style:'fill:var(--blue)'},g);
+      el('polygon',{points:'-11,32 11,32 11,52 7,46 4,52 0,46 -4,52 -7,46 -11,52',style:'fill:var(--blue-soft);stroke:var(--blue);stroke-width:1.2;stroke-linejoin:round'},g);return [-14,0,28,54];},
+  g=>{el('polygon',{points:'-11,5 -7,0 -4,5 0,0 4,5 7,0 11,5 11,24 -11,24',style:'fill:var(--red-soft);stroke:var(--red);stroke-width:1.2;stroke-linejoin:round'},g);
+      el('rect',{x:-16,y:6,width:5,height:10,style:'fill:var(--red)'},g);el('rect',{x:11,y:6,width:5,height:10,style:'fill:var(--red)'},g);
+      el('rect',{x:-2.5,y:7,width:5,height:10,style:'fill:var(--red);opacity:.45'},g);return [-18,0,36,26];},
+  g=>{el('rect',{x:-15,y:0,width:30,height:190,rx:3,style:'fill:var(--steel);stroke:var(--steel-dark);stroke-width:1'},g);
+      el('rect',{x:-11,y:6,width:22,height:52,style:'fill:var(--paper-2)'},g);
+      el('polygon',{points:'-9,6 -3,6 -3,44 -6,50 -6,44 -9,50',style:'fill:var(--rib)'},g);
+      el('polygon',{points:'5,6 11,6 11,44 8,50 8,44 5,50',style:'fill:var(--rib)'},g);
+      el('path',{d:'M15 8 h5 q3 0 3 3 v100 q0 5 -4 5 h-1 v-102 h-3z',style:'fill:var(--steel-dark)'},g);return [-17,0,42,192];},
+  g=>{el('rect',{x:-3.5,y:0,width:7,height:178,style:'fill:var(--paper);stroke:var(--steel-dark);stroke-width:1'},g);
+      el('rect',{x:-2,y:24,width:4,height:80,style:'fill:var(--blue);opacity:.75'},g);
+      el('rect',{x:-7,y:110,width:14,height:4,style:'fill:var(--steel-dark)'},g);
+      el('polygon',{points:'-3.5,178 3.5,178 1.2,192 -1.2,192',style:'fill:var(--steel);stroke:var(--steel-dark);stroke-width:.8'},g);
+      el('circle',{cx:0,cy:193,r:1.8,style:'fill:var(--ink)'},g);return [-9,0,18,196];},
+  g=>{let p=[];for(let i=0;i<=12;i++)p.push(`${i%2?8:-8},${(i*4.6).toFixed(1)}`);el('polyline',{points:p.join(' '),style:'fill:none;stroke:var(--ink);stroke-width:1.4;stroke-linejoin:round'},g);return [-10,-2,20,60];},
+  g=>{el('polygon',{points:'-15,0 15,0 15,8 7,44 -7,44 -15,8',style:'fill:var(--steel);stroke:var(--steel-dark);stroke-width:1;stroke-linejoin:round'},g);
+      el('rect',{x:-13,y:-10,width:26,height:10,style:'fill:var(--steel-dark)'},g);
+      for(let i=0;i<4;i++)el('line',{x1:-13,y1:-8+i*2.5,x2:13,y2:-9.5+i*2.5,style:'stroke:var(--steel);stroke-width:.8'},g);
+      el('circle',{cx:0,cy:44,r:2.5,style:'fill:var(--paper-2)'},g);return [-17,-12,34,58];}
+];
+// positions: [x, y] exploded and together (x centre, y top)
+const POS_APART=[[30,40],[88,52],[145,22],[205,22],[262,90],[318,60]];
+const POS_TOG=[[180,18],[180,72],[180,50],[180,96],[180,212],[180,240]];
+const partG=[];
+PARTS.forEach((p,i)=>{
+  const g=el('g',{class:'part',tabindex:0,role:'button','aria-label':p.name},partsSvg);
+  const bb=DRAW[i](g);
+  const hit=el('rect',{class:'hit',x:bb[0]-4,y:bb[1]-4,width:bb[2]+8,height:bb[3]+8,rx:4,style:'fill:transparent;stroke:none'},g);
+  g.insertBefore(hit,g.firstChild);
+  g.addEventListener('click',()=>selectPart(i));
+  g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();selectPart(i);}});
+  partG.push(g);
+  const lx=POS_APART[i][0];
+  el('text',{class:'lbl n',x:lx,y:264,'text-anchor':'middle'},partsSvg).textContent=String(i+1);
+  el('text',{class:'lbl',x:lx,y:280,'text-anchor':'middle'},partsSvg).textContent=p.name.replace('Nose cone','Nose');
+  const b=document.createElement('button');b.type='button';b.textContent=(i+1)+' '+p.name;b.addEventListener('click',()=>selectPart(i));$('partlist').appendChild(b);
+});
+// order: barrel drawn before cam/plunger so internal parts sit on top when assembled
+partsSvg.insertBefore(partG[2],partsSvg.firstChild);
+function placeParts(){partG.forEach((g,i)=>{const [x,y]=(S.exploded?POS_APART:POS_TOG)[i];g.style.transform=`translate(${x}px,${y}px)`;});
+  partsSvg.classList.toggle('together',!S.exploded); $('assembleBtn').textContent=S.exploded?'Put it together':'Take it apart';}
+function selectPart(i){S.part=i;const p=PARTS[i];$('partNum').textContent=`PART ${i+1} OF 6`;$('partName').textContent=p.name;$('partText').textContent=p.text;
+  [...$('partlist').children].forEach((b,j)=>b.setAttribute('aria-pressed',j===i?'true':'false'));
+  partG.forEach((g,j)=>g.style.opacity=(j===i||!S.exploded)?1:.55);}
+$('assembleBtn').addEventListener('click',()=>{S.exploded=!S.exploded;placeParts();selectPart(S.part);});
+placeParts(); selectPart(1);
+
+readouts(); requestAnimationFrame(frame);
+
+window.__halfturn={
+  get state(){return {D:S.D,x:+S.x.toFixed(3),lugY:+lugY().toFixed(3),tip:tipState(),shown:S.lastStable,clicks:S.clicks,turned:Math.round((S.x-S.x0)*30),phase:S.phase,busy:S.busy,exploded:S.exploded,part:S.part}},
+  press:(d,h)=>press(d,h), setD
+};
+})();
+</script>
+
+</body></html>

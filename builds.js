@@ -6,6 +6,18 @@
 */
 window.BUILDS = [
   {
+    slug: "half-a-turn",
+    title: "Half a Turn",
+    date: "2026-11-27",
+    kind: "How it works",
+    blurb: "How a click pen keeps its tip out, then lets it go. A cutaway pen sits beside the inside of its barrel unrolled flat: two ribs with sloped ends, the plunger's slanted teeth and the red lugs of the cam, the ring that turns. Drag the plunger or press Click and the lugs go where their contacts send them, into a notch (tip out) or up the open track (tip in), 45° a click. Then take the pen apart into its six parts.",
+    font: "'Anybody', 'Arial Black', sans-serif", fontWeight: 900, fontStretch: "130%",
+    bg: "#2b2c31", fg: "#18191d", accent: "#e2452f", accent2: "#1d3fd0", panel: "#f6f4ee",
+    why: "Everyone has clicked a pen a thousand times without knowing what holds the tip out; I wanted the answer as a working model where the cam's position comes from its actual contacts with the ribs and plunger teeth, not a canned animation, so a half press really does nothing.",
+    hook: "What holds a click pen's tip out? A ring that turns 45° every press. Push the plunger and watch.",
+    motif: "halfturn"
+  },
+  {
     slug: "weekender",
     title: "Haybale Weekender",
     date: "2026-11-26",
